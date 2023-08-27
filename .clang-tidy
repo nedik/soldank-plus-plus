@@ -1,0 +1,49 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  clang-analyzer-*,
+  modernize-*,
+  readability-*,
+  misc-*,
+  performance-*,
+  -performance-avoid-endl,
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -readability-identifier-length,
+  -cppcoreguidelines-pro-type-union-access
+
+# Rationale for disabled checks:
+# TODO: -performance-avoid-endl - remove later when we have proper logging and we don't need to use cout anymore everywhere
+# -cppcoreguidelines-avoid-non-const-global-variables - this gets triggered for static members that we want to have mutable
+# TODO: -readability-identifier-length - remove this one later and fix the names in files
+# -cppcoreguidelines-pro-type-union-access - this gets triggered on glm::vec2 accesses to members like .x
+
+CheckOptions:
+  - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: '1'}
+  - { key: readability-identifier-naming.NamespaceCase,            value: CamelCase  }
+  - { key: readability-identifier-naming.ClassCase,                value: CamelCase  }
+  - { key: readability-identifier-naming.StructCase,               value: CamelCase  }
+  - { key: readability-identifier-naming.TemplateParameterCase,    value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,             value: CamelCase  }
+  - { key: readability-identifier-naming.VariableCase,             value: lower_case }
+  - { key: readability-identifier-naming.PrivateMemberSuffix,      value: _          }
+  - { key: readability-identifier-naming.ProtectedMemberSuffix,    value: _          }
+  - { key: readability-identifier-naming.MacroDefinitionCase,      value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumConstantCase,         value: CamelCase  }
+  - { key: readability-identifier-naming.ConstexprVariableCase,    value: UPPER_CASE }
+  - { key: readability-identifier-naming.GlobalConstantCase,       value: UPPER_CASE }
+  - { key: readability-identifier-naming.MemberConstantCase,       value: UPPER_CASE  }
+  - { key: readability-identifier-naming.ClassMemberSuffix,        value: _          }
+  - { key: readability-identifier-naming.StaticConstantCase,       value: UPPER_CASE }
+  - { key: readability-identifier-naming.ParameterCase,            value: lower_case }
+  - { key: readability-identifier-naming.MemberCase,               value: lower_case }
+  - { key: readability-identifier-naming.ClassMemberCase,          value: lower_case }
+  - { key: readability-identifier-naming.PrivateMemberCase,          value: lower_case }
+
+# misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic - we are turning this one on because it gets triggered on struct members
