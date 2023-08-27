@@ -17,7 +17,7 @@ To install all the required package using vcpkg:
 vcpkg install glfw3 glm stb freetype simpleini --triplet x64-windows
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_TOOLCHAIN_FILE=<path/to/vcpkg/scripts/buildsystems/vcpkg.cmake> -DVCPKG_TARGET_TRIPLET=x64-windows
 ```
 
 On linux:
@@ -25,7 +25,7 @@ On linux:
 sudo vcpkg install glfw3 glm stb freetype simpleini --triplet x64-linux
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_TOOLCHAIN_FILE=<path/to/vcpkg/scripts/buildsystems/vcpkg.cmake> -DVCPKG_TARGET_TRIPLET=x64-linux
 ```
 
 You should now be able to build executables using `make` on linux or to open generated solution in visual studio on windows
