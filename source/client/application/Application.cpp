@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
 
 #include "core/World.hpp"
@@ -7,6 +8,8 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <chrono>
+#include <thread>
 
 namespace Soldat::Application
 {
@@ -61,6 +64,17 @@ void Run()
         timecur = glfwGetTime();
         timeacc += timecur - timeprv;
         timeprv = timecur;
+
+        if (Config::FPS_LIMIT != 0) {
+            while (timeacc < 1.0 / (float)Config::FPS_LIMIT) {
+                timecur = glfwGetTime();
+                timeacc += timecur - timeprv;
+                timeprv = timecur;
+
+                // Sleep for 0 milliseconds to give the resource to other processes
+                std::this_thread::sleep_for(std::chrono::milliseconds(0));
+            }
+        }
 
         while (timeacc >= dt) {
             timeacc -= dt;
