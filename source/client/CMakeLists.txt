@@ -1,5 +1,6 @@
-file(GLOB_RECURSE SOURCE_FILES *.cpp)
-file(GLOB_RECURSE HEADER_FILES *.hpp)
+file(GLOB_RECURSE LIB_SOURCES *.cpp)
+file(GLOB_RECURSE HEADER_SOURCES *.hpp)
+list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
 find_package(Freetype REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
@@ -7,11 +8,30 @@ find_package(glm CONFIG REQUIRED)
 find_package(Stb REQUIRED)
 find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
+add_library(client_lib ${LIB_SOURCES} ${HEADER_SOURCES})
+target_compile_definitions(client_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
+
+if(MSVC)
+  target_compile_options(client_lib PRIVATE /W4 /WX)
+else()
+  target_compile_options(client_lib PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+target_link_libraries(client_lib PUBLIC glfw)
+target_link_libraries(client_lib PUBLIC glad)
+target_link_libraries(client_lib PUBLIC glm::glm)
+target_link_libraries(client_lib PUBLIC Freetype::Freetype)
+
+target_include_directories(client_lib PUBLIC ${Stb_INCLUDE_DIR})
+target_include_directories(client_lib PUBLIC ${SIMPLEINI_INCLUDE_DIRS})
+target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/client)
+
+
 # TODO: uncomment this to stop the app from opening cmd on windows
 # IF (WIN32)
-#    add_executable(client WIN32 ${SOURCE_FILES} ${HEADER_FILES})
+#    add_executable(client WIN32 main.cpp)
 # ELSE()
-   add_executable(client ${SOURCE_FILES} ${HEADER_FILES})
+   add_executable(client main.cpp)
 # ENDIF()
 target_compile_definitions(client PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
 
@@ -23,11 +43,5 @@ endif()
 
 set_target_properties(client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 
-target_link_libraries(client PRIVATE glfw)
-target_link_libraries(client PRIVATE glad)
-target_link_libraries(client PRIVATE glm::glm)
-target_link_libraries(client PRIVATE Freetype::Freetype)
-
-target_include_directories(client PRIVATE ${Stb_INCLUDE_DIR})
-target_include_directories(client PRIVATE ${SIMPLEINI_INCLUDE_DIRS})
+target_link_libraries(client PRIVATE client_lib)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)

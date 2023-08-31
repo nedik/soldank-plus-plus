@@ -5,16 +5,17 @@ C++23 implementation of [Soldat](https://github.com/soldat/soldat)
 The project is written in C++23 and depends on:
 - OpenGL 2.1+
 - glad
-- glfw-3.3.8
+- glfw-3.3.8+
 - glm
 - stb
 - FreeType
+- [gtest 1.13.0+](https://github.com/google/googletest)
 
 ### Building with vcpkg
 Make sure you have CMake installed.
 To install all the required package using vcpkg:
 ```
-vcpkg install glfw3 glm stb freetype simpleini --triplet x64-windows
+vcpkg install glfw3 glm stb freetype simpleini gtest --triplet x64-windows
 mkdir build
 cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE=<path/to/vcpkg/scripts/buildsystems/vcpkg.cmake> -DVCPKG_TARGET_TRIPLET=x64-windows
@@ -22,7 +23,7 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=<path/to/vcpkg/scripts/buildsystems/vcpkg.cmake>
 
 On linux:
 ```
-sudo vcpkg install glfw3 glm stb freetype simpleini --triplet x64-linux
+sudo vcpkg install glfw3 glm stb freetype simpleini gtest --triplet x64-linux
 mkdir build
 cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE=<path/to/vcpkg/scripts/buildsystems/vcpkg.cmake> -DVCPKG_TARGET_TRIPLET=x64-linux
