@@ -3,12 +3,12 @@ C++23 implementation of [Soldat](https://github.com/soldat/soldat)
 
 ### Requirements
 The project is written in C++23 and depends on:
-- OpenGL 2.1+
-- glad
-- glfw-3.3.8+
-- glm
-- stb
-- FreeType
+- [OpenGL 2.1+](https://www.opengl.org/)
+- [glad](https://glad.dav1d.de/)
+- [glfw-3.3.8+](https://www.glfw.org/)
+- [glm](https://github.com/g-truc/glm)
+- [stb](https://github.com/nothings/stb)
+- [FreeType](https://freetype.org/)
 - [gtest 1.13.0+](https://github.com/google/googletest)
 
 ### Building with vcpkg
