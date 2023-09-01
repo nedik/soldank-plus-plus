@@ -4,6 +4,7 @@
 #include "application/config/Config.hpp"
 
 #include <string>
+#include <algorithm>
 
 namespace Soldat
 {
@@ -38,9 +39,9 @@ void Scene::Render(const std::shared_ptr<State>& state,
     sceneries_renderer_.Render(camera_.GetView(), 1, state->map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());
     if (Config::DEBUG_DRAW) {
-        sort(state->colliding_polygon_ids.begin(), state->colliding_polygon_ids.end());
+        std::sort(state->colliding_polygon_ids.begin(), state->colliding_polygon_ids.end());
         state->colliding_polygon_ids.erase(
-          unique(state->colliding_polygon_ids.begin(), state->colliding_polygon_ids.end()),
+          std::unique(state->colliding_polygon_ids.begin(), state->colliding_polygon_ids.end()),
           state->colliding_polygon_ids.end());
         for (unsigned int polygon_id : state->colliding_polygon_ids) {
             polygon_outlines_renderer_.Render(camera_.GetView(), polygon_id);
