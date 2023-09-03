@@ -6,7 +6,6 @@ namespace Soldat::Calc
 {
 float Distance(const glm::vec2& p1, const glm::vec2& p2)
 {
-    // return glm::distance(p1, p2);
     return glm::length(p2 - p1);
 }
 
@@ -25,7 +24,7 @@ glm::vec2 Vec2Normalize(const glm::vec2& v)
     return v / magnitude;
 }
 
-float Vec2Angle(const glm::vec2& v) // TODO: porównać wyniki z soldankiem
+float Vec2Angle(const glm::vec2& v)
 {
     return (float)(-atan2(0.0, 1.0) - atan2(v.y, v.x));
 }
