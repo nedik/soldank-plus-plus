@@ -2,12 +2,6 @@ file(GLOB_RECURSE LIB_SOURCES *.cpp)
 file(GLOB_RECURSE HEADER_SOURCES *.hpp)
 list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
-find_package(Freetype REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
-find_package(Stb REQUIRED)
-find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
-
 add_library(client_lib ${LIB_SOURCES} ${HEADER_SOURCES})
 target_compile_definitions(client_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
 
@@ -22,8 +16,8 @@ target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
 
-target_include_directories(client_lib PUBLIC ${Stb_INCLUDE_DIR})
-target_include_directories(client_lib PUBLIC ${SIMPLEINI_INCLUDE_DIRS})
+target_include_directories(client_lib PUBLIC ${stb_SOURCE_DIR})
+target_include_directories(client_lib PUBLIC ${simpleini_SOURCE_DIR})
 target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/client)
 
 

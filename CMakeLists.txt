@@ -5,6 +5,31 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS On)
 
+include(cmake/CPM.cmake)
+
+CPMAddPackage("gh:glfw/glfw#3.3.8")
+CPMAddPackage("gh:g-truc/glm#0.9.9.8")
+CPMAddPackage("gh:brofield/simpleini#v4.20")
+CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
+CPMAddPackage(
+    NAME freetype
+    GITHUB_REPOSITORY freetype/freetype
+    GIT_TAG VER-2-13-2
+    VERSION 2.13.2
+    OPTIONS "FT_DISABLE_HARFBUZZ 1"
+)
+if (freetype_ADDED)
+    add_library(Freetype::Freetype ALIAS freetype)
+endif()
+
+CPMAddPackage(
+    NAME googletest
+    GITHUB_REPOSITORY google/googletest
+    GIT_TAG v1.14.0
+    VERSION 1.14.0
+    OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt"
+)
+
 enable_testing()
 
 add_subdirectory(extern)
