@@ -3,6 +3,7 @@ file(GLOB_RECURSE HEADER_SOURCES *.hpp)
 list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
 add_library(client_lib ${LIB_SOURCES} ${HEADER_SOURCES})
+
 target_compile_definitions(client_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
 
 if(MSVC)
@@ -11,15 +12,14 @@ else()
   target_compile_options(client_lib PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-target_link_libraries(client_lib PUBLIC glfw)
-target_link_libraries(client_lib PUBLIC glad)
-target_link_libraries(client_lib PUBLIC glm::glm)
-target_link_libraries(client_lib PUBLIC Freetype::Freetype)
-
 target_include_directories(client_lib PUBLIC ${stb_SOURCE_DIR})
 target_include_directories(client_lib PUBLIC ${simpleini_SOURCE_DIR})
 target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/client)
 
+target_link_libraries(client_lib PUBLIC glfw)
+target_link_libraries(client_lib PUBLIC glad)
+target_link_libraries(client_lib PUBLIC glm::glm)
+target_link_libraries(client_lib PUBLIC Freetype::Freetype)
 
 # TODO: uncomment this to stop the app from opening cmd on windows
 # IF (WIN32)
@@ -31,11 +31,11 @@ target_compile_definitions(client PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
 
 if(MSVC)
   target_compile_options(client PRIVATE /Wall)
+  set_target_properties(client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 else()
   target_compile_options(client PRIVATE -Wall -Wextra -Wpedantic)
+  set_target_properties(client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 endif()
-
-set_target_properties(client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 target_link_libraries(client PRIVATE client_lib)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)

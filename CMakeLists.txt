@@ -1,10 +1,6 @@
 cmake_minimum_required (VERSION 3.20)
 project (Soldat++)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED On)
-set(CMAKE_CXX_EXTENSIONS On)
-
 include(cmake/CPM.cmake)
 
 CPMAddPackage("gh:glfw/glfw#3.3.8")
@@ -31,6 +27,10 @@ CPMAddPackage(
 )
 
 enable_testing()
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+set(CMAKE_CXX_EXTENSIONS On)
 
 add_subdirectory(extern)
 add_subdirectory(source)
