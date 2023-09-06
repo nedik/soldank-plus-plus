@@ -4,9 +4,9 @@
 #include "core/animations/Animation.hpp"
 #include "core/math/Glm.hpp"
 #include "core/physics/Particles.hpp"
-#include "core/physics/Weapons.hpp"
 #include "core/state/Control.hpp"
 #include "core/state/State.hpp"
+#include "core/entities/Weapon.hpp"
 
 #include <cstdint>
 #include <vector>

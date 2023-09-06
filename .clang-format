@@ -5,7 +5,19 @@ AlignEscapedNewlines: DontAlign
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 BinPackParameters: 'false'
-BreakBeforeBraces: Linux
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: false
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+BreakBeforeBraces: Custom
 ColumnLimit: '100'
 ConstructorInitializerIndentWidth: '4'
 DisableFormat: 'false'

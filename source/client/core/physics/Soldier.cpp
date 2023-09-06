@@ -4,6 +4,7 @@
 #include "core/types/BulletParams.hpp"
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
+#include "core/entities/WeaponParametersFactory.hpp"
 
 #include "application/config/Config.hpp"
 
@@ -73,9 +74,9 @@ Soldier::Soldier(glm::vec2 spawn_position)
     , body_animation(AnimationType::Stand)
     , control()
     , active_weapon(0)
-    , weapons{ { WeaponType::DesertEagles, false },
-               { WeaponType::Chainsaw, false },
-               { WeaponType::FragGrenade, false } }
+    , weapons{ { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },
+               { WeaponParametersFactory::GetParameters(WeaponType::Chainsaw, false) },
+               { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) } }
     , fired(0)
     , particle(true,
                spawn_position,
@@ -94,8 +95,11 @@ void Soldier::SwitchWeapon()
 {
     int new_active_weapon = (active_weapon + 1) % 2;
     active_weapon = new_active_weapon;
-    weapons[new_active_weapon].start_up_time_count = weapons[new_active_weapon].start_up_time;
-    weapons[new_active_weapon].reload_time_prev = weapons[new_active_weapon].reload_time_count;
+    // weapons[new_active_weapon].start_up_time_count =
+    //   weapons[new_active_weapon].GetWeaponParameters().start_up_time;
+    weapons[new_active_weapon].ResetStartUpTimeCount();
+    // weapons[new_active_weapon].reload_time_prev = weapons[new_active_weapon].reload_time_count;
+    weapons[new_active_weapon].SetReloadTimePrev(weapons[new_active_weapon].GetReloadTimeCount());
 }
 
 void Soldier::UpdateKeys(const Control& _control)
@@ -260,7 +264,7 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
     }
 
     // FIRE!!!!
-    if (GetPrimaryWeapon().kind == WeaponType::Chainsaw ||
+    if (GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Chainsaw ||
         (body_animation.GetType() != AnimationType::Roll) &&
           (body_animation.GetType() != AnimationType::RollBack) &&
           (body_animation.GetType() != AnimationType::Melee) &&
@@ -271,8 +275,8 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
             if (control.fire)
             // and (SpriteC.CeaseFireCounter < 0)
             {
-                if (GetPrimaryWeapon().kind == WeaponType::NoWeapon ||
-                    GetPrimaryWeapon().kind == WeaponType::Knife) {
+                if (GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::NoWeapon ||
+                    GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Knife) {
                     BodyApplyAnimation(AnimationType::Punch, 1);
                 } else {
                     // TODO: odkomentować to
@@ -300,7 +304,7 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
             SwitchWeapon();
         } else if ((body_animation.GetFrame() ==
                     Animations::Get(AnimationType::Change).GetFrames().size()) &&
-                   (GetPrimaryWeapon().ammo_count == 0)) {
+                   (GetPrimaryWeapon().GetAmmoCount() == 0)) {
             BodyApplyAnimation(AnimationType::Stand, 1);
         }
     }
@@ -318,24 +322,26 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
            })) {
         BodyApplyAnimation(AnimationType::ThrowWeapon, 1);
 
-        if (GetPrimaryWeapon().kind == WeaponType::Knife) {
+        if (GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Knife) {
             body_animation.SetSpeed(2);
         }
     }
 
     // throw knife
     if (body_animation.GetType() == AnimationType::ThrowWeapon &&
-        GetPrimaryWeapon().kind == WeaponType::Knife &&
+        GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Knife &&
         (!control.drop || body_animation.GetFrame() == 16)) {
-        Weapon weapon(WeaponType::ThrownKnife, false);
+
+        // Weapon weapon{ WeaponParametersFactory::GetParameters(WeaponType::ThrownKnife, false) };
         auto aim_x = (float)control.mouse_aim_x;
         auto aim_y = (float)control.mouse_aim_y;
         auto dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - skeleton->GetPos(15));
         auto frame = (float)body_animation.GetFrame();
-        auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
-        auto bullet_vel = dir * weapon.speed * thrown_mul;
-        auto inherited_vel = particle.GetVelocity() * weapon.inherited_velocity;
-        auto velocity = bullet_vel + inherited_vel;
+        // auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
+        // auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
+        // auto inherited_vel =
+        //   particle.GetVelocity() * weapon.GetWeaponParameters().inherited_velocity;
+        // auto velocity = bullet_vel + inherited_vel;
 
         // TODO: odkomentować to
         // emitter.push(EmitterItem::Bullet(BulletParams {
@@ -1561,7 +1567,7 @@ void Soldier::Fire(/* Emitter& emitter */)
     auto weapon = GetPrimaryWeapon();
 
     glm::vec2 dir;
-    if (weapon.bullet_style == BulletType::Blade ||
+    if (weapon.GetWeaponParameters().bullet_style == BulletType::Blade ||
         body_animation.GetType() == AnimationType::Mercy ||
         body_animation.GetType() == AnimationType::Mercy2) {
         dir = Calc::Vec2Normalize(skeleton->GetPos(15) - skeleton->GetPos(16));
@@ -1572,22 +1578,22 @@ void Soldier::Fire(/* Emitter& emitter */)
     };
 
     auto pos = skeleton->GetPos(15) + dir * 4.0f - glm::vec2(0.0, 2.0);
-    auto bullet_velocity = dir * weapon.speed;
-    auto inherited_velocity = particle.velocity_ * weapon.inherited_velocity;
+    auto bullet_velocity = dir * weapon.GetWeaponParameters().speed;
+    auto inherited_velocity = particle.velocity_ * weapon.GetWeaponParameters().inherited_velocity;
 
     BulletParams params{
-        weapon.bullet_style,
-        weapon.kind,
+        weapon.GetWeaponParameters().bullet_style,
+        weapon.GetWeaponParameters().kind,
         pos,
         bullet_velocity + inherited_velocity,
-        (std::int16_t)weapon.timeout,
-        weapon.hit_multiply,
+        (std::int16_t)weapon.GetWeaponParameters().timeout,
+        weapon.GetWeaponParameters().hit_multiply,
         TeamType::None,
         // TODO: odkomentować
         // sprite: weapon.bullet_sprite
     };
 
-    switch (weapon.kind) {
+    switch (weapon.GetWeaponParameters().kind) {
         case WeaponType::DesertEagles: {
             // TODO: odkomentować to
             // emitter.push(EmitterItem::Bullet(params));

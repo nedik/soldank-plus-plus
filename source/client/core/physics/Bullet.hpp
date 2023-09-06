@@ -4,7 +4,6 @@
 #include "core/map/Map.hpp"
 #include "core/math/Glm.hpp"
 #include "core/physics/Particles.hpp"
-#include "core/physics/Weapons.hpp"
 #include "core/types/BulletType.hpp"
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
