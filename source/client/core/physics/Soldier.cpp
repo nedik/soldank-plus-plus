@@ -1,7 +1,7 @@
 #include "Soldier.hpp"
 
 #include "core/math/Calc.hpp"
-#include "core/types/BulletParams.hpp"
+#include "core/entities/Bullet.hpp"
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
