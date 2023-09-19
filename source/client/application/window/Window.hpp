@@ -9,7 +9,12 @@
 
 namespace Soldat
 {
-enum class CursorMode : uint8_t { Locked, Normal, Hidden };
+enum class CursorMode : uint8_t
+{
+    Locked,
+    Normal,
+    Hidden
+};
 
 class Window
 {

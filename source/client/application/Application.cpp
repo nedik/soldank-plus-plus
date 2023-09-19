@@ -70,6 +70,7 @@ void Run()
             timeacc += timecur - timeprv;
             timeprv = timecur;
 
+            // TODO: Don't use sleep when VSync is on
             // Sleep for 0 milliseconds to give the resource to other processes
             std::this_thread::sleep_for(std::chrono::milliseconds(0));
         }

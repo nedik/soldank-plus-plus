@@ -54,6 +54,8 @@ void Window::Create()
 
     glfwMakeContextCurrent(glfw_window_);
 
+    glfwSwapInterval(0);
+
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0) {
         std::cerr << "Error: Failed to initialize GLAD." << std::endl;
