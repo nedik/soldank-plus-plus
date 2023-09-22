@@ -77,6 +77,7 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
         glm::vec2 scale = glm::vec2(1.0, 1.0);
         unsigned int px = part_data.GetPoint().x;
         unsigned int py = part_data.GetPoint().y;
+        // TODO: frame_percent here causes soldier blurring when moving (sprite ghosting)
         glm::vec2 p0 = Calc::Lerp(
           soldier.skeleton->GetOldPos(px), soldier.skeleton->GetPos(px), (float)frame_percent);
         glm::vec2 p1 = Calc::Lerp(
