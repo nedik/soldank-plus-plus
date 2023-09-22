@@ -10,6 +10,7 @@
 #include "core/math/Glm.hpp"
 
 #include <vector>
+#include <optional>
 
 namespace Soldat
 {
@@ -26,12 +27,16 @@ public:
     SoldierRenderer(SoldierRenderer&&) = delete;
     SoldierRenderer& operator=(SoldierRenderer&& other) = delete;
 
+    static void GenerateVertices(std::vector<float>& vertices,
+                                 const Sprites::SoldierPartData& part_data,
+                                 bool flipped);
+
     void Render(glm::mat4 transform, const Soldier& soldier, double frame_percent);
 
 private:
     Shader shader_;
 
-    std::vector<unsigned int> vbos_;
+    std::vector<std::pair<unsigned int, std::optional<unsigned int>>> vbos_;
     std::vector<unsigned int> ebos_;
     std::vector<Sprites::SoldierPartType> part_types_;
 };
