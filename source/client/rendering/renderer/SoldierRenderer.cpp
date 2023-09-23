@@ -1,7 +1,5 @@
 #include "SoldierRenderer.hpp"
 
-#include <math.h>
-
 #include "rendering/data/Texture.hpp"
 #include "rendering/renderer/Renderer.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
