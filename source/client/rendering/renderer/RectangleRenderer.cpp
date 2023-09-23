@@ -50,7 +50,7 @@ RectangleRenderer::~RectangleRenderer()
 void RectangleRenderer::Render(glm::mat4 transform, glm::vec2 position)
 {
     shader_.Use();
-    Renderer::SetupVertexArray(vbo_, std::nullopt, false);
+    Renderer::SetupVertexArray(vbo_, std::nullopt, true, false);
 
     transform = glm::translate(transform, glm::vec3(position.x, -position.y, 0.0));
     shader_.SetMatrix4("transform", transform);

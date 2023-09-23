@@ -15,7 +15,8 @@
 namespace Soldat
 {
 SoldierRenderer::SoldierRenderer()
-    : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
+    : shader_(ShaderSources::DYNAMIC_COLOR_VERTEX_SHADER_SOURCE,
+              ShaderSources::DYNAMIC_COLOR_FRAGMENT_SHADER_SOURCE)
 {
     std::vector<float> vertices;
     std::vector<unsigned int> indices{ 0, 1, 2, 1, 3, 2 };
@@ -78,11 +79,11 @@ void SoldierRenderer::GenerateVertices(std::vector<float>& vertices,
 
     // clang-format off
         vertices = {
-            // position         // color                    // texture
-            w0, h0, 1.0,        1.0, 1.0, 1.0, 1.0,         0.0, 0.0,
-            w1, h0, 1.0,        1.0, 1.0, 1.0, 1.0,         1.0, 0.0,
-            w0, h1, 1.0,        1.0, 1.0, 1.0, 1.0,         0.0, 1.0,
-            w1, h1, 1.0,        1.0, 1.0, 1.0, 1.0,         1.0, 1.0,
+            // position         // texture
+            w0, h0, 1.0,        0.0, 0.0,
+            w1, h0, 1.0,        1.0, 0.0,
+            w0, h1, 1.0,        0.0, 1.0,
+            w1, h1, 1.0,        1.0, 1.0,
         };
     // clang-format on
 }
@@ -128,7 +129,7 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
         scale.x /= 4.5;
         scale.y /= 4.5;
 
-        Renderer::SetupVertexArray(vbo_to_use, ebos_[i], true);
+        Renderer::SetupVertexArray(vbo_to_use, ebos_[i], false, true);
         glm::mat4 current_part_transform = transform;
 
         current_part_transform =
@@ -138,6 +139,7 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
           glm::scale(current_part_transform, glm::vec3(scale.x, scale.y, 0.0));
 
         shader_.SetMatrix4("transform", current_part_transform);
+        shader_.SetVec4("color", glm::vec4(1.0F, 1.0F, 1.0F, 1.0F));
 
         Renderer::BindTexture(sprite_texture);
         Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, std::nullopt);

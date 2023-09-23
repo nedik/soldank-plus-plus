@@ -16,7 +16,10 @@ unsigned int CreateEBO(const std::vector<unsigned int>& indices, GLenum usage);
 void FreeVBO(unsigned int vbo);
 void FreeEBO(unsigned int ebo);
 
-void SetupVertexArray(unsigned int vbo, std::optional<unsigned int> ebo, bool has_texture = true);
+void SetupVertexArray(unsigned int vbo,
+                      std::optional<unsigned int> ebo,
+                      bool has_color = true,
+                      bool has_texture = true);
 
 void BindTexture(unsigned int texture);
 

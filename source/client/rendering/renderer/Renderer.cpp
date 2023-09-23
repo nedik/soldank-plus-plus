@@ -43,7 +43,10 @@ void FreeEBO(unsigned int ebo)
     glDeleteBuffers(1, &ebo);
 }
 
-void SetupVertexArray(unsigned int vbo, std::optional<unsigned int> ebo, bool has_texture)
+void SetupVertexArray(unsigned int vbo,
+                      std::optional<unsigned int> ebo,
+                      bool has_color,
+                      bool has_texture)
 {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -51,25 +54,43 @@ void SetupVertexArray(unsigned int vbo, std::optional<unsigned int> ebo, bool ha
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *ebo);
     }
 
-    GLsizei stride = 0;
-    if (has_texture) {
-        stride = 9 * sizeof(float);
-    } else {
-        stride = 7 * sizeof(float);
+    GLsizei stride = 3;
+    if (has_color) {
+        stride += 4;
     }
+    if (has_texture) {
+        stride += 2;
+    }
+    stride *= sizeof(float);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+
+    unsigned int index = 0;
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    // NOLINTNEXTLINE(performance-no-int-to-ptr,cppcoreguidelines-pro-type-cstyle-cast)
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
+    glEnableVertexAttribArray(index);
+    int offset = 3;
+    index++;
+    if (has_color) {
+        // color attribute
+        // NOLINTNEXTLINE(performance-no-int-to-ptr,cppcoreguidelines-pro-type-cstyle-cast)
+        glVertexAttribPointer(
+          index, 4, GL_FLOAT, GL_FALSE, stride, (void*)(offset * sizeof(float)));
+        glEnableVertexAttribArray(index);
+        offset += 4;
+        index++;
+    }
     if (has_texture) {
         // texture coord attribute
         // NOLINTNEXTLINE(performance-no-int-to-ptr,cppcoreguidelines-pro-type-cstyle-cast)
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(7 * sizeof(float)));
-        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(
+          index, 2, GL_FLOAT, GL_FALSE, stride, (void*)(offset * sizeof(float)));
+        glEnableVertexAttribArray(index);
+        offset += 2;
+        index++;
     }
 }
 

@@ -50,7 +50,7 @@ BackgroundRenderer::~BackgroundRenderer()
 void BackgroundRenderer::Render(glm::mat4 transform)
 {
     shader_.Use();
-    Renderer::SetupVertexArray(vbo_, std::nullopt, false);
+    Renderer::SetupVertexArray(vbo_, std::nullopt, true, false);
     shader_.SetMatrix4("transform", transform);
     Renderer::DrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -39,7 +39,7 @@ PolygonOutlinesRenderer::~PolygonOutlinesRenderer()
 void PolygonOutlinesRenderer::Render(glm::mat4 transform, unsigned int polygon_id)
 {
     shader_.Use();
-    Renderer::SetupVertexArray(vbo_, std::nullopt, false);
+    Renderer::SetupVertexArray(vbo_, std::nullopt, true, false);
     shader_.SetMatrix4("transform", transform);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // TODO: Move to Renderer if needed
     Renderer::DrawArrays(GL_TRIANGLES, (int)polygon_id * 3, 3);
