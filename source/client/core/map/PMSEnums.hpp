@@ -1,64 +1,89 @@
-#pragma once
+#ifndef __PMS_ENUMS_HPP__
+#define __PMS_ENUMS_HPP__
 
-enum PMSPolygonType : unsigned char {
-    ptNORMAL = 0,
-    ptONLY_BULLETS_COLLIDE,
-    ptONLY_PLAYERS_COLLIDE,
-    ptNO_COLLIDE,
-    ptICE,
-    ptDEADLY,
-    ptBLOODY_DEADLY,
-    ptHURTS,
-    ptREGENERATES,
-    ptLAVA,
-    ptALPHABULLETS,
-    ptALPHAPLAYERS,
-    ptBRAVOBULLETS,
-    ptBRAVOPLAYERS,
-    ptCHARLIEBULLETS,
-    ptCHARLIEPLAYERS,
-    ptDELTABULLETS,
-    ptDELTAPLAYERS,
-    ptBOUNCY,
-    ptEXPLOSIVE,
-    ptHURTFLAGGERS,
-    ptFLAGGERCOLLIDES,
-    ptNONFLAGGERCOLLIDES,
-    ptFLAGCOLLIDES
+namespace Soldat
+{
+enum class PMSPolygonType : unsigned char
+{
+    Normal = 0,
+    OnlyBulletsCollide,
+    OnlyPlayersCollide,
+    NoCollide,
+    Ice,
+    Deadly,
+    BloodyDeadly,
+    Hurts,
+    Regenerates,
+    Lava,
+    AlphaBullets,
+    AlphaPlayers,
+    BravoBullets,
+    BravoPlayers,
+    CharlieBullets,
+    CharliePlayers,
+    DeltaBullets,
+    DeltaPlayers,
+    Bouncy,
+    Explosive,
+    HurtFlaggers,
+    FlaggerCollides,
+    NonFlaggerCollides,
+    FlagCollides
 };
 
-enum PMSSceneryLevel : unsigned char { lBEHIND_ALL = 0, lBEHIND_MAP, lBEHIND_NONE };
-
-enum PMSSpawnPointType : unsigned int {
-    sptGENERAL = 0,
-    sptALPHA,
-    sptBRAVO,
-    sptCHARLIE,
-    sptDELTA,
-    sptALPHA_FLAG,
-    sptBRAVO_FLAG,
-    sptGRENADES,
-    sptMEDKITS,
-    sptCLUSTERS,
-    sptVEST,
-    sptFLAMER,
-    sptBERSERKER,
-    sptPREDATOR,
-    sptYELLOW_FLAG,
-    sptRAMBO_BOW,
-    sptSTAT_GUN
+enum class PMSSceneryLevel : unsigned char
+{
+    BehindAll = 0,
+    BehindMap,
+    BehindNone
 };
 
-enum PMSSpecialAction : unsigned char {
-    saNONE = 0,
-    saSTOP_AND_CAMP,
-    saWAIT_1_SECOND,
-    saWAIT_5_SECONDS,
-    saWAIT_10_SECONDS,
-    saWAIT_15_SECONDS,
-    saWAIT_20_SECONDS
+enum class PMSSpawnPointType : unsigned int
+{
+    General = 0,
+    Alpha,
+    Bravo,
+    Charlie,
+    Delta,
+    AlphaFlag,
+    BravoFlag,
+    Grenades,
+    Medkits,
+    Clusters,
+    Vest,
+    Flamer,
+    Berserker,
+    Predator,
+    YellowFlag,
+    RamboBow,
+    StatGun
 };
 
-enum PMSStepType : unsigned char { stHARD_GROUND = 0, stSOFT_GROUND, stNONE };
+enum class PMSSpecialAction : unsigned char
+{
+    None = 0,
+    StopAndCamp,
+    Wait1Second,
+    Wait5Seconds,
+    Wait10Seconds,
+    Wait15Seconds,
+    Wait20Seconds
+};
 
-enum PMSWeatherType : unsigned char { wtNONE = 0, wtRAIN, wtSANDSTORM, wtSNOW };
+enum class PMSStepType : unsigned char
+{
+    HardGround = 0,
+    SoftGround,
+    None
+};
+
+enum class PMSWeatherType : unsigned char
+{
+    None = 0,
+    Rain,
+    Sandstorm,
+    Snow
+};
+} // namespace Soldat
+
+#endif

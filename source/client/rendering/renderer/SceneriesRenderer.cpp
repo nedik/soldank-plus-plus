@@ -100,7 +100,7 @@ void SceneriesRenderer::Render(glm::mat4 transform,
           current_scenery_transform, scenery_instances[i].rotation, glm::vec3(0.0, 0.0, 1.0));
         current_scenery_transform =
           glm::scale(current_scenery_transform,
-                     glm::vec3(scenery_instances[i].scaleX, scenery_instances[i].scaleY, 0.0));
+                     glm::vec3(scenery_instances[i].scale_x, scenery_instances[i].scale_y, 0.0));
 
         shader_.SetMatrix4("transform", current_scenery_transform);
 

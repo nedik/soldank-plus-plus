@@ -1,52 +1,82 @@
-#pragma once
+#ifndef __PMS_STRUCTS_HPP__
+#define __PMS_STRUCTS_HPP__
 
 #include "PMSConstants.hpp"
 #include "PMSEnums.hpp"
-#include "Utils.hpp"
 #include <vector>
 #include <cmath>
+#include <array>
+#include <string>
 
-struct DOSTime {
+namespace Soldat
+{
+struct DOSTime
+{
     unsigned short second : 5, minute : 6, hour : 5;
 };
 
-struct DOSDate {
+struct DOSDate
+{
     unsigned short day : 5, month : 4, year : 7;
 };
 
-struct PMSCollider {
+struct PMSCollider
+{
     int active;
     float x, y, radius;
 };
 
-struct PMSColor {
-    unsigned char blue, green, red, alpha;
+struct PMSColor
+{
+    unsigned char blue;
+    unsigned char green;
+    unsigned char red;
+    unsigned char alpha;
 
-    PMSColor() { red = 255, green = 255, blue = 255, alpha = 255; }
+    PMSColor()
+        : blue(255)
+        , green(255)
+        , red(255)
+        , alpha(255)
+    {
+    }
 
     PMSColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        : blue(b)
+        , green(g)
+        , red(r)
+        , alpha(a)
     {
-        red = r, green = g, blue = b, alpha = a;
     }
 };
 
-struct PMSVector {
-    float x, y, z;
+struct PMSVector
+{
+    float x;
+    float y;
+    float z;
 };
 
-struct PMSVertex {
-    float x, y, z;
+struct PMSVertex
+{
+    float x{};
+    float y{};
+    float z{};
     // Those are most likely texture-related
-    float rhw;
+    float rhw{};
     PMSColor color;
-    float textureS, textureT; // S corresponds to X axis, T corresponds to Y axis.
+    // S corresponds to X axis
+    float texture_s{};
+    // T corresponds to Y axis
+    float texture_t{};
 };
 
-struct PMSPolygon {
-    PMSVertex vertices[3];
-    PMSVector perpendiculars[3];
-    PMSPolygonType polygonType;
-    float bounciness;
+struct PMSPolygon
+{
+    std::array<PMSVertex, 3> vertices;
+    std::array<PMSVector, 3> perpendiculars{};
+    PMSPolygonType polygon_type{};
+    float bounciness{};
 
     /**
      * \brief Checks if the vertices are arranged in clock-wise order.
@@ -54,7 +84,7 @@ struct PMSPolygon {
      */
     bool AreVerticesClockwise()
     {
-        float sum = 0.0f;
+        float sum = 0.0F;
 
         for (unsigned int i = 0; i < 3; ++i) {
             unsigned int j = i + 1;
@@ -62,101 +92,68 @@ struct PMSPolygon {
                 j = 0;
             }
 
-            sum += (vertices[j].x - vertices[i].x) * (vertices[j].y + vertices[i].y);
+            sum += (vertices.at(j).x - vertices.at(i).x) * (vertices.at(j).y + vertices.at(i).y);
         }
 
-        return sum < 0.0f;
-    }
-
-    /**
-     * \brief Checks if the point at given coordinates is inside the polygon.
-     */
-    bool Contains(float x, float y)
-    {
-        bool b1, b2, b3;
-
-        b1 = Utils::Sign(x, y, vertices[0].x, vertices[0].y, vertices[1].x, vertices[1].y) < 0.0f;
-
-        b2 = Utils::Sign(x, y, vertices[1].x, vertices[1].y, vertices[2].x, vertices[2].y) < 0.0f;
-
-        b3 = Utils::Sign(x, y, vertices[2].x, vertices[2].y, vertices[0].x, vertices[0].y) < 0.0f;
-
-        return (b1 == b2 && b2 == b3);
+        return sum < 0.0F;
     }
 };
 
-struct PMSScenery {
-    bool active;
-    unsigned short style;
-    int width, height;
-    float x, y, rotation, scaleX, scaleY;
-    int alpha;
+struct PMSScenery
+{
+    bool active{};
+    unsigned short style{};
+    int width{};
+    int height{};
+    float x{};
+    float y{};
+    float rotation{};
+    float scale_x{};
+    float scale_y{};
+    int alpha{};
     PMSColor color;
-    int level;
-
-    /**
-     * \brief Checks if the point at given coordinates is inside the scenery.
-     */
-    bool Contains(float x, float y)
-    {
-        float rectX[4], rectY[4];
-
-        rectX[0] = 0.0, rectY[0] = 0.0;
-        rectX[1] = width * scaleX, rectY[1] = 0.0;
-        rectX[2] = width * scaleX, rectY[2] = height * scaleY;
-        rectX[3] = 0.0, rectY[3] = height * scaleY;
-
-        float rotatedX, rotatedY;
-        unsigned int i;
-        for (i = 0; i < 4; ++i) {
-            rotatedX = rectX[i] * cos(-rotation) - rectY[i] * sin(-rotation);
-            rotatedY = rectX[i] * sin(-rotation) + rectY[i] * cos(-rotation);
-
-            rectX[i] = rotatedX + this->x;
-            rectY[i] = rotatedY + this->y;
-        }
-
-        bool b[4];
-        for (i = 0; i < 3; ++i) {
-            b[i] = Utils::Sign(x, y, rectX[i], rectY[i], rectX[i + 1], rectY[i + 1]) < 0.0f;
-        }
-        b[3] = Utils::Sign(x, y, rectX[3], rectY[3], rectX[0], rectY[0]) < 0.0f;
-
-        return (b[0] == b[1] && b[1] == b[2] && b[2] == b[3]);
-    }
+    int level{};
 };
 
-struct PMSTimestamp {
+struct PMSTimestamp
+{
     DOSTime time;
     DOSDate date;
 };
 
-struct PMSSceneryType {
-    unsigned char nameLength;
-    char name[SCENERY_NAME_MAX_LENGTH];
+struct PMSSceneryType
+{
+    unsigned char name_length;
+    std::string name;
     PMSTimestamp timestamp;
 };
 
-struct PMSSector {
-    unsigned short polygonsCount;
+struct PMSSector
+{
+    unsigned short polygons_count;
     std::vector<unsigned short> polygons;
 };
 
-struct PMSSpawnPoint {
+struct PMSSpawnPoint
+{
     int active, x, y;
     PMSSpawnPointType type;
 };
 
-struct PMSWayPoint {
+struct PMSWayPoint
+{
     bool active;
-    unsigned char filler1[3];
+    std::array<unsigned char, 3> filler1;
     int id;
     int x, y;
     bool left, right, up, down, jet;
     unsigned char path;
-    PMSSpecialAction specialAction;
+    PMSSpecialAction special_action;
     unsigned char c2, c3; //?
-    unsigned char filler2[3];
-    int connectionsCount;
-    int connections[20];
+    std::array<unsigned char, 3> filler2;
+    int connections_count;
+    std::array<int, 20> connections;
 };
+} // namespace Soldat
+
+#endif

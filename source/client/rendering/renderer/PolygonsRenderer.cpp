@@ -32,8 +32,8 @@ PolygonsRenderer::PolygonsRenderer(const std::vector<PMSPolygon>& polygons,
             vertices.push_back((float)vertice.color.green / 255.0F);
             vertices.push_back((float)vertice.color.blue / 255.0F);
             vertices.push_back((float)vertice.color.alpha / 255.0F);
-            vertices.push_back(vertice.textureS);
-            vertices.push_back(vertice.textureT);
+            vertices.push_back(vertice.texture_s);
+            vertices.push_back(vertice.texture_t);
         }
     }
 

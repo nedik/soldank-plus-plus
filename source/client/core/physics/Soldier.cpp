@@ -126,8 +126,8 @@ void Soldier::BodyApplyAnimation(AnimationType id, unsigned int frame)
 
 void Soldier::HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, glm::vec2 _pos)
 {
-    if (polytype == PMSPolygonType::ptDEADLY || polytype == PMSPolygonType::ptBLOODY_DEADLY ||
-        polytype == PMSPolygonType::ptEXPLOSIVE) {
+    if (polytype == PMSPolygonType::Deadly || polytype == PMSPolygonType::BloodyDeadly ||
+        polytype == PMSPolygonType::Explosive) {
         particle.position = glm::vec2(map.GetSpawnPoints()[0].x, map.GetSpawnPoints()[0].y);
     }
 }
@@ -1237,10 +1237,10 @@ bool Soldier::CheckMapCollision(const Map& map, float x, float y, int area, Stat
         for (int j = 0; j < map.GetPolygons().size(); j++) {
             // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
             int poly = j;
-            auto polytype = map.GetPolygons()[poly].polygonType;
+            auto polytype = map.GetPolygons()[poly].polygon_type;
 
-            if ((polytype != PMSPolygonType::ptNO_COLLIDE) &&
-                (polytype != PMSPolygonType::ptONLY_BULLETS_COLLIDE)) {
+            if ((polytype != PMSPolygonType::NoCollide) &&
+                (polytype != PMSPolygonType::OnlyBulletsCollide)) {
                 auto polygons = map.GetPolygons()[poly];
 
                 if (map.PointInPoly(pos, polygons)) {
@@ -1266,7 +1266,7 @@ bool Soldier::CheckMapCollision(const Map& map, float x, float y, int area, Stat
                                                         (particle.velocity_.x < -SLIDELIMIT)))) {
                         particle.old_position = particle.position;
                         particle.position -= perp;
-                        if (map.GetPolygons()[poly].polygonType == PMSPolygonType::ptBOUNCY) {
+                        if (map.GetPolygons()[poly].polygon_type == PMSPolygonType::Bouncy) {
                             perp = Calc::Vec2Normalize(perp);
                             perp *= map.GetPolygons()[poly].bounciness * dist;
                         }
@@ -1291,8 +1291,8 @@ bool Soldier::CheckMapCollision(const Map& map, float x, float y, int area, Stat
                                 particle.SetForce(particle_force);
                             }
 
-                            if ((step.y > SLIDELIMIT) && (polytype != PMSPolygonType::ptICE) &&
-                                (polytype != PMSPolygonType::ptBOUNCY)) {
+                            if ((step.y > SLIDELIMIT) && (polytype != PMSPolygonType::Ice) &&
+                                (polytype != PMSPolygonType::Bouncy)) {
                                 if ((legs_animation.GetType() == AnimationType::Stand) ||
                                     (legs_animation.GetType() == AnimationType::Fall) ||
                                     (legs_animation.GetType() == AnimationType::Crouch)) {
@@ -1365,10 +1365,10 @@ bool Soldier::CheckMapVerticesCollision(const Map& map,
             // map.GetSectorsCount() + 25)) {
             //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
             //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-            PMSPolygonType polytype = map.GetPolygons()[poly].polygonType;
+            PMSPolygonType polytype = map.GetPolygons()[poly].polygon_type;
 
-            if (polytype != PMSPolygonType::ptNO_COLLIDE &&
-                polytype != PMSPolygonType::ptONLY_BULLETS_COLLIDE) {
+            if (polytype != PMSPolygonType::NoCollide &&
+                polytype != PMSPolygonType::OnlyBulletsCollide) {
                 for (int i = 0; i < 3; i++) {
                     auto vert = glm::vec2(map.GetPolygons()[poly].vertices[i].x,
                                           map.GetPolygons()[poly].vertices[i].y);
@@ -1421,10 +1421,10 @@ bool Soldier::CheckRadiusMapCollision(const Map& map,
                 // < map.GetSectorsCount() + 25)) {
                 //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
                 //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-                auto polytype = map.GetPolygons()[poly].polygonType;
+                auto polytype = map.GetPolygons()[poly].polygon_type;
 
-                if (polytype != PMSPolygonType::ptNO_COLLIDE &&
-                    polytype != PMSPolygonType::ptONLY_BULLETS_COLLIDE) {
+                if (polytype != PMSPolygonType::NoCollide &&
+                    polytype != PMSPolygonType::OnlyBulletsCollide) {
                     for (int k = 0; k < 2; k++) { // TODO: czy tu powinno być k < 3?
                         auto norm = glm::vec2(map.GetPolygons()[poly].perpendiculars[k].x,
                                               map.GetPolygons()[poly].perpendiculars[k].y);

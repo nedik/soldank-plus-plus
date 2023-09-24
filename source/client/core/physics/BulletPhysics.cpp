@@ -79,23 +79,23 @@ std::optional<std::pair<glm::vec2, unsigned int>> BulletPhysics::CheckMapCollisi
 
 bool BulletPhysics::CollidesWithPoly(const PMSPolygon& poly, TeamType team)
 {
-    switch (poly.polygonType) {
-        case PMSPolygonType::ptALPHABULLETS:
+    switch (poly.polygon_type) {
+        case PMSPolygonType::AlphaBullets:
             return team == TeamType::Alpha;
-        case PMSPolygonType::ptBRAVOBULLETS:
+        case PMSPolygonType::BravoBullets:
             return team == TeamType::Bravo;
-        case PMSPolygonType::ptCHARLIEBULLETS:
+        case PMSPolygonType::CharlieBullets:
             return team == TeamType::Charlie;
-        case PMSPolygonType::ptDELTABULLETS:
+        case PMSPolygonType::DeltaBullets:
             return team == TeamType::Delta;
-        case PMSPolygonType::ptALPHAPLAYERS:
-        case PMSPolygonType::ptBRAVOPLAYERS:
-        case PMSPolygonType::ptCHARLIEPLAYERS:
-        case PMSPolygonType::ptDELTAPLAYERS:
-        case PMSPolygonType::ptONLY_PLAYERS_COLLIDE:
-        case PMSPolygonType::ptNO_COLLIDE:
-        case PMSPolygonType::ptFLAGGERCOLLIDES:
-        case PMSPolygonType::ptNONFLAGGERCOLLIDES:
+        case PMSPolygonType::AlphaPlayers:
+        case PMSPolygonType::BravoPlayers:
+        case PMSPolygonType::CharliePlayers:
+        case PMSPolygonType::DeltaPlayers:
+        case PMSPolygonType::OnlyPlayersCollide:
+        case PMSPolygonType::NoCollide:
+        case PMSPolygonType::FlaggerCollides:
+        case PMSPolygonType::NonFlaggerCollides:
             // TODO: missing polygon types
             // case PMSPolygonType::ptBACKGROUND:
             // case PMSPolygonType::ptBACKGROUND_TRANSITION:
