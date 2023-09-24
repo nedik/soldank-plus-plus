@@ -8,11 +8,13 @@
 
 namespace Soldat
 {
-struct State {
+struct State
+{
     State(const std::string& map_name);
 
     Map map;
     glm::vec2 camera;
+    glm::vec2 camera_prev;
     glm::vec2 mouse;
     float game_width;
     float game_height;

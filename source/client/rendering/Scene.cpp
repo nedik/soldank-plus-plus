@@ -3,6 +3,8 @@
 #include "application/input/Mouse.hpp"
 #include "application/config/Config.hpp"
 
+#include "core/math/Calc.hpp"
+
 #include <string>
 #include <algorithm>
 
@@ -25,10 +27,9 @@ void Scene::Render(const std::shared_ptr<State>& state,
                    const Soldier& soldier,
                    double frame_percent)
 {
-    float camera_x = soldier.particle.position.x + (float)(Mouse::GetX() - (state->game_width / 2));
-    float camera_y =
-      -soldier.particle.position.y + (float)(Mouse::GetY() - (state->game_height / 2));
-    camera_.Move(camera_x, camera_y);
+    glm::vec2 new_camera_position =
+      Calc::Lerp(state->camera_prev, state->camera, (float)frame_percent);
+    camera_.Move(new_camera_position.x, -new_camera_position.y);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);

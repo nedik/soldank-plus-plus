@@ -64,8 +64,11 @@ void Update(double /*delta_time*/)
                                                     // to be 0 and bottom to be game_height
     state->game_width = 640.0;
     state->game_height = 480.0;
-    state->camera.x = soldier->particle.position.x + (float)(Mouse::GetX() - 320.0);
-    state->camera.y = soldier->particle.position.y - (float)(Mouse::GetY() - 240.0);
+    state->camera_prev = state->camera;
+    state->camera.x =
+      soldier->particle.position.x + (float)(Mouse::GetX() - (state->game_width / 2));
+    state->camera.y =
+      soldier->particle.position.y - (float)(Mouse::GetY() - (state->game_height / 2));
     soldier->Update(*state);
 }
 
