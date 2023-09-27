@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <optional>
 
 namespace Soldat::Sprites
 {
-enum class SoldierPartType : unsigned int {
+enum class SoldierPartType : unsigned int
+{
     Stopa = 0,
     Stopa2,
     Noga,
@@ -142,7 +144,8 @@ enum class SoldierPartType : unsigned int {
 // The range Shell to M2Stat is checked for size restriction too, so
 // keep that range together.
 
-enum class WeaponType : unsigned int {
+enum class WeaponType : unsigned int
+{
     Shell = 0,
     Bullet,
     Smudge,
@@ -166,6 +169,7 @@ enum class WeaponType : unsigned int {
     MinimiFire,
     Ruger,
     Ruger2,
+    RugerClip,
     RugerShell,
     RugerBullet,
     RugerFire,
@@ -178,6 +182,7 @@ enum class WeaponType : unsigned int {
     Mp5Fire,
     Spas,
     Spas2,
+    SpasClip,
     SpasShell,
     SpasBullet,
     SpasFire,
@@ -236,14 +241,19 @@ enum class WeaponType : unsigned int {
     BowFire,
     Flamer,
     Flamer2,
+    FlamerClip,
     FlamerFire,
     Knife,
     Knife2,
+    KnifeClip,
+    KnifeFire,
     Chainsaw,
     Chainsaw2,
+    ChainsawClip,
     ChainsawFire,
     Law,
     Law2,
+    LawClip,
     LawFire,
     M2,
     M22,
@@ -255,7 +265,8 @@ enum class WeaponType : unsigned int {
 // - ExplosionSmoke1 to Minismoke
 // - FlamesExplode1 to FlamesExplode16
 
-enum class SparkType : unsigned int {
+enum class SparkType : unsigned int
+{
     Smoke = 0,
     Lilfire,
     Odprysk,
@@ -325,7 +336,8 @@ enum class SparkType : unsigned int {
     FlamesExplode16,
 };
 
-enum class ObjectType : unsigned int {
+enum class ObjectType : unsigned int
+{
     Flag = 0,
     Infflag,
     Medikit,
@@ -341,7 +353,8 @@ enum class ObjectType : unsigned int {
 
 // Preserve order of Guns*
 
-enum class InterfaceType : unsigned int {
+enum class InterfaceType : unsigned int
+{
     Sight = 0,
     GunsDeagles,
     GunsMp5,
@@ -391,7 +404,8 @@ enum class InterfaceType : unsigned int {
     TitleR,
 };
 
-enum class SoldierColor : unsigned int {
+enum class SoldierColor : unsigned int
+{
     None = 0,
     Main,
     Pants,
@@ -401,7 +415,8 @@ enum class SoldierColor : unsigned int {
     Headblood,
 };
 
-enum class SoldierAlpha : unsigned int {
+enum class SoldierAlpha : unsigned int
+{
     Base = 0,
     Blood,
     Nades,
@@ -414,7 +429,7 @@ public:
                     glm::uvec2 point,
                     glm::vec2 center,
                     bool visible,
-                    bool flip,
+                    std::optional<std::string> flipped_file_path,
                     bool team,
                     float flexibility,
                     SoldierColor color,
@@ -464,9 +479,8 @@ private:
 };
 
 void Init();
-const SoldierPartData& Get(unsigned int id);
+const SoldierPartData* Get(unsigned int id);
 unsigned int GetSoldierPartCount();
-SoldierPartType GetType(unsigned int id);
 // const SoldierPartData& Get(WeaponType weapon_type);
 void Free();
 } // namespace Soldat::Sprites

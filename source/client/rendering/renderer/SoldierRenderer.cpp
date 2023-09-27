@@ -22,14 +22,19 @@ SoldierRenderer::SoldierRenderer()
     for (unsigned int i = 0; i < Sprites::GetSoldierPartCount(); i++) {
         vertices.clear();
 
-        const Sprites::SoldierPartData& part_data = Sprites::Get(i);
+        const Sprites::SoldierPartData* part_data = Sprites::Get(i);
+        if (part_data == nullptr) {
+            vbos_.emplace_back(0, 0);
+            ebos_.push_back(0);
+            continue;
+        }
 
-        GenerateVertices(vertices, part_data, false);
+        GenerateVertices(vertices, *part_data, false);
         unsigned int vbo_for_original = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
         std::optional<unsigned int> vbo_for_flipped = std::nullopt;
-        if (part_data.IsFlippable()) {
+        if (part_data->IsFlippable()) {
             vertices.clear();
-            GenerateVertices(vertices, part_data, true);
+            GenerateVertices(vertices, *part_data, true);
             vbo_for_flipped = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
         }
 
@@ -91,17 +96,20 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
     shader_.Use();
 
     for (unsigned int i = 0; i < vbos_.size(); i++) {
-        const Sprites::SoldierPartData& part_data = Sprites::Get(i);
+        const Sprites::SoldierPartData* part_data = Sprites::Get(i);
+        if (part_data == nullptr) {
+            continue;
+        }
 
-        if (!part_data.IsVisible()) {
+        if (!part_data->IsVisible()) {
             // TODO: zaimplementować zmienianie widzialności części
             continue;
         }
 
-        unsigned int sprite_texture = part_data.GetTexture();
+        unsigned int sprite_texture = part_data->GetTexture();
         glm::vec2 scale = glm::vec2(1.0, 1.0);
-        unsigned int px = part_data.GetPoint().x;
-        unsigned int py = part_data.GetPoint().y;
+        unsigned int px = part_data->GetPoint().x;
+        unsigned int py = part_data->GetPoint().y;
         glm::vec2 p0 = Calc::Lerp(
           soldier.skeleton->GetOldPos(px), soldier.skeleton->GetPos(px), (float)frame_percent);
         glm::vec2 p1 = Calc::Lerp(
@@ -110,16 +118,16 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
 
         unsigned int vbo_to_use = vbos_[i].first;
         if (soldier.direction != 1) {
-            if (part_data.IsFlippable()) {
-                sprite_texture = part_data.GetTextureFlipped();
+            if (part_data->IsFlippable()) {
+                sprite_texture = part_data->GetTextureFlipped();
                 vbo_to_use = *vbos_[i].second;
             } else {
                 scale.y = -1.0;
             }
         }
 
-        if (part_data.GetFlexibility() > 0.0) {
-            scale.x = std::min(1.5F, glm::length(p1 - p0) / part_data.GetFlexibility());
+        if (part_data->GetFlexibility() > 0.0) {
+            scale.x = std::min(1.5F, glm::length(p1 - p0) / part_data->GetFlexibility());
         }
 
         // TODO: magic numbers, this is in mod.ini
