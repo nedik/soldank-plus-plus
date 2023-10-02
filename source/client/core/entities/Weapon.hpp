@@ -24,6 +24,8 @@ public:
     std::uint16_t GetReloadTimeCount() const { return reload_time_count_; };
 
     std::uint8_t GetAmmoCount() const { return ammo_count_; }
+    std::uint16_t GetClipInTime() const { return clip_in_time_; }
+    std::uint16_t GetClipOutTime() const { return clip_out_time_; }
 
 private:
     WeaponParameters weapon_parameters_;

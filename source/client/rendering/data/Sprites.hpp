@@ -7,6 +7,7 @@
 #include <vector>
 #include <filesystem>
 #include <optional>
+#include <variant>
 
 namespace Soldat::Sprites
 {
@@ -422,6 +423,97 @@ enum class SoldierAlpha : unsigned int
     Nades,
 };
 
+enum class SoldierPartPrimaryWeaponType : unsigned int
+{
+    Deagles = 0,
+    DeaglesClip,
+    DeaglesFire,
+    Mp5,
+    Mp5Clip,
+    Mp5Fire,
+    Ak74,
+    Ak74Clip,
+    Ak74Fire,
+    Steyr,
+    SteyrClip,
+    SteyrFire,
+    Spas,
+    SpasClip,
+    SpasFire,
+    Ruger,
+    RugerClip,
+    RugerFire,
+    M79,
+    M79Clip,
+    M79Fire,
+    Barrett,
+    BarrettClip,
+    BarrettFire,
+    Minimi,
+    MinimiClip,
+    MinimiFire,
+    MinigunClip,
+    Minigun,
+    MinigunFire,
+    Socom,
+    SocomClip,
+    SocomFire,
+    Knife,
+    KnifeClip,
+    KnifeFire,
+    Chainsaw,
+    ChainsawClip,
+    ChainsawFire,
+    Law,
+    LawClip,
+    LawFire,
+    Bow,
+    BowArrow,
+    BowString,
+    BowReload,
+    BowArrowReload,
+    BowStringReload,
+    BowFire,
+    Flamer,
+    FlamerClip,
+    FlamerFire,
+};
+
+enum class SoldierPartSecondaryWeaponType : unsigned int
+{
+    Deagles = 0,
+    Mp5,
+    Ak74,
+    Steyr,
+    Spas,
+    Ruger,
+    M79,
+    Barrett,
+    Minimi,
+    Minigun,
+    Socom,
+    Knife,
+    Chainsaw,
+    Law,
+    Flamebow,
+    Bow,
+    Flamer,
+};
+
+enum class SoldierPartTertiaryWeaponType : unsigned int
+{
+    FragGrenade1 = 0,
+    FragGrenade2,
+    FragGrenade3,
+    FragGrenade4,
+    FragGrenade5,
+    ClusterGrenade1,
+    ClusterGrenade2,
+    ClusterGrenade3,
+    ClusterGrenade4,
+    ClusterGrenade5,
+};
+
 class SoldierPartData
 {
 public:
@@ -480,8 +572,12 @@ private:
 
 void Init();
 const SoldierPartData* Get(unsigned int id);
+std::variant<SoldierPartType,
+             SoldierPartPrimaryWeaponType,
+             SoldierPartSecondaryWeaponType,
+             SoldierPartTertiaryWeaponType>
+GetType(unsigned int id);
 unsigned int GetSoldierPartCount();
-// const SoldierPartData& Get(WeaponType weapon_type);
 void Free();
 } // namespace Soldat::Sprites
 

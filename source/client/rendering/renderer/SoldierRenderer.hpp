@@ -34,6 +34,19 @@ public:
     void Render(glm::mat4 transform, const Soldier& soldier, double frame_percent);
 
 private:
+    static bool IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_part_type,
+                                         const Soldier& soldier,
+                                         bool part_base_visibility);
+    static bool IsPrimaryWeaponTypeVisible(Sprites::SoldierPartPrimaryWeaponType soldier_part_type,
+                                           const Soldier& soldier,
+                                           bool part_base_visibility);
+    static bool IsSecondaryWeaponTypeVisible(
+      Sprites::SoldierPartSecondaryWeaponType soldier_part_type,
+      const Soldier& soldier);
+    static bool IsTertiaryWeaponTypeVisible(
+      Sprites::SoldierPartTertiaryWeaponType soldier_part_type,
+      const Soldier& soldier);
+
     Shader shader_;
 
     std::vector<std::pair<unsigned int, std::optional<unsigned int>>> vbos_;
