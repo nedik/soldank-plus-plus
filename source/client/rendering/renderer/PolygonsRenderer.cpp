@@ -19,7 +19,7 @@ PolygonsRenderer::PolygonsRenderer(const std::vector<PMSPolygon>& polygons,
         texture_path.replace_extension(".png");
     }
 
-    texture_ = Texture::Load(texture_path.string().c_str());
+    texture_ = Texture::Load(texture_path.string().c_str()).opengl_id;
 
     std::vector<float> vertices;
 

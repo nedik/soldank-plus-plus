@@ -3,8 +3,14 @@
 
 namespace Soldat::Texture
 {
-unsigned int Load(const char* texture_path, int* texture_width, int* texture_height);
-unsigned int Load(const char* texture_path);
+struct TextureData
+{
+    unsigned int opengl_id;
+    int width;
+    int height;
+};
+
+TextureData Load(const char* texture_path);
 
 void Delete(unsigned int texture_id);
 } // namespace Soldat::Texture

@@ -27,10 +27,15 @@ SoldierPartData::SoldierPartData(const std::filesystem::path& file_path,
     , texture_flipped_width_(0)
     , texture_flipped_height_(0)
 {
-    texture_ = Texture::Load(file_path.string().c_str(), &texture_width_, &texture_height_);
+    auto texture_data = Texture::Load(file_path.string().c_str());
+    texture_ = texture_data.opengl_id;
+    texture_width_ = texture_data.width;
+    texture_height_ = texture_data.height;
     if (flipped_file_path.has_value()) {
-        texture_flipped_ = Texture::Load(
-          flipped_file_path->c_str(), &texture_flipped_width_, &texture_flipped_height_);
+        auto texture_flipped_data = Texture::Load(flipped_file_path->c_str());
+        texture_flipped_ = texture_flipped_data.opengl_id;
+        texture_flipped_width_ = texture_flipped_data.width;
+        texture_flipped_height_ = texture_flipped_data.height;
     }
 }
 

@@ -15,9 +15,10 @@ CursorRenderer::CursorRenderer()
     : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
 {
     std::filesystem::path texture_path = "interface-gfx/cursor.png";
-    texture_width_ = 0;  // NOLINT
-    texture_height_ = 0; // NOLINT
-    texture_ = Texture::Load(texture_path.string().c_str(), &texture_width_, &texture_height_);
+    auto texture_data = Texture::Load(texture_path.string().c_str());
+    texture_ = texture_data.opengl_id;
+    texture_width_ = texture_data.width;
+    texture_height_ = texture_data.height;
     float texture_width = (float)texture_width_ / 640.0F;
     float texture_height = (float)texture_height_ / 480.0F;
 

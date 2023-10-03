@@ -20,7 +20,7 @@ SceneriesRenderer::SceneriesRenderer(const std::vector<PMSSceneryType>& scenery_
         //     texture_path.replace_extension(".png");
         // }
 
-        textures_.push_back(Texture::Load(texture_path.string().c_str()));
+        textures_.push_back(Texture::Load(texture_path.string().c_str()).opengl_id);
     }
 
     std::vector<float> vertices;
