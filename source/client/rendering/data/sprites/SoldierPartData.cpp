@@ -4,7 +4,7 @@
 
 namespace Soldat::Sprites
 {
-SoldierPartData::SoldierPartData(const std::filesystem::path& file_path,
+SoldierPartData::SoldierPartData(const std::string& file_path,
                                  glm::uvec2 point,
                                  glm::vec2 center,
                                  bool visible,
@@ -13,8 +13,7 @@ SoldierPartData::SoldierPartData(const std::filesystem::path& file_path,
                                  float flexibility,
                                  SoldierColor color,
                                  SoldierAlpha alpha)
-    : file_path_(file_path)
-    , point_(point)
+    : point_(point)
     , center_(center)
     , visible_(visible)
     , flip_(flipped_file_path.has_value())
@@ -27,7 +26,7 @@ SoldierPartData::SoldierPartData(const std::filesystem::path& file_path,
     , texture_flipped_width_(0)
     , texture_flipped_height_(0)
 {
-    auto texture_data = Texture::Load(file_path.string().c_str());
+    auto texture_data = Texture::Load(file_path.c_str());
     texture_ = texture_data.opengl_id;
     texture_width_ = texture_data.width;
     texture_height_ = texture_data.height;

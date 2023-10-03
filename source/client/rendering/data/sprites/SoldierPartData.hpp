@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <filesystem>
 #include <optional>
 #include <variant>
 
@@ -17,7 +16,7 @@ namespace Soldat::Sprites
 class SoldierPartData
 {
 public:
-    SoldierPartData(const std::filesystem::path& file_path,
+    SoldierPartData(const std::string& file_path,
                     glm::uvec2 point,
                     glm::vec2 center,
                     bool visible,
@@ -57,7 +56,6 @@ public:
     int GetTextureFlippedHeight() const { return texture_flipped_height_; }
 
 private:
-    std::filesystem::path file_path_;
     glm::uvec2 point_;
     glm::vec2 center_;
     bool visible_;
