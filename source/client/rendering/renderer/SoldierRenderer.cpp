@@ -1,7 +1,6 @@
 #include "SoldierRenderer.hpp"
 
 #include "core/types/WeaponType.hpp"
-#include "rendering/data/Sprites.hpp"
 #include "rendering/data/Texture.hpp"
 #include "rendering/renderer/Renderer.hpp"
 #include "rendering/renderer/SoldierRenderer.hpp"

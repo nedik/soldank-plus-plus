@@ -9,7 +9,7 @@
 #include "application/config/Config.hpp"
 
 #include "rendering/Scene.hpp"
-#include "rendering/data/Sprites.hpp"
+#include "rendering/data/sprites/Sprites.hpp"
 
 #include <GLFW/glfw3.h>
 
