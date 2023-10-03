@@ -47,6 +47,10 @@ private:
       Sprites::SoldierPartTertiaryWeaponType soldier_part_type,
       const Soldier& soldier);
 
+    static glm::vec4 GetColorForSoldierPart(const Soldier& soldier,
+                                            Sprites::SoldierColor soldier_color,
+                                            Sprites::SoldierAlpha soldier_alpha);
+
     Shader shader_;
 
     std::vector<std::pair<unsigned int, std::optional<unsigned int>>> vbos_;

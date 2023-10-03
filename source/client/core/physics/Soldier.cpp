@@ -75,7 +75,7 @@ Soldier::Soldier(glm::vec2 spawn_position)
     , control()
     , active_weapon(0)
     , weapons{ { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },
-               { WeaponParametersFactory::GetParameters(WeaponType::Chainsaw, false) },
+               { WeaponParametersFactory::GetParameters(WeaponType::Knife, false) },
                { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) } }
     , fired(0)
     , particle(true,

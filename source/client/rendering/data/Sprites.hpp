@@ -543,6 +543,10 @@ public:
 
     float GetFlexibility() const { return flexibility_; }
 
+    SoldierColor GetSoldierColor() const { return color_; }
+
+    SoldierAlpha GetSoldierAlpha() const { return alpha_; }
+
     unsigned int GetTexture() const { return texture_; }
     unsigned int GetTextureFlipped() const { return texture_flipped_; }
 

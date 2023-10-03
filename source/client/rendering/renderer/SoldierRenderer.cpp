@@ -130,6 +130,25 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
             continue;
         }
 
+        Sprites::SoldierColor part_soldier_color = part_data->GetSoldierColor();
+        Sprites::SoldierAlpha part_soldier_alpha = part_data->GetSoldierAlpha();
+        glm::vec4 part_color =
+          std::visit(VisitOverload{ [&soldier, part_soldier_color, part_soldier_alpha](
+                                      Sprites::SoldierPartType /*soldier_part_type*/) {
+                                       return SoldierRenderer::GetColorForSoldierPart(
+                                         soldier, part_soldier_color, part_soldier_alpha);
+                                   },
+                                    [](Sprites::SoldierPartPrimaryWeaponType /*weapon_type*/) {
+                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                                    },
+                                    [](Sprites::SoldierPartSecondaryWeaponType /*weapon_type*/) {
+                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                                    },
+                                    [](Sprites::SoldierPartTertiaryWeaponType /*weapon_type*/) {
+                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                                    } },
+                     part_type);
+
         unsigned int sprite_texture = part_data->GetTexture();
         glm::vec2 scale = glm::vec2(1.0, 1.0);
         unsigned int px = part_data->GetPoint().x;
@@ -168,7 +187,7 @@ void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double
           glm::scale(current_part_transform, glm::vec3(scale.x, scale.y, 0.0));
 
         shader_.SetMatrix4("transform", current_part_transform);
-        shader_.SetVec4("color", glm::vec4(1.0F, 1.0F, 1.0F, 1.0F));
+        shader_.SetVec4("color", part_color);
 
         Renderer::BindTexture(sprite_texture);
         Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, std::nullopt);
@@ -468,5 +487,68 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
     }
 
     return false;
+}
+
+glm::vec4 SoldierRenderer::GetColorForSoldierPart(const Soldier& soldier,
+                                                  Sprites::SoldierColor soldier_color,
+                                                  Sprites::SoldierAlpha soldier_alpha)
+{
+    auto alpha_base = soldier.alpha;
+    auto alpha_blood = std::max(0.0F, std::min(255.0F, 200.0F - soldier.health));
+
+    glm::vec3 color;
+    switch (soldier_color) {
+        case Sprites::SoldierColor::Cygar:
+            if (soldier.has_cigar != 0) {
+                color = { 97.0F, 97.0F, 97.0F };
+            } else {
+                color = { 255.0F, 255.0F, 255.0F };
+            }
+            break;
+        case Sprites::SoldierColor::None:
+            color = { 255.0F, 255.0F, 255.0F };
+            break;
+        case Sprites::SoldierColor::Main:  // TODO: Player.Color1
+        case Sprites::SoldierColor::Pants: // TODO: Player.Color2
+        case Sprites::SoldierColor::Hair:  // TODO: Player.HairColor
+            color = { 0.0F, 0.0F, 0.0F };
+            break;
+        case Sprites::SoldierColor::Skin: // TODO: Player.SkinColor
+            color = { 230.0F, 180.0F, 120.0F };
+            break;
+        case Sprites::SoldierColor::Headblood:
+            color = { 172.0F, 169.0F, 168.0F };
+            break;
+    }
+
+    bool realistic_mode = false; // TODO: get real value
+
+    if (soldier.health > (90.0F - 40.0F * (float)realistic_mode)) {
+        alpha_blood = 0;
+    }
+
+    if (realistic_mode && soldier.visible > 0 && soldier.visible < 45 && soldier.alpha > 60) {
+        // TODO: if this really needs to change it should be done somewhere during update, not
+        // here soldier.alpha = 3 * soldier.visible;
+        alpha_base = 3 * soldier.visible;
+        alpha_blood = 0;
+    }
+
+    float alpha_nades = (0.75F * (float)alpha_base);
+
+    float alpha = 0;
+    switch (soldier_alpha) {
+        case Sprites::SoldierAlpha::Base:
+            alpha = alpha_base;
+            break;
+        case Sprites::SoldierAlpha::Blood:
+            alpha = alpha_blood;
+            break;
+        case Sprites::SoldierAlpha::Nades:
+            alpha = alpha_nades;
+            break;
+    }
+
+    return { color.x / 255.0F, color.y / 255.0F, color.z / 255.0F, alpha / 255.0F };
 }
 } // namespace Soldat
