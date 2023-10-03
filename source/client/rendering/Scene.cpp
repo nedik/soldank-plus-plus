@@ -4,7 +4,6 @@
 #include "application/config/Config.hpp"
 
 #include "core/math/Calc.hpp"
-#include "rendering/data/sprites/Sprites.hpp"
 
 #include <string>
 #include <algorithm>

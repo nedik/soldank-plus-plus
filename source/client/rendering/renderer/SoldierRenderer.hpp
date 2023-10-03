@@ -2,7 +2,7 @@
 #define __SOLDIERRENDERER_HPP__
 
 #include "rendering/shaders/Shader.hpp"
-#include "rendering/data/sprites/Sprites.hpp"
+#include "rendering/data/sprites/SpritesManager.hpp"
 
 #include "core/map/Map.hpp"
 #include "core/physics/Soldier.hpp"

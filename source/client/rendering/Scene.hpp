@@ -2,7 +2,7 @@
 #define __SCENE_HPP__
 
 #include "rendering/components/Camera.hpp"
-#include "rendering/data/sprites/Sprites.hpp"
+#include "rendering/data/sprites/SpritesManager.hpp"
 #include "rendering/renderer/BackgroundRenderer.hpp"
 #include "rendering/renderer/PolygonsRenderer.hpp"
 #include "rendering/renderer/PolygonOutlinesRenderer.hpp"

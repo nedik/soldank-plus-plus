@@ -1,4 +1,4 @@
-#include "Sprites.hpp"
+#include "SpritesManager.hpp"
 
 #include "rendering/data/Texture.hpp"
 

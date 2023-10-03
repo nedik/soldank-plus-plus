@@ -1,5 +1,5 @@
-#ifndef __SPRITES_HPP__
-#define __SPRITES_HPP__
+#ifndef __SPRITES_MANAGER_HPP__
+#define __SPRITES_MANAGER_HPP__
 
 #include "rendering/data/sprites/SpriteTypes.hpp"
 #include "rendering/data/sprites/SoldierPartData.hpp"
