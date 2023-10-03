@@ -9,7 +9,6 @@
 #include "application/config/Config.hpp"
 
 #include "rendering/Scene.hpp"
-#include "rendering/data/sprites/Sprites.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -27,8 +26,6 @@ std::unique_ptr<Soldier> soldier;
 
 void Init()
 {
-    Sprites::Init();
-
     state = std::make_shared<State>("maps/ctf_Ash.pms");
     control = std::make_shared<Control>();
     scene = std::make_unique<Scene>(state);

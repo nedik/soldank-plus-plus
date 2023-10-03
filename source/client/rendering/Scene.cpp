@@ -4,6 +4,7 @@
 #include "application/config/Config.hpp"
 
 #include "core/math/Calc.hpp"
+#include "rendering/data/sprites/Sprites.hpp"
 
 #include <string>
 #include <algorithm>
@@ -17,6 +18,7 @@ Scene::Scene(const std::shared_ptr<State>& state)
     , polygons_renderer_(state->map.GetPolygons(), std::string(state->map.GetTextureName()))
     , polygon_outlines_renderer_(state->map.GetPolygons())
     , sceneries_renderer_(state->map.GetSceneryTypes(), state->map.GetSceneryInstances())
+    , soldier_renderer_(sprite_manager_)
     , text_renderer_("play-regular.ttf", 48)
 {
     glEnable(GL_BLEND);
@@ -36,7 +38,7 @@ void Scene::Render(const std::shared_ptr<State>& state,
 
     background_renderer_.Render(camera_.GetView());
     sceneries_renderer_.Render(camera_.GetView(), 0, state->map.GetSceneryInstances());
-    soldier_renderer_.Render(camera_.GetView(), soldier, frame_percent);
+    soldier_renderer_.Render(camera_.GetView(), sprite_manager_, soldier, frame_percent);
     sceneries_renderer_.Render(camera_.GetView(), 1, state->map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());
     if (Config::DEBUG_DRAW) {

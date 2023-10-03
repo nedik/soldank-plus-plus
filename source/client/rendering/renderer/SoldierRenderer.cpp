@@ -16,17 +16,17 @@
 
 namespace Soldat
 {
-SoldierRenderer::SoldierRenderer()
+SoldierRenderer::SoldierRenderer(const Sprites::SpriteManager& sprite_manager)
     : shader_(ShaderSources::DYNAMIC_COLOR_VERTEX_SHADER_SOURCE,
               ShaderSources::DYNAMIC_COLOR_FRAGMENT_SHADER_SOURCE)
 {
     std::vector<float> vertices;
     std::vector<unsigned int> indices{ 0, 1, 2, 1, 3, 2 };
 
-    for (unsigned int i = 0; i < Sprites::GetSoldierPartCount(); i++) {
+    for (unsigned int i = 0; i < sprite_manager.GetSoldierPartCount(); i++) {
         vertices.clear();
 
-        const Sprites::SoldierPartData* part_data = Sprites::Get(i);
+        const Sprites::SoldierPartData* part_data = sprite_manager.GetSoldierPartData(i);
         if (part_data == nullptr) {
             vbos_.emplace_back(0, 0);
             ebos_.push_back(0);
@@ -95,18 +95,21 @@ void SoldierRenderer::GenerateVertices(std::vector<float>& vertices,
     // clang-format on
 }
 
-void SoldierRenderer::Render(glm::mat4 transform, const Soldier& soldier, double frame_percent)
+void SoldierRenderer::Render(glm::mat4 transform,
+                             const Sprites::SpriteManager& sprite_manager,
+                             const Soldier& soldier,
+                             double frame_percent)
 {
     shader_.Use();
 
     for (unsigned int i = 0; i < vbos_.size(); i++) {
-        const Sprites::SoldierPartData* part_data = Sprites::Get(i);
+        const Sprites::SoldierPartData* part_data = sprite_manager.GetSoldierPartData(i);
         if (part_data == nullptr) {
             continue;
         }
 
         bool part_base_visibility = part_data->IsVisible();
-        auto part_type = Sprites::GetType(i);
+        auto part_type = sprite_manager.GetSoldierPartDataType(i);
         bool part_visible = std::visit(
           VisitOverload{
             [&soldier, part_base_visibility](Sprites::SoldierPartType soldier_part_type) {

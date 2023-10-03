@@ -10,20 +10,7 @@
 
 namespace Soldat::Sprites
 {
-namespace
-{
-using TSpriteData = std::unique_ptr<SoldierPartData>;
-using TSpriteKey = std::variant<SoldierPartType,
-                                SoldierPartPrimaryWeaponType,
-                                SoldierPartSecondaryWeaponType,
-                                SoldierPartTertiaryWeaponType>;
-using TListItem = std::pair<TSpriteKey, TSpriteData>;
-using TList = std::vector<TListItem>;
-
-std::unique_ptr<TList> soldier_part_type_to_data;
-} // namespace
-
-void Init()
+SpriteManager::SpriteManager()
 {
     std::cout << "Init Sprites" << std::endl;
     // clang-format off
@@ -159,33 +146,31 @@ void Init()
     v->push_back({ SoldierPartType::Reka, std::make_unique<SoldierPartData>("gostek-gfx/reka.png", glm::uvec2(13, 16), glm::vec2(0.000, 0.600), true, std::nullopt, true, 5.0, SoldierColor::Main, SoldierAlpha::Base) });
     v->push_back({ SoldierPartType::RannyReka, std::make_unique<SoldierPartData>("gostek-gfx/ranny/reka.png", glm::uvec2(13, 16), glm::vec2(0.000, 0.600), false, "gostek-gfx/ranny/reka2.png", true, 5.0, SoldierColor::None, SoldierAlpha::Blood) });
     v->push_back({ SoldierPartType::Dlon, std::make_unique<SoldierPartData>("gostek-gfx/dlon.png", glm::uvec2(16, 20), glm::vec2(0.000, 0.500), true, "gostek-gfx/dlon2.png", true, 0.0, SoldierColor::Skin, SoldierAlpha::Base) });
-    soldier_part_type_to_data = std::unique_ptr<TList>(v);
+    soldier_part_type_to_data_ = std::unique_ptr<TList>(v);
     // clang-format on
-    std::cout << "Loaded " << soldier_part_type_to_data->size() << " gostek-gfx assets"
+    std::cout << "Loaded " << soldier_part_type_to_data_->size() << " gostek-gfx assets"
               << std::endl;
 }
 
-const SoldierPartData* Get(unsigned int id)
+SpriteManager::~SpriteManager()
 {
-    return (*soldier_part_type_to_data)[id].second.get();
+    soldier_part_type_to_data_.reset(nullptr);
 }
 
+const SoldierPartData* SpriteManager::GetSoldierPartData(unsigned int id) const
+{
+    return (*soldier_part_type_to_data_)[id].second.get();
+}
 std::variant<SoldierPartType,
              SoldierPartPrimaryWeaponType,
              SoldierPartSecondaryWeaponType,
              SoldierPartTertiaryWeaponType>
-GetType(unsigned int id)
+SpriteManager::GetSoldierPartDataType(unsigned int id) const
 {
-    return (*soldier_part_type_to_data)[id].first;
+    return (*soldier_part_type_to_data_)[id].first;
 }
-
-unsigned int GetSoldierPartCount()
+unsigned int SpriteManager::GetSoldierPartCount() const
 {
-    return soldier_part_type_to_data->size();
-}
-
-void Free()
-{
-    soldier_part_type_to_data.reset(nullptr);
+    return soldier_part_type_to_data_->size();
 }
 } // namespace Soldat::Sprites

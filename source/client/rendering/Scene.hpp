@@ -2,6 +2,7 @@
 #define __SCENE_HPP__
 
 #include "rendering/components/Camera.hpp"
+#include "rendering/data/sprites/Sprites.hpp"
 #include "rendering/renderer/BackgroundRenderer.hpp"
 #include "rendering/renderer/PolygonsRenderer.hpp"
 #include "rendering/renderer/PolygonOutlinesRenderer.hpp"
@@ -27,6 +28,7 @@ public:
 
 private:
     Camera camera_;
+    Sprites::SpriteManager sprite_manager_;
     BackgroundRenderer background_renderer_;
     PolygonsRenderer polygons_renderer_;
     PolygonOutlinesRenderer polygon_outlines_renderer_;

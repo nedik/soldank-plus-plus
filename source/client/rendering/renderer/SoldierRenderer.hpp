@@ -17,7 +17,7 @@ namespace Soldat
 class SoldierRenderer
 {
 public:
-    SoldierRenderer();
+    SoldierRenderer(const Sprites::SpriteManager& sprite_manager);
     ~SoldierRenderer();
 
     // it's not safe to be able to copy/move this because we would also need to take care of the
@@ -31,7 +31,10 @@ public:
                                  const Sprites::SoldierPartData& part_data,
                                  bool flipped);
 
-    void Render(glm::mat4 transform, const Soldier& soldier, double frame_percent);
+    void Render(glm::mat4 transform,
+                const Sprites::SpriteManager& sprite_manager,
+                const Soldier& soldier,
+                double frame_percent);
 
 private:
     static bool IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_part_type,
