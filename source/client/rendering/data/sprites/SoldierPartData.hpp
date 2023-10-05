@@ -1,6 +1,7 @@
 #ifndef __SOLDIER_PART_DATA_HPP__
 #define __SOLDIER_PART_DATA_HPP__
 
+#include "rendering/data/Texture.hpp"
 #include "rendering/data/sprites/SpriteTypes.hpp"
 
 #include "core/math/Glm.hpp"
@@ -16,16 +17,16 @@ namespace Soldat::Sprites
 class SoldierPartData
 {
 public:
-    SoldierPartData(const std::string& file_path,
+    SoldierPartData(const Texture::TextureData& texture_data,
                     glm::uvec2 point,
                     glm::vec2 center,
                     bool visible,
-                    std::optional<std::string> flipped_file_path,
+                    const std::optional<Texture::TextureData>& flipped_texture_data,
                     bool team,
                     float flexibility,
                     SoldierColor color,
                     SoldierAlpha alpha);
-    ~SoldierPartData();
+    ~SoldierPartData() = default;
 
     // it's not safe to be able to copy/move this because we would also need to take care of the
     // created OpenGL buffers and textures

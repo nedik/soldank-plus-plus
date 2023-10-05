@@ -3,6 +3,7 @@
 
 #include "rendering/data/sprites/SpriteTypes.hpp"
 #include "rendering/data/sprites/SoldierPartData.hpp"
+#include "rendering/data/Texture.hpp"
 
 #include "core/math/Glm.hpp"
 
@@ -11,6 +12,7 @@
 #include <filesystem>
 #include <optional>
 #include <variant>
+#include <unordered_map>
 
 namespace Soldat::Sprites
 {
@@ -36,15 +38,30 @@ public:
     unsigned int GetSoldierPartCount() const;
 
 private:
-    using TSpriteData = std::unique_ptr<SoldierPartData>;
-    using TSpriteKey = std::variant<SoldierPartType,
-                                    SoldierPartPrimaryWeaponType,
-                                    SoldierPartSecondaryWeaponType,
-                                    SoldierPartTertiaryWeaponType>;
-    using TListItem = std::pair<TSpriteKey, TSpriteData>;
-    using TList = std::vector<TListItem>;
+    using TSoldierPartSpriteData = std::unique_ptr<SoldierPartData>;
+    using TSoldierPartSpriteKey = std::variant<SoldierPartType,
+                                               SoldierPartPrimaryWeaponType,
+                                               SoldierPartSecondaryWeaponType,
+                                               SoldierPartTertiaryWeaponType>;
+    using TSoldierPartListItem = std::pair<TSoldierPartSpriteKey, TSoldierPartSpriteData>;
+    using TSoldierPartList = std::vector<TSoldierPartListItem>;
 
-    std::unique_ptr<TList> soldier_part_type_to_data_;
+    using TSpriteKey = std::variant<SoldierPartType, WeaponType>;
+
+    void AddSprite(TSoldierPartSpriteKey soldier_part_sprite_key,
+                   TSpriteKey sprite_key,
+                   std::optional<TSpriteKey> flipped_sprite_key,
+                   glm::uvec2 point,
+                   glm::vec2 center,
+                   bool visible,
+                   bool team,
+                   float flexibility,
+                   SoldierColor color,
+                   SoldierAlpha alpha);
+
+    TSoldierPartList soldier_part_type_to_data_;
+
+    std::unordered_map<TSpriteKey, Texture::TextureData> all_sprites_;
 };
 } // namespace Soldat::Sprites
 
