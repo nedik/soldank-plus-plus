@@ -112,18 +112,19 @@ void SoldierRenderer::Render(glm::mat4 transform,
         auto part_type = sprite_manager.GetSoldierPartDataType(i);
         bool part_visible = std::visit(
           VisitOverload{
-            [&soldier, part_base_visibility](Sprites::SoldierPartType soldier_part_type) {
+            [&soldier, part_base_visibility](Sprites::SoldierPartSpriteType soldier_part_type) {
                 return SoldierRenderer::IsSoldierPartTypeVisible(
                   soldier_part_type, soldier, part_base_visibility);
             },
-            [&soldier, part_base_visibility](Sprites::SoldierPartPrimaryWeaponType weapon_type) {
+            [&soldier,
+             part_base_visibility](Sprites::SoldierPartPrimaryWeaponSpriteType weapon_type) {
                 return SoldierRenderer::IsPrimaryWeaponTypeVisible(
                   weapon_type, soldier, part_base_visibility);
             },
-            [&soldier](Sprites::SoldierPartSecondaryWeaponType weapon_type) {
+            [&soldier](Sprites::SoldierPartSecondaryWeaponSpriteType weapon_type) {
                 return SoldierRenderer::IsSecondaryWeaponTypeVisible(weapon_type, soldier);
             },
-            [&soldier](Sprites::SoldierPartTertiaryWeaponType weapon_type) {
+            [&soldier](Sprites::SoldierPartTertiaryWeaponSpriteType weapon_type) {
                 return SoldierRenderer::IsTertiaryWeaponTypeVisible(weapon_type, soldier);
             } },
           part_type);
@@ -132,24 +133,24 @@ void SoldierRenderer::Render(glm::mat4 transform,
             continue;
         }
 
-        Sprites::SoldierColor part_soldier_color = part_data->GetSoldierColor();
-        Sprites::SoldierAlpha part_soldier_alpha = part_data->GetSoldierAlpha();
-        glm::vec4 part_color =
-          std::visit(VisitOverload{ [&soldier, part_soldier_color, part_soldier_alpha](
-                                      Sprites::SoldierPartType /*soldier_part_type*/) {
-                                       return SoldierRenderer::GetColorForSoldierPart(
-                                         soldier, part_soldier_color, part_soldier_alpha);
-                                   },
-                                    [](Sprites::SoldierPartPrimaryWeaponType /*weapon_type*/) {
-                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
-                                    },
-                                    [](Sprites::SoldierPartSecondaryWeaponType /*weapon_type*/) {
-                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
-                                    },
-                                    [](Sprites::SoldierPartTertiaryWeaponType /*weapon_type*/) {
-                                        return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
-                                    } },
-                     part_type);
+        Sprites::SoldierSpriteColor part_soldier_color = part_data->GetSoldierColor();
+        Sprites::SoldierSpriteAlpha part_soldier_alpha = part_data->GetSoldierAlpha();
+        glm::vec4 part_color = std::visit(
+          VisitOverload{ [&soldier, part_soldier_color, part_soldier_alpha](
+                           Sprites::SoldierPartSpriteType /*soldier_part_type*/) {
+                            return SoldierRenderer::GetColorForSoldierPart(
+                              soldier, part_soldier_color, part_soldier_alpha);
+                        },
+                         [](Sprites::SoldierPartPrimaryWeaponSpriteType /*weapon_type*/) {
+                             return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                         },
+                         [](Sprites::SoldierPartSecondaryWeaponSpriteType /*weapon_type*/) {
+                             return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                         },
+                         [](Sprites::SoldierPartTertiaryWeaponSpriteType /*weapon_type*/) {
+                             return glm::vec4{ 1.0F, 1.0F, 1.0F, 1.0F };
+                         } },
+          part_type);
 
         unsigned int sprite_texture = part_data->GetTexture();
         glm::vec2 scale = glm::vec2(1.0, 1.0);
@@ -196,20 +197,20 @@ void SoldierRenderer::Render(glm::mat4 transform,
     }
 }
 
-bool SoldierRenderer::IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_part_type,
+bool SoldierRenderer::IsSoldierPartTypeVisible(Sprites::SoldierPartSpriteType soldier_part_type,
                                                const Soldier& soldier,
                                                bool part_base_visibility)
 {
     bool has_blood = false; // TODO: need to get real value
     if (has_blood) {
         switch (soldier_part_type) {
-            case Sprites::SoldierPartType::RannyUdo:
-            case Sprites::SoldierPartType::RannyNoga:
-            case Sprites::SoldierPartType::RannyRamie:
-            case Sprites::SoldierPartType::RannyReka:
-            case Sprites::SoldierPartType::RannyKlata:
-            case Sprites::SoldierPartType::RannyBiodro:
-            case Sprites::SoldierPartType::RannyMorda:
+            case Sprites::SoldierPartSpriteType::RannyUdo:
+            case Sprites::SoldierPartSpriteType::RannyNoga:
+            case Sprites::SoldierPartSpriteType::RannyRamie:
+            case Sprites::SoldierPartSpriteType::RannyReka:
+            case Sprites::SoldierPartSpriteType::RannyKlata:
+            case Sprites::SoldierPartSpriteType::RannyBiodro:
+            case Sprites::SoldierPartSpriteType::RannyMorda:
                 return true;
             default:
                 break;
@@ -218,16 +219,16 @@ bool SoldierRenderer::IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_
 
     if (soldier.control.jets && soldier.jets_count > 0) {
         switch (soldier_part_type) {
-            case Sprites::SoldierPartType::Stopa:
+            case Sprites::SoldierPartSpriteType::Stopa:
                 return false;
-            case Sprites::SoldierPartType::Lecistopa:
+            case Sprites::SoldierPartSpriteType::Lecistopa:
                 return true;
             default:
                 break;
         }
     }
 
-    if (soldier.vest > 0.0F && soldier_part_type == Sprites::SoldierPartType::Kamizelka) {
+    if (soldier.vest > 0.0F && soldier_part_type == Sprites::SoldierPartSpriteType::Kamizelka) {
         return true;
     }
 
@@ -236,7 +237,7 @@ bool SoldierRenderer::IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_
 
 // TODO: rework this to something more readable
 bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
-  Sprites::SoldierPartPrimaryWeaponType soldier_part_type,
+  Sprites::SoldierPartPrimaryWeaponSpriteType soldier_part_type,
   const Soldier& soldier,
   bool part_base_visibility)
 {
@@ -245,51 +246,51 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
     std::uint16_t reload_time_count = soldier.GetPrimaryWeapon().GetReloadTimeCount();
 
     if (primary_weapon_type == WeaponType::Minigun) {
-        if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::Minigun) {
+        if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::Minigun) {
             return true;
         }
 
         if (ammo > 0 || (ammo == 0 && reload_time_count < 65)) {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::MinigunClip) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::MinigunClip) {
                 return true;
             }
         }
 
         if (soldier.fired > 0) {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::MinigunFire) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::MinigunFire) {
                 return true;
             }
         }
     } else if (primary_weapon_type == WeaponType::Bow ||
                primary_weapon_type == WeaponType::FlameBow) {
         if (ammo == 0) {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowArrowReload) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowArrowReload) {
                 return true;
             }
         } else {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowArrow) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowArrow) {
                 return true;
             }
         }
 
         if (soldier.body_animation.GetType() == AnimationType::ReloadBow) {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowReload) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowReload) {
                 return true;
             }
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowStringReload) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowStringReload) {
                 return true;
             }
         } else {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::Bow) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::Bow) {
                 return true;
             }
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowString) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowString) {
                 return true;
             }
         }
 
         if (soldier.fired > 0) {
-            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponType::BowFire) {
+            if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowFire) {
                 return true;
             }
         }
@@ -301,22 +302,21 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
             WeaponType::LAW,          WeaponType::Flamer
         };
 
-        std::array<Sprites::SoldierPartPrimaryWeaponType, 14> soldier_part_primary_weapon_types{
-            Sprites::SoldierPartPrimaryWeaponType::Deagles,
-            Sprites::SoldierPartPrimaryWeaponType::Mp5,
-            Sprites::SoldierPartPrimaryWeaponType::Ak74,
-            Sprites::SoldierPartPrimaryWeaponType::Steyr,
-            Sprites::SoldierPartPrimaryWeaponType::Spas,
-            Sprites::SoldierPartPrimaryWeaponType::Ruger,
-            Sprites::SoldierPartPrimaryWeaponType::M79,
-            Sprites::SoldierPartPrimaryWeaponType::Barrett,
-            Sprites::SoldierPartPrimaryWeaponType::Minimi,
-            Sprites::SoldierPartPrimaryWeaponType::Socom,
-            Sprites::SoldierPartPrimaryWeaponType::Knife,
-            Sprites::SoldierPartPrimaryWeaponType::Chainsaw,
-            Sprites::SoldierPartPrimaryWeaponType::Law,
-            Sprites::SoldierPartPrimaryWeaponType::Flamer
-        };
+        std::array<Sprites::SoldierPartPrimaryWeaponSpriteType, 14>
+          soldier_part_primary_weapon_types{ Sprites::SoldierPartPrimaryWeaponSpriteType::Deagles,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Mp5,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Ak74,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Steyr,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Spas,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Ruger,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::M79,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Barrett,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Minimi,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Socom,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Knife,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Chainsaw,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Law,
+                                             Sprites::SoldierPartPrimaryWeaponSpriteType::Flamer };
 
         if (std::ranges::contains(soldier_part_primary_weapon_types, soldier_part_type)) {
             for (int i = 0; i < (int)soldier_part_primary_weapon_types.size(); i++) {
@@ -326,22 +326,22 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
             }
         }
 
-        std::array<Sprites::SoldierPartPrimaryWeaponType, 14>
+        std::array<Sprites::SoldierPartPrimaryWeaponSpriteType, 14>
           soldier_part_primary_weapon_clip_types{
-              Sprites::SoldierPartPrimaryWeaponType::DeaglesClip,
-              Sprites::SoldierPartPrimaryWeaponType::Mp5Clip,
-              Sprites::SoldierPartPrimaryWeaponType::Ak74Clip,
-              Sprites::SoldierPartPrimaryWeaponType::SteyrClip,
-              Sprites::SoldierPartPrimaryWeaponType::SpasClip,
-              Sprites::SoldierPartPrimaryWeaponType::RugerClip,
-              Sprites::SoldierPartPrimaryWeaponType::M79Clip,
-              Sprites::SoldierPartPrimaryWeaponType::BarrettClip,
-              Sprites::SoldierPartPrimaryWeaponType::MinimiClip,
-              Sprites::SoldierPartPrimaryWeaponType::SocomClip,
-              Sprites::SoldierPartPrimaryWeaponType::KnifeClip,
-              Sprites::SoldierPartPrimaryWeaponType::ChainsawClip,
-              Sprites::SoldierPartPrimaryWeaponType::LawClip,
-              Sprites::SoldierPartPrimaryWeaponType::FlamerClip
+              Sprites::SoldierPartPrimaryWeaponSpriteType::DeaglesClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::Mp5Clip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::Ak74Clip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SteyrClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SpasClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::RugerClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::M79Clip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::BarrettClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::MinimiClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SocomClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::KnifeClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::ChainsawClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::LawClip,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::FlamerClip
           };
 
         auto reload_count = soldier.GetPrimaryWeapon().GetReloadTimeCount();
@@ -361,22 +361,22 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
             }
         }
 
-        std::array<Sprites::SoldierPartPrimaryWeaponType, 14>
+        std::array<Sprites::SoldierPartPrimaryWeaponSpriteType, 14>
           soldier_part_primary_weapon_fire_types{
-              Sprites::SoldierPartPrimaryWeaponType::DeaglesFire,
-              Sprites::SoldierPartPrimaryWeaponType::Mp5Fire,
-              Sprites::SoldierPartPrimaryWeaponType::Ak74Fire,
-              Sprites::SoldierPartPrimaryWeaponType::SteyrFire,
-              Sprites::SoldierPartPrimaryWeaponType::SpasFire,
-              Sprites::SoldierPartPrimaryWeaponType::RugerFire,
-              Sprites::SoldierPartPrimaryWeaponType::M79Fire,
-              Sprites::SoldierPartPrimaryWeaponType::BarrettFire,
-              Sprites::SoldierPartPrimaryWeaponType::MinimiFire,
-              Sprites::SoldierPartPrimaryWeaponType::SocomFire,
-              Sprites::SoldierPartPrimaryWeaponType::KnifeFire,
-              Sprites::SoldierPartPrimaryWeaponType::ChainsawFire,
-              Sprites::SoldierPartPrimaryWeaponType::LawFire,
-              Sprites::SoldierPartPrimaryWeaponType::FlamerFire
+              Sprites::SoldierPartPrimaryWeaponSpriteType::DeaglesFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::Mp5Fire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::Ak74Fire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SteyrFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SpasFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::RugerFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::M79Fire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::BarrettFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::MinimiFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::SocomFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::KnifeFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::ChainsawFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::LawFire,
+              Sprites::SoldierPartPrimaryWeaponSpriteType::FlamerFire
           };
 
         if (std::ranges::contains(soldier_part_primary_weapon_fire_types, soldier_part_type)) {
@@ -396,61 +396,61 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
 }
 
 bool SoldierRenderer::IsSecondaryWeaponTypeVisible(
-  Sprites::SoldierPartSecondaryWeaponType soldier_part_type,
+  Sprites::SoldierPartSecondaryWeaponSpriteType soldier_part_type,
   const Soldier& soldier)
 {
     auto secondary_weapon_type = soldier.GetSecondaryWeapon().GetWeaponParameters().kind;
     switch (soldier_part_type) {
-        case Sprites::SoldierPartSecondaryWeaponType::Deagles:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Deagles:
             return secondary_weapon_type == WeaponType::DesertEagles;
-        case Sprites::SoldierPartSecondaryWeaponType::Mp5:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Mp5:
             return secondary_weapon_type == WeaponType::MP5;
-        case Sprites::SoldierPartSecondaryWeaponType::Ak74:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Ak74:
             return secondary_weapon_type == WeaponType::Ak74;
-        case Sprites::SoldierPartSecondaryWeaponType::Steyr:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Steyr:
             return secondary_weapon_type == WeaponType::SteyrAUG;
-        case Sprites::SoldierPartSecondaryWeaponType::Spas:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Spas:
             return secondary_weapon_type == WeaponType::Spas12;
-        case Sprites::SoldierPartSecondaryWeaponType::Ruger:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Ruger:
             return secondary_weapon_type == WeaponType::Ruger77;
-        case Sprites::SoldierPartSecondaryWeaponType::M79:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::M79:
             return secondary_weapon_type == WeaponType::M79;
-        case Sprites::SoldierPartSecondaryWeaponType::Barrett:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Barrett:
             return secondary_weapon_type == WeaponType::Barrett;
-        case Sprites::SoldierPartSecondaryWeaponType::Minimi:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Minimi:
             return secondary_weapon_type == WeaponType::Minimi;
-        case Sprites::SoldierPartSecondaryWeaponType::Minigun:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Minigun:
             return secondary_weapon_type == WeaponType::Minigun;
-        case Sprites::SoldierPartSecondaryWeaponType::Socom:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Socom:
             return secondary_weapon_type == WeaponType::USSOCOM;
-        case Sprites::SoldierPartSecondaryWeaponType::Knife:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Knife:
             return secondary_weapon_type == WeaponType::Knife;
-        case Sprites::SoldierPartSecondaryWeaponType::Chainsaw:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Chainsaw:
             return secondary_weapon_type == WeaponType::Chainsaw;
-        case Sprites::SoldierPartSecondaryWeaponType::Law:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Law:
             return secondary_weapon_type == WeaponType::LAW;
-        case Sprites::SoldierPartSecondaryWeaponType::Flamebow:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Flamebow:
             return secondary_weapon_type == WeaponType::FlameBow;
-        case Sprites::SoldierPartSecondaryWeaponType::Bow:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Bow:
             return secondary_weapon_type == WeaponType::Bow;
-        case Sprites::SoldierPartSecondaryWeaponType::Flamer:
+        case Sprites::SoldierPartSecondaryWeaponSpriteType::Flamer:
             return secondary_weapon_type == WeaponType::Flamer;
     }
 }
 
 bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
-  Sprites::SoldierPartTertiaryWeaponType soldier_part_type,
+  Sprites::SoldierPartTertiaryWeaponSpriteType soldier_part_type,
   const Soldier& soldier)
 {
     auto tertiary_weapon_type = soldier.GetTertiaryWeapon().GetWeaponParameters().kind;
     int ammo = soldier.GetTertiaryWeapon().GetAmmoCount();
     if (tertiary_weapon_type == WeaponType::FragGrenade) {
-        std::vector<Sprites::SoldierPartTertiaryWeaponType> sprite_types{
-            Sprites::SoldierPartTertiaryWeaponType::FragGrenade1,
-            Sprites::SoldierPartTertiaryWeaponType::FragGrenade2,
-            Sprites::SoldierPartTertiaryWeaponType::FragGrenade3,
-            Sprites::SoldierPartTertiaryWeaponType::FragGrenade4,
-            Sprites::SoldierPartTertiaryWeaponType::FragGrenade5
+        std::vector<Sprites::SoldierPartTertiaryWeaponSpriteType> sprite_types{
+            Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade1,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade2,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade3,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade4,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade5
         };
 
         int n = 0;
@@ -466,12 +466,12 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
             }
         }
     } else if (tertiary_weapon_type == WeaponType::ClusterGrenade) {
-        std::vector<Sprites::SoldierPartTertiaryWeaponType> sprite_types{
-            Sprites::SoldierPartTertiaryWeaponType::ClusterGrenade1,
-            Sprites::SoldierPartTertiaryWeaponType::ClusterGrenade2,
-            Sprites::SoldierPartTertiaryWeaponType::ClusterGrenade3,
-            Sprites::SoldierPartTertiaryWeaponType::ClusterGrenade4,
-            Sprites::SoldierPartTertiaryWeaponType::ClusterGrenade5
+        std::vector<Sprites::SoldierPartTertiaryWeaponSpriteType> sprite_types{
+            Sprites::SoldierPartTertiaryWeaponSpriteType::ClusterGrenade1,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::ClusterGrenade2,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::ClusterGrenade3,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::ClusterGrenade4,
+            Sprites::SoldierPartTertiaryWeaponSpriteType::ClusterGrenade5
         };
 
         int n = 0;
@@ -492,33 +492,33 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
 }
 
 glm::vec4 SoldierRenderer::GetColorForSoldierPart(const Soldier& soldier,
-                                                  Sprites::SoldierColor soldier_color,
-                                                  Sprites::SoldierAlpha soldier_alpha)
+                                                  Sprites::SoldierSpriteColor soldier_color,
+                                                  Sprites::SoldierSpriteAlpha soldier_alpha)
 {
     auto alpha_base = soldier.alpha;
     auto alpha_blood = std::max(0.0F, std::min(255.0F, 200.0F - soldier.health));
 
     glm::vec3 color;
     switch (soldier_color) {
-        case Sprites::SoldierColor::Cygar:
+        case Sprites::SoldierSpriteColor::Cygar:
             if (soldier.has_cigar != 0) {
                 color = { 97.0F, 97.0F, 97.0F };
             } else {
                 color = { 255.0F, 255.0F, 255.0F };
             }
             break;
-        case Sprites::SoldierColor::None:
+        case Sprites::SoldierSpriteColor::None:
             color = { 255.0F, 255.0F, 255.0F };
             break;
-        case Sprites::SoldierColor::Main:  // TODO: Player.Color1
-        case Sprites::SoldierColor::Pants: // TODO: Player.Color2
-        case Sprites::SoldierColor::Hair:  // TODO: Player.HairColor
+        case Sprites::SoldierSpriteColor::Main:  // TODO: Player.Color1
+        case Sprites::SoldierSpriteColor::Pants: // TODO: Player.Color2
+        case Sprites::SoldierSpriteColor::Hair:  // TODO: Player.HairColor
             color = { 0.0F, 0.0F, 0.0F };
             break;
-        case Sprites::SoldierColor::Skin: // TODO: Player.SkinColor
+        case Sprites::SoldierSpriteColor::Skin: // TODO: Player.SkinColor
             color = { 230.0F, 180.0F, 120.0F };
             break;
-        case Sprites::SoldierColor::Headblood:
+        case Sprites::SoldierSpriteColor::Headblood:
             color = { 172.0F, 169.0F, 168.0F };
             break;
     }
@@ -540,13 +540,13 @@ glm::vec4 SoldierRenderer::GetColorForSoldierPart(const Soldier& soldier,
 
     float alpha = 0;
     switch (soldier_alpha) {
-        case Sprites::SoldierAlpha::Base:
+        case Sprites::SoldierSpriteAlpha::Base:
             alpha = alpha_base;
             break;
-        case Sprites::SoldierAlpha::Blood:
+        case Sprites::SoldierSpriteAlpha::Blood:
             alpha = alpha_blood;
             break;
-        case Sprites::SoldierAlpha::Nades:
+        case Sprites::SoldierSpriteAlpha::Nades:
             alpha = alpha_nades;
             break;
     }

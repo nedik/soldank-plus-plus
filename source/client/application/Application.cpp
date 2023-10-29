@@ -2,6 +2,7 @@
 
 #include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
+#include "application/input/Mouse.hpp"
 
 #include "core/World.hpp"
 
@@ -29,6 +30,7 @@ void Run()
 
     double last_fps_check_time = glfwGetTime();
     int frame_count_since_last_fps_check = 0;
+    int last_fps = 0;
 
     double timecur = glfwGetTime();
     double timeprv = timecur;
@@ -52,6 +54,7 @@ void Run()
             std::cout << 1000.0 / double(frame_count_since_last_fps_check) << " ms/frame"
                       << std::endl;
             std::cout << "FPS: " << frame_count_since_last_fps_check << std::endl;
+            last_fps = frame_count_since_last_fps_check;
             frame_count_since_last_fps_check = 0;
             last_fps_check_time = current_frame_time;
 
@@ -87,7 +90,7 @@ void Run()
             timeprv = timecur;
         }
         double p = std::min(1.0, std::max(0.0, timeacc / dt));
-        World::Render(p);
+        World::Render(p, last_fps);
 
         window->SwapBuffers();
         window->PollInput();

@@ -16,239 +16,239 @@ SpriteManager::SpriteManager()
 {
     std::cout << "Init Sprites" << std::endl;
     std::vector<std::pair<TSpriteKey, std::string>> all_sprite_file_paths{
-        { SoldierPartType::Stopa, "gostek-gfx/stopa.png" },
-        { SoldierPartType::Stopa2, "gostek-gfx/stopa2.png" },
-        { SoldierPartType::Noga, "gostek-gfx/noga.png" },
-        { SoldierPartType::Noga2, "gostek-gfx/noga2.png" },
-        { SoldierPartType::Udo, "gostek-gfx/udo.png" },
-        { SoldierPartType::Udo2, "gostek-gfx/udo2.png" },
-        { SoldierPartType::Biodro, "gostek-gfx/biodro.png" },
-        { SoldierPartType::Biodro2, "gostek-gfx/biodro2.png" },
-        { SoldierPartType::Klata, "gostek-gfx/klata.png" },
-        { SoldierPartType::Klata2, "gostek-gfx/klata2.png" },
-        { SoldierPartType::Morda, "gostek-gfx/morda.png" },
-        { SoldierPartType::Morda2, "gostek-gfx/morda2.png" },
-        { SoldierPartType::Ramie, "gostek-gfx/ramie.png" },
-        { SoldierPartType::Ramie2, "gostek-gfx/ramie2.png" },
-        { SoldierPartType::Reka, "gostek-gfx/reka.png" },
-        { SoldierPartType::Reka2, "gostek-gfx/reka2.png" },
-        { SoldierPartType::Dlon, "gostek-gfx/dlon.png" },
-        { SoldierPartType::Dlon2, "gostek-gfx/dlon2.png" },
-        { SoldierPartType::Lancuch, "gostek-gfx/lancuch.png" },
-        { SoldierPartType::Helm, "gostek-gfx/helm.png" },
-        { SoldierPartType::Helm2, "gostek-gfx/helm2.png" },
-        { SoldierPartType::Badge, "gostek-gfx/badge.png" },
-        { SoldierPartType::Badge2, "gostek-gfx/badge2.png" },
-        { SoldierPartType::Cygaro, "gostek-gfx/cygaro.png" },
-        { SoldierPartType::Cygaro2, "gostek-gfx/cygaro2.png" },
-        { SoldierPartType::Metal, "gostek-gfx/metal.png" },
-        { SoldierPartType::Metal2, "gostek-gfx/metal2.png" },
-        { SoldierPartType::Zloto, "gostek-gfx/zloto.png" },
-        { SoldierPartType::Zloto2, "gostek-gfx/zloto2.png" },
-        { SoldierPartType::Zlotylancuch, "gostek-gfx/zlotylancuch.png" },
-        { SoldierPartType::Kap, "gostek-gfx/kap.png" },
-        { SoldierPartType::Kap2, "gostek-gfx/kap2.png" },
-        { SoldierPartType::Dred, "gostek-gfx/dred.png" },
-        { SoldierPartType::Hair1, "gostek-gfx/hair1.png" },
-        { SoldierPartType::Hair12, "gostek-gfx/hair12.png" },
-        { SoldierPartType::Hair2, "gostek-gfx/hair2.png" },
-        { SoldierPartType::Hair22, "gostek-gfx/hair22.png" },
-        { SoldierPartType::Hair3, "gostek-gfx/hair3.png" },
-        { SoldierPartType::Hair32, "gostek-gfx/hair32.png" },
-        { SoldierPartType::Hair4, "gostek-gfx/hair4.png" },
-        { SoldierPartType::Hair42, "gostek-gfx/hair42.png" },
-        { SoldierPartType::Kamizelka, "gostek-gfx/kamizelka.png" },
-        { SoldierPartType::Kamizelka2, "gostek-gfx/kamizelka2.png" },
-        { SoldierPartType::RannyKlata, "gostek-gfx/ranny/klata.png" },
-        { SoldierPartType::RannyKlata2, "gostek-gfx/ranny/klata2.png" },
-        { SoldierPartType::RannyMorda, "gostek-gfx/ranny/morda.png" },
-        { SoldierPartType::RannyMorda2, "gostek-gfx/ranny/morda2.png" },
-        { SoldierPartType::RannyNoga, "gostek-gfx/ranny/noga.png" },
-        { SoldierPartType::RannyNoga2, "gostek-gfx/ranny/noga2.png" },
-        { SoldierPartType::RannyRamie, "gostek-gfx/ranny/ramie.png" },
-        { SoldierPartType::RannyRamie2, "gostek-gfx/ranny/ramie2.png" },
-        { SoldierPartType::RannyReka, "gostek-gfx/ranny/reka.png" },
-        { SoldierPartType::RannyReka2, "gostek-gfx/ranny/reka2.png" },
-        { SoldierPartType::RannyUdo, "gostek-gfx/ranny/udo.png" },
-        { SoldierPartType::RannyUdo2, "gostek-gfx/ranny/udo2.png" },
-        { SoldierPartType::RannyBiodro, "gostek-gfx/ranny/biodro.png" },
-        { SoldierPartType::RannyBiodro2, "gostek-gfx/ranny/biodro2.png" },
-        { SoldierPartType::Lecistopa, "gostek-gfx/lecistopa.png" },
-        { SoldierPartType::Lecistopa2, "gostek-gfx/lecistopa2.png" },
+        { SoldierPartSpriteType::Stopa, "gostek-gfx/stopa.png" },
+        { SoldierPartSpriteType::Stopa2, "gostek-gfx/stopa2.png" },
+        { SoldierPartSpriteType::Noga, "gostek-gfx/noga.png" },
+        { SoldierPartSpriteType::Noga2, "gostek-gfx/noga2.png" },
+        { SoldierPartSpriteType::Udo, "gostek-gfx/udo.png" },
+        { SoldierPartSpriteType::Udo2, "gostek-gfx/udo2.png" },
+        { SoldierPartSpriteType::Biodro, "gostek-gfx/biodro.png" },
+        { SoldierPartSpriteType::Biodro2, "gostek-gfx/biodro2.png" },
+        { SoldierPartSpriteType::Klata, "gostek-gfx/klata.png" },
+        { SoldierPartSpriteType::Klata2, "gostek-gfx/klata2.png" },
+        { SoldierPartSpriteType::Morda, "gostek-gfx/morda.png" },
+        { SoldierPartSpriteType::Morda2, "gostek-gfx/morda2.png" },
+        { SoldierPartSpriteType::Ramie, "gostek-gfx/ramie.png" },
+        { SoldierPartSpriteType::Ramie2, "gostek-gfx/ramie2.png" },
+        { SoldierPartSpriteType::Reka, "gostek-gfx/reka.png" },
+        { SoldierPartSpriteType::Reka2, "gostek-gfx/reka2.png" },
+        { SoldierPartSpriteType::Dlon, "gostek-gfx/dlon.png" },
+        { SoldierPartSpriteType::Dlon2, "gostek-gfx/dlon2.png" },
+        { SoldierPartSpriteType::Lancuch, "gostek-gfx/lancuch.png" },
+        { SoldierPartSpriteType::Helm, "gostek-gfx/helm.png" },
+        { SoldierPartSpriteType::Helm2, "gostek-gfx/helm2.png" },
+        { SoldierPartSpriteType::Badge, "gostek-gfx/badge.png" },
+        { SoldierPartSpriteType::Badge2, "gostek-gfx/badge2.png" },
+        { SoldierPartSpriteType::Cygaro, "gostek-gfx/cygaro.png" },
+        { SoldierPartSpriteType::Cygaro2, "gostek-gfx/cygaro2.png" },
+        { SoldierPartSpriteType::Metal, "gostek-gfx/metal.png" },
+        { SoldierPartSpriteType::Metal2, "gostek-gfx/metal2.png" },
+        { SoldierPartSpriteType::Zloto, "gostek-gfx/zloto.png" },
+        { SoldierPartSpriteType::Zloto2, "gostek-gfx/zloto2.png" },
+        { SoldierPartSpriteType::Zlotylancuch, "gostek-gfx/zlotylancuch.png" },
+        { SoldierPartSpriteType::Kap, "gostek-gfx/kap.png" },
+        { SoldierPartSpriteType::Kap2, "gostek-gfx/kap2.png" },
+        { SoldierPartSpriteType::Dred, "gostek-gfx/dred.png" },
+        { SoldierPartSpriteType::Hair1, "gostek-gfx/hair1.png" },
+        { SoldierPartSpriteType::Hair12, "gostek-gfx/hair12.png" },
+        { SoldierPartSpriteType::Hair2, "gostek-gfx/hair2.png" },
+        { SoldierPartSpriteType::Hair22, "gostek-gfx/hair22.png" },
+        { SoldierPartSpriteType::Hair3, "gostek-gfx/hair3.png" },
+        { SoldierPartSpriteType::Hair32, "gostek-gfx/hair32.png" },
+        { SoldierPartSpriteType::Hair4, "gostek-gfx/hair4.png" },
+        { SoldierPartSpriteType::Hair42, "gostek-gfx/hair42.png" },
+        { SoldierPartSpriteType::Kamizelka, "gostek-gfx/kamizelka.png" },
+        { SoldierPartSpriteType::Kamizelka2, "gostek-gfx/kamizelka2.png" },
+        { SoldierPartSpriteType::RannyKlata, "gostek-gfx/ranny/klata.png" },
+        { SoldierPartSpriteType::RannyKlata2, "gostek-gfx/ranny/klata2.png" },
+        { SoldierPartSpriteType::RannyMorda, "gostek-gfx/ranny/morda.png" },
+        { SoldierPartSpriteType::RannyMorda2, "gostek-gfx/ranny/morda2.png" },
+        { SoldierPartSpriteType::RannyNoga, "gostek-gfx/ranny/noga.png" },
+        { SoldierPartSpriteType::RannyNoga2, "gostek-gfx/ranny/noga2.png" },
+        { SoldierPartSpriteType::RannyRamie, "gostek-gfx/ranny/ramie.png" },
+        { SoldierPartSpriteType::RannyRamie2, "gostek-gfx/ranny/ramie2.png" },
+        { SoldierPartSpriteType::RannyReka, "gostek-gfx/ranny/reka.png" },
+        { SoldierPartSpriteType::RannyReka2, "gostek-gfx/ranny/reka2.png" },
+        { SoldierPartSpriteType::RannyUdo, "gostek-gfx/ranny/udo.png" },
+        { SoldierPartSpriteType::RannyUdo2, "gostek-gfx/ranny/udo2.png" },
+        { SoldierPartSpriteType::RannyBiodro, "gostek-gfx/ranny/biodro.png" },
+        { SoldierPartSpriteType::RannyBiodro2, "gostek-gfx/ranny/biodro2.png" },
+        { SoldierPartSpriteType::Lecistopa, "gostek-gfx/lecistopa.png" },
+        { SoldierPartSpriteType::Lecistopa2, "gostek-gfx/lecistopa2.png" },
 
         // Soldier Team2 list. Keep it next to the non-team2 list.
 
-        { SoldierPartType::Team2Stopa, "gostek-gfx/team2/stopa.png" },
-        { SoldierPartType::Team2Stopa2, "gostek-gfx/team2/stopa2.png" },
-        { SoldierPartType::Team2Noga, "gostek-gfx/team2/noga.png" },
-        { SoldierPartType::Team2Noga2, "gostek-gfx/team2/noga2.png" },
-        { SoldierPartType::Team2Udo, "gostek-gfx/team2/udo.png" },
-        { SoldierPartType::Team2Udo2, "gostek-gfx/team2/udo2.png" },
-        { SoldierPartType::Team2Biodro, "gostek-gfx/team2/biodro.png" },
-        { SoldierPartType::Team2Biodro2, "gostek-gfx/team2/biodro2.png" },
-        { SoldierPartType::Team2Klata, "gostek-gfx/team2/klata.png" },
-        { SoldierPartType::Team2Klata2, "gostek-gfx/team2/klata2.png" },
-        { SoldierPartType::Team2Morda, "gostek-gfx/team2/morda.png" },
-        { SoldierPartType::Team2Morda2, "gostek-gfx/team2/morda2.png" },
-        { SoldierPartType::Team2Ramie, "gostek-gfx/team2/ramie.png" },
-        { SoldierPartType::Team2Ramie2, "gostek-gfx/team2/ramie2.png" },
-        { SoldierPartType::Team2Reka, "gostek-gfx/team2/reka.png" },
-        { SoldierPartType::Team2Reka2, "gostek-gfx/team2/reka2.png" },
-        { SoldierPartType::Team2Dlon, "gostek-gfx/team2/dlon.png" },
-        { SoldierPartType::Team2Dlon2, "gostek-gfx/team2/dlon2.png" },
-        { SoldierPartType::Team2Lancuch, "gostek-gfx/team2/lancuch.png" },
-        { SoldierPartType::Team2Helm, "gostek-gfx/team2/helm.png" },
-        { SoldierPartType::Team2Helm2, "gostek-gfx/team2/helm2.png" },
-        { SoldierPartType::Team2Badge, "gostek-gfx/team2/badge.png" },
-        { SoldierPartType::Team2Badge2, "gostek-gfx/team2/badge2.png" },
-        { SoldierPartType::Team2Cygaro, "gostek-gfx/team2/cygaro.png" },
-        { SoldierPartType::Team2Cygaro2, "gostek-gfx/team2/cygaro2.png" },
-        { SoldierPartType::Team2Metal, "gostek-gfx/team2/metal.png" },
-        { SoldierPartType::Team2Metal2, "gostek-gfx/team2/metal2.png" },
-        { SoldierPartType::Team2Zloto, "gostek-gfx/team2/zloto.png" },
-        { SoldierPartType::Team2Zloto2, "gostek-gfx/team2/zloto2.png" },
-        { SoldierPartType::Team2Zlotylancuch, "gostek-gfx/team2/zlotylancuch.png" },
-        { SoldierPartType::Team2Kap, "gostek-gfx/team2/kap.png" },
-        { SoldierPartType::Team2Kap2, "gostek-gfx/team2/kap2.png" },
-        { SoldierPartType::Team2Dred, "gostek-gfx/team2/dred.png" },
-        { SoldierPartType::Team2Hair1, "gostek-gfx/team2/hair1.png" },
-        { SoldierPartType::Team2Hair12, "gostek-gfx/team2/hair12.png" },
-        { SoldierPartType::Team2Hair2, "gostek-gfx/team2/hair2.png" },
-        { SoldierPartType::Team2Hair22, "gostek-gfx/team2/hair22.png" },
-        { SoldierPartType::Team2Hair3, "gostek-gfx/team2/hair3.png" },
-        { SoldierPartType::Team2Hair32, "gostek-gfx/team2/hair32.png" },
-        { SoldierPartType::Team2Hair4, "gostek-gfx/team2/hair4.png" },
-        { SoldierPartType::Team2Hair42, "gostek-gfx/team2/hair42.png" },
-        { SoldierPartType::Team2Kamizelka, "gostek-gfx/team2/kamizelka.png" },
-        { SoldierPartType::Team2Kamizelka2, "gostek-gfx/team2/kamizelka2.png" },
-        { SoldierPartType::Team2RannyKlata, "gostek-gfx/team2/ranny/klata.png" },
-        { SoldierPartType::Team2RannyKlata2, "gostek-gfx/team2/ranny/klata2.png" },
-        { SoldierPartType::Team2RannyMorda, "gostek-gfx/team2/ranny/morda.png" },
-        { SoldierPartType::Team2RannyMorda2, "gostek-gfx/team2/ranny/morda2.png" },
-        { SoldierPartType::Team2RannyNoga, "gostek-gfx/team2/ranny/noga.png" },
-        { SoldierPartType::Team2RannyNoga2, "gostek-gfx/team2/ranny/noga2.png" },
-        { SoldierPartType::Team2RannyRamie, "gostek-gfx/team2/ranny/ramie.png" },
-        { SoldierPartType::Team2RannyRamie2, "gostek-gfx/team2/ranny/ramie2.png" },
-        { SoldierPartType::Team2RannyReka, "gostek-gfx/team2/ranny/reka.png" },
-        { SoldierPartType::Team2RannyReka2, "gostek-gfx/team2/ranny/reka2.png" },
-        { SoldierPartType::Team2RannyUdo, "gostek-gfx/team2/ranny/udo.png" },
-        { SoldierPartType::Team2RannyUdo2, "gostek-gfx/team2/ranny/udo2.png" },
-        { SoldierPartType::Team2RannyBiodro, "gostek-gfx/team2/ranny/biodro.png" },
-        { SoldierPartType::Team2RannyBiodro2, "gostek-gfx/team2/ranny/biodro2.png" },
-        { SoldierPartType::Team2Lecistopa, "gostek-gfx/team2/lecistopa.png" },
-        { SoldierPartType::Team2Lecistopa2, "gostek-gfx/team2/lecistopa2.png" },
+        { SoldierPartSpriteType::Team2Stopa, "gostek-gfx/team2/stopa.png" },
+        { SoldierPartSpriteType::Team2Stopa2, "gostek-gfx/team2/stopa2.png" },
+        { SoldierPartSpriteType::Team2Noga, "gostek-gfx/team2/noga.png" },
+        { SoldierPartSpriteType::Team2Noga2, "gostek-gfx/team2/noga2.png" },
+        { SoldierPartSpriteType::Team2Udo, "gostek-gfx/team2/udo.png" },
+        { SoldierPartSpriteType::Team2Udo2, "gostek-gfx/team2/udo2.png" },
+        { SoldierPartSpriteType::Team2Biodro, "gostek-gfx/team2/biodro.png" },
+        { SoldierPartSpriteType::Team2Biodro2, "gostek-gfx/team2/biodro2.png" },
+        { SoldierPartSpriteType::Team2Klata, "gostek-gfx/team2/klata.png" },
+        { SoldierPartSpriteType::Team2Klata2, "gostek-gfx/team2/klata2.png" },
+        { SoldierPartSpriteType::Team2Morda, "gostek-gfx/team2/morda.png" },
+        { SoldierPartSpriteType::Team2Morda2, "gostek-gfx/team2/morda2.png" },
+        { SoldierPartSpriteType::Team2Ramie, "gostek-gfx/team2/ramie.png" },
+        { SoldierPartSpriteType::Team2Ramie2, "gostek-gfx/team2/ramie2.png" },
+        { SoldierPartSpriteType::Team2Reka, "gostek-gfx/team2/reka.png" },
+        { SoldierPartSpriteType::Team2Reka2, "gostek-gfx/team2/reka2.png" },
+        { SoldierPartSpriteType::Team2Dlon, "gostek-gfx/team2/dlon.png" },
+        { SoldierPartSpriteType::Team2Dlon2, "gostek-gfx/team2/dlon2.png" },
+        { SoldierPartSpriteType::Team2Lancuch, "gostek-gfx/team2/lancuch.png" },
+        { SoldierPartSpriteType::Team2Helm, "gostek-gfx/team2/helm.png" },
+        { SoldierPartSpriteType::Team2Helm2, "gostek-gfx/team2/helm2.png" },
+        { SoldierPartSpriteType::Team2Badge, "gostek-gfx/team2/badge.png" },
+        { SoldierPartSpriteType::Team2Badge2, "gostek-gfx/team2/badge2.png" },
+        { SoldierPartSpriteType::Team2Cygaro, "gostek-gfx/team2/cygaro.png" },
+        { SoldierPartSpriteType::Team2Cygaro2, "gostek-gfx/team2/cygaro2.png" },
+        { SoldierPartSpriteType::Team2Metal, "gostek-gfx/team2/metal.png" },
+        { SoldierPartSpriteType::Team2Metal2, "gostek-gfx/team2/metal2.png" },
+        { SoldierPartSpriteType::Team2Zloto, "gostek-gfx/team2/zloto.png" },
+        { SoldierPartSpriteType::Team2Zloto2, "gostek-gfx/team2/zloto2.png" },
+        { SoldierPartSpriteType::Team2Zlotylancuch, "gostek-gfx/team2/zlotylancuch.png" },
+        { SoldierPartSpriteType::Team2Kap, "gostek-gfx/team2/kap.png" },
+        { SoldierPartSpriteType::Team2Kap2, "gostek-gfx/team2/kap2.png" },
+        { SoldierPartSpriteType::Team2Dred, "gostek-gfx/team2/dred.png" },
+        { SoldierPartSpriteType::Team2Hair1, "gostek-gfx/team2/hair1.png" },
+        { SoldierPartSpriteType::Team2Hair12, "gostek-gfx/team2/hair12.png" },
+        { SoldierPartSpriteType::Team2Hair2, "gostek-gfx/team2/hair2.png" },
+        { SoldierPartSpriteType::Team2Hair22, "gostek-gfx/team2/hair22.png" },
+        { SoldierPartSpriteType::Team2Hair3, "gostek-gfx/team2/hair3.png" },
+        { SoldierPartSpriteType::Team2Hair32, "gostek-gfx/team2/hair32.png" },
+        { SoldierPartSpriteType::Team2Hair4, "gostek-gfx/team2/hair4.png" },
+        { SoldierPartSpriteType::Team2Hair42, "gostek-gfx/team2/hair42.png" },
+        { SoldierPartSpriteType::Team2Kamizelka, "gostek-gfx/team2/kamizelka.png" },
+        { SoldierPartSpriteType::Team2Kamizelka2, "gostek-gfx/team2/kamizelka2.png" },
+        { SoldierPartSpriteType::Team2RannyKlata, "gostek-gfx/team2/ranny/klata.png" },
+        { SoldierPartSpriteType::Team2RannyKlata2, "gostek-gfx/team2/ranny/klata2.png" },
+        { SoldierPartSpriteType::Team2RannyMorda, "gostek-gfx/team2/ranny/morda.png" },
+        { SoldierPartSpriteType::Team2RannyMorda2, "gostek-gfx/team2/ranny/morda2.png" },
+        { SoldierPartSpriteType::Team2RannyNoga, "gostek-gfx/team2/ranny/noga.png" },
+        { SoldierPartSpriteType::Team2RannyNoga2, "gostek-gfx/team2/ranny/noga2.png" },
+        { SoldierPartSpriteType::Team2RannyRamie, "gostek-gfx/team2/ranny/ramie.png" },
+        { SoldierPartSpriteType::Team2RannyRamie2, "gostek-gfx/team2/ranny/ramie2.png" },
+        { SoldierPartSpriteType::Team2RannyReka, "gostek-gfx/team2/ranny/reka.png" },
+        { SoldierPartSpriteType::Team2RannyReka2, "gostek-gfx/team2/ranny/reka2.png" },
+        { SoldierPartSpriteType::Team2RannyUdo, "gostek-gfx/team2/ranny/udo.png" },
+        { SoldierPartSpriteType::Team2RannyUdo2, "gostek-gfx/team2/ranny/udo2.png" },
+        { SoldierPartSpriteType::Team2RannyBiodro, "gostek-gfx/team2/ranny/biodro.png" },
+        { SoldierPartSpriteType::Team2RannyBiodro2, "gostek-gfx/team2/ranny/biodro2.png" },
+        { SoldierPartSpriteType::Team2Lecistopa, "gostek-gfx/team2/lecistopa.png" },
+        { SoldierPartSpriteType::Team2Lecistopa2, "gostek-gfx/team2/lecistopa2.png" },
 
         // Preserve order of these parachute textures.
 
-        { SoldierPartType::ParaRope, "gostek-gfx/para-rope.png" },
-        { SoldierPartType::Para, "gostek-gfx/para.png" },
-        { SoldierPartType::Para2, "gostek-gfx/para2.png" },
+        { SoldierPartSpriteType::ParaRope, "gostek-gfx/para-rope.png" },
+        { SoldierPartSpriteType::Para, "gostek-gfx/para.png" },
+        { SoldierPartSpriteType::Para2, "gostek-gfx/para2.png" },
 
-        { WeaponType::Shell, "weapons-gfx/shell.png" },
-        { WeaponType::Bullet, "weapons-gfx/bullet.png" },
-        { WeaponType::Smudge, "weapons-gfx/smudge.png" },
-        { WeaponType::Missile, "weapons-gfx/missile.png" },
-        { WeaponType::Cluster, "weapons-gfx/cluster.png" },
-        { WeaponType::ClusterGrenade, "weapons-gfx/cluster-grenade.png" },
-        { WeaponType::FragGrenade, "weapons-gfx/frag-grenade.png" },
-        { WeaponType::Ak74, "weapons-gfx/ak74.png" },
-        { WeaponType::Ak742, "weapons-gfx/ak74-2.png" },
-        { WeaponType::Ak74Clip, "weapons-gfx/ak74-clip.png" },
-        { WeaponType::Ak74Clip2, "weapons-gfx/ak74-clip2.png" },
-        { WeaponType::Ak74Shell, "weapons-gfx/ak74-shell.png" },
-        { WeaponType::Ak74Bullet, "weapons-gfx/ak74-bullet.png" },
-        { WeaponType::Ak74Fire, "weapons-gfx/ak74-fire.png" },
-        { WeaponType::Minimi, "weapons-gfx/m249.png" },
-        { WeaponType::Minimi2, "weapons-gfx/m249-2.png" },
-        { WeaponType::MinimiClip, "weapons-gfx/m249-clip.png" },
-        { WeaponType::MinimiClip2, "weapons-gfx/m249-clip2.png" },
-        { WeaponType::MinimiShell, "weapons-gfx/m249-shell.png" },
-        { WeaponType::MinimiBullet, "weapons-gfx/m249-bullet.png" },
-        { WeaponType::MinimiFire, "weapons-gfx/m249-fire.png" },
-        { WeaponType::Ruger, "weapons-gfx/ruger77.png" },
-        { WeaponType::Ruger2, "weapons-gfx/ruger77-2.png" },
-        { WeaponType::RugerShell, "weapons-gfx/ruger77-shell.png" },
-        { WeaponType::RugerBullet, "weapons-gfx/ruger77-bullet.png" },
-        { WeaponType::RugerFire, "weapons-gfx/ruger77-fire.png" },
-        { WeaponType::Mp5, "weapons-gfx/mp5.png" },
-        { WeaponType::Mp52, "weapons-gfx/mp5-2.png" },
-        { WeaponType::Mp5Clip, "weapons-gfx/mp5-clip.png" },
-        { WeaponType::Mp5Clip2, "weapons-gfx/mp5-clip2.png" },
-        { WeaponType::Mp5Shell, "weapons-gfx/mp5-shell.png" },
-        { WeaponType::Mp5Bullet, "weapons-gfx/mp5-bullet.png" },
-        { WeaponType::Mp5Fire, "weapons-gfx/mp5-fire.png" },
-        { WeaponType::Spas, "weapons-gfx/spas12.png" },
-        { WeaponType::Spas2, "weapons-gfx/spas12-2.png" },
-        { WeaponType::SpasShell, "weapons-gfx/spas12-shell.png" },
-        { WeaponType::SpasBullet, "weapons-gfx/spas12-bullet.png" },
-        { WeaponType::SpasFire, "weapons-gfx/spas12-fire.png" },
-        { WeaponType::M79, "weapons-gfx/m79.png" },
-        { WeaponType::M792, "weapons-gfx/m79-2.png" },
-        { WeaponType::M79Clip, "weapons-gfx/m79-clip.png" },
-        { WeaponType::M79Clip2, "weapons-gfx/m79-clip2.png" },
-        { WeaponType::M79Shell, "weapons-gfx/m79-shell.png" },
-        { WeaponType::M79Bullet, "weapons-gfx/m79-bullet.png" },
-        { WeaponType::M79Fire, "weapons-gfx/m79-fire.png" },
-        { WeaponType::Deagles, "weapons-gfx/deserteagle.png" },
-        { WeaponType::Deagles2, "weapons-gfx/deserteagle-2.png" },
-        { WeaponType::NDeagles, "weapons-gfx/n-deserteagle.png" },
-        { WeaponType::NDeagles2, "weapons-gfx/n-deserteagle-2.png" },
-        { WeaponType::DeaglesClip, "weapons-gfx/deserteagle-clip.png" },
-        { WeaponType::DeaglesClip2, "weapons-gfx/deserteagle-clip2.png" },
-        { WeaponType::DeaglesShell, "weapons-gfx/eagles-shell.png" },
-        { WeaponType::DeaglesBullet, "weapons-gfx/eagles-bullet.png" },
-        { WeaponType::DeaglesFire, "weapons-gfx/eagles-fire.png" },
-        { WeaponType::Steyr, "weapons-gfx/steyraug.png" },
-        { WeaponType::Steyr2, "weapons-gfx/steyraug-2.png" },
-        { WeaponType::SteyrClip, "weapons-gfx/steyraug-clip.png" },
-        { WeaponType::SteyrClip2, "weapons-gfx/steyraug-clip2.png" },
-        { WeaponType::SteyrShell, "weapons-gfx/steyraug-shell.png" },
-        { WeaponType::SteyrBullet, "weapons-gfx/steyraug-bullet.png" },
-        { WeaponType::SteyrFire, "weapons-gfx/steyraug-fire.png" },
-        { WeaponType::Barrett, "weapons-gfx/barretm82.png" },
-        { WeaponType::Barrett2, "weapons-gfx/barretm82-2.png" },
-        { WeaponType::BarrettClip, "weapons-gfx/barretm82-clip.png" },
-        { WeaponType::BarrettClip2, "weapons-gfx/barretm82-clip2.png" },
-        { WeaponType::BarrettShell, "weapons-gfx/barretm82-shell.png" },
-        { WeaponType::BarrettBullet, "weapons-gfx/barretm82-bullet.png" },
-        { WeaponType::BarrettFire, "weapons-gfx/barret-fire.png" },
-        { WeaponType::Minigun, "weapons-gfx/minigun.png" },
-        { WeaponType::Minigun2, "weapons-gfx/minigun-2.png" },
-        { WeaponType::MinigunClip, "weapons-gfx/minigun-clip.png" },
-        { WeaponType::MinigunShell, "weapons-gfx/minigun-shell.png" },
-        { WeaponType::MinigunBullet, "weapons-gfx/minigun-bullet.png" },
-        { WeaponType::MinigunFire, "weapons-gfx/minigun-fire.png" },
-        { WeaponType::Socom, "weapons-gfx/colt1911.png" },
-        { WeaponType::Socom2, "weapons-gfx/colt1911-2.png" },
-        { WeaponType::NSocom, "weapons-gfx/n-colt1911.png" },
-        { WeaponType::NSocom2, "weapons-gfx/n-colt1911-2.png" },
-        { WeaponType::SocomClip, "weapons-gfx/colt1911-clip.png" },
-        { WeaponType::SocomClip2, "weapons-gfx/colt1911-clip2.png" },
-        { WeaponType::ColtShell, "weapons-gfx/colt-shell.png" },
-        { WeaponType::ColtBullet, "weapons-gfx/colt-bullet.png" },
-        { WeaponType::SocomFire, "weapons-gfx/colt1911-fire.png" },
-        { WeaponType::Bow, "weapons-gfx/bow.png" },
-        { WeaponType::Bow2, "weapons-gfx/bow-2.png" },
-        { WeaponType::BowS, "weapons-gfx/bow-s.png" },
-        { WeaponType::BowA, "weapons-gfx/bow-a.png" },
-        { WeaponType::NBow, "weapons-gfx/n-bow.png" },
-        { WeaponType::NBow2, "weapons-gfx/n-bow-2.png" },
-        { WeaponType::Arrow, "weapons-gfx/arrow.png" },
-        { WeaponType::BowFire, "weapons-gfx/bow-fire.png" },
-        { WeaponType::Flamer, "weapons-gfx/flamer.png" },
-        { WeaponType::Flamer2, "weapons-gfx/flamer-2.png" },
-        { WeaponType::FlamerFire, "weapons-gfx/flamer-fire.png" },
-        { WeaponType::Knife, "weapons-gfx/knife.png" },
-        { WeaponType::Knife2, "weapons-gfx/knife2.png" },
-        { WeaponType::Chainsaw, "weapons-gfx/chainsaw.png" },
-        { WeaponType::Chainsaw2, "weapons-gfx/chainsaw2.png" },
-        { WeaponType::ChainsawFire, "weapons-gfx/chainsaw-fire.png" },
-        { WeaponType::Law, "weapons-gfx/law.png" },
-        { WeaponType::Law2, "weapons-gfx/law-2.png" },
-        { WeaponType::LawFire, "weapons-gfx/law-fire.png" },
-        { WeaponType::M2, "weapons-gfx/m2.png" },
-        { WeaponType::M22, "weapons-gfx/m2-2.png" },
-        { WeaponType::M2Stat, "weapons-gfx/m2-stat.png" },
+        { WeaponSpriteType::Shell, "weapons-gfx/shell.png" },
+        { WeaponSpriteType::Bullet, "weapons-gfx/bullet.png" },
+        { WeaponSpriteType::Smudge, "weapons-gfx/smudge.png" },
+        { WeaponSpriteType::Missile, "weapons-gfx/missile.png" },
+        { WeaponSpriteType::Cluster, "weapons-gfx/cluster.png" },
+        { WeaponSpriteType::ClusterGrenade, "weapons-gfx/cluster-grenade.png" },
+        { WeaponSpriteType::FragGrenade, "weapons-gfx/frag-grenade.png" },
+        { WeaponSpriteType::Ak74, "weapons-gfx/ak74.png" },
+        { WeaponSpriteType::Ak742, "weapons-gfx/ak74-2.png" },
+        { WeaponSpriteType::Ak74Clip, "weapons-gfx/ak74-clip.png" },
+        { WeaponSpriteType::Ak74Clip2, "weapons-gfx/ak74-clip2.png" },
+        { WeaponSpriteType::Ak74Shell, "weapons-gfx/ak74-shell.png" },
+        { WeaponSpriteType::Ak74Bullet, "weapons-gfx/ak74-bullet.png" },
+        { WeaponSpriteType::Ak74Fire, "weapons-gfx/ak74-fire.png" },
+        { WeaponSpriteType::Minimi, "weapons-gfx/m249.png" },
+        { WeaponSpriteType::Minimi2, "weapons-gfx/m249-2.png" },
+        { WeaponSpriteType::MinimiClip, "weapons-gfx/m249-clip.png" },
+        { WeaponSpriteType::MinimiClip2, "weapons-gfx/m249-clip2.png" },
+        { WeaponSpriteType::MinimiShell, "weapons-gfx/m249-shell.png" },
+        { WeaponSpriteType::MinimiBullet, "weapons-gfx/m249-bullet.png" },
+        { WeaponSpriteType::MinimiFire, "weapons-gfx/m249-fire.png" },
+        { WeaponSpriteType::Ruger, "weapons-gfx/ruger77.png" },
+        { WeaponSpriteType::Ruger2, "weapons-gfx/ruger77-2.png" },
+        { WeaponSpriteType::RugerShell, "weapons-gfx/ruger77-shell.png" },
+        { WeaponSpriteType::RugerBullet, "weapons-gfx/ruger77-bullet.png" },
+        { WeaponSpriteType::RugerFire, "weapons-gfx/ruger77-fire.png" },
+        { WeaponSpriteType::Mp5, "weapons-gfx/mp5.png" },
+        { WeaponSpriteType::Mp52, "weapons-gfx/mp5-2.png" },
+        { WeaponSpriteType::Mp5Clip, "weapons-gfx/mp5-clip.png" },
+        { WeaponSpriteType::Mp5Clip2, "weapons-gfx/mp5-clip2.png" },
+        { WeaponSpriteType::Mp5Shell, "weapons-gfx/mp5-shell.png" },
+        { WeaponSpriteType::Mp5Bullet, "weapons-gfx/mp5-bullet.png" },
+        { WeaponSpriteType::Mp5Fire, "weapons-gfx/mp5-fire.png" },
+        { WeaponSpriteType::Spas, "weapons-gfx/spas12.png" },
+        { WeaponSpriteType::Spas2, "weapons-gfx/spas12-2.png" },
+        { WeaponSpriteType::SpasShell, "weapons-gfx/spas12-shell.png" },
+        { WeaponSpriteType::SpasBullet, "weapons-gfx/spas12-bullet.png" },
+        { WeaponSpriteType::SpasFire, "weapons-gfx/spas12-fire.png" },
+        { WeaponSpriteType::M79, "weapons-gfx/m79.png" },
+        { WeaponSpriteType::M792, "weapons-gfx/m79-2.png" },
+        { WeaponSpriteType::M79Clip, "weapons-gfx/m79-clip.png" },
+        { WeaponSpriteType::M79Clip2, "weapons-gfx/m79-clip2.png" },
+        { WeaponSpriteType::M79Shell, "weapons-gfx/m79-shell.png" },
+        { WeaponSpriteType::M79Bullet, "weapons-gfx/m79-bullet.png" },
+        { WeaponSpriteType::M79Fire, "weapons-gfx/m79-fire.png" },
+        { WeaponSpriteType::Deagles, "weapons-gfx/deserteagle.png" },
+        { WeaponSpriteType::Deagles2, "weapons-gfx/deserteagle-2.png" },
+        { WeaponSpriteType::NDeagles, "weapons-gfx/n-deserteagle.png" },
+        { WeaponSpriteType::NDeagles2, "weapons-gfx/n-deserteagle-2.png" },
+        { WeaponSpriteType::DeaglesClip, "weapons-gfx/deserteagle-clip.png" },
+        { WeaponSpriteType::DeaglesClip2, "weapons-gfx/deserteagle-clip2.png" },
+        { WeaponSpriteType::DeaglesShell, "weapons-gfx/eagles-shell.png" },
+        { WeaponSpriteType::DeaglesBullet, "weapons-gfx/eagles-bullet.png" },
+        { WeaponSpriteType::DeaglesFire, "weapons-gfx/eagles-fire.png" },
+        { WeaponSpriteType::Steyr, "weapons-gfx/steyraug.png" },
+        { WeaponSpriteType::Steyr2, "weapons-gfx/steyraug-2.png" },
+        { WeaponSpriteType::SteyrClip, "weapons-gfx/steyraug-clip.png" },
+        { WeaponSpriteType::SteyrClip2, "weapons-gfx/steyraug-clip2.png" },
+        { WeaponSpriteType::SteyrShell, "weapons-gfx/steyraug-shell.png" },
+        { WeaponSpriteType::SteyrBullet, "weapons-gfx/steyraug-bullet.png" },
+        { WeaponSpriteType::SteyrFire, "weapons-gfx/steyraug-fire.png" },
+        { WeaponSpriteType::Barrett, "weapons-gfx/barretm82.png" },
+        { WeaponSpriteType::Barrett2, "weapons-gfx/barretm82-2.png" },
+        { WeaponSpriteType::BarrettClip, "weapons-gfx/barretm82-clip.png" },
+        { WeaponSpriteType::BarrettClip2, "weapons-gfx/barretm82-clip2.png" },
+        { WeaponSpriteType::BarrettShell, "weapons-gfx/barretm82-shell.png" },
+        { WeaponSpriteType::BarrettBullet, "weapons-gfx/barretm82-bullet.png" },
+        { WeaponSpriteType::BarrettFire, "weapons-gfx/barret-fire.png" },
+        { WeaponSpriteType::Minigun, "weapons-gfx/minigun.png" },
+        { WeaponSpriteType::Minigun2, "weapons-gfx/minigun-2.png" },
+        { WeaponSpriteType::MinigunClip, "weapons-gfx/minigun-clip.png" },
+        { WeaponSpriteType::MinigunShell, "weapons-gfx/minigun-shell.png" },
+        { WeaponSpriteType::MinigunBullet, "weapons-gfx/minigun-bullet.png" },
+        { WeaponSpriteType::MinigunFire, "weapons-gfx/minigun-fire.png" },
+        { WeaponSpriteType::Socom, "weapons-gfx/colt1911.png" },
+        { WeaponSpriteType::Socom2, "weapons-gfx/colt1911-2.png" },
+        { WeaponSpriteType::NSocom, "weapons-gfx/n-colt1911.png" },
+        { WeaponSpriteType::NSocom2, "weapons-gfx/n-colt1911-2.png" },
+        { WeaponSpriteType::SocomClip, "weapons-gfx/colt1911-clip.png" },
+        { WeaponSpriteType::SocomClip2, "weapons-gfx/colt1911-clip2.png" },
+        { WeaponSpriteType::ColtShell, "weapons-gfx/colt-shell.png" },
+        { WeaponSpriteType::ColtBullet, "weapons-gfx/colt-bullet.png" },
+        { WeaponSpriteType::SocomFire, "weapons-gfx/colt1911-fire.png" },
+        { WeaponSpriteType::Bow, "weapons-gfx/bow.png" },
+        { WeaponSpriteType::Bow2, "weapons-gfx/bow-2.png" },
+        { WeaponSpriteType::BowS, "weapons-gfx/bow-s.png" },
+        { WeaponSpriteType::BowA, "weapons-gfx/bow-a.png" },
+        { WeaponSpriteType::NBow, "weapons-gfx/n-bow.png" },
+        { WeaponSpriteType::NBow2, "weapons-gfx/n-bow-2.png" },
+        { WeaponSpriteType::Arrow, "weapons-gfx/arrow.png" },
+        { WeaponSpriteType::BowFire, "weapons-gfx/bow-fire.png" },
+        { WeaponSpriteType::Flamer, "weapons-gfx/flamer.png" },
+        { WeaponSpriteType::Flamer2, "weapons-gfx/flamer-2.png" },
+        { WeaponSpriteType::FlamerFire, "weapons-gfx/flamer-fire.png" },
+        { WeaponSpriteType::Knife, "weapons-gfx/knife.png" },
+        { WeaponSpriteType::Knife2, "weapons-gfx/knife2.png" },
+        { WeaponSpriteType::Chainsaw, "weapons-gfx/chainsaw.png" },
+        { WeaponSpriteType::Chainsaw2, "weapons-gfx/chainsaw2.png" },
+        { WeaponSpriteType::ChainsawFire, "weapons-gfx/chainsaw-fire.png" },
+        { WeaponSpriteType::Law, "weapons-gfx/law.png" },
+        { WeaponSpriteType::Law2, "weapons-gfx/law-2.png" },
+        { WeaponSpriteType::LawFire, "weapons-gfx/law-fire.png" },
+        { WeaponSpriteType::M2, "weapons-gfx/m2.png" },
+        { WeaponSpriteType::M22, "weapons-gfx/m2-2.png" },
+        { WeaponSpriteType::M2Stat, "weapons-gfx/m2-stat.png" },
     };
 
     std::ranges::for_each(
@@ -258,137 +258,137 @@ SpriteManager::SpriteManager()
       });
 
     // clang-format off
-    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponType::Deagles, nullptr);
-    AddSprite(SoldierPartSecondaryWeaponType::Mp5, WeaponType::Mp5, WeaponType::Mp52, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Ak74, WeaponType::Ak74, WeaponType::Ak742, {5, 10}, {0.300, 0.250}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Steyr, WeaponType::Steyr, WeaponType::Steyr2, {5, 10}, {0.300, 0.500}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Spas, WeaponType::Spas, WeaponType::Spas2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Ruger, WeaponType::Ruger, WeaponType::Ruger2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::M79, WeaponType::M79, WeaponType::M792, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Barrett, WeaponType::Barrett, WeaponType::Barrett2, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Minimi, WeaponType::Minimi, WeaponType::Minimi2, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Minigun, WeaponType::Minigun, WeaponType::Minigun2, {5, 10}, {0.200, 0.500}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponType::Socom, nullptr);
-    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponType::Knife, nullptr);
-    AddSprite(SoldierPartSecondaryWeaponType::Chainsaw, WeaponType::Chainsaw, WeaponType::Chainsaw2, {5, 10}, {0.250, 0.500}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartSecondaryWeaponType::Law, WeaponType::Law, WeaponType::Law2, {5, 10}, {0.300, 0.450}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponType::Flamebow, nullptr);
-    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponType::Bow, nullptr);
-    AddSprite(SoldierPartSecondaryWeaponType::Flamer, WeaponType::Flamer, WeaponType::Flamer2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Udo, SoldierPartType::Udo, SoldierPartType::Udo2, {6, 3}, {0.200, 0.500}, true, true, 5.0, SoldierColor::Pants, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyUdo, SoldierPartType::Udo, SoldierPartType::Udo2, {6, 3}, {0.200, 0.500}, false, true, 5.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Stopa, SoldierPartType::Stopa, SoldierPartType::Stopa2, {2, 18}, {0.350, 0.350}, true, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Lecistopa, SoldierPartType::Lecistopa, SoldierPartType::Lecistopa2, {2, 18}, {0.350, 0.350}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Noga, SoldierPartType::Noga, SoldierPartType::Noga2, {3, 2}, {0.150, 0.550}, true, true, 0.0, SoldierColor::Pants, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyNoga, SoldierPartType::Noga, SoldierPartType::Noga2, {3, 2}, {0.150, 0.550}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Ramie, SoldierPartType::Ramie, SoldierPartType::Ramie2, {11, 14}, {0.000, 0.500}, true, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyRamie, SoldierPartType::Ramie, SoldierPartType::Ramie2, {11, 14}, {0.000, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Reka, SoldierPartType::Reka, std::nullopt, {14, 15}, {0.000, 0.500}, true, true, 5.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyReka, SoldierPartType::Reka, SoldierPartType::Reka2, {14, 15}, {0.000, 0.500}, false, true, 5.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Dlon, SoldierPartType::Dlon, SoldierPartType::Dlon2, {15, 19}, {0.000, 0.400}, true, true, 0.0, SoldierColor::Skin, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Helm, SoldierPartType::Helm, SoldierPartType::Helm2, {15, 19}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Kap, SoldierPartType::Kap, SoldierPartType::Kap2, {15, 19}, {0.100, 0.400}, false, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Udo, SoldierPartType::Udo, SoldierPartType::Udo2, {5, 4}, {0.200, 0.650}, true, true, 5.0, SoldierColor::Pants, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyUdo, SoldierPartType::Udo, SoldierPartType::Udo2, {5, 4}, {0.200, 0.650}, false, true, 5.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Stopa, SoldierPartType::Stopa, SoldierPartType::Stopa2, {1, 17}, {0.350, 0.350}, true, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Lecistopa, SoldierPartType::Lecistopa, SoldierPartType::Lecistopa2, {1, 17}, {0.350, 0.350}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Noga, SoldierPartType::Noga, SoldierPartType::Noga2, {4, 1}, {0.150, 0.550}, true, true, 0.0, SoldierColor::Pants, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyNoga, SoldierPartType::Noga, SoldierPartType::Noga2, {4, 1}, {0.150, 0.550}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Klata, SoldierPartType::Klata, SoldierPartType::Klata2, {10, 11}, {0.100, 0.300}, true, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Kamizelka, SoldierPartType::Kamizelka, SoldierPartType::Kamizelka2, {10, 11}, {0.100, 0.300}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyKlata, SoldierPartType::Klata, SoldierPartType::Klata2, {10, 11}, {0.100, 0.300}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Biodro, SoldierPartType::Biodro, SoldierPartType::Biodro2, {5, 6}, {0.250, 0.600}, true, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyBiodro, SoldierPartType::Biodro, SoldierPartType::Biodro2, {5, 6}, {0.250, 0.600}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Morda, SoldierPartType::Morda, SoldierPartType::Morda2, {9, 12}, {0.000, 0.500}, true, true, 0.0, SoldierColor::Skin, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyMorda, SoldierPartType::Morda, SoldierPartType::Morda2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Headblood, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Morda, SoldierPartType::Morda, SoldierPartType::Morda2, {9, 12}, {0.500, 0.500}, false, true, 0.0, SoldierColor::Skin, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyMorda, SoldierPartType::Morda, SoldierPartType::Morda2, {9, 12}, {0.500, 0.500}, false, true, 0.0, SoldierColor::Headblood, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Hair3, SoldierPartType::Hair3, SoldierPartType::Hair32, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Helm, SoldierPartType::Helm, SoldierPartType::Helm2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Kap, SoldierPartType::Kap, SoldierPartType::Kap2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Badge, SoldierPartType::Badge, SoldierPartType::Badge2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Hair1, SoldierPartType::Hair1, SoldierPartType::Hair12, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Dred, SoldierPartType::Dred, std::nullopt, {23, 24}, {0.000, 1.220}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Dred, SoldierPartType::Dred, std::nullopt, {23, 24}, {0.100, 0.500}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Dred, SoldierPartType::Dred, std::nullopt, {23, 24}, {0.040, -0.300}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Dred, SoldierPartType::Dred, std::nullopt, {23, 24}, {0.000, -0.900}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Dred, SoldierPartType::Dred, std::nullopt, {23, 24}, {-0.200, -1.350}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Hair2, SoldierPartType::Hair2, SoldierPartType::Hair22, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Hair4, SoldierPartType::Hair4, SoldierPartType::Hair42, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierColor::Hair, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Cygaro, SoldierPartType::Cygaro, SoldierPartType::Cygaro2, {9, 12}, {-0.125, 0.400}, false, true, 0.0, SoldierColor::Cygar, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Lancuch, SoldierPartType::Lancuch, std::nullopt, {10, 22}, {0.100, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Lancuch, SoldierPartType::Lancuch, std::nullopt, {11, 22}, {0.100, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Metal, SoldierPartType::Metal, SoldierPartType::Metal2, {22, 21}, {0.500, 0.700}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Zlotylancuch, SoldierPartType::Zlotylancuch, std::nullopt, {10, 22}, {0.100, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Zlotylancuch, SoldierPartType::Zlotylancuch, std::nullopt, {11, 22}, {0.100, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::Zloto, SoldierPartType::Zloto, SoldierPartType::Zloto2, {22, 21}, {0.500, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Base);
-    AddSprite(SoldierPartTertiaryWeaponType::FragGrenade1, WeaponType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::FragGrenade2, WeaponType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::FragGrenade3, WeaponType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::FragGrenade4, WeaponType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::FragGrenade5, WeaponType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::ClusterGrenade1, WeaponType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::ClusterGrenade2, WeaponType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::ClusterGrenade3, WeaponType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::ClusterGrenade4, WeaponType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartTertiaryWeaponType::ClusterGrenade5, WeaponType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Nades);
-    AddSprite(SoldierPartPrimaryWeaponType::Deagles, WeaponType::Deagles, WeaponType::Deagles2, {16, 15}, { 0.100,  0.800}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::DeaglesClip, WeaponType::DeaglesClip, WeaponType::DeaglesClip2, {16, 15}, { 0.100,  0.800}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::DeaglesFire, WeaponType::DeaglesFire, std::nullopt, {16, 15}, {-0.500,  1.000}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Mp5, WeaponType::Mp5, WeaponType::Mp52, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Mp5Clip, WeaponType::Mp5Clip, WeaponType::Mp5Clip2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Mp5Fire, WeaponType::Mp5Fire, std::nullopt, {16, 15}, { -0.65,  0.850}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Ak74, WeaponType::Ak74, WeaponType::Ak742, {16, 15}, { 0.150,  0.500}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Ak74Clip, WeaponType::Ak74Clip, WeaponType::Ak74Clip2, {16, 15}, { 0.150,  0.500}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Ak74Fire, WeaponType::Ak74Fire, std::nullopt, {16, 15}, { -0.37,  0.800}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Steyr, WeaponType::Steyr, WeaponType::Steyr2, {16, 15}, { 0.200,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::SteyrClip, WeaponType::SteyrClip, WeaponType::SteyrClip2, {16, 15}, { 0.200,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::SteyrFire, WeaponType::SteyrFire, std::nullopt, {16, 15}, { -0.24,  0.750}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Spas, WeaponType::Spas, WeaponType::Spas2, {16, 15}, { 0.100,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::SpasClip, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::SpasFire, WeaponType::SpasFire, std::nullopt, {16, 15}, {-0.200,  0.900}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Ruger, WeaponType::Ruger, WeaponType::Ruger2, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::RugerClip, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::RugerFire, WeaponType::RugerFire, std::nullopt, {16, 15}, { -0.35,  0.850}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::M79, WeaponType::M79, WeaponType::M792, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::M79Clip, WeaponType::M79Clip, WeaponType::M79Clip2, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::M79Fire, WeaponType::M79Fire, std::nullopt, {16, 15}, {-0.400,  0.800}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Barrett, WeaponType::Barrett, WeaponType::Barrett2, {16, 15}, { 0.150,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BarrettClip, WeaponType::BarrettClip, WeaponType::BarrettClip2, {16, 15}, { 0.150,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BarrettFire, WeaponType::BarrettFire, std::nullopt, {16, 15}, { -0.15,  0.800}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Minimi, WeaponType::Minimi, WeaponType::Minimi2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::MinimiClip, WeaponType::MinimiClip, WeaponType::MinimiClip2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::MinimiFire, WeaponType::MinimiFire, std::nullopt, {16, 15}, {-0.200,  0.900}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::MinigunClip, WeaponType::MinigunClip, std::nullopt, { 8,  7}, { 0.500,  0.100}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Minigun, WeaponType::Minigun, WeaponType::Minigun2, {16, 15}, { 0.050,  0.500}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::MinigunFire, WeaponType::MinigunFire, std::nullopt, {16, 15}, {-0.200,  0.450}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Socom, WeaponType::Socom, WeaponType::Socom2, {16, 15}, { 0.200,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::SocomClip, WeaponType::SocomClip, WeaponType::SocomClip2, {16, 15}, { 0.200,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::SocomFire, WeaponType::SocomFire, std::nullopt, {16, 15}, { -0.24,  0.850}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Knife, WeaponType::Knife, WeaponType::Knife2, {16, 20}, {-0.100,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::KnifeClip, nullptr);
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::KnifeFire, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::Chainsaw, WeaponType::Chainsaw, WeaponType::Chainsaw2, {16, 15}, { 0.100,  0.500}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::ChainsawClip, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::ChainsawFire, WeaponType::ChainsawFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Law, WeaponType::Law, WeaponType::Law2, {16, 15}, { 0.100,  0.600}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::LawClip, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::LawFire, WeaponType::LawFire, std::nullopt, {16, 15}, {-0.100,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Bow, WeaponType::Bow, WeaponType::Bow2, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowArrow, WeaponType::BowA, std::nullopt, {16, 15}, { 0.000,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowString, WeaponType::BowS, std::nullopt, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowReload, WeaponType::Bow, WeaponType::Bow2, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowArrowReload, WeaponType::Arrow, std::nullopt, {16, 20}, { 0.000,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowStringReload, WeaponType::BowS, std::nullopt, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::BowFire, WeaponType::BowFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartPrimaryWeaponType::Flamer, WeaponType::Flamer, WeaponType::Flamer2, {16, 15}, { 0.200,  0.700}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponType::FlamerClip, nullptr);
-    AddSprite(SoldierPartPrimaryWeaponType::FlamerFire, WeaponType::FlamerFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierColor::None, SoldierAlpha::Base );
-    AddSprite(SoldierPartType::Ramie, SoldierPartType::Ramie, SoldierPartType::Ramie2, {10, 13}, {0.000, 0.600}, true, true, 0.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyRamie, SoldierPartType::Ramie, SoldierPartType::Ramie2, {10, 13}, {-0.100, 0.500}, false, true, 0.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Reka, SoldierPartType::Reka, std::nullopt, {13, 16}, {0.000, 0.600}, true, true, 5.0, SoldierColor::Main, SoldierAlpha::Base);
-    AddSprite(SoldierPartType::RannyReka, SoldierPartType::Reka, SoldierPartType::Reka2, {13, 16}, {0.000, 0.600}, false, true, 5.0, SoldierColor::None, SoldierAlpha::Blood);
-    AddSprite(SoldierPartType::Dlon, SoldierPartType::Dlon, SoldierPartType::Dlon2, {16, 20}, {0.000, 0.500}, true, true, 0.0, SoldierColor::Skin, SoldierAlpha::Base);
+    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponSpriteType::Deagles, nullptr);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Mp5, WeaponSpriteType::Mp5, WeaponSpriteType::Mp52, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Ak74, WeaponSpriteType::Ak74, WeaponSpriteType::Ak742, {5, 10}, {0.300, 0.250}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Steyr, WeaponSpriteType::Steyr, WeaponSpriteType::Steyr2, {5, 10}, {0.300, 0.500}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Spas, WeaponSpriteType::Spas, WeaponSpriteType::Spas2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Ruger, WeaponSpriteType::Ruger, WeaponSpriteType::Ruger2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::M79, WeaponSpriteType::M79, WeaponSpriteType::M792, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Barrett, WeaponSpriteType::Barrett, WeaponSpriteType::Barrett2, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Minimi, WeaponSpriteType::Minimi, WeaponSpriteType::Minimi2, {5, 10}, {0.300, 0.350}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Minigun, WeaponSpriteType::Minigun, WeaponSpriteType::Minigun2, {5, 10}, {0.200, 0.500}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponSpriteType::Socom, nullptr);
+    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponSpriteType::Knife, nullptr);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Chainsaw, WeaponSpriteType::Chainsaw, WeaponSpriteType::Chainsaw2, {5, 10}, {0.250, 0.500}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Law, WeaponSpriteType::Law, WeaponSpriteType::Law2, {5, 10}, {0.300, 0.450}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponSpriteType::Flamebow, nullptr);
+    soldier_part_type_to_data_.emplace_back(SoldierPartSecondaryWeaponSpriteType::Bow, nullptr);
+    AddSprite(SoldierPartSecondaryWeaponSpriteType::Flamer, WeaponSpriteType::Flamer, WeaponSpriteType::Flamer2, {5, 10}, {0.300, 0.300}, false, false, 0.0F, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo2, {6, 3}, {0.200, 0.500}, true, true, 5.0, SoldierSpriteColor::Pants, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyUdo, SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo2, {6, 3}, {0.200, 0.500}, false, true, 5.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Stopa, SoldierPartSpriteType::Stopa, SoldierPartSpriteType::Stopa2, {2, 18}, {0.350, 0.350}, true, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Lecistopa, SoldierPartSpriteType::Lecistopa, SoldierPartSpriteType::Lecistopa2, {2, 18}, {0.350, 0.350}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga2, {3, 2}, {0.150, 0.550}, true, true, 0.0, SoldierSpriteColor::Pants, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyNoga, SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga2, {3, 2}, {0.150, 0.550}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie2, {11, 14}, {0.000, 0.500}, true, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyRamie, SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie2, {11, 14}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Reka, SoldierPartSpriteType::Reka, std::nullopt, {14, 15}, {0.000, 0.500}, true, true, 5.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyReka, SoldierPartSpriteType::Reka, SoldierPartSpriteType::Reka2, {14, 15}, {0.000, 0.500}, false, true, 5.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon2, {15, 19}, {0.000, 0.400}, true, true, 0.0, SoldierSpriteColor::Skin, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Helm, SoldierPartSpriteType::Helm, SoldierPartSpriteType::Helm2, {15, 19}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Kap, SoldierPartSpriteType::Kap, SoldierPartSpriteType::Kap2, {15, 19}, {0.100, 0.400}, false, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo2, {5, 4}, {0.200, 0.650}, true, true, 5.0, SoldierSpriteColor::Pants, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyUdo, SoldierPartSpriteType::Udo, SoldierPartSpriteType::Udo2, {5, 4}, {0.200, 0.650}, false, true, 5.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Stopa, SoldierPartSpriteType::Stopa, SoldierPartSpriteType::Stopa2, {1, 17}, {0.350, 0.350}, true, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Lecistopa, SoldierPartSpriteType::Lecistopa, SoldierPartSpriteType::Lecistopa2, {1, 17}, {0.350, 0.350}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga2, {4, 1}, {0.150, 0.550}, true, true, 0.0, SoldierSpriteColor::Pants, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyNoga, SoldierPartSpriteType::Noga, SoldierPartSpriteType::Noga2, {4, 1}, {0.150, 0.550}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Klata, SoldierPartSpriteType::Klata, SoldierPartSpriteType::Klata2, {10, 11}, {0.100, 0.300}, true, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Kamizelka, SoldierPartSpriteType::Kamizelka, SoldierPartSpriteType::Kamizelka2, {10, 11}, {0.100, 0.300}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyKlata, SoldierPartSpriteType::Klata, SoldierPartSpriteType::Klata2, {10, 11}, {0.100, 0.300}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Biodro, SoldierPartSpriteType::Biodro, SoldierPartSpriteType::Biodro2, {5, 6}, {0.250, 0.600}, true, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyBiodro, SoldierPartSpriteType::Biodro, SoldierPartSpriteType::Biodro2, {5, 6}, {0.250, 0.600}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda2, {9, 12}, {0.000, 0.500}, true, true, 0.0, SoldierSpriteColor::Skin, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyMorda, SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Headblood, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda2, {9, 12}, {0.500, 0.500}, false, true, 0.0, SoldierSpriteColor::Skin, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyMorda, SoldierPartSpriteType::Morda, SoldierPartSpriteType::Morda2, {9, 12}, {0.500, 0.500}, false, true, 0.0, SoldierSpriteColor::Headblood, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Hair3, SoldierPartSpriteType::Hair3, SoldierPartSpriteType::Hair32, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Helm, SoldierPartSpriteType::Helm, SoldierPartSpriteType::Helm2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Kap, SoldierPartSpriteType::Kap, SoldierPartSpriteType::Kap2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Badge, SoldierPartSpriteType::Badge, SoldierPartSpriteType::Badge2, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Hair1, SoldierPartSpriteType::Hair1, SoldierPartSpriteType::Hair12, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Dred, SoldierPartSpriteType::Dred, std::nullopt, {23, 24}, {0.000, 1.220}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Dred, SoldierPartSpriteType::Dred, std::nullopt, {23, 24}, {0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Dred, SoldierPartSpriteType::Dred, std::nullopt, {23, 24}, {0.040, -0.300}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Dred, SoldierPartSpriteType::Dred, std::nullopt, {23, 24}, {0.000, -0.900}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Dred, SoldierPartSpriteType::Dred, std::nullopt, {23, 24}, {-0.200, -1.350}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Hair2, SoldierPartSpriteType::Hair2, SoldierPartSpriteType::Hair22, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Hair4, SoldierPartSpriteType::Hair4, SoldierPartSpriteType::Hair42, {9, 12}, {0.000, 0.500}, false, true, 0.0, SoldierSpriteColor::Hair, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Cygaro, SoldierPartSpriteType::Cygaro, SoldierPartSpriteType::Cygaro2, {9, 12}, {-0.125, 0.400}, false, true, 0.0, SoldierSpriteColor::Cygar, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Lancuch, SoldierPartSpriteType::Lancuch, std::nullopt, {10, 22}, {0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Lancuch, SoldierPartSpriteType::Lancuch, std::nullopt, {11, 22}, {0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Metal, SoldierPartSpriteType::Metal, SoldierPartSpriteType::Metal2, {22, 21}, {0.500, 0.700}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Zlotylancuch, SoldierPartSpriteType::Zlotylancuch, std::nullopt, {10, 22}, {0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Zlotylancuch, SoldierPartSpriteType::Zlotylancuch, std::nullopt, {11, 22}, {0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::Zloto, SoldierPartSpriteType::Zloto, SoldierPartSpriteType::Zloto2, {22, 21}, {0.500, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::FragGrenade1, WeaponSpriteType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::FragGrenade2, WeaponSpriteType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::FragGrenade3, WeaponSpriteType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::FragGrenade4, WeaponSpriteType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::FragGrenade5, WeaponSpriteType::FragGrenade, std::nullopt, { 5,  6}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::ClusterGrenade1, WeaponSpriteType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::ClusterGrenade2, WeaponSpriteType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::ClusterGrenade3, WeaponSpriteType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::ClusterGrenade4, WeaponSpriteType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartTertiaryWeaponSpriteType::ClusterGrenade5, WeaponSpriteType::ClusterGrenade, std::nullopt, { 5,  6}, { 0.500,  0.300}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Nades);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Deagles, WeaponSpriteType::Deagles, WeaponSpriteType::Deagles2, {16, 15}, { 0.100,  0.800}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::DeaglesClip, WeaponSpriteType::DeaglesClip, WeaponSpriteType::DeaglesClip2, {16, 15}, { 0.100,  0.800}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::DeaglesFire, WeaponSpriteType::DeaglesFire, std::nullopt, {16, 15}, {-0.500,  1.000}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Mp5, WeaponSpriteType::Mp5, WeaponSpriteType::Mp52, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Mp5Clip, WeaponSpriteType::Mp5Clip, WeaponSpriteType::Mp5Clip2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Mp5Fire, WeaponSpriteType::Mp5Fire, std::nullopt, {16, 15}, { -0.65,  0.850}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Ak74, WeaponSpriteType::Ak74, WeaponSpriteType::Ak742, {16, 15}, { 0.150,  0.500}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Ak74Clip, WeaponSpriteType::Ak74Clip, WeaponSpriteType::Ak74Clip2, {16, 15}, { 0.150,  0.500}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Ak74Fire, WeaponSpriteType::Ak74Fire, std::nullopt, {16, 15}, { -0.37,  0.800}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Steyr, WeaponSpriteType::Steyr, WeaponSpriteType::Steyr2, {16, 15}, { 0.200,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::SteyrClip, WeaponSpriteType::SteyrClip, WeaponSpriteType::SteyrClip2, {16, 15}, { 0.200,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::SteyrFire, WeaponSpriteType::SteyrFire, std::nullopt, {16, 15}, { -0.24,  0.750}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Spas, WeaponSpriteType::Spas, WeaponSpriteType::Spas2, {16, 15}, { 0.100,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::SpasClip, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::SpasFire, WeaponSpriteType::SpasFire, std::nullopt, {16, 15}, {-0.200,  0.900}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Ruger, WeaponSpriteType::Ruger, WeaponSpriteType::Ruger2, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::RugerClip, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::RugerFire, WeaponSpriteType::RugerFire, std::nullopt, {16, 15}, { -0.35,  0.850}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::M79, WeaponSpriteType::M79, WeaponSpriteType::M792, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::M79Clip, WeaponSpriteType::M79Clip, WeaponSpriteType::M79Clip2, {16, 15}, { 0.100,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::M79Fire, WeaponSpriteType::M79Fire, std::nullopt, {16, 15}, {-0.400,  0.800}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Barrett, WeaponSpriteType::Barrett, WeaponSpriteType::Barrett2, {16, 15}, { 0.150,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BarrettClip, WeaponSpriteType::BarrettClip, WeaponSpriteType::BarrettClip2, {16, 15}, { 0.150,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BarrettFire, WeaponSpriteType::BarrettFire, std::nullopt, {16, 15}, { -0.15,  0.800}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Minimi, WeaponSpriteType::Minimi, WeaponSpriteType::Minimi2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::MinimiClip, WeaponSpriteType::MinimiClip, WeaponSpriteType::MinimiClip2, {16, 15}, { 0.150,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::MinimiFire, WeaponSpriteType::MinimiFire, std::nullopt, {16, 15}, {-0.200,  0.900}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::MinigunClip, WeaponSpriteType::MinigunClip, std::nullopt, { 8,  7}, { 0.500,  0.100}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Minigun, WeaponSpriteType::Minigun, WeaponSpriteType::Minigun2, {16, 15}, { 0.050,  0.500}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::MinigunFire, WeaponSpriteType::MinigunFire, std::nullopt, {16, 15}, {-0.200,  0.450}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Socom, WeaponSpriteType::Socom, WeaponSpriteType::Socom2, {16, 15}, { 0.200,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::SocomClip, WeaponSpriteType::SocomClip, WeaponSpriteType::SocomClip2, {16, 15}, { 0.200,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::SocomFire, WeaponSpriteType::SocomFire, std::nullopt, {16, 15}, { -0.24,  0.850}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Knife, WeaponSpriteType::Knife, WeaponSpriteType::Knife2, {16, 20}, {-0.100,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::KnifeClip, nullptr);
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::KnifeFire, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Chainsaw, WeaponSpriteType::Chainsaw, WeaponSpriteType::Chainsaw2, {16, 15}, { 0.100,  0.500}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::ChainsawClip, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::ChainsawFire, WeaponSpriteType::ChainsawFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Law, WeaponSpriteType::Law, WeaponSpriteType::Law2, {16, 15}, { 0.100,  0.600}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::LawClip, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::LawFire, WeaponSpriteType::LawFire, std::nullopt, {16, 15}, {-0.100,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Bow, WeaponSpriteType::Bow, WeaponSpriteType::Bow2, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowArrow, WeaponSpriteType::BowA, std::nullopt, {16, 15}, { 0.000,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowString, WeaponSpriteType::BowS, std::nullopt, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowReload, WeaponSpriteType::Bow, WeaponSpriteType::Bow2, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowArrowReload, WeaponSpriteType::Arrow, std::nullopt, {16, 20}, { 0.000,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowStringReload, WeaponSpriteType::BowS, std::nullopt, {16, 15}, {-0.400,  0.550}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::BowFire, WeaponSpriteType::BowFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::Flamer, WeaponSpriteType::Flamer, WeaponSpriteType::Flamer2, {16, 15}, { 0.200,  0.700}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    soldier_part_type_to_data_.emplace_back(SoldierPartPrimaryWeaponSpriteType::FlamerClip, nullptr);
+    AddSprite(SoldierPartPrimaryWeaponSpriteType::FlamerFire, WeaponSpriteType::FlamerFire, std::nullopt, {16, 15}, { 0.000,  0.000}, false, false, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Base );
+    AddSprite(SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie2, {10, 13}, {0.000, 0.600}, true, true, 0.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyRamie, SoldierPartSpriteType::Ramie, SoldierPartSpriteType::Ramie2, {10, 13}, {-0.100, 0.500}, false, true, 0.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Reka, SoldierPartSpriteType::Reka, std::nullopt, {13, 16}, {0.000, 0.600}, true, true, 5.0, SoldierSpriteColor::Main, SoldierSpriteAlpha::Base);
+    AddSprite(SoldierPartSpriteType::RannyReka, SoldierPartSpriteType::Reka, SoldierPartSpriteType::Reka2, {13, 16}, {0.000, 0.600}, false, true, 5.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
+    AddSprite(SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon2, {16, 20}, {0.000, 0.500}, true, true, 0.0, SoldierSpriteColor::Skin, SoldierSpriteAlpha::Base);
     // clang-format on
     std::cout << "Loaded " << soldier_part_type_to_data_.size() << " soldier part sprites"
               << std::endl;
@@ -409,8 +409,8 @@ void SpriteManager::AddSprite(TSoldierPartSpriteKey soldier_part_sprite_key,
                               bool visible,
                               bool team,
                               float flexibility,
-                              SoldierColor color,
-                              SoldierAlpha alpha)
+                              SoldierSpriteColor color,
+                              SoldierSpriteAlpha alpha)
 {
     std::optional<Texture::TextureData> flipped_sprite_texture_data = std::nullopt;
     if (flipped_sprite_key) {
@@ -433,10 +433,10 @@ const SoldierPartData* SpriteManager::GetSoldierPartData(unsigned int id) const
 {
     return soldier_part_type_to_data_[id].second.get();
 }
-std::variant<SoldierPartType,
-             SoldierPartPrimaryWeaponType,
-             SoldierPartSecondaryWeaponType,
-             SoldierPartTertiaryWeaponType>
+std::variant<SoldierPartSpriteType,
+             SoldierPartPrimaryWeaponSpriteType,
+             SoldierPartSecondaryWeaponSpriteType,
+             SoldierPartTertiaryWeaponSpriteType>
 SpriteManager::GetSoldierPartDataType(unsigned int id) const
 {
     return soldier_part_type_to_data_[id].first;
@@ -444,5 +444,96 @@ SpriteManager::GetSoldierPartDataType(unsigned int id) const
 unsigned int SpriteManager::GetSoldierPartCount() const
 {
     return soldier_part_type_to_data_.size();
+}
+
+Texture::TextureData SpriteManager::GetBulletTexture(WeaponSpriteType weapon_sprite_type) const
+{
+    return all_sprites_.at(weapon_sprite_type);
+}
+
+Texture::TextureData SpriteManager::GetBulletTexture(const Bullet& bullet) const
+{
+    auto bullet_style = bullet.style;
+    auto weapon_kind = bullet.weapon;
+
+    switch (bullet_style) {
+        case BulletType::Bullet: {
+            switch (weapon_kind) {
+                case Soldat::WeaponType::DesertEagles:
+                    return all_sprites_.at(WeaponSpriteType::DeaglesBullet);
+                case Soldat::WeaponType::MP5:
+                    return all_sprites_.at(WeaponSpriteType::Mp5Bullet);
+                case Soldat::WeaponType::Ak74:
+                    return all_sprites_.at(WeaponSpriteType::Ak74Bullet);
+                case Soldat::WeaponType::SteyrAUG:
+                    return all_sprites_.at(WeaponSpriteType::SteyrBullet);
+                case Soldat::WeaponType::Spas12:
+                    return all_sprites_.at(WeaponSpriteType::SpasBullet);
+                case Soldat::WeaponType::Ruger77:
+                    return all_sprites_.at(WeaponSpriteType::RugerBullet);
+                case Soldat::WeaponType::M79:
+                    return all_sprites_.at(WeaponSpriteType::M79Bullet);
+                case Soldat::WeaponType::Barrett:
+                    return all_sprites_.at(WeaponSpriteType::BarrettBullet);
+                case Soldat::WeaponType::Minimi:
+                    return all_sprites_.at(WeaponSpriteType::MinimiBullet);
+                case Soldat::WeaponType::Minigun:
+                    return all_sprites_.at(WeaponSpriteType::MinigunBullet);
+                case Soldat::WeaponType::USSOCOM:
+                    return all_sprites_.at(WeaponSpriteType::ColtBullet);
+                case Soldat::WeaponType::Knife:
+                    return all_sprites_.at(WeaponSpriteType::Knife); // TODO
+                case Soldat::WeaponType::Chainsaw:
+                    return all_sprites_.at(WeaponSpriteType::Chainsaw); // TODO
+                case Soldat::WeaponType::LAW:
+                    return all_sprites_.at(WeaponSpriteType::Law); // TODO
+                case Soldat::WeaponType::FlameBow:
+                    return all_sprites_.at(WeaponSpriteType::Arrow); // TODO
+                case Soldat::WeaponType::Bow:
+                    return all_sprites_.at(WeaponSpriteType::Arrow); // TODO
+                case Soldat::WeaponType::Flamer:
+                    return all_sprites_.at(WeaponSpriteType::Flamer); // TODO
+                case Soldat::WeaponType::M2:
+                    return all_sprites_.at(WeaponSpriteType::M2); // TODO
+                case Soldat::WeaponType::NoWeapon:
+                    return all_sprites_.at(WeaponSpriteType::Bullet); // TODO
+                case Soldat::WeaponType::FragGrenade:
+                    return all_sprites_.at(WeaponSpriteType::FragGrenade); // TODO
+                case Soldat::WeaponType::ClusterGrenade:
+                    return all_sprites_.at(WeaponSpriteType::ClusterGrenade); // TODO
+                case Soldat::WeaponType::Cluster:
+                    return all_sprites_.at(WeaponSpriteType::Cluster); // TODO
+                case Soldat::WeaponType::ThrownKnife:
+                    return all_sprites_.at(WeaponSpriteType::Knife); // TODO
+            }
+        }
+        case BulletType::FragGrenade:
+        case BulletType::GaugeBullet:
+        case BulletType::M79Grenade:
+        case BulletType::Flame:
+            // TODO: I'm not sure which sprite to return here
+            //       I think this one is handled with sparks
+            return all_sprites_.at(WeaponSpriteType::FlamerFire);
+        case BulletType::Fist:
+        case BulletType::Arrow:
+            // TODO: I'm not sure which sprite to return here
+            return all_sprites_.at(WeaponSpriteType::Arrow);
+        case BulletType::FlameArrow:
+            // TODO: I'm not sure which sprite to return here
+            return all_sprites_.at(WeaponSpriteType::Arrow);
+        case BulletType::ClusterGrenade:
+        case BulletType::Cluster:
+        case BulletType::Blade:
+            // TODO: I'm not sure which sprite to return here
+            return all_sprites_.at(WeaponSpriteType::Bullet);
+        case BulletType::LAWMissile:
+            // TODO: I'm not sure which sprite to return here
+            return all_sprites_.at(WeaponSpriteType::Bullet);
+        case BulletType::ThrownKnife:
+            return all_sprites_.at(WeaponSpriteType::Knife);
+        case BulletType::M2Bullet:
+            // TODO: I'm not sure which sprite to return here
+            return all_sprites_.at(WeaponSpriteType::Bullet);
+    }
 }
 } // namespace Soldat::Sprites

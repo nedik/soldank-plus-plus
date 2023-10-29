@@ -7,6 +7,7 @@
 #include "core/state/Control.hpp"
 #include "core/state/State.hpp"
 #include "core/entities/Weapon.hpp"
+#include "core/entities/Bullet.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -30,8 +31,8 @@ public:
     void LegsApplyAnimation(AnimationType id, unsigned int frame);
     void BodyApplyAnimation(AnimationType id, unsigned int frame);
     void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, glm::vec2 _pos);
-    void UpdateControl(State& state);
-    void Update(State& state);
+    void UpdateControl(State& state, std::vector<BulletParams>& bullet_emitter);
+    void Update(State& state, std::vector<BulletParams>& bullet_emitter);
 
     bool CheckMapCollision(const Map& map, float x, float y, int area, State& state);
     bool CheckMapVerticesCollision(const Map& map,
@@ -43,7 +44,7 @@ public:
     bool CheckRadiusMapCollision(const Map& map, float x, float y, bool has_collided, State& state);
     bool CheckSkeletonMapCollision(const Map& map, unsigned int i, float x, float y, State& state);
     void AddCollidingPoly(State& state, unsigned int poly_id);
-    void Fire();
+    void Fire(std::vector<BulletParams>& bullet_emitter);
 
     bool active;
     bool dead_meat;

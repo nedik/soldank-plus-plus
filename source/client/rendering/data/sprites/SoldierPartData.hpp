@@ -24,8 +24,8 @@ public:
                     const std::optional<Texture::TextureData>& flipped_texture_data,
                     bool team,
                     float flexibility,
-                    SoldierColor color,
-                    SoldierAlpha alpha);
+                    SoldierSpriteColor color,
+                    SoldierSpriteAlpha alpha);
     ~SoldierPartData() = default;
 
     // it's not safe to be able to copy/move this because we would also need to take care of the
@@ -43,9 +43,9 @@ public:
 
     float GetFlexibility() const { return flexibility_; }
 
-    SoldierColor GetSoldierColor() const { return color_; }
+    SoldierSpriteColor GetSoldierColor() const { return color_; }
 
-    SoldierAlpha GetSoldierAlpha() const { return alpha_; }
+    SoldierSpriteAlpha GetSoldierAlpha() const { return alpha_; }
 
     unsigned int GetTexture() const { return texture_; }
     unsigned int GetTextureFlipped() const { return texture_flipped_; }
@@ -63,8 +63,8 @@ private:
     bool flip_;
     bool team_;
     float flexibility_;
-    SoldierColor color_;
-    SoldierAlpha alpha_;
+    SoldierSpriteColor color_;
+    SoldierSpriteAlpha alpha_;
     unsigned int texture_;
     unsigned int texture_flipped_;
     int texture_width_;

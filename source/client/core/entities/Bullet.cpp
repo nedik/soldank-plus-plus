@@ -8,7 +8,7 @@ Bullet::Bullet(BulletParams params)
     , team(params.team)
     , particle(true,
                params.position,
-               params.velocity,
+               params.position,
                params.velocity,
                glm::vec2(0.0F, 0.0F),
                1.0F,

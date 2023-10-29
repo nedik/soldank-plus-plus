@@ -15,6 +15,7 @@ float Vec2Angle(const glm::vec2& v);
 float PointLineDistance(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3);
 
 glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float t);
+float Lerp(float a, float b, float t);
 } // namespace Soldat::Calc
 
 #endif

@@ -68,7 +68,7 @@ std::optional<std::pair<glm::vec2, unsigned int>> BulletPhysics::CheckMapCollisi
         for (int poly_id = 0; poly_id < map.GetPolygons().size(); poly_id++) {
             const PMSPolygon& poly = map.GetPolygons()[poly_id];
             if (CollidesWithPoly(poly, bullet.team) &&
-                map.PointInPoly(glm::vec2(xy.x, xy.y), poly)) {
+                Map::PointInPoly(glm::vec2(xy.x, xy.y), poly)) {
                 return std::make_pair(xy, poly_id);
             }
         }

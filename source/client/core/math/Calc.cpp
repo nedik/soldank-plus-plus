@@ -44,4 +44,9 @@ glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float t)
 {
     return a + (b - a) * t;
 }
+
+float Lerp(float a, float b, float t)
+{
+    return a + (b - a) * t;
+}
 } // namespace Soldat::Calc

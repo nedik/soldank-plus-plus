@@ -6,6 +6,7 @@
 #include "rendering/data/Texture.hpp"
 
 #include "core/math/Glm.hpp"
+#include "core/entities/Bullet.hpp"
 
 #include <string>
 #include <vector>
@@ -30,23 +31,26 @@ public:
     SpriteManager& operator=(SpriteManager&& other) = delete;
 
     const SoldierPartData* GetSoldierPartData(unsigned int id) const;
-    std::variant<SoldierPartType,
-                 SoldierPartPrimaryWeaponType,
-                 SoldierPartSecondaryWeaponType,
-                 SoldierPartTertiaryWeaponType>
+    std::variant<SoldierPartSpriteType,
+                 SoldierPartPrimaryWeaponSpriteType,
+                 SoldierPartSecondaryWeaponSpriteType,
+                 SoldierPartTertiaryWeaponSpriteType>
     GetSoldierPartDataType(unsigned int id) const;
     unsigned int GetSoldierPartCount() const;
 
+    Texture::TextureData GetBulletTexture(WeaponSpriteType weapon_sprite_type) const;
+    Texture::TextureData GetBulletTexture(const Bullet& bullet) const;
+
 private:
     using TSoldierPartSpriteData = std::unique_ptr<SoldierPartData>;
-    using TSoldierPartSpriteKey = std::variant<SoldierPartType,
-                                               SoldierPartPrimaryWeaponType,
-                                               SoldierPartSecondaryWeaponType,
-                                               SoldierPartTertiaryWeaponType>;
+    using TSoldierPartSpriteKey = std::variant<SoldierPartSpriteType,
+                                               SoldierPartPrimaryWeaponSpriteType,
+                                               SoldierPartSecondaryWeaponSpriteType,
+                                               SoldierPartTertiaryWeaponSpriteType>;
     using TSoldierPartListItem = std::pair<TSoldierPartSpriteKey, TSoldierPartSpriteData>;
     using TSoldierPartList = std::vector<TSoldierPartListItem>;
 
-    using TSpriteKey = std::variant<SoldierPartType, WeaponType>;
+    using TSpriteKey = std::variant<SoldierPartSpriteType, WeaponSpriteType>;
 
     void AddSprite(TSoldierPartSpriteKey soldier_part_sprite_key,
                    TSpriteKey sprite_key,
@@ -56,8 +60,8 @@ private:
                    bool visible,
                    bool team,
                    float flexibility,
-                   SoldierColor color,
-                   SoldierAlpha alpha);
+                   SoldierSpriteColor color,
+                   SoldierSpriteAlpha alpha);
 
     TSoldierPartList soldier_part_type_to_data_;
 

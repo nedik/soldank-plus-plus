@@ -9,8 +9,8 @@ SoldierPartData::SoldierPartData(const Texture::TextureData& texture_data,
                                  const std::optional<Texture::TextureData>& flipped_texture_data,
                                  bool team,
                                  float flexibility,
-                                 SoldierColor color,
-                                 SoldierAlpha alpha)
+                                 SoldierSpriteColor color,
+                                 SoldierSpriteAlpha alpha)
     : point_(point)
     , center_(center)
     , visible_(visible)

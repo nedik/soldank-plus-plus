@@ -132,7 +132,7 @@ void Soldier::HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, gl
     }
 }
 
-void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
+void Soldier::UpdateControl(State& state, std::vector<BulletParams>& bullet_emitter)
 {
     bool player_pressed_left_right = false;
 
@@ -279,8 +279,7 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
                     GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Knife) {
                     BodyApplyAnimation(AnimationType::Punch, 1);
                 } else {
-                    // TODO: odkomentować to
-                    // fire(emitter);
+                    Fire(bullet_emitter);
                     control.fire = false;
                 }
             }
@@ -332,28 +331,27 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
         GetPrimaryWeapon().GetWeaponParameters().kind == WeaponType::Knife &&
         (!control.drop || body_animation.GetFrame() == 16)) {
 
-        // Weapon weapon{ WeaponParametersFactory::GetParameters(WeaponType::ThrownKnife, false) };
+        Weapon weapon{ WeaponParametersFactory::GetParameters(WeaponType::ThrownKnife, false) };
         auto aim_x = (float)control.mouse_aim_x;
         auto aim_y = (float)control.mouse_aim_y;
         auto dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - skeleton->GetPos(15));
         auto frame = (float)body_animation.GetFrame();
-        // auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
-        // auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
-        // auto inherited_vel =
-        //   particle.GetVelocity() * weapon.GetWeaponParameters().inherited_velocity;
-        // auto velocity = bullet_vel + inherited_vel;
+        auto thrown_mul = 1.5F * min(16.0F, max(8.0F, frame)) / 16.0F;
+        auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
+        auto inherited_vel =
+          particle.GetVelocity() * weapon.GetWeaponParameters().inherited_velocity;
+        auto velocity = bullet_vel + inherited_vel;
 
-        // TODO: odkomentować to
-        // emitter.push(EmitterItem::Bullet(BulletParams {
-        //     style: weapon.bullet_style,
-        //     weapon: weapon.kind,
-        //     position: self.skeleton.pos(16) + velocity,
-        //     velocity,
-        //     timeout: weapon.timeout as i16,
-        //     hit_multiply: weapon.hit_multiply,
-        //     team: Team::None,
-        //     sprite: weapon.bullet_sprite,
-        // }));
+        BulletParams params{
+            weapon.GetWeaponParameters().bullet_style,
+            weapon.GetWeaponParameters().kind,
+            skeleton->GetPos(16) + velocity,
+            velocity,
+            (std::int16_t)weapon.GetWeaponParameters().timeout,
+            weapon.GetWeaponParameters().hit_multiply,
+            TeamType::None,
+        };
+        bullet_emitter.push_back(params);
 
         control.drop = false;
         BodyApplyAnimation(AnimationType::Stand, 1);
@@ -987,14 +985,14 @@ void Soldier::UpdateControl(State& state /*, Emitter& emitter*/)
     }
 }
 
-void Soldier::Update(State& state)
+void Soldier::Update(State& state, std::vector<BulletParams>& bullet_emitter)
 {
     const Map& map = state.map;
     float body_y = 0.0f;
     float arm_s;
 
     particle.Euler();
-    UpdateControl(state);
+    UpdateControl(state, bullet_emitter);
 
     skeleton->SetOldPos(21, skeleton->GetPos(21));
     skeleton->SetOldPos(23, skeleton->GetPos(23));
@@ -1562,7 +1560,7 @@ void Soldier::AddCollidingPoly(State& state, unsigned int poly_id)
     }
 }
 
-void Soldier::Fire(/* Emitter& emitter */)
+void Soldier::Fire(std::vector<BulletParams>& bullet_emitter)
 {
     auto weapon = GetPrimaryWeapon();
 
@@ -1572,12 +1570,12 @@ void Soldier::Fire(/* Emitter& emitter */)
         body_animation.GetType() == AnimationType::Mercy2) {
         dir = Calc::Vec2Normalize(skeleton->GetPos(15) - skeleton->GetPos(16));
     } else {
-        float aim_x = control.mouse_aim_x;
-        float aim_y = control.mouse_aim_y;
+        auto aim_x = (float)control.mouse_aim_x;
+        auto aim_y = (float)control.mouse_aim_y;
         dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - skeleton->GetPos(15));
     };
 
-    auto pos = skeleton->GetPos(15) + dir * 4.0f - glm::vec2(0.0, 2.0);
+    auto pos = skeleton->GetPos(15) + dir * 4.0F - glm::vec2(0.0, 2.0);
     auto bullet_velocity = dir * weapon.GetWeaponParameters().speed;
     auto inherited_velocity = particle.velocity_ * weapon.GetWeaponParameters().inherited_velocity;
 
@@ -1589,42 +1587,28 @@ void Soldier::Fire(/* Emitter& emitter */)
         (std::int16_t)weapon.GetWeaponParameters().timeout,
         weapon.GetWeaponParameters().hit_multiply,
         TeamType::None,
-        // TODO: odkomentować
-        // sprite: weapon.bullet_sprite
     };
 
     switch (weapon.GetWeaponParameters().kind) {
         case WeaponType::DesertEagles: {
-            // TODO: odkomentować to
-            // emitter.push(EmitterItem::Bullet(params));
+            bullet_emitter.push_back(params);
 
-            // auto signx = dir.x > 0.0f ? 1.0f : (dir.x < 0.0f ? -1.0f : 0.0f);
-            // auto signy = dir.x > 0.0f ? 1.0f : (dir.x < 0.0f ? -1.0f : 0.0f);
+            auto signx = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
+            auto signy = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
 
-            // params.position += glm::vec2(-signx * dir.y, signy * dir.x) * 3.0f;
-            // emitter.push(EmitterItem::Bullet(params));
+            params.position += glm::vec2(-signx * dir.y, signy * dir.x) * 3.0F;
+            bullet_emitter.push_back(params);
             break;
         }
-        case WeaponType::Spas12: {
+        case WeaponType::Spas12:
+        case WeaponType::Flamer:
+        case WeaponType::NoWeapon:
+        case WeaponType::Knife:
+        case WeaponType::Chainsaw:
+        case WeaponType::LAW:
             break;
-        }
-        case WeaponType::Flamer: {
-            break;
-        }
-        case WeaponType::NoWeapon: {
-            break;
-        }
-        case WeaponType::Knife: {
-            break;
-        }
-        case WeaponType::Chainsaw: {
-            break;
-        }
-        case WeaponType::LAW: {
-            break;
-        }
         default: {
-            // emitter.push(EmitterItem::Bullet(params));
+            bullet_emitter.push_back(params);
         }
     };
 }

@@ -37,28 +37,29 @@ public:
                 double frame_percent);
 
 private:
-    static bool IsSoldierPartTypeVisible(Sprites::SoldierPartType soldier_part_type,
+    static bool IsSoldierPartTypeVisible(Sprites::SoldierPartSpriteType soldier_part_type,
                                          const Soldier& soldier,
                                          bool part_base_visibility);
-    static bool IsPrimaryWeaponTypeVisible(Sprites::SoldierPartPrimaryWeaponType soldier_part_type,
-                                           const Soldier& soldier,
-                                           bool part_base_visibility);
+    static bool IsPrimaryWeaponTypeVisible(
+      Sprites::SoldierPartPrimaryWeaponSpriteType soldier_part_type,
+      const Soldier& soldier,
+      bool part_base_visibility);
     static bool IsSecondaryWeaponTypeVisible(
-      Sprites::SoldierPartSecondaryWeaponType soldier_part_type,
+      Sprites::SoldierPartSecondaryWeaponSpriteType soldier_part_type,
       const Soldier& soldier);
     static bool IsTertiaryWeaponTypeVisible(
-      Sprites::SoldierPartTertiaryWeaponType soldier_part_type,
+      Sprites::SoldierPartTertiaryWeaponSpriteType soldier_part_type,
       const Soldier& soldier);
 
     static glm::vec4 GetColorForSoldierPart(const Soldier& soldier,
-                                            Sprites::SoldierColor soldier_color,
-                                            Sprites::SoldierAlpha soldier_alpha);
+                                            Sprites::SoldierSpriteColor soldier_color,
+                                            Sprites::SoldierSpriteAlpha soldier_alpha);
 
     Shader shader_;
 
     std::vector<std::pair<unsigned int, std::optional<unsigned int>>> vbos_;
     std::vector<unsigned int> ebos_;
-    std::vector<Sprites::SoldierPartType> part_types_;
+    std::vector<Sprites::SoldierPartSpriteType> part_types_;
 };
 } // namespace Soldat
 

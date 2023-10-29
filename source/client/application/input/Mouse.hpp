@@ -1,6 +1,9 @@
 #ifndef __MOUSE_HPP__
 #define __MOUSE_HPP__
 
+#include <functional>
+#include <vector>
+
 struct GLFWwindow;
 
 namespace Soldat
@@ -23,6 +26,8 @@ public:
 
     static bool Button(int button);
 
+    static void SubscribeButtonObserver(const std::function<void(int, int)>& observer);
+
 private:
     static double x_;
     static double y_;
@@ -39,6 +44,8 @@ private:
     static bool first_mouse_;
     static bool buttons_[]; // button state array (true for down, false for up)
     static bool buttons_changed_[];
+
+    static std::vector<std::function<void(int, int)>> button_observers_;
 };
 } // namespace Soldat
 #endif

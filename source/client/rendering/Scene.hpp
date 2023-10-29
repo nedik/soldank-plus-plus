@@ -11,6 +11,7 @@
 #include "rendering/renderer/interface/CursorRenderer.hpp"
 #include "rendering/renderer/TextRenderer.hpp"
 #include "rendering/renderer/RectangleRenderer.hpp"
+#include "rendering/renderer/BulletRenderer.hpp"
 
 #include "core/state/State.hpp"
 #include "core/physics/Soldier.hpp"
@@ -24,7 +25,10 @@ class Scene
 public:
     Scene(const std::shared_ptr<State>& state);
 
-    void Render(const std::shared_ptr<State>& state, const Soldier& soldier, double frame_percent);
+    void Render(const std::shared_ptr<State>& state,
+                const Soldier& soldier,
+                double frame_percent,
+                int fps);
 
 private:
     Camera camera_;
@@ -37,6 +41,7 @@ private:
     CursorRenderer cursor_renderer_;
     TextRenderer text_renderer_;
     RectangleRenderer rectangle_renderer_;
+    BulletRenderer bullet_renderer_;
 };
 } // namespace Soldat
 

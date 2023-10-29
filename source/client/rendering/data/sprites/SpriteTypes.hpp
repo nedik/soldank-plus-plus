@@ -3,7 +3,7 @@
 
 namespace Soldat::Sprites
 {
-enum class SoldierPartType : unsigned int
+enum class SoldierPartSpriteType : unsigned int
 {
     Stopa = 0,
     Stopa2,
@@ -137,7 +137,7 @@ enum class SoldierPartType : unsigned int
 // The range Shell to M2Stat is checked for size restriction too, so
 // keep that range together.
 
-enum class WeaponType : unsigned int
+enum class WeaponSpriteType : unsigned int
 {
     Shell = 0,
     Bullet,
@@ -258,7 +258,7 @@ enum class WeaponType : unsigned int
 // - ExplosionSmoke1 to Minismoke
 // - FlamesExplode1 to FlamesExplode16
 
-enum class SparkType : unsigned int
+enum class SparkSpriteType : unsigned int
 {
     Smoke = 0,
     Lilfire,
@@ -329,7 +329,7 @@ enum class SparkType : unsigned int
     FlamesExplode16,
 };
 
-enum class ObjectType : unsigned int
+enum class ObjectSpriteType : unsigned int
 {
     Flag = 0,
     Infflag,
@@ -346,7 +346,7 @@ enum class ObjectType : unsigned int
 
 // Preserve order of Guns*
 
-enum class InterfaceType : unsigned int
+enum class InterfaceSpriteType : unsigned int
 {
     Sight = 0,
     GunsDeagles,
@@ -397,7 +397,7 @@ enum class InterfaceType : unsigned int
     TitleR,
 };
 
-enum class SoldierPartPrimaryWeaponType : unsigned int
+enum class SoldierPartPrimaryWeaponSpriteType : unsigned int
 {
     Deagles = 0,
     DeaglesClip,
@@ -453,7 +453,7 @@ enum class SoldierPartPrimaryWeaponType : unsigned int
     FlamerFire,
 };
 
-enum class SoldierPartSecondaryWeaponType : unsigned int
+enum class SoldierPartSecondaryWeaponSpriteType : unsigned int
 {
     Deagles = 0,
     Mp5,
@@ -474,7 +474,7 @@ enum class SoldierPartSecondaryWeaponType : unsigned int
     Flamer,
 };
 
-enum class SoldierPartTertiaryWeaponType : unsigned int
+enum class SoldierPartTertiaryWeaponSpriteType : unsigned int
 {
     FragGrenade1 = 0,
     FragGrenade2,
@@ -488,7 +488,7 @@ enum class SoldierPartTertiaryWeaponType : unsigned int
     ClusterGrenade5,
 };
 
-enum class SoldierColor : unsigned int
+enum class SoldierSpriteColor : unsigned int
 {
     None = 0,
     Main,
@@ -499,7 +499,7 @@ enum class SoldierColor : unsigned int
     Headblood,
 };
 
-enum class SoldierAlpha : unsigned int
+enum class SoldierSpriteAlpha : unsigned int
 {
     Base = 0,
     Blood,

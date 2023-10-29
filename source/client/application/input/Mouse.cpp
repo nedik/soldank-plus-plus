@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 namespace Soldat
 {
 bool Mouse::first_mouse_ = true;
@@ -21,6 +23,7 @@ double Mouse::scroll_dy_ = 0;
 
 bool Mouse::buttons_[GLFW_MOUSE_BUTTON_LAST] = { 0 };
 bool Mouse::buttons_changed_[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+std::vector<std::function<void(int, int)>> Mouse::button_observers_{};
 
 void Mouse::CursorPosCallback(GLFWwindow* window, const double x, const double y)
 {
@@ -53,6 +56,10 @@ void Mouse::CursorPosCallback(GLFWwindow* window, const double x, const double y
 
 void Mouse::MouseButtonCallback(GLFWwindow* window, const int button, const int action, int mods)
 {
+    for (const auto& button_observer : button_observers_) {
+        button_observer(button, action);
+    }
+
     if (action == GLFW_PRESS) {
         if (!buttons_[button]) {
             buttons_[button] = true;
@@ -97,4 +104,10 @@ bool Mouse::Button(int button)
 {
     return buttons_[button];
 }
+
+void Mouse::SubscribeButtonObserver(const std::function<void(int, int)>& observer)
+{
+    button_observers_.push_back(observer);
+}
+
 } // namespace Soldat

@@ -5,7 +5,7 @@ namespace Soldat::World
 {
 void Init();
 void Update(double delta_time);
-void Render(double frame_percent);
+void Render(double frame_percent, int fps);
 void Free();
 } // namespace Soldat::World
 
