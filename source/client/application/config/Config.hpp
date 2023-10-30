@@ -9,9 +9,6 @@ constexpr const int INITIAL_WINDOWS_HEIGHT = 1024;
 
 // If FPS_LIMIT == 0, then there's no limit
 constexpr const int FPS_LIMIT = 0;
-
-constexpr const char* const WEAPONS_INI_FILE_PATH = "weapons.ini";
-constexpr const char* const WEAPONS_REALISTIC_INI_FILE_PATH = "weapons_realistic.ini";
 } // namespace Soldat::Config
 
 #endif

@@ -1,6 +1,6 @@
 #include "WeaponParametersFactory.hpp"
 
-#include "application/config/Config.hpp"
+#include "core/config/Config.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
 #include <iostream>

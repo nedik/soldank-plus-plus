@@ -6,6 +6,9 @@
 
 #include "core/World.hpp"
 
+#include "rendering/Scene.hpp"
+
+#include <GLFW/glfw3.h>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -19,6 +22,17 @@ std::unique_ptr<Window> window;
 void Init()
 {
     window = std::make_unique<Window>();
+}
+
+void UpdateMouseButton(int button, int action)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        World::UpdateFireButtonState(action == GLFW_PRESS);
+    }
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        World::UpdateJetsButtonState(action == GLFW_PRESS);
+    }
 }
 
 void Run()
@@ -39,6 +53,9 @@ void Run()
     int world_updates = 0;
 
     World::Init();
+    Scene scene(World::GetState());
+    Mouse::SubscribeButtonObserver(
+      [](int button, int action) { UpdateMouseButton(button, action); });
 
     while (!window->ShouldClose()) {
         if (Keyboard::KeyWentDown(GLFW_KEY_ESCAPE)) {
@@ -83,6 +100,18 @@ void Run()
 
             world_updates++;
 
+            World::UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
+            World::UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+            World::UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
+            World::UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+            World::UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
+            World::UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
+            World::UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
+            World::UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
+            World::UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
+
+            World::UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
+
             World::Update(delta_time);
 
             timecur = glfwGetTime();
@@ -90,7 +119,7 @@ void Run()
             timeprv = timecur;
         }
         double p = std::min(1.0, std::max(0.0, timeacc / dt));
-        World::Render(p, last_fps);
+        scene.Render(World::GetState(), World::GetSoldier(), p, last_fps);
 
         window->SwapBuffers();
         window->PollInput();

@@ -43,7 +43,6 @@ public:
                                    State& state);
     bool CheckRadiusMapCollision(const Map& map, float x, float y, bool has_collided, State& state);
     bool CheckSkeletonMapCollision(const Map& map, unsigned int i, float x, float y, State& state);
-    void AddCollidingPoly(State& state, unsigned int poly_id);
     void Fire(std::vector<BulletParams>& bullet_emitter);
 
     bool active;

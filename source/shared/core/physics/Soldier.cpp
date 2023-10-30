@@ -6,8 +6,6 @@
 #include "core/types/WeaponType.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
-#include "application/config/Config.hpp"
-
 #include <cmath>
 #include <iostream>
 #include <utility>
@@ -1332,8 +1330,8 @@ bool Soldier::CheckMapCollision(const Map& map, float x, float y, int area, Stat
                         }
                     }
 
-                    AddCollidingPoly(state,
-                                     poly); // TODO: remove later, this is only a debug
+                    // AddCollidingPoly(state,
+                    //  poly); // TODO: remove later, this is only a debug
                     return true;
                 }
             }
@@ -1379,8 +1377,8 @@ bool Soldier::CheckMapVerticesCollision(const Map& map,
                         auto dir = pos - vert;
                         dir = Calc::Vec2Normalize(dir);
                         particle.position += dir;
-                        AddCollidingPoly(state,
-                                         poly); // TODO: remove later, this is only a debug
+                        // AddCollidingPoly(state,
+                        //  poly); // TODO: remove later, this is only a debug
                         return true;
                     }
                 }
@@ -1471,8 +1469,8 @@ bool Soldier::CheckRadiusMapCollision(const Map& map,
                             particle.position = particle.old_position;
                             particle.velocity_ = particle.GetForce() - perp;
 
-                            AddCollidingPoly(state,
-                                             poly); // TODO: remove later, this is only a debug
+                            // AddCollidingPoly(state,
+                            //  poly); // TODO: remove later, this is only a debug
                             return true;
                         }
                     }
@@ -1512,8 +1510,8 @@ bool Soldier::CheckSkeletonMapCollision(const Map& map,
                 perp *= dist;
 
                 skeleton->SetPos(i, skeleton->GetOldPos(i) - perp);
-                AddCollidingPoly(state,
-                                 poly); // TODO: remove later, this is only a debug
+                // AddCollidingPoly(state,
+                //                  poly); // TODO: remove later, this is only a debug
                 result = true;
             }
         }
@@ -1542,8 +1540,8 @@ bool Soldier::CheckSkeletonMapCollision(const Map& map,
                     perp *= dist;
 
                     skeleton->SetPos(i, skeleton->GetOldPos(i) - perp);
-                    AddCollidingPoly(state,
-                                     poly); // TODO: remove later, this is only a debug
+                    // AddCollidingPoly(state,
+                    //  poly); // TODO: remove later, this is only a debug
                     result = true;
                 }
             }
@@ -1551,13 +1549,6 @@ bool Soldier::CheckSkeletonMapCollision(const Map& map,
     }
 
     return result;
-}
-
-void Soldier::AddCollidingPoly(State& state, unsigned int poly_id)
-{
-    if (Config::DEBUG_DRAW) {
-        state.colliding_polygon_ids.push_back(poly_id);
-    }
 }
 
 void Soldier::Fire(std::vector<BulletParams>& bullet_emitter)

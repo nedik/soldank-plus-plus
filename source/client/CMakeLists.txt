@@ -20,6 +20,7 @@ target_link_libraries(client_lib PUBLIC glfw)
 target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
+target_link_libraries(client_lib PUBLIC shared_lib)
 
 # TODO: uncomment this to stop the app from opening cmd on windows
 # IF (WIN32)
