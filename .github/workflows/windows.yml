@@ -18,6 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg
+          .\vcpkg\bootstrap-vcpkg.bat
+          .\vcpkg\vcpkg install --triplet=x64-windows
+
       - name: configure
         run: cmake -Bbuild
 

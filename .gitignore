@@ -4,3 +4,5 @@ build-linux/
 
 .vscode/
 .cache/
+
+vcpkg_installed/
