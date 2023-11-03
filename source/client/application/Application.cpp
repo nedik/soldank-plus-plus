@@ -18,20 +18,22 @@
 namespace Soldat::Application
 {
 std::unique_ptr<Window> window;
+std::unique_ptr<World> world;
 
 void Init()
 {
     window = std::make_unique<Window>();
+    world = std::make_unique<World>();
 }
 
 void UpdateMouseButton(int button, int action)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
-        World::UpdateFireButtonState(action == GLFW_PRESS);
+        world->UpdateFireButtonState(action == GLFW_PRESS);
     }
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        World::UpdateJetsButtonState(action == GLFW_PRESS);
+        world->UpdateJetsButtonState(action == GLFW_PRESS);
     }
 }
 
@@ -52,8 +54,7 @@ void Run()
 
     int world_updates = 0;
 
-    World::Init();
-    Scene scene(World::GetState());
+    Scene scene(world->GetState());
     Mouse::SubscribeButtonObserver(
       [](int button, int action) { UpdateMouseButton(button, action); });
 
@@ -100,26 +101,26 @@ void Run()
 
             world_updates++;
 
-            World::UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
-            World::UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-            World::UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
-            World::UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-            World::UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
-            World::UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
-            World::UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
-            World::UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
-            World::UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
+            world->UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
+            world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+            world->UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
+            world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+            world->UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
+            world->UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
+            world->UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
+            world->UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
+            world->UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
 
-            World::UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
+            world->UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
 
-            World::Update(delta_time);
+            world->Update(delta_time);
 
             timecur = glfwGetTime();
             timeacc += timecur - timeprv;
             timeprv = timecur;
         }
         double p = std::min(1.0, std::max(0.0, timeacc / dt));
-        scene.Render(World::GetState(), World::GetSoldier(), p, last_fps);
+        scene.Render(world->GetState(), world->GetSoldier(), p, last_fps);
 
         window->SwapBuffers();
         window->PollInput();
@@ -128,7 +129,6 @@ void Run()
 
 void Free()
 {
-    World::Free();
     window.reset(nullptr);
 }
 } // namespace Soldat::Application
