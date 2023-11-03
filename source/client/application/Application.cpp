@@ -41,90 +41,38 @@ void Run()
 {
     window->Create();
 
-    double delta_time = 0.0;
-    double last_frame_time = 0.0;
-
-    double last_fps_check_time = glfwGetTime();
-    int frame_count_since_last_fps_check = 0;
-    int last_fps = 0;
-
-    double timecur = glfwGetTime();
-    double timeprv = timecur;
-    double timeacc = 0.0;
-
-    int world_updates = 0;
-
     Scene scene(world->GetState());
     Mouse::SubscribeButtonObserver(
       [](int button, int action) { UpdateMouseButton(button, action); });
 
-    while (!window->ShouldClose()) {
+    world->SetShouldStopGameLoopCallback([&]() { return window->ShouldClose(); });
+    world->SetPreGameLoopIterationCallback([&]() {
         if (Keyboard::KeyWentDown(GLFW_KEY_ESCAPE)) {
             window->Close();
         }
+    });
+    world->SetPreWorldUpdateCallback([&]() {
+        world->UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
+        world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+        world->UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
+        world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
+        world->UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
+        world->UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
+        world->UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
+        world->UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
+        world->UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
 
-        const double current_frame_time = glfwGetTime();
-        delta_time = current_frame_time - last_frame_time;
-        last_frame_time = current_frame_time;
+        world->UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
+    });
+    world->SetPostGameLoopIterationCallback(
+      [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
+          scene.Render(state, world->GetSoldier(), frame_percent, last_fps);
 
-        frame_count_since_last_fps_check++;
-        if (current_frame_time - last_fps_check_time >= 1.0) {
-            std::cout << 1000.0 / double(frame_count_since_last_fps_check) << " ms/frame"
-                      << std::endl;
-            std::cout << "FPS: " << frame_count_since_last_fps_check << std::endl;
-            last_fps = frame_count_since_last_fps_check;
-            frame_count_since_last_fps_check = 0;
-            last_fps_check_time = current_frame_time;
+          window->SwapBuffers();
+          window->PollInput();
+      });
 
-            std::cout << "World updates: " << world_updates << std::endl;
-            world_updates = 0;
-        }
-
-        double dt = 1.0 / 60.0;
-
-        timecur = glfwGetTime();
-        timeacc += timecur - timeprv;
-        timeprv = timecur;
-
-        while (Config::FPS_LIMIT != 0 && timeacc < 1.0 / (float)Config::FPS_LIMIT) {
-            timecur = glfwGetTime();
-            timeacc += timecur - timeprv;
-            timeprv = timecur;
-
-            // TODO: Don't use sleep when VSync is on
-            // Sleep for 0 milliseconds to give the resource to other processes
-            std::this_thread::sleep_for(std::chrono::milliseconds(0));
-        }
-
-        while (timeacc >= dt) {
-            timeacc -= dt;
-
-            world_updates++;
-
-            world->UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
-            world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-            world->UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
-            world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-            world->UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
-            world->UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
-            world->UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
-            world->UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
-            world->UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
-
-            world->UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
-
-            world->Update(delta_time);
-
-            timecur = glfwGetTime();
-            timeacc += timecur - timeprv;
-            timeprv = timecur;
-        }
-        double p = std::min(1.0, std::max(0.0, timeacc / dt));
-        scene.Render(world->GetState(), world->GetSoldier(), p, last_fps);
-
-        window->SwapBuffers();
-        window->PollInput();
-    }
+    world->RunLoop(Config::FPS_LIMIT);
 }
 
 void Free()

@@ -24,6 +24,87 @@ World::World()
 {
 }
 
+void World::RunLoop(int fps_limit)
+{
+    std::chrono::time_point<std::chrono::system_clock> last_frame_time;
+    auto last_fps_check_time = std::chrono::system_clock::now();
+    int frame_count_since_last_fps_check = 0;
+    int last_fps = 0;
+
+    auto timecur = std::chrono::system_clock::now();
+    auto timeprv = timecur;
+    std::chrono::duration<double> timeacc{ 0 };
+
+    int world_updates = 0;
+    auto should_run_game_loop_iteration = [&]() {
+        if (should_stop_game_loop_callback_) {
+            return !should_stop_game_loop_callback_();
+        }
+        return true;
+    };
+    while (should_run_game_loop_iteration()) {
+        if (pre_game_loop_iteration_callback_) {
+            pre_game_loop_iteration_callback_();
+        }
+
+        auto current_frame_time = std::chrono::system_clock::now();
+        std::chrono::duration<double> delta_time = current_frame_time - last_frame_time;
+        last_frame_time = current_frame_time;
+
+        frame_count_since_last_fps_check++;
+        std::chrono::duration<double> diff = current_frame_time - last_fps_check_time;
+        if (diff.count() >= 1.0) {
+            std::cout << 1000.0 / double(frame_count_since_last_fps_check) << " ms/frame"
+                      << std::endl;
+            std::cout << "FPS: " << frame_count_since_last_fps_check << std::endl;
+            last_fps = frame_count_since_last_fps_check;
+            frame_count_since_last_fps_check = 0;
+            last_fps_check_time = current_frame_time;
+
+            std::cout << "World updates: " << world_updates << std::endl;
+            world_updates = 0;
+        }
+
+        double dt = 1.0 / 60.0;
+
+        timecur = std::chrono::system_clock::now();
+        timeacc += (timecur - timeprv);
+        timeprv = timecur;
+
+        while (fps_limit != 0 && timeacc.count() < 1.0 / (float)fps_limit) {
+            timecur = std::chrono::system_clock::now();
+            timeacc += timecur - timeprv;
+            timeprv = timecur;
+
+            // TODO: Don't use sleep when VSync is on
+            // Sleep for 0 milliseconds to give the resource to other processes
+            std::this_thread::sleep_for(std::chrono::milliseconds(0));
+        }
+
+        if (pre_world_update_callback_) {
+            pre_world_update_callback_();
+        }
+
+        while (timeacc.count() >= dt) {
+            std::chrono::duration<double> dt_in_duration{ dt };
+            timeacc -= dt_in_duration;
+
+            world_updates++;
+
+            Update(delta_time.count());
+
+            timecur = std::chrono::system_clock::now();
+            timeacc += timecur - timeprv;
+            timeprv = timecur;
+        }
+        double frame_percent = std::min(1.0, std::max(0.0, timeacc.count() / dt));
+
+        if (post_game_loop_iteration_callback_) {
+            post_game_loop_iteration_callback_(state_, frame_percent, last_fps);
+        }
+    }
+}
+
 void World::Update(double /*delta_time*/)
 {
     state_->game_width = 640.0;
