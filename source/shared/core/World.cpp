@@ -11,11 +11,6 @@
 
 namespace Soldat
 {
-namespace
-{
-
-} // namespace
-
 World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
     , soldier_(std::make_unique<Soldier>(

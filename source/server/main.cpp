@@ -1,13 +1,9 @@
-#include <steam/steamnetworkingsockets.h>
-
-#include <iostream>
+#include "application/Application.hpp"
 
 int main()
 {
-    std::cout << "Server started!" << std::endl;
+    Soldat::Application application;
+    application.Run();
 
-    SteamNetworkingIdentity identity{};
-
-    identity.ParseString("str:peer-server");
     return 0;
 }
