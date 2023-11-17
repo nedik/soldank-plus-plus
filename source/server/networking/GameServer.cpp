@@ -1,6 +1,7 @@
 #include "networking/GameServer.hpp"
 
 #include "networking/interface/NetworkingInterface.hpp"
+#include "networking/poll_groups/EntryPollGroup.hpp"
 
 #include <steam/isteamnetworkingutils.h>
 
@@ -20,12 +21,15 @@ GameServer::GameServer()
           OnSteamNetConnectionStatusChanged(p_info);
       });
 
+    entry_poll_group_ = NetworkingInterface::CreatePollGroup<EntryPollGroup>();
     player_poll_group_ = NetworkingInterface::CreatePollGroup<PlayerPollGroup>();
+    entry_poll_group_->RegisterPlayerPollGroup(player_poll_group_);
 };
 
 void GameServer::Run()
 {
     while (true) {
+        entry_poll_group_->PollIncomingMessages();
         player_poll_group_->PollIncomingMessages();
         NetworkingInterface::PollConnectionStateChanges();
     }
@@ -42,12 +46,18 @@ void GameServer::OnSteamNetConnectionStatusChanged(
 
         case k_ESteamNetworkingConnectionState_ClosedByPeer:
         case k_ESteamNetworkingConnectionState_ProblemDetectedLocally: {
-            player_poll_group_->CloseConnection(p_info);
+            if (entry_poll_group_->IsConnectionAssigned(p_info->m_hConn)) {
+                entry_poll_group_->CloseConnection(p_info);
+            }
+            if (player_poll_group_->IsConnectionAssigned(p_info->m_hConn)) {
+                player_poll_group_->CloseConnection(p_info);
+            }
             break;
         }
 
         case k_ESteamNetworkingConnectionState_Connecting: {
-            player_poll_group_->AcceptConnection(p_info);
+            entry_poll_group_->AcceptConnection(p_info);
+            // player_poll_group_->AcceptConnection(p_info);
             break;
         }
 

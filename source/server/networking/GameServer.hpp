@@ -1,6 +1,7 @@
 #ifndef __GAME_SERVER_HPP__
 #define __GAME_SERVER_HPP__
 
+#include "networking/poll_groups/EntryPollGroup.hpp"
 #include "networking/poll_groups/PlayerPollGroup.hpp"
 
 #include <steam/steamnetworkingsockets.h>
@@ -19,7 +20,8 @@ public:
     void Run();
 
 private:
-    std::unique_ptr<PlayerPollGroup> player_poll_group_;
+    std::unique_ptr<EntryPollGroup> entry_poll_group_;
+    std::shared_ptr<PlayerPollGroup> player_poll_group_;
 
     void OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* p_info);
 };

@@ -1,6 +1,8 @@
 #ifndef __I_POLL_GROUP_HPP__
 #define __I_POLL_GROUP_HPP__
 
+#include "networking/types/Connection.hpp"
+
 class ISteamNetworkingSockets;
 struct SteamNetConnectionStatusChangedCallback_t;
 
@@ -20,6 +22,8 @@ public:
     virtual void AcceptConnection(
       SteamNetConnectionStatusChangedCallback_t* new_connection_info) = 0;
     virtual void CloseConnection(SteamNetConnectionStatusChangedCallback_t* connection_info) = 0;
+    virtual bool AssignConnection(const Connection& connection) = 0;
+    virtual bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) = 0;
 
 protected:
     IPollGroup(ISteamNetworkingSockets* interface)

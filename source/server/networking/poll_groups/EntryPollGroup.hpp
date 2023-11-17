@@ -1,5 +1,5 @@
-#ifndef __PLAYER_POLL_GROUP_HPP__
-#define __PLAYER_POLL_GROUP_HPP__
+#ifndef __ENTRY_POLL_GROUP_HPP__
+#define __ENTRY_POLL_GROUP_HPP__
 
 #include "networking/poll_groups/PollGroupBase.hpp"
 #include "networking/types/Connection.hpp"
@@ -8,16 +8,22 @@
 
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 namespace Soldat
 {
-class PlayerPollGroup : public PollGroupBase
+class EntryPollGroup : public PollGroupBase
 {
 public:
-    PlayerPollGroup(ISteamNetworkingSockets* interface);
+    EntryPollGroup(ISteamNetworkingSockets* interface);
 
     void PollIncomingMessages() override;
     void AcceptConnection(SteamNetConnectionStatusChangedCallback_t* new_connection_info) override;
+
+    void RegisterPlayerPollGroup(std::shared_ptr<IPollGroup> poll_group);
+
+private:
+    std::shared_ptr<IPollGroup> player_poll_group_;
 };
 } // namespace Soldat
 
