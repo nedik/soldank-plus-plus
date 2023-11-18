@@ -1,7 +1,11 @@
 #ifndef __APPLICATION_HPP__
 #define __APPLICATION_HPP__
 
+#include "core/World.hpp"
+
 #include <steam/isteamnetworkingutils.h>
+
+#include <memory>
 
 namespace Soldat
 {
@@ -23,6 +27,8 @@ private:
                             const char* message);
 
     static SteamNetworkingMicroseconds log_time_zero_;
+
+    std::unique_ptr<World> world_;
 };
 } // namespace Soldat
 

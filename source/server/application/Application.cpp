@@ -25,6 +25,7 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
 }
 
 Application::Application()
+    : world_(std::make_unique<World>())
 {
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
@@ -48,7 +49,15 @@ void Application::Run()
     std::cout << "Server started!" << std::endl;
 
     GameServer game_server;
-    game_server.Run();
+
+    world_->SetShouldStopGameLoopCallback([&]() { return false; });
+    world_->SetPreGameLoopIterationCallback([&]() {});
+    world_->SetPreWorldUpdateCallback([&]() {});
+    world_->SetPostGameLoopIterationCallback([&](const std::shared_ptr<State>& state,
+                                                 double frame_percent,
+                                                 int last_fps) { game_server.Update(); });
+
+    world_->RunLoop(60);
 
     // Give connections time to finish up.  This is an application layer protocol
     // here, it's not TCP.  Note that if you have an application and you need to be

@@ -26,14 +26,16 @@ GameServer::GameServer()
     entry_poll_group_->RegisterPlayerPollGroup(player_poll_group_);
 };
 
-void GameServer::Run()
+GameServer::~GameServer()
 {
-    while (true) {
-        entry_poll_group_->PollIncomingMessages();
-        player_poll_group_->PollIncomingMessages();
-        NetworkingInterface::PollConnectionStateChanges();
-    }
     NetworkingInterface::Free();
+}
+
+void GameServer::Update()
+{
+    entry_poll_group_->PollIncomingMessages();
+    player_poll_group_->PollIncomingMessages();
+    NetworkingInterface::PollConnectionStateChanges();
 }
 
 void GameServer::OnSteamNetConnectionStatusChanged(

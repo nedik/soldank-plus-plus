@@ -16,8 +16,14 @@ class GameServer
 {
 public:
     GameServer();
+    ~GameServer();
 
-    void Run();
+    GameServer(GameServer&& other) = delete;
+    GameServer& operator=(GameServer&& other) = delete;
+    GameServer(GameServer& other) = delete;
+    GameServer& operator=(GameServer& other) = delete;
+
+    void Update();
 
 private:
     std::unique_ptr<EntryPollGroup> entry_poll_group_;
