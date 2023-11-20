@@ -21,6 +21,9 @@ target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
 target_link_libraries(client_lib PUBLIC shared_lib)
+target_link_libraries(client_lib
+    PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
+)
 
 # TODO: uncomment this to stop the app from opening cmd on windows
 # IF (WIN32)
@@ -39,4 +42,7 @@ else()
 endif()
 
 target_link_libraries(client PRIVATE client_lib)
+target_link_libraries(client
+    PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
+)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)
