@@ -1,15 +1,15 @@
 #include "networking/interface/NetworkingInterface.hpp"
 
-#include <steam/steamnetworkingsockets.h>
-
+#include <vector>
+#include <functional>
 #include <iostream>
+#include <array>
 
 namespace Soldat::NetworkingInterface
 {
 namespace
 {
 ISteamNetworkingSockets* interface;
-HSteamListenSocket listen_socket_handle;
 std::vector<std::function<void(SteamNetConnectionStatusChangedCallback_t*)>> observers;
 
 void SteamNetConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* p_info)
@@ -20,28 +20,28 @@ void SteamNetConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCall
 }
 } // namespace
 
-namespace Hidden
-{
-ISteamNetworkingSockets* GetInterface()
-{
-    return interface;
-}
-} // namespace Hidden
-
 void Init()
 {
     interface = SteamNetworkingSockets();
-    SteamNetworkingIPAddr server_local_addr{};
-    server_local_addr.Clear();
-    // TODO: port is a magic number
-    server_local_addr.m_port = 23073;
+}
+
+std::shared_ptr<Connection> CreateConnection()
+{
+    SteamNetworkingIPAddr server_addr{};
+    server_addr.Clear();
+    server_addr.ParseString("127.0.0.1");
+    server_addr.m_port = 23073;
+    std::cout << "Connecting to server" << std::endl;
+
     SteamNetworkingConfigValue_t opt{};
     opt.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged,
                (void*)SteamNetConnectionStatusChangedCallback);
-    listen_socket_handle = interface->CreateListenSocketIP(server_local_addr, 1, &opt);
-    if (listen_socket_handle == k_HSteamListenSocket_Invalid) {
-        std::cout << "Failed to listen on port " << 23073 << std::endl;
+    HSteamNetConnection connection_handle = interface->ConnectByIPAddress(server_addr, 1, &opt);
+    if (connection_handle == k_HSteamNetConnection_Invalid) {
+        std::cout << "Failed to create connection" << std::endl;
     }
+
+    return std::make_shared<Connection>(interface, connection_handle);
 }
 
 void PollConnectionStateChanges()
@@ -57,8 +57,6 @@ void RegisterObserver(
 
 void Free()
 {
-    interface->CloseListenSocket(listen_socket_handle);
-    listen_socket_handle = k_HSteamListenSocket_Invalid;
     observers.clear();
 }
 } // namespace Soldat::NetworkingInterface

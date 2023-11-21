@@ -33,11 +33,15 @@ void EntryPollGroup::PollIncomingMessages()
         message_from_client.assign(static_cast<char*>(incoming_message->m_pData),
                                    incoming_message->m_cbSize);
         it_client->second.nick = message_from_client;
+        SetClientNick(it_client->second.connection_handle, it_client->second.nick);
         std::cout << std::format("[EntryPollGroup] Name assigned to connection {}: {}",
                                  it_client->second.connection_handle,
                                  it_client->second.nick)
                   << std::endl;
         incoming_message->Release();
+
+        SendStringToClient(it_client->second.connection_handle,
+                           "Welcome to the server " + it_client->second.nick);
 
         player_poll_group_->AssignConnection(it_client->second);
         EraseConnection(it_client);
@@ -73,6 +77,8 @@ void EntryPollGroup::AcceptConnection(
                    "[EntryPollGroup] Connection assigned: {}",
                    std::span{ new_connection_info->m_info.m_szConnectionDescription }.data())
               << std::endl;
+
+    SetClientNick(new_connection_info->m_hConn, "NEW CONNECTION PLACEHOLDER");
 }
 
 void EntryPollGroup::RegisterPlayerPollGroup(std::shared_ptr<IPollGroup> poll_group)

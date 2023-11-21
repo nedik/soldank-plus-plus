@@ -4,6 +4,8 @@
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
 
+#include "networking/NetworkingClient.hpp"
+
 #include "core/World.hpp"
 
 #include "rendering/Scene.hpp"
@@ -25,6 +27,7 @@ namespace Soldat::Application
 {
 std::unique_ptr<Window> window;
 std::unique_ptr<World> world;
+std::unique_ptr<NetworkingClient> networking_client;
 
 SteamNetworkingMicroseconds log_time_zero;
 
@@ -53,6 +56,8 @@ void Init()
 
     SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
                                                    DebugOutput);
+
+    networking_client = std::make_unique<NetworkingClient>();
 }
 
 void UpdateMouseButton(int button, int action)
@@ -99,6 +104,8 @@ void Run()
 
           window->SwapBuffers();
           window->PollInput();
+
+          networking_client->Update();
       });
 
     world->RunLoop(Config::FPS_LIMIT);
@@ -107,6 +114,7 @@ void Run()
 void Free()
 {
     window.reset(nullptr);
+    networking_client.reset(nullptr);
 
     // Give connections time to finish up.  This is an application layer protocol
     // here, it's not TCP.  Note that if you have an application and you need to be
