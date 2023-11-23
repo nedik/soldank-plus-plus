@@ -241,9 +241,9 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
   const Soldier& soldier,
   bool part_base_visibility)
 {
-    auto primary_weapon_type = soldier.GetPrimaryWeapon().GetWeaponParameters().kind;
-    int ammo = soldier.GetPrimaryWeapon().GetAmmoCount();
-    std::uint16_t reload_time_count = soldier.GetPrimaryWeapon().GetReloadTimeCount();
+    auto primary_weapon_type = GetPrimaryWeapon(soldier).GetWeaponParameters().kind;
+    int ammo = GetPrimaryWeapon(soldier).GetAmmoCount();
+    std::uint16_t reload_time_count = GetPrimaryWeapon(soldier).GetReloadTimeCount();
 
     if (primary_weapon_type == WeaponType::Minigun) {
         if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::Minigun) {
@@ -344,9 +344,9 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
               Sprites::SoldierPartPrimaryWeaponSpriteType::FlamerClip
           };
 
-        auto reload_count = soldier.GetPrimaryWeapon().GetReloadTimeCount();
-        auto clip_in_time = soldier.GetPrimaryWeapon().GetClipInTime();
-        auto clip_out_time = soldier.GetPrimaryWeapon().GetClipOutTime();
+        auto reload_count = GetPrimaryWeapon(soldier).GetReloadTimeCount();
+        auto clip_in_time = GetPrimaryWeapon(soldier).GetClipInTime();
+        auto clip_out_time = GetPrimaryWeapon(soldier).GetClipOutTime();
 
         if (std::ranges::contains(soldier_part_primary_weapon_clip_types, soldier_part_type)) {
             for (int i = 0; i < (int)soldier_part_primary_weapon_clip_types.size(); i++) {
@@ -399,7 +399,7 @@ bool SoldierRenderer::IsSecondaryWeaponTypeVisible(
   Sprites::SoldierPartSecondaryWeaponSpriteType soldier_part_type,
   const Soldier& soldier)
 {
-    auto secondary_weapon_type = soldier.GetSecondaryWeapon().GetWeaponParameters().kind;
+    auto secondary_weapon_type = GetSecondaryWeapon(soldier).GetWeaponParameters().kind;
     switch (soldier_part_type) {
         case Sprites::SoldierPartSecondaryWeaponSpriteType::Deagles:
             return secondary_weapon_type == WeaponType::DesertEagles;
@@ -442,8 +442,8 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
   Sprites::SoldierPartTertiaryWeaponSpriteType soldier_part_type,
   const Soldier& soldier)
 {
-    auto tertiary_weapon_type = soldier.GetTertiaryWeapon().GetWeaponParameters().kind;
-    int ammo = soldier.GetTertiaryWeapon().GetAmmoCount();
+    auto tertiary_weapon_type = GetTertiaryWeapon(soldier).GetWeaponParameters().kind;
+    int ammo = GetTertiaryWeapon(soldier).GetAmmoCount();
     if (tertiary_weapon_type == WeaponType::FragGrenade) {
         std::vector<Sprites::SoldierPartTertiaryWeaponSpriteType> sprite_types{
             Sprites::SoldierPartTertiaryWeaponSpriteType::FragGrenade1,

@@ -2,8 +2,9 @@
 #define __WORLD_HPP__
 
 #include "core/state/State.hpp"
-#include "core/physics/Soldier.hpp"
+#include "core/physics/SoldierPhysics.hpp"
 #include "core/physics/BulletPhysics.hpp"
+#include "core/entities/Soldier.hpp"
 
 #include <functional>
 #include <utility>
@@ -61,8 +62,9 @@ public:
 
 private:
     std::shared_ptr<State> state_;
-    std::unique_ptr<Soldier> soldier_;
+    std::unique_ptr<SoldierPhysics> soldier_physics_;
     std::unique_ptr<BulletPhysics> bullet_physics_;
+    std::unique_ptr<Soldier> soldier_;
 
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;
     TPreGameLoopIterationCallback pre_game_loop_iteration_callback_;

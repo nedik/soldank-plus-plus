@@ -14,7 +14,7 @@
 #include "rendering/renderer/BulletRenderer.hpp"
 
 #include "core/state/State.hpp"
-#include "core/physics/Soldier.hpp"
+#include "core/entities/Soldier.hpp"
 
 #include <memory>
 

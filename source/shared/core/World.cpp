@@ -13,9 +13,10 @@ namespace Soldat
 {
 World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
+    , soldier_physics_(std::make_unique<SoldierPhysics>())
+    , bullet_physics_(std::make_unique<BulletPhysics>())
     , soldier_(std::make_unique<Soldier>(
         glm::vec2(state_->map.GetSpawnPoints()[0].x, state_->map.GetSpawnPoints()[0].y)))
-    , bullet_physics_(std::make_unique<BulletPhysics>())
 {
 }
 
@@ -115,7 +116,7 @@ void World::Update(double /*delta_time*/)
     state_->bullets.erase(removed_bullets_range.begin(), removed_bullets_range.end());
 
     std::vector<BulletParams> bullet_emitter;
-    soldier_->Update(*state_, bullet_emitter);
+    soldier_physics_->Update(*state_, *soldier_, bullet_emitter);
 
     for (auto& bullet : state_->bullets) {
         bullet_physics_->UpdateBullet(bullet, state_->map);

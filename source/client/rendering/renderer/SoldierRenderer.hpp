@@ -5,7 +5,7 @@
 #include "rendering/data/sprites/SpritesManager.hpp"
 
 #include "core/map/Map.hpp"
-#include "core/physics/Soldier.hpp"
+#include "core/entities/Soldier.hpp"
 
 #include "core/math/Glm.hpp"
 
@@ -54,6 +54,18 @@ private:
     static glm::vec4 GetColorForSoldierPart(const Soldier& soldier,
                                             Sprites::SoldierSpriteColor soldier_color,
                                             Sprites::SoldierSpriteAlpha soldier_alpha);
+
+    static const Weapon& GetPrimaryWeapon(const Soldier& soldier)
+    {
+        return soldier.weapons[soldier.active_weapon];
+    }
+
+    static const Weapon& GetSecondaryWeapon(const Soldier& soldier)
+    {
+        return soldier.weapons[(soldier.active_weapon + 1) % 2];
+    }
+
+    static const Weapon& GetTertiaryWeapon(const Soldier& soldier) { return soldier.weapons[2]; }
 
     Shader shader_;
 
