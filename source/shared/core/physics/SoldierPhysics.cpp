@@ -102,8 +102,10 @@ void SoldierPhysics::UpdateControl(State& state,
         soldier.body_animation.SetSpeed(1);
     }
 
-    soldier.control.mouse_aim_x = (state.mouse.x - (float)state.game_width / 2.0 + state.camera.x);
-    soldier.control.mouse_aim_y = (state.mouse.y - (float)state.game_height / 2.0 + state.camera.y);
+    soldier.control.mouse_aim_x =
+      (soldier.mouse.x - (float)soldier.game_width / 2.0 + soldier.camera.x);
+    soldier.control.mouse_aim_y =
+      (soldier.mouse.y - (float)soldier.game_height / 2.0 + soldier.camera.y);
 
     auto cleft = soldier.control.left;
     auto cright = soldier.control.right;

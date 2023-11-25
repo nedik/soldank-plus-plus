@@ -3,6 +3,7 @@
 #include "core/state/Control.hpp"
 
 #include <algorithm>
+#include <random>
 #include <ranges>
 #include <memory>
 #include <tuple>
@@ -15,8 +16,7 @@ World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
     , soldier_physics_(std::make_unique<SoldierPhysics>())
     , bullet_physics_(std::make_unique<BulletPhysics>())
-    , soldier_(std::make_unique<Soldier>(
-        glm::vec2(state_->map.GetSpawnPoints()[0].x, state_->map.GetSpawnPoints()[0].y)))
+    , mersenne_twister_engine_(random_device_())
 {
 }
 
@@ -77,16 +77,15 @@ void World::RunLoop(int fps_limit)
             std::this_thread::sleep_for(std::chrono::milliseconds(0));
         }
 
-        if (pre_world_update_callback_) {
-            pre_world_update_callback_();
-        }
-
         while (timeacc.count() >= dt) {
             std::chrono::duration<double> dt_in_duration{ dt };
             timeacc -= dt_in_duration;
 
             world_updates++;
 
+            if (pre_world_update_callback_) {
+                pre_world_update_callback_();
+            }
             Update(delta_time.count());
 
             timecur = std::chrono::system_clock::now();
@@ -103,20 +102,15 @@ void World::RunLoop(int fps_limit)
 
 void World::Update(double /*delta_time*/)
 {
-    state_->game_width = 640.0;
-    state_->game_height = 480.0;
-    state_->camera_prev = state_->camera;
-    state_->camera.x =
-      soldier_->particle.position.x + (float)(state_->mouse.x - (state_->game_width / 2));
-    state_->camera.y = soldier_->particle.position.y -
-                       (float)((480.0F - state_->mouse.y) - (state_->game_height / 2));
-
     auto removed_bullets_range =
       std::ranges::remove_if(state_->bullets, [](const Bullet& bullet) { return !bullet.active; });
     state_->bullets.erase(removed_bullets_range.begin(), removed_bullets_range.end());
 
     std::vector<BulletParams> bullet_emitter;
-    soldier_physics_->Update(*state_, *soldier_, bullet_emitter);
+
+    for (auto& soldier : state_->soldiers) {
+        soldier_physics_->Update(*state_, soldier, bullet_emitter);
+    }
 
     for (auto& bullet : state_->bullets) {
         bullet_physics_->UpdateBullet(bullet, state_->map);
@@ -129,68 +123,165 @@ void World::Update(double /*delta_time*/)
 
 const std::shared_ptr<State>& World::GetState() const
 {
-
     return state_;
 }
-const Soldier& World::GetSoldier() const
+
+const Soldier& World::GetSoldier(unsigned int soldier_id) const
 {
-    return *soldier_;
+    for (const auto& soldier : state_->soldiers) {
+        if (soldier.id == soldier_id) {
+            return soldier;
+        }
+    }
+
+    std::unreachable();
 }
 
-void World::UpdateFireButtonState(bool pressed)
+void World::CreateSoldier(unsigned int soldier_id)
 {
-    soldier_->control.fire = pressed;
+    std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
+      0, state_->map.GetSpawnPoints().size()); // distribution in range [1, 6]
+
+    unsigned int random_spawnpoint_id = spawnpoint_id_random_distribution(mersenne_twister_engine_);
+
+    const auto& chosen_spawnpoint = state_->map.GetSpawnPoints().at(random_spawnpoint_id);
+    glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
+
+    state_->soldiers.emplace_back(soldier_id, spawn_position);
 }
 
-void World::UpdateJetsButtonState(bool pressed)
+void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.jets = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.fire = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateFireButtonState" << std::endl;
 }
 
-void World::UpdateLeftButtonState(bool pressed)
+void World::UpdateJetsButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.left = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.jets = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateJetsButtonState" << std::endl;
 }
 
-void World::UpdateRightButtonState(bool pressed)
+void World::UpdateLeftButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.right = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.left = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateLeftButtonState" << std::endl;
 }
 
-void World::UpdateJumpButtonState(bool pressed)
+void World::UpdateRightButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.up = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.right = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateRightButtonState" << std::endl;
 }
 
-void World::UpdateCrouchButtonState(bool pressed)
+void World::UpdateJumpButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.down = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.up = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateJumpButtonState" << std::endl;
 }
 
-void World::UpdateProneButtonState(bool pressed)
+void World::UpdateCrouchButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.prone = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.down = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateCrouchButtonState" << std::endl;
 }
 
-void World::UpdateChangeButtonState(bool pressed)
+void World::UpdateProneButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.change = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.prone = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateProneButtonState" << std::endl;
 }
 
-void World::UpdateThrowGrenadeButtonState(bool pressed)
+void World::UpdateChangeButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.throw_grenade = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.change = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateChangeButtonState" << std::endl;
 }
 
-void World::UpdateDropButtonState(bool pressed)
+void World::UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed)
 {
-    soldier_->control.drop = pressed;
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.throw_grenade = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateThrowGrenadeButtonState" << std::endl;
 }
 
-void World::UpdateMousePosition(glm::vec2 mouse_position)
+void World::UpdateDropButtonState(unsigned int soldier_id, bool pressed)
 {
-    state_->mouse.x = mouse_position.x;
-    state_->mouse.y = 480.0F - mouse_position.y; // TODO: soldier.control.mouse_aim_y expects top
-                                                 // to be 0 and bottom to be game_height
+    for (auto& soldier_it : state_->soldiers) {
+        if (soldier_it.id == soldier_id) {
+            soldier_it.control.drop = pressed;
+            return;
+        }
+    }
+    std::cout << "Wrong soldier_id in UpdateDropButtonState" << std::endl;
+}
+
+void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position)
+{
+    for (auto& soldier : state_->soldiers) {
+        if (soldier.id == soldier_id) {
+            soldier.game_width = 640.0;
+            soldier.game_height = 480.0;
+            soldier.camera_prev = soldier.camera;
+
+            soldier.mouse.x = mouse_position.x;
+            soldier.mouse.y =
+              480.0F - mouse_position.y; // TODO: soldier.control.mouse_aim_y expects
+                                         // top to be 0 and bottom to be game_height
+
+            soldier.camera.x =
+              soldier.particle.position.x + (float)(soldier.mouse.x - (soldier.game_width / 2));
+            soldier.camera.y = soldier.particle.position.y -
+                               (float)((480.0F - soldier.mouse.y) - (soldier.game_height / 2));
+
+            return;
+        }
+    }
+
+    std::cout << "Wrong soldier_id in UpdateMousePosition" << std::endl;
 }
 } // namespace Soldat

@@ -6,8 +6,9 @@ const float GRAV = 0.06F;
 
 namespace Soldat
 {
-Soldier::Soldier(glm::vec2 spawn_position)
-    : active(true)
+Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
+    : id(soldier_id)
+    , active(true)
     , dead_meat(false)
     , style(0)
     , num(1)

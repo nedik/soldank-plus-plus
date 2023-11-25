@@ -62,12 +62,14 @@ void Init()
 
 void UpdateMouseButton(int button, int action)
 {
+    unsigned int soldier_id = 0;
+
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
-        world->UpdateFireButtonState(action == GLFW_PRESS);
+        world->UpdateFireButtonState(soldier_id, action == GLFW_PRESS);
     }
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        world->UpdateJetsButtonState(action == GLFW_PRESS);
+        world->UpdateJetsButtonState(soldier_id, action == GLFW_PRESS);
     }
 }
 
@@ -86,27 +88,31 @@ void Run()
         }
     });
     world->SetPreWorldUpdateCallback([&]() {
-        world->UpdateLeftButtonState(Keyboard::Key(GLFW_KEY_A));
-        world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-        world->UpdateJumpButtonState(Keyboard::Key(GLFW_KEY_W));
-        world->UpdateRightButtonState(Keyboard::Key(GLFW_KEY_D));
-        world->UpdateCrouchButtonState(Keyboard::Key(GLFW_KEY_S));
-        world->UpdateChangeButtonState(Keyboard::Key(GLFW_KEY_Q));
-        world->UpdateThrowGrenadeButtonState(Keyboard::Key(GLFW_KEY_E));
-        world->UpdateDropButtonState(Keyboard::Key(GLFW_KEY_F));
-        world->UpdateProneButtonState(Keyboard::Key(GLFW_KEY_X));
+        unsigned int soldier_id = 0;
 
-        world->UpdateMousePosition({ Mouse::GetX(), Mouse::GetY() });
+        world->UpdateLeftButtonState(soldier_id, Keyboard::Key(GLFW_KEY_A));
+        world->UpdateRightButtonState(soldier_id, Keyboard::Key(GLFW_KEY_D));
+        world->UpdateJumpButtonState(soldier_id, Keyboard::Key(GLFW_KEY_W));
+        world->UpdateRightButtonState(soldier_id, Keyboard::Key(GLFW_KEY_D));
+        world->UpdateCrouchButtonState(soldier_id, Keyboard::Key(GLFW_KEY_S));
+        world->UpdateChangeButtonState(soldier_id, Keyboard::Key(GLFW_KEY_Q));
+        world->UpdateThrowGrenadeButtonState(soldier_id, Keyboard::Key(GLFW_KEY_E));
+        world->UpdateDropButtonState(soldier_id, Keyboard::Key(GLFW_KEY_F));
+        world->UpdateProneButtonState(soldier_id, Keyboard::Key(GLFW_KEY_X));
+
+        world->UpdateMousePosition(0, { Mouse::GetX(), Mouse::GetY() });
     });
     world->SetPostGameLoopIterationCallback(
       [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
-          scene.Render(state, world->GetSoldier(), frame_percent, last_fps);
+          scene.Render(state, world->GetSoldier(0), frame_percent, last_fps);
 
           window->SwapBuffers();
           window->PollInput();
 
           networking_client->Update();
       });
+
+    world->CreateSoldier(0);
 
     world->RunLoop(Config::FPS_LIMIT);
 }

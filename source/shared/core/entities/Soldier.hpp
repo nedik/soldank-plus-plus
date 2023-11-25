@@ -6,6 +6,7 @@
 #include "core/state/Control.hpp"
 #include "core/entities/Weapon.hpp"
 #include "core/entities/Bullet.hpp"
+#include "core/math/Glm.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -15,7 +16,15 @@ namespace Soldat
 {
 struct Soldier
 {
-    Soldier(glm::vec2 spawn_position);
+    Soldier(unsigned int soldier_id, glm::vec2 spawn_position);
+
+    unsigned int id;
+
+    glm::vec2 camera;
+    glm::vec2 camera_prev;
+    glm::vec2 mouse;
+    float game_width;
+    float game_height;
 
     bool active;
     bool dead_meat;

@@ -32,7 +32,7 @@ void Scene::Render(const std::shared_ptr<State>& state,
                    int fps)
 {
     glm::vec2 new_camera_position =
-      Calc::Lerp(state->camera_prev, state->camera, (float)frame_percent);
+      Calc::Lerp(soldier.camera_prev, soldier.camera, (float)frame_percent);
     camera_.Move(new_camera_position.x, -new_camera_position.y);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -56,7 +56,7 @@ void Scene::Render(const std::shared_ptr<State>& state,
         }
     }
     sceneries_renderer_.Render(camera_.GetView(), 2, state->map.GetSceneryInstances());
-    cursor_renderer_.Render({ state->mouse.x, state->game_height - state->mouse.y });
+    cursor_renderer_.Render({ soldier.mouse.x, soldier.game_height - soldier.mouse.y });
     text_renderer_.Render("FPS: " + std::to_string(fps), 50.0, 100.0, 1.0, { 1.0, 1.0, 1.0 });
     if (Config::DEBUG_DRAW) {
         rectangle_renderer_.Render(

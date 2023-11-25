@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <utility>
+#include <random>
 
 namespace Soldat
 {
@@ -26,19 +27,21 @@ public:
     void RunLoop(int fps_limit);
     void Update(double delta_time);
     const std::shared_ptr<State>& GetState() const;
-    const Soldier& GetSoldier() const;
+    const Soldier& GetSoldier(unsigned int soldier_id) const;
 
-    void UpdateFireButtonState(bool pressed);
-    void UpdateJetsButtonState(bool pressed);
-    void UpdateLeftButtonState(bool pressed);
-    void UpdateRightButtonState(bool pressed);
-    void UpdateJumpButtonState(bool pressed);
-    void UpdateCrouchButtonState(bool pressed);
-    void UpdateProneButtonState(bool pressed);
-    void UpdateChangeButtonState(bool pressed);
-    void UpdateThrowGrenadeButtonState(bool pressed);
-    void UpdateDropButtonState(bool pressed);
-    void UpdateMousePosition(glm::vec2 mouse_position);
+    void CreateSoldier(unsigned int soldier_id);
+
+    void UpdateFireButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateJetsButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateLeftButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateRightButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateJumpButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateCrouchButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateProneButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateChangeButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateDropButtonState(unsigned int soldier_id, bool pressed);
+    void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position);
 
     void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback)
     {
@@ -64,12 +67,14 @@ private:
     std::shared_ptr<State> state_;
     std::unique_ptr<SoldierPhysics> soldier_physics_;
     std::unique_ptr<BulletPhysics> bullet_physics_;
-    std::unique_ptr<Soldier> soldier_;
 
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;
     TPreGameLoopIterationCallback pre_game_loop_iteration_callback_;
     TPreWorldUpdateCallback pre_world_update_callback_;
     TPostGameLoopIterationCallback post_game_loop_iteration_callback_;
+
+    std::random_device random_device_;
+    std::mt19937 mersenne_twister_engine_;
 };
 
 } // namespace Soldat
