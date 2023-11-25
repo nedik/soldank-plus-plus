@@ -31,6 +31,10 @@ public:
                 double frame_percent,
                 int fps);
 
+    void RenderSoldiers(const std::shared_ptr<State>& game_state,
+                        const ClientState& client_state,
+                        double frame_percent);
+
 private:
     Camera camera_;
     Sprites::SpriteManager sprite_manager_;

@@ -41,9 +41,7 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
 
     background_renderer_.Render(camera_.GetView());
     sceneries_renderer_.Render(camera_.GetView(), 0, game_state->map.GetSceneryInstances());
-    for (const auto& soldier : game_state->soldiers) {
-        soldier_renderer_.Render(camera_.GetView(), sprite_manager_, soldier, frame_percent);
-    }
+    RenderSoldiers(game_state, client_state, frame_percent);
     for (const Bullet& bullet : game_state->bullets) {
         bullet_renderer_.Render(camera_.GetView(), bullet, frame_percent);
     }
@@ -68,6 +66,33 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
             rectangle_renderer_.Render(
               camera_.GetView(),
               glm::vec2(soldier.control.mouse_aim_x, soldier.control.mouse_aim_y));
+        }
+    }
+}
+
+void Scene::RenderSoldiers(const std::shared_ptr<State>& game_state,
+                           const ClientState& client_state,
+                           double frame_percent)
+{
+    for (const auto& soldier : game_state->soldiers) {
+        if (client_state.client_soldier_id.has_value() &&
+            *client_state.client_soldier_id == soldier.id) {
+
+            // skip rendering player's soldier sprites now because we will render it later
+            continue;
+        }
+        soldier_renderer_.Render(camera_.GetView(), sprite_manager_, soldier, frame_percent);
+    }
+
+    // Render player's soldier last because it's the most important for the player to see their
+    // soldier on top of others
+    if (client_state.client_soldier_id.has_value()) {
+        unsigned int client_soldier_id = *client_state.client_soldier_id;
+        for (const auto& soldier : game_state->soldiers) {
+            if (soldier.id == client_soldier_id) {
+                soldier_renderer_.Render(
+                  camera_.GetView(), sprite_manager_, soldier, frame_percent);
+            }
         }
     }
 }

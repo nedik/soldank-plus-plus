@@ -129,7 +129,7 @@ void Run()
           networking_client->Update();
       });
 
-    const auto& soldier = world->CreateSoldier(197);
+    const auto& soldier = world->CreateSoldier();
     client_state->client_soldier_id = soldier.id;
     std::cout << "Created soldier with id = " << *client_state->client_soldier_id << std::endl;
 
