@@ -1,6 +1,7 @@
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 
+#include "rendering/ClientState.hpp"
 #include "rendering/components/Camera.hpp"
 #include "rendering/data/sprites/SpritesManager.hpp"
 #include "rendering/renderer/BackgroundRenderer.hpp"
@@ -23,10 +24,10 @@ namespace Soldat
 class Scene
 {
 public:
-    Scene(const std::shared_ptr<State>& state);
+    Scene(const std::shared_ptr<State>& game_state);
 
-    void Render(const std::shared_ptr<State>& state,
-                const Soldier& soldier,
+    void Render(const std::shared_ptr<State>& game_state,
+                const ClientState& client_state,
                 double frame_percent,
                 int fps);
 
