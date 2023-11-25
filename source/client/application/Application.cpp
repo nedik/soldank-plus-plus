@@ -28,6 +28,7 @@ namespace Soldat::Application
 std::unique_ptr<Window> window;
 std::unique_ptr<World> world;
 std::unique_ptr<NetworkingClient> networking_client;
+unsigned int player_soldier_id;
 
 SteamNetworkingMicroseconds log_time_zero;
 
@@ -62,14 +63,12 @@ void Init()
 
 void UpdateMouseButton(int button, int action)
 {
-    unsigned int soldier_id = 0;
-
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
-        world->UpdateFireButtonState(soldier_id, action == GLFW_PRESS);
+        world->UpdateFireButtonState(player_soldier_id, action == GLFW_PRESS);
     }
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        world->UpdateJetsButtonState(soldier_id, action == GLFW_PRESS);
+        world->UpdateJetsButtonState(player_soldier_id, action == GLFW_PRESS);
     }
 }
 
@@ -88,23 +87,21 @@ void Run()
         }
     });
     world->SetPreWorldUpdateCallback([&]() {
-        unsigned int soldier_id = 0;
+        world->UpdateLeftButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_A));
+        world->UpdateRightButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_D));
+        world->UpdateJumpButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_W));
+        world->UpdateRightButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_D));
+        world->UpdateCrouchButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_S));
+        world->UpdateChangeButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_Q));
+        world->UpdateThrowGrenadeButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_E));
+        world->UpdateDropButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_F));
+        world->UpdateProneButtonState(player_soldier_id, Keyboard::Key(GLFW_KEY_X));
 
-        world->UpdateLeftButtonState(soldier_id, Keyboard::Key(GLFW_KEY_A));
-        world->UpdateRightButtonState(soldier_id, Keyboard::Key(GLFW_KEY_D));
-        world->UpdateJumpButtonState(soldier_id, Keyboard::Key(GLFW_KEY_W));
-        world->UpdateRightButtonState(soldier_id, Keyboard::Key(GLFW_KEY_D));
-        world->UpdateCrouchButtonState(soldier_id, Keyboard::Key(GLFW_KEY_S));
-        world->UpdateChangeButtonState(soldier_id, Keyboard::Key(GLFW_KEY_Q));
-        world->UpdateThrowGrenadeButtonState(soldier_id, Keyboard::Key(GLFW_KEY_E));
-        world->UpdateDropButtonState(soldier_id, Keyboard::Key(GLFW_KEY_F));
-        world->UpdateProneButtonState(soldier_id, Keyboard::Key(GLFW_KEY_X));
-
-        world->UpdateMousePosition(0, { Mouse::GetX(), Mouse::GetY() });
+        world->UpdateMousePosition(player_soldier_id, { Mouse::GetX(), Mouse::GetY() });
     });
     world->SetPostGameLoopIterationCallback(
       [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
-          scene.Render(state, world->GetSoldier(0), frame_percent, last_fps);
+          scene.Render(state, world->GetSoldier(player_soldier_id), frame_percent, last_fps);
 
           window->SwapBuffers();
           window->PollInput();
@@ -112,7 +109,9 @@ void Run()
           networking_client->Update();
       });
 
-    world->CreateSoldier(0);
+    const auto& soldier = world->CreateSoldier(197);
+    player_soldier_id = soldier.id;
+    std::cout << "Created soldier with id = " << player_soldier_id << std::endl;
 
     world->RunLoop(Config::FPS_LIMIT);
 }

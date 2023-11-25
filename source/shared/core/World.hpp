@@ -9,6 +9,7 @@
 #include <functional>
 #include <utility>
 #include <random>
+#include <optional>
 
 namespace Soldat
 {
@@ -29,7 +30,7 @@ public:
     const std::shared_ptr<State>& GetState() const;
     const Soldier& GetSoldier(unsigned int soldier_id) const;
 
-    void CreateSoldier(unsigned int soldier_id);
+    const Soldier& CreateSoldier(std::optional<unsigned int> force_soldier_id = std::nullopt);
 
     void UpdateFireButtonState(unsigned int soldier_id, bool pressed);
     void UpdateJetsButtonState(unsigned int soldier_id, bool pressed);

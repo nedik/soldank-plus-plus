@@ -137,8 +137,27 @@ const Soldier& World::GetSoldier(unsigned int soldier_id) const
     std::unreachable();
 }
 
-void World::CreateSoldier(unsigned int soldier_id)
+const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id)
 {
+    unsigned int new_soldier_id = NAN;
+
+    if (!force_soldier_id.has_value()) {
+        std::vector<unsigned int> current_soldier_ids;
+        for (const auto& soldier : state_->soldiers) {
+            current_soldier_ids.push_back(soldier.id);
+        }
+        std::sort(current_soldier_ids.begin(), current_soldier_ids.end());
+        unsigned int free_soldier_id = 0;
+        while (free_soldier_id < current_soldier_ids.size() &&
+               current_soldier_ids[free_soldier_id] == free_soldier_id) {
+            free_soldier_id++;
+        }
+
+        new_soldier_id = free_soldier_id;
+    } else {
+        new_soldier_id = *force_soldier_id;
+    }
+
     std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
       0, state_->map.GetSpawnPoints().size()); // distribution in range [1, 6]
 
@@ -147,7 +166,9 @@ void World::CreateSoldier(unsigned int soldier_id)
     const auto& chosen_spawnpoint = state_->map.GetSpawnPoints().at(random_spawnpoint_id);
     glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
 
-    state_->soldiers.emplace_back(soldier_id, spawn_position);
+    state_->soldiers.emplace_back(new_soldier_id, spawn_position);
+
+    return state_->soldiers.back();
 }
 
 void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
