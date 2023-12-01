@@ -10,10 +10,9 @@ using namespace Soldat;
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorOneString)
 {
-    std::vector<unsigned char> expected_bytes{ 1, 0, 0, 0, 'T', 'e', 's', 't' };
+    std::vector<unsigned char> expected_bytes{ 1, 0, 0, 0, 4, 0, 'T', 'e', 's', 't' };
 
-    NetworkMessage network_message(
-      NetworkEvent::AssignPlayerId, "Test", expected_bytes.size() - sizeof(NetworkEvent));
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, "Test");
     auto data = network_message.GetData();
 
     ASSERT_EQ(data.size(), expected_bytes.size());
@@ -36,7 +35,7 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorOneStruct)
 
     TestStruct test_struct{ 't', 4 };
 
-    NetworkMessage network_message(NetworkEvent::AssignPlayerId, test_struct, sizeof(test_struct));
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, test_struct);
     auto data = network_message.GetData();
 
     ASSERT_EQ(data.size(), expected_bytes.size());
@@ -47,9 +46,11 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorOneStruct)
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorManyStrings)
 {
-    std::vector<unsigned char> expected_bytes{ 1, 0, 0, 0, 'T', 'e', 's', 't', '4', '9' };
+    std::vector<unsigned char> expected_bytes{
+        1, 0, 0, 0, 4, 0, 'T', 'e', 's', 't', 2, 0, '4', '9'
+    };
 
-    NetworkMessage network_message(NetworkEvent::AssignPlayerId, "Test", 4, "49", 2);
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, "Test", "49");
     auto data = network_message.GetData();
 
     ASSERT_EQ(data.size(), expected_bytes.size());
@@ -60,17 +61,12 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorManyStrings)
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorManyVariables)
 {
-    std::vector<unsigned char> expected_bytes{ 1, 0, 0, 0, 'T', 'e', 's', 't', 5, 0, 0, 0, 6, 0 };
+    std::vector<unsigned char> expected_bytes{ 1,   0,   0, 0, 4, 0, 'T', 'e',
+                                               's', 't', 5, 0, 0, 0, 6,   0 };
 
     int variable_2 = 5;
     short variable_3 = 6;
-    NetworkMessage network_message(NetworkEvent::AssignPlayerId,
-                                   "Test",
-                                   4,
-                                   variable_2,
-                                   sizeof(variable_2),
-                                   variable_3,
-                                   sizeof(variable_3));
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, "Test", variable_2, variable_3);
     auto data = network_message.GetData();
 
     ASSERT_EQ(data.size(), expected_bytes.size());

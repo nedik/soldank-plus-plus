@@ -5,6 +5,7 @@
 
 #include <span>
 #include <vector>
+#include <string>
 
 namespace Soldat
 {
@@ -15,8 +16,8 @@ public:
     NetworkMessage(NetworkEvent event, Arg one_arg, unsigned int size)
     {
         auto event_value = std::to_underlying(event);
-        auto event_value_in_bytes = std::span<unsigned char>(
-          static_cast<unsigned char*>(static_cast<void*>(&event_value)), sizeof(event_value));
+        auto event_value_in_bytes = std::span<char>(
+          static_cast<char*>(static_cast<void*>(&event_value)), sizeof(event_value));
         data_.append_range(event_value_in_bytes);
         AppendBytes(one_arg, size);
     }
@@ -25,42 +26,49 @@ public:
     NetworkMessage(NetworkEvent event, Args... args)
     {
         auto event_value = std::to_underlying(event);
-        auto event_value_in_bytes = std::span<unsigned char>(
-          static_cast<unsigned char*>(static_cast<void*>(&event_value)), sizeof(event_value));
+        auto event_value_in_bytes = std::span<char>(
+          static_cast<char*>(static_cast<void*>(&event_value)), sizeof(event_value));
         data_.append_range(event_value_in_bytes);
         AppendBytes(args...);
     }
 
     template<class Head, class... Tail>
-    void AppendBytes(Head head, unsigned int size, Tail... tail)
+    void AppendBytes(Head head, Tail... tail)
     {
-        AppendBytes(head, size);
+        AppendBytes(head);
         AppendBytes(tail...);
     }
 
-    void AppendBytes(const char* head, unsigned int size)
+    void AppendBytes(const std::string& text)
     {
-        data_.append_range(
-          std::span{ static_cast<const unsigned char*>(static_cast<const void*>(head)), size });
+        unsigned short text_length = text.length();
+        data_.append_range(std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
+                                      sizeof(text_length) });
+        data_.append_range(std::span{
+          static_cast<const char*>(static_cast<const void*>(text.c_str())), text_length });
     }
 
-    void AppendBytes(const unsigned char* head, unsigned int size)
+    void AppendBytes(const char* head)
     {
-        data_.append_range(
-          std::span{ static_cast<const unsigned char*>(static_cast<const void*>(head)), size });
+        std::string text = head;
+        unsigned short text_length = text.length();
+        data_.append_range(std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
+                                      sizeof(text_length) });
+        data_.append_range(std::span{
+          static_cast<const char*>(static_cast<const void*>(text.c_str())), text_length });
     }
 
     template<typename Head>
-    void AppendBytes(Head head, unsigned int size)
+    void AppendBytes(Head head)
     {
         data_.append_range(
-          std::span{ static_cast<const unsigned char*>(static_cast<void*>(&head)), size });
+          std::span{ static_cast<const char*>(static_cast<void*>(&head)), sizeof(Head) });
     }
 
-    std::span<const unsigned char> GetData() const { return { data_ }; }
+    std::span<const char> GetData() const { return { data_ }; }
 
 private:
-    std::vector<unsigned char> data_;
+    std::vector<char> data_;
 };
 }; // namespace Soldat
 
