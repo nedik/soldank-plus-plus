@@ -6,9 +6,68 @@
 #include <span>
 #include <vector>
 #include <string>
+#include <tuple>
 
 namespace Soldat
 {
+namespace
+{
+template<unsigned int N>
+struct NetworkMessageData
+{
+    template<typename Arg>
+    static Arg GetParameter(std::span<const char> data)
+    {
+        Arg converted_data =
+          *static_cast<const Arg*>(static_cast<const void*>(data.subspan(0, sizeof(Arg)).data()));
+        return converted_data;
+    }
+
+    template<>
+    static std::string GetParameter<std::string>(std::span<const char> data)
+    {
+        unsigned short text_size =
+          GetParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+        auto text_data = data.subspan(2, text_size);
+        std::string text{ text_data.begin(), text_data.end() };
+        return text;
+    }
+
+    template<typename Arg>
+    static unsigned int GetParameterSize(std::span<const char> /*data*/)
+    {
+        return sizeof(Arg);
+    }
+
+    template<>
+    static unsigned int GetParameterSize<std::string>(std::span<const char> data)
+    {
+        return sizeof(unsigned short) +
+               GetParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+    }
+
+    template<typename Head, typename... Tail>
+    static std::tuple<Head, Tail...> GetParameters(std::span<const char> data)
+    {
+        Head head = GetParameter<Head>(data);
+        std::tuple<Head> head_in_tuple{ head };
+        return std::tuple_cat(head_in_tuple,
+                              NetworkMessageData<N - 1>::template GetParameters<Tail...>(
+                                data.subspan(GetParameterSize<Head>(data))));
+    }
+};
+
+template<>
+struct NetworkMessageData<1>
+{
+    template<typename Head>
+    static std::tuple<Head> GetParameters(std::span<const char> data)
+    {
+        return { NetworkMessageData<2>::GetParameter<Head>(data) };
+    }
+};
+} // namespace
+
 class NetworkMessage
 {
 public:
@@ -66,6 +125,12 @@ public:
     }
 
     std::span<const char> GetData() const { return { data_ }; }
+
+    template<typename... Args>
+    static std::tuple<Args...> GetParameters(std::span<const char> data)
+    {
+        return NetworkMessageData<sizeof...(Args)>::template GetParameters<Args...>(data);
+    }
 
 private:
     std::vector<char> data_;

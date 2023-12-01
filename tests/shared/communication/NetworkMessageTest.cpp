@@ -75,6 +75,24 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorManyVariables)
     }
 }
 
+TEST(NetworkMessageTests, TestNetworkMessageGetParameters)
+{
+    int expected_variable_1 = 5;
+    int expected_variable_2 = 6;
+    NetworkMessage network_message(
+      NetworkEvent::AssignPlayerId, expected_variable_1, expected_variable_2, "Test", 5);
+    auto data = network_message.GetData();
+
+    auto [network_event, variable_1, variable_2, text, variable_3] =
+      NetworkMessage::GetParameters<NetworkEvent, int, int, std::string, int>(data);
+
+    ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
+    ASSERT_EQ(variable_1, expected_variable_1);
+    ASSERT_EQ(variable_2, expected_variable_2);
+    ASSERT_EQ(text, "Test");
+    ASSERT_EQ(variable_3, 5);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
