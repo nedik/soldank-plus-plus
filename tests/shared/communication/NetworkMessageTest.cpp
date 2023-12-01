@@ -93,6 +93,16 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParameters)
     ASSERT_EQ(variable_3, 5);
 }
 
+TEST(NetworkMessageTests, TestNetworkMessageGetParametersJustEvent)
+{
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), sizeof(NetworkEvent));
+    auto [network_event] = NetworkMessage::GetParameters<NetworkEvent>(data);
+
+    ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

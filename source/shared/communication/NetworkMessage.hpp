@@ -71,13 +71,17 @@ struct NetworkMessageData<1>
 class NetworkMessage
 {
 public:
+    NetworkMessage(NetworkEvent event)
+    {
+        auto event_value = std::to_underlying(event);
+        AppendBytes(event_value);
+    }
+
     template<class Arg>
     NetworkMessage(NetworkEvent event, Arg one_arg, unsigned int size)
     {
         auto event_value = std::to_underlying(event);
-        auto event_value_in_bytes = std::span<char>(
-          static_cast<char*>(static_cast<void*>(&event_value)), sizeof(event_value));
-        data_.append_range(event_value_in_bytes);
+        AppendBytes(event_value);
         AppendBytes(one_arg, size);
     }
 
@@ -85,9 +89,7 @@ public:
     NetworkMessage(NetworkEvent event, Args... args)
     {
         auto event_value = std::to_underlying(event);
-        auto event_value_in_bytes = std::span<char>(
-          static_cast<char*>(static_cast<void*>(&event_value)), sizeof(event_value));
-        data_.append_range(event_value_in_bytes);
+        AppendBytes(event_value);
         AppendBytes(args...);
     }
 
