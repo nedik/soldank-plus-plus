@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
+#include <expected>
 
 namespace Soldat
 {
@@ -16,7 +17,7 @@ template<unsigned int N>
 struct NetworkMessageData
 {
     template<typename Arg>
-    static Arg GetParameter(std::span<const char> data)
+    static Arg ParseDataParameter(std::span<const char> data)
     {
         Arg converted_data =
           *static_cast<const Arg*>(static_cast<const void*>(data.subspan(0, sizeof(Arg)).data()));
@@ -24,36 +25,36 @@ struct NetworkMessageData
     }
 
     template<>
-    static std::string GetParameter<std::string>(std::span<const char> data)
+    static std::string ParseDataParameter<std::string>(std::span<const char> data)
     {
         unsigned short text_size =
-          GetParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+          ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
         auto text_data = data.subspan(2, text_size);
         std::string text{ text_data.begin(), text_data.end() };
         return text;
     }
 
     template<typename Arg>
-    static unsigned int GetParameterSize(std::span<const char> /*data*/)
+    static unsigned int ParseDataParameterSize(std::span<const char> /*data*/)
     {
         return sizeof(Arg);
     }
 
     template<>
-    static unsigned int GetParameterSize<std::string>(std::span<const char> data)
+    static unsigned int ParseDataParameterSize<std::string>(std::span<const char> data)
     {
         return sizeof(unsigned short) +
-               GetParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+               ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
     }
 
     template<typename Head, typename... Tail>
-    static std::tuple<Head, Tail...> GetParameters(std::span<const char> data)
+    static std::tuple<Head, Tail...> ParseData(std::span<const char> data)
     {
-        Head head = GetParameter<Head>(data);
+        Head head = ParseDataParameter<Head>(data);
         std::tuple<Head> head_in_tuple{ head };
         return std::tuple_cat(head_in_tuple,
-                              NetworkMessageData<N - 1>::template GetParameters<Tail...>(
-                                data.subspan(GetParameterSize<Head>(data))));
+                              NetworkMessageData<N - 1>::template ParseData<Tail...>(
+                                data.subspan(ParseDataParameterSize<Head>(data))));
     }
 };
 
@@ -61,9 +62,9 @@ template<>
 struct NetworkMessageData<1>
 {
     template<typename Head>
-    static std::tuple<Head> GetParameters(std::span<const char> data)
+    static std::tuple<Head> ParseData(std::span<const char> data)
     {
-        return { NetworkMessageData<2>::GetParameter<Head>(data) };
+        return { NetworkMessageData<2>::ParseDataParameter<Head>(data) };
     }
 };
 } // namespace
@@ -129,9 +130,9 @@ public:
     std::span<const char> GetData() const { return { data_ }; }
 
     template<typename... Args>
-    static std::tuple<Args...> GetParameters(std::span<const char> data)
+    static std::tuple<Args...> ParseData(std::span<const char> data)
     {
-        return NetworkMessageData<sizeof...(Args)>::template GetParameters<Args...>(data);
+        return NetworkMessageData<sizeof...(Args)>::template ParseData<Args...>(data);
     }
 
 private:

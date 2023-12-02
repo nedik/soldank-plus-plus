@@ -84,7 +84,7 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParameters)
     auto data = network_message.GetData();
 
     auto [network_event, variable_1, variable_2, text, variable_3] =
-      NetworkMessage::GetParameters<NetworkEvent, int, int, std::string, int>(data);
+      NetworkMessage::ParseData<NetworkEvent, int, int, std::string, int>(data);
 
     ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
     ASSERT_EQ(variable_1, expected_variable_1);
@@ -98,7 +98,7 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParametersJustEvent)
     NetworkMessage network_message(NetworkEvent::AssignPlayerId);
     auto data = network_message.GetData();
     ASSERT_EQ(data.size(), sizeof(NetworkEvent));
-    auto [network_event] = NetworkMessage::GetParameters<NetworkEvent>(data);
+    auto [network_event] = NetworkMessage::ParseData<NetworkEvent>(data);
 
     ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
 }
