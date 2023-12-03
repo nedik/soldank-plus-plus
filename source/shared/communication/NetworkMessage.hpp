@@ -11,60 +11,131 @@
 
 namespace Soldat
 {
+enum class ParseError : unsigned short
+{
+    InvalidStringSize = 0,
+    BufferTooSmall,
+    BufferTooBig,
+    InvalidString,
+};
+
 namespace
 {
 template<unsigned int N>
 struct NetworkMessageData
 {
     template<typename Arg>
-    static Arg ParseDataParameter(std::span<const char> data)
+    static std::expected<Arg, ParseError> ParseDataParameter(std::span<const char> data)
     {
+        if (data.size() < sizeof(Arg)) {
+            return std::unexpected(ParseError::BufferTooSmall);
+        }
+
         Arg converted_data =
           *static_cast<const Arg*>(static_cast<const void*>(data.subspan(0, sizeof(Arg)).data()));
         return converted_data;
     }
 
     template<>
-    static std::string ParseDataParameter<std::string>(std::span<const char> data)
+    static std::expected<std::string, ParseError> ParseDataParameter<std::string>(
+      std::span<const char> data)
     {
-        unsigned short text_size =
+        auto text_size_or_error =
           ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+        if (!text_size_or_error.has_value()) {
+            return std::unexpected(text_size_or_error.error());
+        }
+
+        unsigned short text_size = *text_size_or_error;
+        if (text_size == 0 || text_size > data.size() - 2) {
+            return std::unexpected(ParseError::InvalidStringSize);
+        }
+
+        for (char character : data.subspan(2, text_size)) {
+            if (character == 0) {
+                return std::unexpected(ParseError::InvalidString);
+            }
+        }
+
         auto text_data = data.subspan(2, text_size);
         std::string text{ text_data.begin(), text_data.end() };
         return text;
     }
 
     template<typename Arg>
-    static unsigned int ParseDataParameterSize(std::span<const char> /*data*/)
+    static std::expected<unsigned int, ParseError> ParseDataParameterSize(
+      std::span<const char> data)
     {
+        if (data.size() < sizeof(Arg)) {
+            return std::unexpected(ParseError::BufferTooSmall);
+        }
+
         return sizeof(Arg);
     }
 
     template<>
-    static unsigned int ParseDataParameterSize<std::string>(std::span<const char> data)
+    static std::expected<unsigned int, ParseError> ParseDataParameterSize<std::string>(
+      std::span<const char> data)
     {
-        return sizeof(unsigned short) +
-               ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+        auto text_size_or_error =
+          ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
+        if (!text_size_or_error.has_value()) {
+            return std::unexpected(text_size_or_error.error());
+        }
+        unsigned short text_size = *text_size_or_error;
+        if ((text_size == 0) || text_size > data.size() - 2) {
+            return std::unexpected(ParseError::InvalidStringSize);
+        }
+
+        return sizeof(unsigned short) + text_size;
     }
 
     template<typename Head, typename... Tail>
-    static std::tuple<Head, Tail...> ParseData(std::span<const char> data)
+    static std::expected<std::tuple<Head, Tail...>, ParseError> ParseData(
+      std::span<const char> data)
     {
-        Head head = ParseDataParameter<Head>(data);
-        std::tuple<Head> head_in_tuple{ head };
-        return std::tuple_cat(head_in_tuple,
-                              NetworkMessageData<N - 1>::template ParseData<Tail...>(
-                                data.subspan(ParseDataParameterSize<Head>(data))));
+        auto head_or_error = ParseDataParameter<Head>(data);
+        if (!head_or_error.has_value()) {
+            return std::unexpected(head_or_error.error());
+        }
+
+        auto tail_offset_or_error = ParseDataParameterSize<Head>(data);
+        if (!tail_offset_or_error.has_value()) {
+            return std::unexpected(tail_offset_or_error.error());
+        }
+
+        auto tail_or_error = NetworkMessageData<N - 1>::template ParseData<Tail...>(
+          data.subspan(*tail_offset_or_error));
+        if (!tail_or_error.has_value()) {
+            return std::unexpected(tail_or_error.error());
+        }
+        std::tuple<Head> head_in_tuple{ *head_or_error };
+        return std::tuple_cat(head_in_tuple, *tail_or_error);
     }
 };
 
 template<>
 struct NetworkMessageData<1>
 {
-    template<typename Head>
-    static std::tuple<Head> ParseData(std::span<const char> data)
+    template<typename Arg>
+    static std::expected<std::tuple<Arg>, ParseError> ParseData(std::span<const char> data)
     {
-        return { NetworkMessageData<2>::ParseDataParameter<Head>(data) };
+        auto last_parameter_size_or_error =
+          NetworkMessageData<2>::ParseDataParameterSize<Arg>(data);
+        if (!last_parameter_size_or_error.has_value()) {
+            return std::unexpected(last_parameter_size_or_error.error());
+        }
+        auto last_parameter_size = *last_parameter_size_or_error;
+        if (data.size() > last_parameter_size) {
+            return std::unexpected(ParseError::BufferTooBig);
+        }
+
+        auto parsed_or_error = NetworkMessageData<2>::ParseDataParameter<Arg>(data);
+        if (!parsed_or_error.has_value()) {
+            return std::unexpected(parsed_or_error.error());
+        }
+
+        return { *parsed_or_error };
     }
 };
 } // namespace
@@ -130,7 +201,7 @@ public:
     std::span<const char> GetData() const { return { data_ }; }
 
     template<typename... Args>
-    static std::tuple<Args...> ParseData(std::span<const char> data)
+    static std::expected<std::tuple<Args...>, ParseError> ParseData(std::span<const char> data)
     {
         return NetworkMessageData<sizeof...(Args)>::template ParseData<Args...>(data);
     }

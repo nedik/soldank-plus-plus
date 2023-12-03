@@ -5,6 +5,8 @@
 
 #include <cstddef>
 #include <array>
+#include <optional>
+#include <utility>
 
 using namespace Soldat;
 
@@ -75,7 +77,7 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorManyVariables)
     }
 }
 
-TEST(NetworkMessageTests, TestNetworkMessageGetParameters)
+TEST(NetworkMessageTests, TestNetworkMessageParseData)
 {
     int expected_variable_1 = 5;
     int expected_variable_2 = 6;
@@ -83,8 +85,11 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParameters)
       NetworkEvent::AssignPlayerId, expected_variable_1, expected_variable_2, "Test", 5);
     auto data = network_message.GetData();
 
-    auto [network_event, variable_1, variable_2, text, variable_3] =
-      NetworkMessage::ParseData<NetworkEvent, int, int, std::string, int>(data);
+    auto parsed = NetworkMessage::ParseData<NetworkEvent, int, int, std::string, int>(data);
+
+    ASSERT_TRUE(parsed.has_value());
+
+    auto [network_event, variable_1, variable_2, text, variable_3] = *parsed;
 
     ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
     ASSERT_EQ(variable_1, expected_variable_1);
@@ -98,9 +103,74 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParametersJustEvent)
     NetworkMessage network_message(NetworkEvent::AssignPlayerId);
     auto data = network_message.GetData();
     ASSERT_EQ(data.size(), sizeof(NetworkEvent));
-    auto [network_event] = NetworkMessage::ParseData<NetworkEvent>(data);
-
+    auto parsed = NetworkMessage::ParseData<NetworkEvent>(data);
+    ASSERT_TRUE(parsed.has_value());
+    auto [network_event] = *parsed;
     ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
+}
+
+template<typename... Args>
+void CheckParseError(std::span<const char> data, ParseError expected_parse_error)
+{
+    auto parsed = NetworkMessage::ParseData<Args...>(data);
+    ASSERT_FALSE(parsed.has_value());
+    ASSERT_EQ(parsed.error(), expected_parse_error);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataValidMessageInvalidParse)
+{
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), sizeof(NetworkEvent));
+    CheckParseError<NetworkEvent, int>(data, ParseError::BufferTooSmall);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataNetworkEventDifferentSize)
+{
+    std::vector<char> data{ 1 };
+    CheckParseError<NetworkEvent>(data, ParseError::BufferTooSmall);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataTextLongerThanSize)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 3, 0, 'T', 'e', 's', 't' };
+    CheckParseError<NetworkEvent, std::string>(data, ParseError::BufferTooBig);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataTextShorterThanSize)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 3, 0, 'T', 'e' };
+    CheckParseError<NetworkEvent, std::string>(data, ParseError::InvalidStringSize);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataTextSizeEqualsZero)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 0, 0, 'T', 'e', 's', 't' };
+    CheckParseError<NetworkEvent, std::string>(data, ParseError::InvalidStringSize);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataAdditionalParameterDifferentSize)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 4, 0, 0 };
+    CheckParseError<NetworkEvent, int>(data, ParseError::BufferTooSmall);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataBufferBiggerThanExpected)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 4, 0, 0, 0, 5, 6 };
+    CheckParseError<NetworkEvent, int>(data, ParseError::BufferTooBig);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataMoreDataThanExpected)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 4, 0, 'T', 'e', 's', 't', 1 };
+    CheckParseError<NetworkEvent, std::string>(data, ParseError::BufferTooBig);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataStringHasZeroInTheMiddle)
+{
+    std::vector<char> data{ 1, 0, 0, 0, 4, 0, 'T', 'e', 0, 't' };
+    CheckParseError<NetworkEvent, std::string>(data, ParseError::InvalidString);
 }
 
 int main(int argc, char** argv)
