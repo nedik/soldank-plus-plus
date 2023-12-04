@@ -8,6 +8,7 @@
 #include <string>
 #include <tuple>
 #include <expected>
+#include <cmath>
 
 namespace Soldat
 {
@@ -17,6 +18,7 @@ enum class ParseError : unsigned short
     BufferTooSmall,
     BufferTooBig,
     InvalidString,
+    InvalidNetworkEvent,
 };
 
 namespace
@@ -143,6 +145,11 @@ struct NetworkMessageData<1>
 class NetworkMessage
 {
 public:
+    NetworkMessage(std::span<const char> data)
+        : data_{ data.begin(), data.end() }
+    {
+    }
+
     NetworkMessage(NetworkEvent event)
     {
         auto event_value = std::to_underlying(event);
@@ -204,6 +211,24 @@ public:
     static std::expected<std::tuple<Args...>, ParseError> ParseData(std::span<const char> data)
     {
         return NetworkMessageData<sizeof...(Args)>::template ParseData<Args...>(data);
+    }
+
+    template<typename... Args>
+    std::expected<std::tuple<Args...>, ParseError> Parse() const
+    {
+        return NetworkMessageData<sizeof...(Args)>::template ParseData<Args...>(data_);
+    }
+
+    std::expected<NetworkEvent, ParseError> GetNetworkEvent() const
+    {
+        std::span<const char> data{ data_ };
+        auto parsed = NetworkMessageData<1>::template ParseData<NetworkEvent>(
+          data.subspan(0, std::min(sizeof(NetworkEvent), data.size())));
+        if (!parsed.has_value()) {
+            return std::unexpected(parsed.error());
+        }
+        auto [network_event] = *parsed;
+        return network_event;
     }
 
 private:

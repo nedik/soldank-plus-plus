@@ -21,6 +21,10 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorOneString)
     for (unsigned int i = 0; i < expected_bytes.size(); i++) {
         ASSERT_EQ(expected_bytes[i], data[i]);
     }
+
+    auto network_event_or_error = network_message.GetNetworkEvent();
+    ASSERT_TRUE(network_event_or_error.has_value());
+    ASSERT_EQ(*network_event_or_error, NetworkEvent::AssignPlayerId);
 }
 
 #pragma pack(push, 1)
@@ -44,6 +48,10 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorOneStruct)
     for (unsigned int i = 0; i < expected_bytes.size(); i++) {
         ASSERT_EQ(expected_bytes[i], data[i]);
     }
+
+    auto network_event_or_error = network_message.GetNetworkEvent();
+    ASSERT_TRUE(network_event_or_error.has_value());
+    ASSERT_EQ(*network_event_or_error, NetworkEvent::AssignPlayerId);
 }
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorManyStrings)
@@ -59,6 +67,10 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorManyStrings)
     for (unsigned int i = 0; i < expected_bytes.size(); i++) {
         ASSERT_EQ(expected_bytes[i], data[i]);
     }
+
+    auto network_event_or_error = network_message.GetNetworkEvent();
+    ASSERT_TRUE(network_event_or_error.has_value());
+    ASSERT_EQ(*network_event_or_error, NetworkEvent::AssignPlayerId);
 }
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorManyVariables)
@@ -75,6 +87,10 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructorManyVariables)
     for (unsigned int i = 0; i < expected_bytes.size(); i++) {
         ASSERT_EQ(expected_bytes[i], data[i]);
     }
+
+    auto network_event_or_error = network_message.GetNetworkEvent();
+    ASSERT_TRUE(network_event_or_error.has_value());
+    ASSERT_EQ(*network_event_or_error, NetworkEvent::AssignPlayerId);
 }
 
 TEST(NetworkMessageTests, TestNetworkMessageParseData)

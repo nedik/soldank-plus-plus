@@ -38,12 +38,14 @@ CheckOptions:
   - { key: readability-identifier-naming.EnumConstantCase,         value: CamelCase  }
   - { key: readability-identifier-naming.ConstexprVariableCase,    value: UPPER_CASE }
   - { key: readability-identifier-naming.GlobalConstantCase,       value: UPPER_CASE }
-  - { key: readability-identifier-naming.MemberConstantCase,       value: UPPER_CASE  }
+  - { key: readability-identifier-naming.MemberConstantCase,       value: UPPER_CASE }
   - { key: readability-identifier-naming.ClassMemberSuffix,        value: _          }
   - { key: readability-identifier-naming.StaticConstantCase,       value: UPPER_CASE }
   - { key: readability-identifier-naming.ParameterCase,            value: lower_case }
   - { key: readability-identifier-naming.MemberCase,               value: lower_case }
   - { key: readability-identifier-naming.ClassMemberCase,          value: lower_case }
-  - { key: readability-identifier-naming.PrivateMemberCase,          value: lower_case }
+  - { key: readability-identifier-naming.PrivateMemberCase,        value: lower_case }
+  - { key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor, value: '1' }
 
 # misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic - we are turning this one on because it gets triggered on struct members
+# cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor - we are turning this one on because it gets triggered on pure virtual interface classes
