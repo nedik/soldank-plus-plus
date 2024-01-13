@@ -12,13 +12,15 @@ using namespace Soldat;
 class NetworkEventObserverExample : public INetworkEventObserver
 {
 public:
-    NetworkEventObserverResult OnAssignPlayerId(unsigned int assigned_player_id) override
+    NetworkEventObserverResult OnAssignPlayerId(const ConnectionMetadata& /*connection_metadata*/,
+                                                unsigned int assigned_player_id) override
     {
         last_assigned_player_id_ = assigned_player_id;
         return result_;
     }
 
-    NetworkEventObserverResult OnChatMessage(const std::string& chat_message) override
+    NetworkEventObserverResult OnChatMessage(const ConnectionMetadata& /*connection_metadata*/,
+                                             const std::string& chat_message) override
     {
         last_chat_message_ = chat_message;
         return result_;
@@ -56,7 +58,9 @@ protected:
     NetworkEventDispatcher::TDispatchResult ProcessNetworkMessage(
       const NetworkMessage& network_message)
     {
-        return network_event_dispatcher_->ProcessNetworkMessage(network_message);
+        ConnectionMetadata connection_metadata;
+        return network_event_dispatcher_->ProcessNetworkMessage(connection_metadata,
+                                                                network_message);
     }
 
     NetworkEventObserverExample& GetObserver() { return observer_; }

@@ -40,8 +40,9 @@ void EntryPollGroup::PollIncomingMessages()
                   << std::endl;
         incoming_message->Release();
 
-        SendStringToClient(it_client->second.connection_handle,
-                           "Welcome to the server " + it_client->second.nick);
+        SendNetworkMessage(
+          it_client->second.connection_handle,
+          { NetworkEvent::ChatMessage, "Welcome to the server " + it_client->second.nick });
 
         player_poll_group_->AssignConnection(it_client->second);
         EraseConnection(it_client);

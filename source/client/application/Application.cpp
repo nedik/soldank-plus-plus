@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "application/ClientNetworkEventObserver.hpp"
 #include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
@@ -10,6 +11,8 @@
 
 #include "rendering/Scene.hpp"
 #include "rendering/ClientState.hpp"
+
+#include "communication/NetworkEventDispatcher.hpp"
 
 #include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
@@ -27,9 +30,11 @@
 namespace Soldat::Application
 {
 std::unique_ptr<Window> window;
-std::unique_ptr<World> world;
+std::shared_ptr<World> world;
 std::unique_ptr<NetworkingClient> networking_client;
-std::unique_ptr<ClientState> client_state;
+std::shared_ptr<ClientState> client_state;
+std::shared_ptr<NetworkEventDispatcher> client_network_event_dispatcher;
+std::shared_ptr<INetworkEventObserver> client_network_event_observer;
 
 SteamNetworkingMicroseconds log_time_zero;
 
@@ -46,8 +51,12 @@ void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char*
 void Init()
 {
     window = std::make_unique<Window>();
-    world = std::make_unique<World>();
-    client_state = std::make_unique<ClientState>();
+    world = std::make_shared<World>();
+    client_state = std::make_shared<ClientState>();
+    client_network_event_observer =
+      std::make_shared<ClientNetworkEventObserver>(world, client_state);
+    client_network_event_dispatcher =
+      std::make_shared<NetworkEventDispatcher>(client_network_event_observer);
 
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
@@ -126,12 +135,8 @@ void Run()
           window->SwapBuffers();
           window->PollInput();
 
-          networking_client->Update();
+          networking_client->Update(client_network_event_dispatcher);
       });
-
-    const auto& soldier = world->CreateSoldier();
-    client_state->client_soldier_id = soldier.id;
-    std::cout << "Created soldier with id = " << *client_state->client_soldier_id << std::endl;
 
     world->RunLoop(Config::FPS_LIMIT);
 }

@@ -12,7 +12,8 @@
 
 namespace Soldat
 {
-GameServer::GameServer()
+GameServer::GameServer(
+  const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher)
 {
 
     NetworkingInterface::Init();
@@ -24,6 +25,7 @@ GameServer::GameServer()
     entry_poll_group_ = NetworkingInterface::CreatePollGroup<EntryPollGroup>();
     player_poll_group_ = NetworkingInterface::CreatePollGroup<PlayerPollGroup>();
     entry_poll_group_->RegisterPlayerPollGroup(player_poll_group_);
+    player_poll_group_->SetServerNetworkEventDispatcher(network_event_dispatcher);
 };
 
 GameServer::~GameServer()
@@ -36,6 +38,17 @@ void GameServer::Update()
     entry_poll_group_->PollIncomingMessages();
     player_poll_group_->PollIncomingMessages();
     NetworkingInterface::PollConnectionStateChanges();
+}
+
+void GameServer::SendNetworkMessage(unsigned int connection_id,
+                                    const NetworkMessage& network_message)
+{
+    if (entry_poll_group_->IsConnectionAssigned(connection_id)) {
+        entry_poll_group_->SendNetworkMessage(connection_id, network_message);
+    }
+    if (player_poll_group_->IsConnectionAssigned(connection_id)) {
+        player_poll_group_->SendNetworkMessage(connection_id, network_message);
+    }
 }
 
 void GameServer::OnSteamNetConnectionStatusChanged(

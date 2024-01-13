@@ -3,6 +3,8 @@
 
 #include "networking/Connection.hpp"
 
+#include "communication/NetworkEventDispatcher.hpp"
+
 #include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
 
@@ -15,13 +17,14 @@ class NetworkingClient
 public:
     NetworkingClient();
 
-    void Update();
+    void Update(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher);
 
 private:
     void OnSteamNetConnectionStatusChanged(
       SteamNetConnectionStatusChangedCallback_t* connection_info);
 
     std::shared_ptr<Connection> connection_;
+    std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
 };
 } // namespace Soldat
 

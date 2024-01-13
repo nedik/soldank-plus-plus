@@ -3,6 +3,11 @@
 
 #include "networking/types/Connection.hpp"
 
+#include "communication/NetworkEvent.hpp"
+#include "communication/NetworkMessage.hpp"
+
+#include <memory>
+
 class ISteamNetworkingSockets;
 struct SteamNetConnectionStatusChangedCallback_t;
 
@@ -24,6 +29,9 @@ public:
     virtual void CloseConnection(SteamNetConnectionStatusChangedCallback_t* connection_info) = 0;
     virtual bool AssignConnection(const Connection& connection) = 0;
     virtual bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) = 0;
+
+    virtual void SendNetworkMessage(unsigned int connection_id,
+                                    const NetworkMessage& network_message) = 0;
 
 protected:
     IPollGroup(ISteamNetworkingSockets* interface)

@@ -63,9 +63,22 @@ bool PollGroupBase::AssignConnection(const Connection& connection)
         return false;
     }
     connections_[connection.connection_handle] = connection;
+    OnAssignConnection(connection);
 
     return true;
 }
+
+void PollGroupBase::SendNetworkMessage(HSteamNetConnection connection_id,
+                                       const NetworkMessage& network_message)
+{
+    GetInterface()->SendMessageToConnection(connection_id,
+                                            network_message.GetData().data(),
+                                            network_message.GetData().size(),
+                                            k_nSteamNetworkingSend_Reliable,
+                                            nullptr);
+}
+
+void PollGroupBase::OnAssignConnection(const Connection& /* connection */) {}
 
 bool PollGroupBase::IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle)
 {

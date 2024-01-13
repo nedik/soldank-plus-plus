@@ -3,6 +3,10 @@
 
 #include "networking/poll_groups/EntryPollGroup.hpp"
 #include "networking/poll_groups/PlayerPollGroup.hpp"
+#include "networking/events/ServerNetworkEventDispatcher.hpp"
+
+#include "communication/NetworkMessage.hpp"
+#include "communication/NetworkEventDispatcher.hpp"
 
 #include <steam/steamnetworkingsockets.h>
 
@@ -15,7 +19,7 @@ namespace Soldat
 class GameServer
 {
 public:
-    GameServer();
+    GameServer(const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher);
     ~GameServer();
 
     GameServer(GameServer&& other) = delete;
@@ -24,6 +28,8 @@ public:
     GameServer& operator=(GameServer& other) = delete;
 
     void Update();
+
+    void SendNetworkMessage(unsigned int connection_id, const NetworkMessage& network_message);
 
 private:
     std::unique_ptr<EntryPollGroup> entry_poll_group_;

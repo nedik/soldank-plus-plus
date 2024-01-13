@@ -1,6 +1,6 @@
 #include "application/Application.hpp"
 
-#include "networking/GameServer.hpp"
+#include "networking/events/ServerNetworkEventObserver.hpp"
 
 #include <steam/steamnetworkingsockets.h>
 
@@ -25,7 +25,7 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
 }
 
 Application::Application()
-    : world_(std::make_unique<World>())
+    : world_(std::make_shared<World>())
 {
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
@@ -37,6 +37,11 @@ Application::Application()
 
     SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
                                                    DebugOutput);
+
+    server_network_event_observer_ = std::make_shared<ServerNetworkEventObserver>(world_);
+    server_network_event_dispatcher_ =
+      std::make_shared<ServerNetworkEventDispatcher>(server_network_event_observer_);
+    game_server_ = std::make_shared<GameServer>(server_network_event_dispatcher_);
 }
 
 Application::~Application()
@@ -48,14 +53,12 @@ void Application::Run()
 {
     std::cout << "Server started!" << std::endl;
 
-    GameServer game_server;
-
     world_->SetShouldStopGameLoopCallback([&]() { return false; });
     world_->SetPreGameLoopIterationCallback([&]() {});
     world_->SetPreWorldUpdateCallback([&]() {});
     world_->SetPostGameLoopIterationCallback([&](const std::shared_ptr<State>& state,
                                                  double frame_percent,
-                                                 int last_fps) { game_server.Update(); });
+                                                 int last_fps) { game_server_->Update(); });
 
     world_->RunLoop(60);
 

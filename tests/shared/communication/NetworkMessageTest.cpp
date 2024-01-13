@@ -125,6 +125,21 @@ TEST(NetworkMessageTests, TestNetworkMessageGetParametersJustEvent)
     ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
 }
 
+TEST(NetworkMessageTests, TestNetworkMessageConstructFromBytes)
+{
+    std::array<char, 8> expected_bytes{ 1, 0, 0, 0, 3, 0, 0, 0 };
+    std::span<char> exp = expected_bytes;
+    NetworkMessage network_message(exp);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), 8);
+    auto parsed = NetworkMessage::ParseData<NetworkEvent, int>(data);
+    ASSERT_TRUE(parsed.has_value());
+    auto [network_event, player_id] = *parsed;
+    ASSERT_EQ(network_event, NetworkEvent::AssignPlayerId);
+    ASSERT_EQ(player_id, 3);
+    ASSERT_EQ(network_message.GetNetworkEvent(), NetworkEvent::AssignPlayerId);
+}
+
 template<typename... Args>
 void CheckParseError(std::span<const char> data, ParseError expected_parse_error)
 {

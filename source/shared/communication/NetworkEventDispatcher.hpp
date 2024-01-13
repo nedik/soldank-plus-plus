@@ -7,6 +7,7 @@
 #include <memory>
 #include <variant>
 #include <utility>
+#include <functional>
 
 namespace Soldat
 {
@@ -23,13 +24,22 @@ enum class NetworkEventObserverResult
     Failure = 1,
 };
 
+struct ConnectionMetadata
+{
+    unsigned int connection_id;
+    std::function<void(const NetworkMessage&)> send_message_to_connection;
+};
+
 class INetworkEventObserver
 {
 public:
     virtual ~INetworkEventObserver() = default;
 
-    virtual NetworkEventObserverResult OnAssignPlayerId(unsigned int assigned_player_id) = 0;
-    virtual NetworkEventObserverResult OnChatMessage(const std::string& chat_message) = 0;
+    virtual NetworkEventObserverResult OnAssignPlayerId(
+      const ConnectionMetadata& connection_metadata,
+      unsigned int assigned_player_id) = 0;
+    virtual NetworkEventObserverResult OnChatMessage(const ConnectionMetadata& connection_metadata,
+                                                     const std::string& chat_message) = 0;
 };
 
 class NetworkEventDispatcher
@@ -41,7 +51,8 @@ public:
 
     NetworkEventDispatcher(std::shared_ptr<INetworkEventObserver> network_event_observer);
 
-    TDispatchResult ProcessNetworkMessage(const NetworkMessage& network_message);
+    TDispatchResult ProcessNetworkMessage(const ConnectionMetadata& connection_metadata,
+                                          const NetworkMessage& network_message);
 
 private:
     static TDispatchResult HandleObserverResult(NetworkEventObserverResult observer_result);

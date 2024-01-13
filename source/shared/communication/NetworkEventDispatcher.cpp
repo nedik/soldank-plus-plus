@@ -3,6 +3,8 @@
 #include "communication/NetworkEvent.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
 
+#include <iostream>
+
 namespace Soldat
 {
 NetworkEventDispatcher::NetworkEventDispatcher(
@@ -12,6 +14,7 @@ NetworkEventDispatcher::NetworkEventDispatcher(
 }
 
 NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMessage(
+  const ConnectionMetadata& connection_metadata,
   const NetworkMessage& network_message)
 {
     auto network_event_or_error = network_message.GetNetworkEvent();
@@ -20,6 +23,8 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
     }
 
     auto network_event = *network_event_or_error;
+    std::cout << "[ProcessNetworkMessage] network_event = " << std::to_underlying(network_event)
+              << std::endl;
 
     NetworkEventObserverResult observer_result = NetworkEventObserverResult::Failure;
 
@@ -30,7 +35,11 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                 return { NetworkEventDispatchResult::ParseError, parsed.error() };
             }
             unsigned int assigned_player_id = std::get<1>(*parsed);
-            observer_result = network_event_observer_->OnAssignPlayerId(assigned_player_id);
+
+            std::cout << "[ProcessNetworkMessage] AssignPlayerId: " << assigned_player_id
+                      << std::endl;
+            observer_result =
+              network_event_observer_->OnAssignPlayerId(connection_metadata, assigned_player_id);
             break;
         }
         case NetworkEvent::ChatMessage: {
@@ -39,13 +48,17 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                 return { NetworkEventDispatchResult::ParseError, parsed.error() };
             }
             std::string chat_message = std::get<1>(*parsed);
-            observer_result = network_event_observer_->OnChatMessage(chat_message);
+
+            std::cout << "[ProcessNetworkMessage] ChatMessage: " << chat_message << std::endl;
+            observer_result =
+              network_event_observer_->OnChatMessage(connection_metadata, chat_message);
             break;
         }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80
             // when NetworkEvent has less than 80 values!
+            std::cout << "[ProcessNetworkMessage] ParseError" << std::endl;
             return { NetworkEventDispatchResult::ParseError, ParseError::InvalidNetworkEvent };
         }
     }

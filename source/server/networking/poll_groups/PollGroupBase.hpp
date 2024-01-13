@@ -22,7 +22,12 @@ public:
     bool AssignConnection(const Connection& connection) override;
     bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) override;
 
+    void SendNetworkMessage(HSteamNetConnection connection_id,
+                            const NetworkMessage& network_message) override;
+
 protected:
+    virtual void OnAssignConnection(const Connection& connection);
+
     HSteamNetPollGroup GetPollGroupHandle() const;
 
     std::unordered_map<HSteamNetConnection, Connection>::iterator FindConnection(

@@ -1,8 +1,12 @@
 #include "networking/Connection.hpp"
 
+#include "communication/NetworkEventDispatcher.hpp"
+#include "communication/NetworkMessage.hpp"
+
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <span>
 
 namespace Soldat
 {
@@ -18,7 +22,8 @@ Connection::Connection(ISteamNetworkingSockets* interface, HSteamNetConnection c
                                         nullptr);
 }
 
-void Connection::PollIncomingMessages()
+void Connection::PollIncomingMessages(
+  const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher)
 {
     ISteamNetworkingMessage* p_incoming_msg = nullptr;
     int num_msgs = interface_->ReceiveMessagesOnConnection(connection_handle_, &p_incoming_msg, 1);
@@ -27,16 +32,19 @@ void Connection::PollIncomingMessages()
     }
     if (num_msgs < 0) {
         std::cout << "Error checking for messages" << std::endl;
+        return;
     }
 
-    std::string message_from_server;
-    message_from_server.assign(static_cast<char*>(p_incoming_msg->m_pData),
-                               p_incoming_msg->m_cbSize);
+    std::span<const char> received_bytes{ static_cast<char*>(p_incoming_msg->m_pData),
+                                          static_cast<unsigned int>(p_incoming_msg->m_cbSize) };
 
-    std::cout << message_from_server << std::endl;
-
+    NetworkMessage received_message(received_bytes);
     // We don't need this anymore.
     p_incoming_msg->Release();
+    ConnectionMetadata connection_metadata{ .connection_id = p_incoming_msg->m_conn,
+                                            .send_message_to_connection =
+                                              [](const NetworkMessage& message) {} };
+    network_event_dispatcher->ProcessNetworkMessage(connection_metadata, received_message);
 }
 
 void Connection::CloseConnection()

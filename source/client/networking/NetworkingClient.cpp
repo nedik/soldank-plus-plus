@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <span>
+#include <utility>
 
 namespace Soldat
 {
@@ -19,9 +20,10 @@ NetworkingClient::NetworkingClient()
     connection_ = NetworkingInterface::CreateConnection();
 }
 
-void NetworkingClient::Update()
+void NetworkingClient::Update(
+  const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher)
 {
-    connection_->PollIncomingMessages();
+    connection_->PollIncomingMessages(network_event_dispatcher);
     NetworkingInterface::PollConnectionStateChanges();
 }
 
