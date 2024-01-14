@@ -1,6 +1,8 @@
 #ifndef __NETWORKING_CLIENT_HPP__
 #define __NETWORKING_CLIENT_HPP__
 
+#include "networking/INetworkingClient.hpp"
+
 #include "networking/Connection.hpp"
 
 #include "communication/NetworkEventDispatcher.hpp"
@@ -12,12 +14,12 @@
 
 namespace Soldat
 {
-class NetworkingClient
+class NetworkingClient : public INetworkingClient
 {
 public:
     NetworkingClient();
 
-    void Update(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher);
+    void Update(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher) override;
 
 private:
     void OnSteamNetConnectionStatusChanged(

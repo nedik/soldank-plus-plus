@@ -31,7 +31,7 @@ namespace Soldat::Application
 {
 std::unique_ptr<Window> window;
 std::shared_ptr<IWorld> world;
-std::unique_ptr<NetworkingClient> networking_client;
+std::unique_ptr<INetworkingClient> networking_client;
 std::shared_ptr<ClientState> client_state;
 std::shared_ptr<NetworkEventDispatcher> client_network_event_dispatcher;
 std::shared_ptr<INetworkEventObserver> client_network_event_observer;
