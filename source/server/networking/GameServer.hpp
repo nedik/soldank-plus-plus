@@ -1,6 +1,8 @@
 #ifndef __GAME_SERVER_HPP__
 #define __GAME_SERVER_HPP__
 
+#include "networking/IGameServer.hpp"
+
 #include "networking/poll_groups/EntryPollGroup.hpp"
 #include "networking/poll_groups/PlayerPollGroup.hpp"
 #include "networking/events/ServerNetworkEventDispatcher.hpp"
@@ -16,20 +18,21 @@
 
 namespace Soldat
 {
-class GameServer
+class GameServer : public IGameServer
 {
 public:
     GameServer(const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher);
-    ~GameServer();
+    ~GameServer() override;
 
     GameServer(GameServer&& other) = delete;
     GameServer& operator=(GameServer&& other) = delete;
     GameServer(GameServer& other) = delete;
     GameServer& operator=(GameServer& other) = delete;
 
-    void Update();
+    void Update() override;
 
-    void SendNetworkMessage(unsigned int connection_id, const NetworkMessage& network_message);
+    void SendNetworkMessage(unsigned int connection_id,
+                            const NetworkMessage& network_message) override;
 
 private:
     std::unique_ptr<EntryPollGroup> entry_poll_group_;

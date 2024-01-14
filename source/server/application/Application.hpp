@@ -32,7 +32,7 @@ private:
 
     static SteamNetworkingMicroseconds log_time_zero_;
 
-    std::shared_ptr<GameServer> game_server_;
+    std::shared_ptr<IGameServer> game_server_;
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerNetworkEventObserver> server_network_event_observer_;
     std::shared_ptr<ServerNetworkEventDispatcher> server_network_event_dispatcher_;
