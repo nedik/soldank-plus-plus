@@ -3,14 +3,14 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-#include "core/World.hpp"
+#include "core/IWorld.hpp"
 
 namespace Soldat
 {
 class ServerNetworkEventObserver : public INetworkEventObserver
 {
 public:
-    ServerNetworkEventObserver(const std::shared_ptr<World>& world);
+    ServerNetworkEventObserver(const std::shared_ptr<IWorld>& world);
 
     NetworkEventObserverResult OnAssignPlayerId(const ConnectionMetadata& connection_metadata,
                                                 unsigned int assigned_player_id) override;
@@ -24,7 +24,7 @@ public:
     glm::vec2 SpawnSoldier(unsigned int soldier_id);
 
 private:
-    std::shared_ptr<World> world_;
+    std::shared_ptr<IWorld> world_;
 };
 } // namespace Soldat
 

@@ -3,7 +3,7 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-#include "core/World.hpp"
+#include "core/IWorld.hpp"
 
 #include "rendering/ClientState.hpp"
 
@@ -14,7 +14,7 @@ namespace Soldat
 class ClientNetworkEventObserver : public INetworkEventObserver
 {
 public:
-    ClientNetworkEventObserver(const std::shared_ptr<World>& world,
+    ClientNetworkEventObserver(const std::shared_ptr<IWorld>& world,
                                const std::shared_ptr<ClientState>& client_state);
 
     NetworkEventObserverResult OnAssignPlayerId(const ConnectionMetadata& connection_metadata,
@@ -26,7 +26,7 @@ public:
                                               glm::vec2 spawn_position) override;
 
 private:
-    std::shared_ptr<World> world_;
+    std::shared_ptr<IWorld> world_;
     std::shared_ptr<ClientState> client_state_;
 };
 } // namespace Soldat

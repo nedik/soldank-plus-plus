@@ -6,7 +6,7 @@
 namespace Soldat
 {
 ClientNetworkEventObserver::ClientNetworkEventObserver(
-  const std::shared_ptr<World>& world,
+  const std::shared_ptr<IWorld>& world,
   const std::shared_ptr<ClientState>& client_state)
     : world_(world)
     , client_state_(client_state)

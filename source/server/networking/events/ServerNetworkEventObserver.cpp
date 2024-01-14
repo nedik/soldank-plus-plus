@@ -6,7 +6,7 @@
 
 namespace Soldat
 {
-ServerNetworkEventObserver::ServerNetworkEventObserver(const std::shared_ptr<World>& world)
+ServerNetworkEventObserver::ServerNetworkEventObserver(const std::shared_ptr<IWorld>& world)
     : world_(world)
 {
 }

@@ -1,6 +1,7 @@
 #ifndef __WORLD_HPP__
 #define __WORLD_HPP__
 
+#include "core/IWorld.hpp"
 #include "core/state/State.hpp"
 #include "core/physics/SoldierPhysics.hpp"
 #include "core/physics/BulletPhysics.hpp"
@@ -13,7 +14,7 @@
 
 namespace Soldat
 {
-class World
+class World : public IWorld
 {
 private:
     using TShouldStopGameLoopCallback = std::function<bool()>;
@@ -25,43 +26,44 @@ private:
 public:
     World();
 
-    void RunLoop(int fps_limit);
-    void Update(double delta_time);
-    const std::shared_ptr<State>& GetState() const;
-    const Soldier& GetSoldier(unsigned int soldier_id) const;
+    void RunLoop(int fps_limit) override;
+    void Update(double delta_time) override;
+    const std::shared_ptr<State>& GetState() const override;
+    const Soldier& GetSoldier(unsigned int soldier_id) const override;
 
-    const Soldier& CreateSoldier(std::optional<unsigned int> force_soldier_id = std::nullopt);
+    const Soldier& CreateSoldier(
+      std::optional<unsigned int> force_soldier_id = std::nullopt) override;
     glm::vec2 SpawnSoldier(unsigned int soldier_id,
-                           std::optional<glm::vec2> spawn_position = std::nullopt);
+                           std::optional<glm::vec2> spawn_position = std::nullopt) override;
 
-    void UpdateFireButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateJetsButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateLeftButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateRightButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateJumpButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateCrouchButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateProneButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateChangeButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateDropButtonState(unsigned int soldier_id, bool pressed);
-    void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position);
+    void UpdateFireButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateJetsButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateLeftButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateRightButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateJumpButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateCrouchButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateProneButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateChangeButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateDropButtonState(unsigned int soldier_id, bool pressed) override;
+    void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) override;
 
-    void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback)
+    void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) override
     {
         should_stop_game_loop_callback_ = std::move(callback);
     }
 
-    void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback)
+    void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback) override
     {
         pre_game_loop_iteration_callback_ = std::move(callback);
     }
 
-    void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback)
+    void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback) override
     {
         pre_world_update_callback_ = std::move(callback);
     }
 
-    void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback)
+    void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) override
     {
         post_game_loop_iteration_callback_ = std::move(callback);
     }
