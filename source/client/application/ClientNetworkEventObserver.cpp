@@ -1,4 +1,5 @@
 #include "application/ClientNetworkEventObserver.hpp"
+#include "communication/NetworkEventDispatcher.hpp"
 
 #include <iostream>
 
@@ -13,7 +14,7 @@ ClientNetworkEventObserver::ClientNetworkEventObserver(
 }
 
 NetworkEventObserverResult ClientNetworkEventObserver::OnAssignPlayerId(
-  const ConnectionMetadata& connection_metadata,
+  const ConnectionMetadata& /*connection_metadata*/,
   unsigned int assigned_player_id)
 {
     const auto& soldier = world_->CreateSoldier(assigned_player_id);
@@ -24,10 +25,21 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnAssignPlayerId(
 }
 
 NetworkEventObserverResult ClientNetworkEventObserver::OnChatMessage(
-  const ConnectionMetadata& connection_metadata,
+  const ConnectionMetadata& /*connection_metadata*/,
   const std::string& chat_message)
 {
     std::cout << "OnChatMessage: " << chat_message << std::endl;
+    return NetworkEventObserverResult::Success;
+}
+
+NetworkEventObserverResult ClientNetworkEventObserver::OnSpawnSoldier(
+  const ConnectionMetadata& /*connection_metadata*/,
+  unsigned int soldier_id,
+  glm::vec2 spawn_position)
+{
+    std::cout << "OnSpawnSoldier: " << soldier_id << ", (" << spawn_position.x << ", "
+              << spawn_position.y << ")" << std::endl;
+    world_->SpawnSoldier(soldier_id, spawn_position);
     return NetworkEventObserverResult::Success;
 }
 } // namespace Soldat

@@ -67,6 +67,8 @@ void GameServer::OnSteamNetConnectionStatusChanged(
             if (player_poll_group_->IsConnectionAssigned(p_info->m_hConn)) {
                 player_poll_group_->CloseConnection(p_info);
             }
+            // TODO: remove connection's soldier
+            // TODO: Send info to clients about this player leaving so they can also remove them
             break;
         }
 

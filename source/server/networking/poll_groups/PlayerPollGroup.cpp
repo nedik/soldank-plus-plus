@@ -1,4 +1,5 @@
 #include "networking/poll_groups/PlayerPollGroup.hpp"
+#include "communication/NetworkEvent.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
 #include "networking/poll_groups/PollGroupBase.hpp"
 
@@ -62,8 +63,12 @@ void PlayerPollGroup::OnAssignConnection(const Connection& connection)
 {
     unsigned int soldier_id = network_event_dispatcher_->CreateNewSoldier();
     std::cout << "OnAssignPlayerId: " << soldier_id << std::endl;
-    // TODO: send id back to the client
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
     SendNetworkMessage(connection.connection_handle, network_message);
+
+    auto spawn_position = network_event_dispatcher_->SpawnSoldier(soldier_id);
+    SendNetworkMessage(
+      connection.connection_handle,
+      { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });
 }
 } // namespace Soldat

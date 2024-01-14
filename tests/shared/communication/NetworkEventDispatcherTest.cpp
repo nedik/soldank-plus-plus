@@ -26,6 +26,13 @@ public:
         return result_;
     }
 
+    NetworkEventObserverResult OnSpawnSoldier(const ConnectionMetadata& /*connection_metadata*/,
+                                              unsigned int /*soldier_id*/,
+                                              glm::vec2 /*spawn_position*/) override
+    {
+        return result_;
+    }
+
     void SetResult(NetworkEventObserverResult result) { result_ = result; }
 
     unsigned int GetLastAssignedPlayerId() const { return last_assigned_player_id_; }

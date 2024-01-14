@@ -21,6 +21,9 @@ public:
                                                 unsigned int assigned_player_id) override;
     NetworkEventObserverResult OnChatMessage(const ConnectionMetadata& connection_metadata,
                                              const std::string& chat_message) override;
+    NetworkEventObserverResult OnSpawnSoldier(const ConnectionMetadata& connection_metadata,
+                                              unsigned int soldier_id,
+                                              glm::vec2 spawn_position) override;
 
 private:
     std::shared_ptr<World> world_;

@@ -13,4 +13,9 @@ unsigned int ServerNetworkEventDispatcher::CreateNewSoldier()
 {
     return server_network_event_observer_->OnCreateNewSoldier();
 }
+
+glm::vec2 ServerNetworkEventDispatcher::SpawnSoldier(unsigned int soldier_id)
+{
+    return server_network_event_observer_->SpawnSoldier(soldier_id);
+}
 } // namespace Soldat

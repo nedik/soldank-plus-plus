@@ -14,6 +14,7 @@ public:
       const std::shared_ptr<ServerNetworkEventObserver>& server_network_event_observer);
 
     unsigned int CreateNewSoldier();
+    glm::vec2 SpawnSoldier(unsigned int soldier_id);
 
 private:
     std::shared_ptr<ServerNetworkEventObserver> server_network_event_observer_;

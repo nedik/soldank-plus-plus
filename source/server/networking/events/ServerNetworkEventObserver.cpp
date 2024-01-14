@@ -1,4 +1,5 @@
 #include "networking/events/ServerNetworkEventObserver.hpp"
+#include "communication/NetworkEventDispatcher.hpp"
 #include "communication/NetworkMessage.hpp"
 
 #include <iostream>
@@ -31,5 +32,18 @@ unsigned int ServerNetworkEventObserver::OnCreateNewSoldier()
     const auto& soldier = world_->CreateSoldier();
     std::cout << "OnCreateSoldier: " << soldier.id << std::endl;
     return soldier.id;
+}
+
+NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id,
+  glm::vec2 spawn_position)
+{
+    return NetworkEventObserverResult::Success;
+}
+
+glm::vec2 ServerNetworkEventObserver::SpawnSoldier(unsigned int soldier_id)
+{
+    return world_->SpawnSoldier(soldier_id);
 }
 } // namespace Soldat

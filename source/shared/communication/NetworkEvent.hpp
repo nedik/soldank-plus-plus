@@ -6,7 +6,8 @@ namespace Soldat
 enum class NetworkEvent : unsigned int
 {
     ChatMessage = 0,
-    AssignPlayerId = 1
+    AssignPlayerId,
+    SpawnSoldier
 };
 }
 

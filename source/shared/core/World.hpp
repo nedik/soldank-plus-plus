@@ -31,6 +31,8 @@ public:
     const Soldier& GetSoldier(unsigned int soldier_id) const;
 
     const Soldier& CreateSoldier(std::optional<unsigned int> force_soldier_id = std::nullopt);
+    glm::vec2 SpawnSoldier(unsigned int soldier_id,
+                           std::optional<glm::vec2> spawn_position = std::nullopt);
 
     void UpdateFireButtonState(unsigned int soldier_id, bool pressed);
     void UpdateJetsButtonState(unsigned int soldier_id, bool pressed);

@@ -3,6 +3,8 @@
 #include "communication/NetworkEvent.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
 
+#include "core/math/Glm.hpp"
+
 #include <iostream>
 
 namespace Soldat
@@ -52,6 +54,20 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             std::cout << "[ProcessNetworkMessage] ChatMessage: " << chat_message << std::endl;
             observer_result =
               network_event_observer_->OnChatMessage(connection_metadata, chat_message);
+            break;
+        }
+        case NetworkEvent::SpawnSoldier: {
+            auto parsed = network_message.Parse<NetworkEvent, unsigned int, float, float>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            unsigned int soldier_id = std::get<1>(*parsed);
+            glm::vec2 spawn_position{ std::get<2>(*parsed), std::get<3>(*parsed) };
+
+            std::cout << "[ProcessNetworkMessage] SpawnSoldier: " << soldier_id << ", ("
+                      << spawn_position.x << ", " << spawn_position.y << ")" << std::endl;
+            observer_result = network_event_observer_->OnSpawnSoldier(
+              connection_metadata, soldier_id, spawn_position);
             break;
         }
         default: {

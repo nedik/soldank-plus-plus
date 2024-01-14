@@ -173,6 +173,36 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
     return state_->soldiers.back();
 }
 
+glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> spawn_position)
+{
+    glm::vec2 initial_player_position;
+    if (spawn_position.has_value()) {
+        initial_player_position = *spawn_position;
+    } else {
+        std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
+          0, state_->map.GetSpawnPoints().size()); // distribution in range [1, 6]
+
+        unsigned int random_spawnpoint_id =
+          spawnpoint_id_random_distribution(mersenne_twister_engine_);
+
+        const auto& chosen_spawnpoint = state_->map.GetSpawnPoints().at(random_spawnpoint_id);
+        initial_player_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
+    }
+
+    for (auto& soldier : state_->soldiers) {
+        if (soldier.id == soldier_id) {
+            soldier.particle.position = initial_player_position;
+            soldier.particle.old_position = initial_player_position;
+            soldier.active = true;
+            soldier.particle.active = true;
+            return initial_player_position;
+        }
+    }
+
+    std::cout << "[SpawnSoldier] Wrong soldier_id (" << soldier_id << ")" << std::endl;
+    std::unreachable();
+}
+
 void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
 {
     for (auto& soldier_it : state_->soldiers) {

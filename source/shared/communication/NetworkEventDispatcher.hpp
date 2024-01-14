@@ -4,6 +4,8 @@
 #include "communication/NetworkEvent.hpp"
 #include "communication/NetworkMessage.hpp"
 
+#include "core/math/Glm.hpp"
+
 #include <memory>
 #include <variant>
 #include <utility>
@@ -40,6 +42,9 @@ public:
       unsigned int assigned_player_id) = 0;
     virtual NetworkEventObserverResult OnChatMessage(const ConnectionMetadata& connection_metadata,
                                                      const std::string& chat_message) = 0;
+    virtual NetworkEventObserverResult OnSpawnSoldier(const ConnectionMetadata& connection_metadata,
+                                                      unsigned int soldier_id,
+                                                      glm::vec2 spawn_position) = 0;
 };
 
 class NetworkEventDispatcher
