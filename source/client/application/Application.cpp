@@ -111,19 +111,29 @@ void Run()
 
         if (client_state->client_soldier_id.has_value()) {
             unsigned int client_soldier_id = *client_state->client_soldier_id;
+            bool is_soldier_active = false;
+            for (const auto& soldier : world->GetState()->soldiers) {
+                if (soldier.id == client_soldier_id && soldier.active) {
+                    is_soldier_active = true;
+                }
+            }
 
-            world->UpdateLeftButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_A));
-            world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
-            world->UpdateJumpButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_W));
-            world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
-            world->UpdateCrouchButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_S));
-            world->UpdateChangeButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_Q));
-            world->UpdateThrowGrenadeButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_E));
-            world->UpdateDropButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_F));
-            world->UpdateProneButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_X));
+            if (is_soldier_active) {
+                world->UpdateLeftButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_A));
+                world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
+                world->UpdateJumpButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_W));
+                world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
+                world->UpdateCrouchButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_S));
+                world->UpdateChangeButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_Q));
+                world->UpdateThrowGrenadeButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_E));
+                world->UpdateDropButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_F));
+                world->UpdateProneButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_X));
 
-            world->UpdateMousePosition(client_soldier_id, mouse_position);
-            client_state->camera = world->GetSoldier(client_soldier_id).camera;
+                world->UpdateMousePosition(client_soldier_id, mouse_position);
+                client_state->camera = world->GetSoldier(client_soldier_id).camera;
+            } else {
+                client_state->camera = { 0.0F, 0.0F };
+            }
         } else {
             client_state->camera = { 0.0F, 0.0F };
         }

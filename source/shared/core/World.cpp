@@ -109,7 +109,9 @@ void World::Update(double /*delta_time*/)
     std::vector<BulletParams> bullet_emitter;
 
     for (auto& soldier : state_->soldiers) {
-        soldier_physics_->Update(*state_, soldier, bullet_emitter);
+        if (soldier.active) {
+            soldier_physics_->Update(*state_, soldier, bullet_emitter);
+        }
     }
 
     for (auto& bullet : state_->bullets) {

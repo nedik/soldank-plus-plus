@@ -8,7 +8,7 @@ namespace Soldat
 {
 Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
     : id(soldier_id)
-    , active(true)
+    , active(false)
     , dead_meat(false)
     , style(0)
     , num(1)
@@ -41,7 +41,7 @@ Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
                { WeaponParametersFactory::GetParameters(WeaponType::Knife, false) },
                { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) } }
     , fired(0)
-    , particle(true,
+    , particle(false,
                spawn_position,
                spawn_position,
                glm::vec2(0.0F, 0.0F),

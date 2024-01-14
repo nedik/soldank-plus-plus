@@ -81,7 +81,9 @@ void Scene::RenderSoldiers(const std::shared_ptr<State>& game_state,
             // skip rendering player's soldier sprites now because we will render it later
             continue;
         }
-        soldier_renderer_.Render(camera_.GetView(), sprite_manager_, soldier, frame_percent);
+        if (soldier.active) {
+            soldier_renderer_.Render(camera_.GetView(), sprite_manager_, soldier, frame_percent);
+        }
     }
 
     // Render player's soldier last because it's the most important for the player to see their
@@ -89,7 +91,7 @@ void Scene::RenderSoldiers(const std::shared_ptr<State>& game_state,
     if (client_state.client_soldier_id.has_value()) {
         unsigned int client_soldier_id = *client_state.client_soldier_id;
         for (const auto& soldier : game_state->soldiers) {
-            if (soldier.id == client_soldier_id) {
+            if (soldier.id == client_soldier_id && soldier.active) {
                 soldier_renderer_.Render(
                   camera_.GetView(), sprite_manager_, soldier, frame_percent);
             }
