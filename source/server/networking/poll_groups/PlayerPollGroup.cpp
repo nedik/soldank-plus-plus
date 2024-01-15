@@ -18,9 +18,14 @@ PlayerPollGroup::PlayerPollGroup(ISteamNetworkingSockets* interface)
 }
 
 void PlayerPollGroup::SetServerNetworkEventDispatcher(
-  const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher)
+  const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher)
 {
     network_event_dispatcher_ = network_event_dispatcher;
+}
+
+void PlayerPollGroup::SetWorld(const std::shared_ptr<IWorld>& world)
+{
+    world_ = world;
 }
 
 void PlayerPollGroup::PollIncomingMessages()
@@ -61,12 +66,12 @@ void PlayerPollGroup::AcceptConnection(
 
 void PlayerPollGroup::OnAssignConnection(const Connection& connection)
 {
-    unsigned int soldier_id = network_event_dispatcher_->CreateNewSoldier();
+    unsigned int soldier_id = world_->CreateSoldier().id;
     std::cout << "OnAssignPlayerId: " << soldier_id << std::endl;
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
     SendNetworkMessage(connection.connection_handle, network_message);
 
-    auto spawn_position = network_event_dispatcher_->SpawnSoldier(soldier_id);
+    auto spawn_position = world_->SpawnSoldier(soldier_id);
     SendNetworkMessage(
       connection.connection_handle,
       { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });

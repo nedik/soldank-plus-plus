@@ -4,7 +4,6 @@
 #include "core/World.hpp"
 
 #include "networking/GameServer.hpp"
-#include "networking/events/ServerNetworkEventDispatcher.hpp"
 #include "networking/events/ServerNetworkEventObserver.hpp"
 
 #include <steam/isteamnetworkingutils.h>
@@ -35,7 +34,7 @@ private:
     std::shared_ptr<IGameServer> game_server_;
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerNetworkEventObserver> server_network_event_observer_;
-    std::shared_ptr<ServerNetworkEventDispatcher> server_network_event_dispatcher_;
+    std::shared_ptr<NetworkEventDispatcher> server_network_event_dispatcher_;
 };
 } // namespace Soldat
 

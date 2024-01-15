@@ -12,8 +12,8 @@
 
 namespace Soldat
 {
-GameServer::GameServer(
-  const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher)
+GameServer::GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
+                       const std::shared_ptr<IWorld>& world)
 {
 
     NetworkingInterface::Init();
@@ -26,6 +26,7 @@ GameServer::GameServer(
     player_poll_group_ = NetworkingInterface::CreatePollGroup<PlayerPollGroup>();
     entry_poll_group_->RegisterPlayerPollGroup(player_poll_group_);
     player_poll_group_->SetServerNetworkEventDispatcher(network_event_dispatcher);
+    player_poll_group_->SetWorld(world);
 };
 
 GameServer::~GameServer()

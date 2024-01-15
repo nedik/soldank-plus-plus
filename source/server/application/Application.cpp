@@ -40,8 +40,8 @@ Application::Application()
 
     server_network_event_observer_ = std::make_shared<ServerNetworkEventObserver>(world_);
     server_network_event_dispatcher_ =
-      std::make_shared<ServerNetworkEventDispatcher>(server_network_event_observer_);
-    game_server_ = std::make_shared<GameServer>(server_network_event_dispatcher_);
+      std::make_shared<NetworkEventDispatcher>(server_network_event_observer_);
+    game_server_ = std::make_shared<GameServer>(server_network_event_dispatcher_, world_);
 }
 
 Application::~Application()

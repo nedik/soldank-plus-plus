@@ -5,10 +5,11 @@
 
 #include "networking/poll_groups/EntryPollGroup.hpp"
 #include "networking/poll_groups/PlayerPollGroup.hpp"
-#include "networking/events/ServerNetworkEventDispatcher.hpp"
 
 #include "communication/NetworkMessage.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
+
+#include "core/IWorld.hpp"
 
 #include <steam/steamnetworkingsockets.h>
 
@@ -21,7 +22,8 @@ namespace Soldat
 class GameServer : public IGameServer
 {
 public:
-    GameServer(const std::shared_ptr<ServerNetworkEventDispatcher>& network_event_dispatcher);
+    GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
+               const std::shared_ptr<IWorld>& world);
     ~GameServer() override;
 
     GameServer(GameServer&& other) = delete;
