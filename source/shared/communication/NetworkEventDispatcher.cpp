@@ -2,6 +2,7 @@
 
 #include "communication/NetworkEvent.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
+#include "communication/NetworkPackets.hpp"
 
 #include "core/math/Glm.hpp"
 
@@ -68,6 +69,22 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                       << spawn_position.x << ", " << spawn_position.y << ")" << std::endl;
             observer_result = network_event_observer_->OnSpawnSoldier(
               connection_metadata, soldier_id, spawn_position);
+            break;
+        }
+        case NetworkEvent::UpdateSoldierState: {
+            auto parsed = network_message.Parse<NetworkEvent, UpdateSoldierStatePacket>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            UpdateSoldierStatePacket update_soldier_state_packet = std::get<1>(*parsed);
+            unsigned int soldier_id = update_soldier_state_packet.id;
+            glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
+                                           update_soldier_state_packet.position_y };
+
+            std::cout << "[ProcessNetworkMessage] UpdateSoldierState: " << soldier_id << ", ("
+                      << soldier_position.x << ", " << soldier_position.y << ")" << std::endl;
+            observer_result = network_event_observer_->OnUpdateSoldierState(
+              connection_metadata, soldier_id, soldier_position);
             break;
         }
         default: {

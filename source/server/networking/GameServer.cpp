@@ -52,6 +52,11 @@ void GameServer::SendNetworkMessage(unsigned int connection_id,
     }
 }
 
+void GameServer::SendNetworkMessageToAll(const NetworkMessage& network_message)
+{
+    player_poll_group_->SendNetworkMessageToAll(network_message);
+}
+
 void GameServer::OnSteamNetConnectionStatusChanged(
   SteamNetConnectionStatusChangedCallback_t* p_info)
 {

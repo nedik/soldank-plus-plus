@@ -35,6 +35,7 @@ public:
 
     void SendNetworkMessage(unsigned int connection_id,
                             const NetworkMessage& network_message) override;
+    void SendNetworkMessageToAll(const NetworkMessage& network_message) override;
 
 private:
     std::unique_ptr<EntryPollGroup> entry_poll_group_;

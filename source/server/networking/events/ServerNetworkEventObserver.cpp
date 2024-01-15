@@ -27,13 +27,6 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnChatMessage(
     return NetworkEventObserverResult::Success;
 }
 
-unsigned int ServerNetworkEventObserver::OnCreateNewSoldier()
-{
-    const auto& soldier = world_->CreateSoldier();
-    std::cout << "OnCreateSoldier: " << soldier.id << std::endl;
-    return soldier.id;
-}
-
 NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
   const ConnectionMetadata& connection_metadata,
   unsigned int soldier_id,
@@ -42,8 +35,11 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
     return NetworkEventObserverResult::Success;
 }
 
-glm::vec2 ServerNetworkEventObserver::SpawnSoldier(unsigned int soldier_id)
+NetworkEventObserverResult ServerNetworkEventObserver::OnUpdateSoldierState(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id,
+  glm::vec2 soldier_position)
 {
-    return world_->SpawnSoldier(soldier_id);
+    return NetworkEventObserverResult::Success;
 }
 } // namespace Soldat

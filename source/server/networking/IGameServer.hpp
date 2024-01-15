@@ -13,6 +13,7 @@ public:
 
     virtual void SendNetworkMessage(unsigned int connection_id,
                                     const NetworkMessage& network_message) = 0;
+    virtual void SendNetworkMessageToAll(const NetworkMessage& network_message) = 0;
 };
 } // namespace Soldat
 

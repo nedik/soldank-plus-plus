@@ -78,6 +78,17 @@ void PollGroupBase::SendNetworkMessage(HSteamNetConnection connection_id,
                                             nullptr);
 }
 
+void PollGroupBase::SendNetworkMessageToAll(const NetworkMessage& network_message)
+{
+    for (auto& connection : connections_) {
+        GetInterface()->SendMessageToConnection(connection.second.connection_handle,
+                                                network_message.GetData().data(),
+                                                network_message.GetData().size(),
+                                                k_nSteamNetworkingSend_Reliable,
+                                                nullptr);
+    }
+}
+
 void PollGroupBase::OnAssignConnection(const Connection& /* connection */) {}
 
 bool PollGroupBase::IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle)

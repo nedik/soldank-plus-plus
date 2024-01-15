@@ -24,6 +24,7 @@ public:
 
     void SendNetworkMessage(HSteamNetConnection connection_id,
                             const NetworkMessage& network_message) override;
+    void SendNetworkMessageToAll(const NetworkMessage& network_message) override;
 
 protected:
     virtual void OnAssignConnection(const Connection& connection);
