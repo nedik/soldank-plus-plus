@@ -6,7 +6,7 @@
 
 #include "core/math/Glm.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
 
 namespace Soldat
 {
@@ -26,8 +26,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
     }
 
     auto network_event = *network_event_or_error;
-    std::cout << "[ProcessNetworkMessage] network_event = " << std::to_underlying(network_event)
-              << std::endl;
+    spdlog::info("[ProcessNetworkMessage] network_event = {}", std::to_underlying(network_event));
 
     NetworkEventObserverResult observer_result = NetworkEventObserverResult::Failure;
 
@@ -39,8 +38,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             }
             unsigned int assigned_player_id = std::get<1>(*parsed);
 
-            std::cout << "[ProcessNetworkMessage] AssignPlayerId: " << assigned_player_id
-                      << std::endl;
+            spdlog::info("[ProcessNetworkMessage] AssignPlayerId: {}", assigned_player_id);
             observer_result =
               network_event_observer_->OnAssignPlayerId(connection_metadata, assigned_player_id);
             break;
@@ -52,7 +50,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             }
             std::string chat_message = std::get<1>(*parsed);
 
-            std::cout << "[ProcessNetworkMessage] ChatMessage: " << chat_message << std::endl;
+            spdlog::info("[ProcessNetworkMessage] ChatMessage: {}", chat_message);
             observer_result =
               network_event_observer_->OnChatMessage(connection_metadata, chat_message);
             break;
@@ -65,8 +63,10 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             unsigned int soldier_id = std::get<1>(*parsed);
             glm::vec2 spawn_position{ std::get<2>(*parsed), std::get<3>(*parsed) };
 
-            std::cout << "[ProcessNetworkMessage] SpawnSoldier: " << soldier_id << ", ("
-                      << spawn_position.x << ", " << spawn_position.y << ")" << std::endl;
+            spdlog::info("[ProcessNetworkMessage] SpawnSoldier: {}, ({}, {})",
+                         soldier_id,
+                         spawn_position.x,
+                         spawn_position.y);
             observer_result = network_event_observer_->OnSpawnSoldier(
               connection_metadata, soldier_id, spawn_position);
             break;
@@ -81,8 +81,10 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
 
-            std::cout << "[ProcessNetworkMessage] UpdateSoldierState: " << soldier_id << ", ("
-                      << soldier_position.x << ", " << soldier_position.y << ")" << std::endl;
+            spdlog::info("[ProcessNetworkMessage] SpawnSoldier: {}, ({}, {})",
+                         soldier_id,
+                         soldier_position.x,
+                         soldier_position.y);
             observer_result = network_event_observer_->OnUpdateSoldierState(
               connection_metadata, soldier_id, soldier_position);
             break;
@@ -91,7 +93,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80
             // when NetworkEvent has less than 80 values!
-            std::cout << "[ProcessNetworkMessage] ParseError" << std::endl;
+            spdlog::error("[ProcessNetworkMessage] ParseError");
             return { NetworkEventDispatchResult::ParseError, ParseError::InvalidNetworkEvent };
         }
     }

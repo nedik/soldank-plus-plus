@@ -4,7 +4,6 @@
 #include "rendering/shaders/ShaderSources.hpp"
 
 #include <filesystem>
-#include <iostream>
 
 namespace Soldat
 {

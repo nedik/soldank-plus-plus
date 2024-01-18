@@ -2,8 +2,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-
 namespace Soldat
 {
 bool Mouse::first_mouse_ = true;

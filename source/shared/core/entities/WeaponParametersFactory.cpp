@@ -3,7 +3,8 @@
 #include "core/config/Config.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <unordered_map>
 
 namespace Soldat::WeaponParametersFactory
@@ -127,7 +128,7 @@ WeaponParameters LoadFromINIFile(const std::string& ini_file_path, WeaponType we
     CSimpleIniA ini_config;
     SI_Error rc = ini_config.LoadFile(ini_file_path.c_str());
     if (rc < 0) {
-        std::cout << "Error: INI File could not be loaded: " << ini_file_path << std::endl;
+        spdlog::error("Error: INI File could not be loaded: {}", ini_file_path);
     };
     return LoadFromINI(ini_config, weapon_type);
 }

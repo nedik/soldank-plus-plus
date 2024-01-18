@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <filesystem>
-#include <iostream>
 #include <cmath>
 
 namespace Soldat

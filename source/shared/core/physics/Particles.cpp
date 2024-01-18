@@ -2,9 +2,10 @@
 
 #include "core/utility/Getline.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 
 namespace Soldat
 {
@@ -148,7 +149,7 @@ std::shared_ptr<ParticleSystem> ParticleSystem::LoadFromFile(const std::string& 
     if (!file_data.is_open()) {
         std::string message = "Could not open file: ";
         message += file_path.string();
-        std::cout << message << std::endl;
+        spdlog::info(message);
         throw std::runtime_error(message.c_str());
     }
 
@@ -199,8 +200,10 @@ std::shared_ptr<ParticleSystem> ParticleSystem::LoadFromFile(const std::string& 
     }
     file_data.close();
 
-    std::cout << "particle " << file_path << ", loaded " << particles.size() << " particles and "
-              << constraints.size() << " constraints" << std::endl;
+    spdlog::info("Particle {}, loaded {} particles and {} constraints",
+                 file_path.string(),
+                 particles.size(),
+                 constraints.size());
 
     return std::make_shared<ParticleSystem>(particles, constraints);
 }

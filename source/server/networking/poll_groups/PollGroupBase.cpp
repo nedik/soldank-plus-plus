@@ -1,6 +1,7 @@
 #include "networking/poll_groups/PollGroupBase.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <cassert>
 #include <format>
 #include <utility>
@@ -12,7 +13,7 @@ PollGroupBase::PollGroupBase(ISteamNetworkingSockets* interface)
     , poll_group_handle_(interface->CreatePollGroup())
 {
     if (poll_group_handle_ == k_HSteamNetPollGroup_Invalid) {
-        std::cout << "Failed to create a player poll group" << std::endl;
+        spdlog::error("Failed to create a player poll group");
     }
 }
 
@@ -38,12 +39,11 @@ void PollGroupBase::CloseConnection(SteamNetConnectionStatusChangedCallback_t* c
             debug_log_action = "closed by peer";
         }
 
-        std::cout << std::format("Connection {} {}, reason {}: {}",
-                                 connection_info->m_info.m_szConnectionDescription,
-                                 debug_log_action,
-                                 connection_info->m_info.m_eEndReason,
-                                 connection_info->m_info.m_szEndDebug)
-                  << std::endl;
+        spdlog::info("Connection {} {}, reason {}: {}",
+                     connection_info->m_info.m_szConnectionDescription,
+                     debug_log_action,
+                     connection_info->m_info.m_eEndReason,
+                     connection_info->m_info.m_szEndDebug);
 
         SendStringToAllClients(std::format("{} {}", it_client->second.nick, "has left the server"),
                                it_client->first);
@@ -59,7 +59,7 @@ bool PollGroupBase::AssignConnection(const Connection& connection)
 {
     if (!GetInterface()->SetConnectionPollGroup(connection.connection_handle, poll_group_handle_)) {
         GetInterface()->CloseConnection(connection.connection_handle, 0, nullptr, false);
-        std::cout << "Failed to set poll group?" << std::endl;
+        spdlog::warn("Failed to set poll group?");
         return false;
     }
     connections_[connection.connection_handle] = connection;

@@ -2,7 +2,8 @@
 
 #include "rendering/data/Texture.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <memory>
 #include <utility>
 #include <variant>
@@ -14,7 +15,7 @@ namespace Soldat::Sprites
 {
 SpriteManager::SpriteManager()
 {
-    std::cout << "Init Sprites" << std::endl;
+    spdlog::info("Init Sprites");
     std::vector<std::pair<TSpriteKey, std::string>> all_sprite_file_paths{
         { SoldierPartSpriteType::Stopa, "gostek-gfx/stopa.png" },
         { SoldierPartSpriteType::Stopa2, "gostek-gfx/stopa2.png" },
@@ -390,8 +391,7 @@ SpriteManager::SpriteManager()
     AddSprite(SoldierPartSpriteType::RannyReka, SoldierPartSpriteType::Reka, SoldierPartSpriteType::Reka2, {13, 16}, {0.000, 0.600}, false, true, 5.0, SoldierSpriteColor::None, SoldierSpriteAlpha::Blood);
     AddSprite(SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon, SoldierPartSpriteType::Dlon2, {16, 20}, {0.000, 0.500}, true, true, 0.0, SoldierSpriteColor::Skin, SoldierSpriteAlpha::Base);
     // clang-format on
-    std::cout << "Loaded " << soldier_part_type_to_data_.size() << " soldier part sprites"
-              << std::endl;
+    spdlog::info("Loaded {} soldier part sprites", soldier_part_type_to_data_.size());
 }
 
 SpriteManager::~SpriteManager()

@@ -3,11 +3,12 @@
 #include "communication/NetworkPackets.hpp"
 #include "networking/events/ServerNetworkEventObserver.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <steam/steamnetworkingsockets.h>
 
 #include <span>
 #include <cstdlib>
-#include <iostream>
 #include <format>
 
 namespace Soldat
@@ -18,7 +19,7 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
                               const char* message)
 {
     SteamNetworkingMicroseconds time = SteamNetworkingUtils()->GetLocalTimestamp() - log_time_zero_;
-    std::cout << std::format("{} {}", (double)time * 1e-6, message) << std::endl;
+    spdlog::info("{} {}", (double)time * 1e-6, message);
     fflush(stdout);
     if (output_type == k_ESteamNetworkingSocketsDebugOutputType_Bug) {
         exit(1);
@@ -30,8 +31,7 @@ Application::Application()
 {
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
-        std::cout << "GameNetworkingSockets_Init failed. " << std::span(err_msg).data()
-                  << std::endl;
+        spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
     }
 
     log_time_zero_ = SteamNetworkingUtils()->GetLocalTimestamp();
@@ -52,7 +52,7 @@ Application::~Application()
 
 void Application::Run()
 {
-    std::cout << "Server started!" << std::endl;
+    spdlog::info("Server started!");
 
     world_->SetShouldStopGameLoopCallback([&]() { return false; });
     world_->SetPreGameLoopIterationCallback([&]() {});

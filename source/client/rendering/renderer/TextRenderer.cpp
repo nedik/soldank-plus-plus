@@ -2,7 +2,8 @@
 
 #include "rendering/shaders/ShaderSources.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <map>
 #include <array>
 
@@ -14,17 +15,17 @@ TextRenderer::TextRenderer(const std::string& file_path, unsigned int font_heigh
     FT_Library ft = nullptr;
     // All functions return a value different than 0 whenever an error occurred
     if (FT_Init_FreeType(&ft) != 0) {
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+        spdlog::error("ERROR::FREETYPE: Could not init FreeType Library");
     }
 
     if (file_path.empty()) {
-        std::cout << "ERROR::FREETYPE: Failed to load file_path" << std::endl;
+        spdlog::error("ERROR::FREETYPE: Failed to load file_path");
     }
 
     // load font as face
     FT_Face face = nullptr;
     if (FT_New_Face(ft, file_path.c_str(), 0, &face) != 0) {
-        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+        spdlog::error("ERROR::FREETYPE: Failed to load font");
     } else {
         // set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, font_height);
@@ -36,7 +37,7 @@ TextRenderer::TextRenderer(const std::string& file_path, unsigned int font_heigh
         for (unsigned char c = 0; c < 128; c++) {
             // Load character glyph
             if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
-                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+                spdlog::error("ERROR::FREETYTPE: Failed to load Glyph");
                 continue;
             }
             // generate texture

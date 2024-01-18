@@ -1,6 +1,7 @@
 #include "networking/poll_groups/EntryPollGroup.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <utility>
 #include <span>
 #include <cassert>
@@ -23,7 +24,7 @@ void EntryPollGroup::PollIncomingMessages()
             break;
         }
         if (messages_count < 0) {
-            std::cout << "[EntryPollGroup] Error checking for messages" << std::endl;
+            spdlog::error("[EntryPollGroup] Error checking for messages");
         }
         assert(messages_count == 1 && incoming_message);
         assert(IsConnectionAssigned(incoming_message->m_conn));
@@ -34,10 +35,9 @@ void EntryPollGroup::PollIncomingMessages()
                                    incoming_message->m_cbSize);
         it_client->second.nick = message_from_client;
         SetClientNick(it_client->second.connection_handle, it_client->second.nick);
-        std::cout << std::format("[EntryPollGroup] Name assigned to connection {}: {}",
-                                 it_client->second.connection_handle,
-                                 it_client->second.nick)
-                  << std::endl;
+        spdlog::info("[EntryPollGroup] Name assigned to connection {}: {}",
+                     it_client->second.connection_handle,
+                     it_client->second.nick);
         incoming_message->Release();
 
         SendNetworkMessage(
@@ -55,29 +55,24 @@ void EntryPollGroup::AcceptConnection(
     // This must be a new connection
     assert(!IsConnectionAssigned(new_connection_info->m_hConn));
 
-    std::cout << "[EntryPollGroup] Connection request from "
-              << std::span{ new_connection_info->m_info.m_szConnectionDescription }.data()
-              << std::endl;
+    spdlog::info("[EntryPollGroup] Connection request from {}",
+                 std::span{ new_connection_info->m_info.m_szConnectionDescription }.data());
 
     if (GetInterface()->AcceptConnection(new_connection_info->m_hConn) != k_EResultOK) {
         GetInterface()->CloseConnection(new_connection_info->m_hConn, 0, nullptr, false);
-        std::cout << "[EntryPollGroup] Can't accept connection. (It was already closed?)"
-                  << std::endl;
+        spdlog::warn("[EntryPollGroup] Can't accept connection. (It was already closed?)");
         return;
     }
 
-    std::cout << std::format(
-      "[EntryPollGroup] Connection accepted: {}\n",
-      std::span{ new_connection_info->m_info.m_szConnectionDescription }.data());
+    spdlog::info("[EntryPollGroup] Connection accepted: {}\n",
+                 std::span{ new_connection_info->m_info.m_szConnectionDescription }.data());
 
     if (!AssignConnection({ new_connection_info->m_hConn, "NEW CONNECTION PLACEHOLDER" })) {
         return;
     }
 
-    std::cout << std::format(
-                   "[EntryPollGroup] Connection assigned: {}",
-                   std::span{ new_connection_info->m_info.m_szConnectionDescription }.data())
-              << std::endl;
+    spdlog::info("[EntryPollGroup] Connection assigned: {}",
+                 std::span{ new_connection_info->m_info.m_szConnectionDescription }.data());
 
     SetClientNick(new_connection_info->m_hConn, "NEW CONNECTION PLACEHOLDER");
 }

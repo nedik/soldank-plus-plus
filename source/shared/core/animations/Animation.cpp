@@ -2,10 +2,11 @@
 
 #include "core/utility/Getline.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <unordered_map>
 #include <exception>
 #include <cmath>
@@ -74,7 +75,8 @@ AnimationData::AnimationData(AnimationType id, const std::string& file_name, int
     , speed_(speed)
     , looped_(looped)
 {
-    std::cout << "AnimationData" << std::endl;
+    spdlog::info("AnimationData");
+
     std::filesystem::path file_path = "anims/" + file_name;
     std::ifstream ifs;
     ifs.open(file_path, std::ios::in);
@@ -83,7 +85,7 @@ AnimationData::AnimationData(AnimationType id, const std::string& file_name, int
         message += file_path.string();
         throw std::runtime_error(message.c_str());
     }
-    std::cout << "Animation: " << file_path << std::endl;
+    spdlog::info("Animation: {}", file_path.string());
 
     std::string line;
     std::vector<glm::vec2> positions;
@@ -96,8 +98,7 @@ AnimationData::AnimationData(AnimationType id, const std::string& file_name, int
         } else {
             unsigned int point = std::stoul(line);
             if (point != positions.size() + 1) {
-                std::cerr << "Error in Animation loading: " << point
-                          << " != " << positions.size() + 1 << std::endl;
+                spdlog::error("Error in Animation loading: {} != {}", point, positions.size() + 1);
             }
 
             float x = NAN;

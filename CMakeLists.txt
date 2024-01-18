@@ -20,6 +20,7 @@ set(CMAKE_CXX_EXTENSIONS On)
 CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#0.9.9.8")
 CPMAddPackage("gh:brofield/simpleini#v4.20")
+CPMAddPackage("gh:gabime/spdlog#v1.13.0")
 CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
 CPMAddPackage(
     NAME freetype

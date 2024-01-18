@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <chrono>
-#include <iostream>
 #include <cassert>
 
 namespace Soldat

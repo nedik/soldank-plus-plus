@@ -1,5 +1,7 @@
 #include "Shader.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <array>
 
 namespace Soldat
@@ -82,20 +84,14 @@ void Shader::CheckCompileErrors(unsigned int shader, const std::string& type)
         if (success == 0) {
             glGetShaderInfoLog(shader, 1024, nullptr, info_log.data());
             // TODO: We should log it better
-            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
-                      << info_log.data()
-                      << "\n -- --------------------------------------------------- -- "
-                      << std::endl;
+            spdlog::error("ERROR::SHADER_COMPILATION_ERROR of type: {}, {}", type, info_log.data());
         }
     } else {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (success == 0) {
             glGetProgramInfoLog(shader, 1024, nullptr, info_log.data());
             // TODO: We should log it better
-            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
-                      << info_log.data()
-                      << "\n -- --------------------------------------------------- -- "
-                      << std::endl;
+            spdlog::error("ERROR::PROGRAM_LINKING_ERROR of type: {}, {}", type, info_log.data());
         }
     }
 }

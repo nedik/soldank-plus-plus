@@ -1,8 +1,9 @@
 #include "networking/interface/NetworkingInterface.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <vector>
 #include <functional>
-#include <iostream>
 #include <array>
 
 namespace Soldat::NetworkingInterface
@@ -31,14 +32,14 @@ std::shared_ptr<Connection> CreateConnection()
     server_addr.Clear();
     server_addr.ParseString("127.0.0.1");
     server_addr.m_port = 23073;
-    std::cout << "Connecting to server" << std::endl;
+    spdlog::info("Connecting to server");
 
     SteamNetworkingConfigValue_t opt{};
     opt.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged,
                (void*)SteamNetConnectionStatusChangedCallback);
     HSteamNetConnection connection_handle = interface->ConnectByIPAddress(server_addr, 1, &opt);
     if (connection_handle == k_HSteamNetConnection_Invalid) {
-        std::cout << "Failed to create connection" << std::endl;
+        spdlog::error("Failed to create connection");
     }
 
     return std::make_shared<Connection>(interface, connection_handle);

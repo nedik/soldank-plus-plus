@@ -19,6 +19,7 @@ target_link_libraries(server_lib PUBLIC shared_lib)
 target_link_libraries(server_lib
     PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
 )
+target_link_libraries(server_lib PRIVATE spdlog)
 
 add_executable(server main.cpp)
 target_compile_definitions(client PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
@@ -35,4 +36,5 @@ target_link_libraries(server PRIVATE server_lib)
 target_link_libraries(server
     PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
 )
+target_link_libraries(server PRIVATE spdlog)
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/source/server)

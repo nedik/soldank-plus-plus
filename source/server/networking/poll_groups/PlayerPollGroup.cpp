@@ -5,7 +5,8 @@
 
 #include "communication/NetworkMessage.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <cassert>
 #include <span>
 #include <format>
@@ -38,7 +39,7 @@ void PlayerPollGroup::PollIncomingMessages()
             break;
         }
         if (messages_count < 0) {
-            std::cout << "Error checking for messages" << std::endl;
+            spdlog::error("Error checking for messages");
             break;
         }
         assert(messages_count == 1 && incoming_message);
@@ -67,7 +68,7 @@ void PlayerPollGroup::AcceptConnection(
 void PlayerPollGroup::OnAssignConnection(const Connection& connection)
 {
     unsigned int soldier_id = world_->CreateSoldier().id;
-    std::cout << "OnAssignPlayerId: " << soldier_id << std::endl;
+    spdlog::info("OnAssignPlayerId: {}", soldier_id);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
     SendNetworkMessage(connection.connection_handle, network_message);
 

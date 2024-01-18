@@ -5,8 +5,9 @@
 #include "application/input/Mouse.hpp"
 #include "application/window/Window.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 namespace Soldat
 {
@@ -20,7 +21,7 @@ Window::Window(std::string title, int width, int height)
     , glfw_window_(nullptr)
 {
     if (glfwInit() == 0) {
-        std::cerr << "Error: Failed to initialize GLFW" << std::endl;
+        spdlog::error("Error: Failed to initialize GLFW");
         throw "Error: Failed to initialize GLFW";
     }
 
@@ -41,14 +42,14 @@ void Window::Create()
 {
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     if (monitor == nullptr) {
-        std::cerr << "Error: Failed to get primary monitor\n";
+        spdlog::error("Error: Failed to get primary monitor");
         throw "Error: Failed to get primary monitor";
     }
 
     glfw_window_ =
       glfwCreateWindow(width_, height_, title_.c_str(), /* monitor */ nullptr, nullptr);
     if (nullptr == glfw_window_) {
-        std::cerr << "Error: Failed to create window.\n";
+        spdlog::error("Error: Failed to create window.");
         throw "Error: Failed to create window.";
     }
 
@@ -58,7 +59,7 @@ void Window::Create()
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0) {
-        std::cerr << "Error: Failed to initialize GLAD." << std::endl;
+        spdlog::error("Error: Failed to initialize GLAD.");
         glfwTerminate();
         throw "Error: Failed to initialize GLAD.";
     }
@@ -144,6 +145,6 @@ void Window::ResizeCallback(GLFWwindow* /*window*/, const int width, const int h
 
 void Window::GLFWErrorCallback(int error, const char* description)
 {
-    std::cerr << "Error(" << error << "): " << description << std::endl;
+    spdlog::error("Error({}): {}", error, description);
 }
 } // namespace Soldat

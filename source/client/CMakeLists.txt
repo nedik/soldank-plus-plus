@@ -20,6 +20,7 @@ target_link_libraries(client_lib PUBLIC glfw)
 target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
+target_link_libraries(client_lib PRIVATE spdlog)
 target_link_libraries(client_lib PUBLIC shared_lib)
 target_link_libraries(client_lib
     PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
@@ -45,4 +46,5 @@ target_link_libraries(client PRIVATE client_lib)
 target_link_libraries(client
     PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
 )
+target_link_libraries(client PRIVATE spdlog)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)

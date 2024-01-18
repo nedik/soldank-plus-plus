@@ -5,7 +5,6 @@
 #include "application/Application.hpp"
 
 #include <exception>
-#include <iostream>
 
 // TODO: odkomentować
 // #ifdef _WIN32

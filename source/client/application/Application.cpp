@@ -14,13 +14,14 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
 
 #include <GLFW/glfw3.h>
 
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <chrono>
 #include <thread>
@@ -41,7 +42,7 @@ SteamNetworkingMicroseconds log_time_zero;
 void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char* message)
 {
     SteamNetworkingMicroseconds time = SteamNetworkingUtils()->GetLocalTimestamp() - log_time_zero;
-    std::cout << std::format("{} {}", (double)time * 1e-6, message) << std::endl;
+    spdlog::info("{} {}", (double)time * 1e-6, message);
     fflush(stdout);
     if (output_type == k_ESteamNetworkingSocketsDebugOutputType_Bug) {
         exit(1);
@@ -60,8 +61,7 @@ void Init()
 
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
-        std::cout << "GameNetworkingSockets_Init failed. " << std::span(err_msg).data()
-                  << std::endl;
+        spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
     }
 
     log_time_zero = SteamNetworkingUtils()->GetLocalTimestamp();

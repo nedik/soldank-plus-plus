@@ -2,7 +2,7 @@
 #include "communication/NetworkEventDispatcher.hpp"
 #include "communication/NetworkMessage.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
 
 namespace Soldat
 {
@@ -23,7 +23,7 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnChatMessage(
   const ConnectionMetadata& connection_metadata,
   const std::string& chat_message)
 {
-    std::cout << "OnChatMessage: " << chat_message << std::endl;
+    spdlog::info("OnChatMessage: {}", chat_message);
     return NetworkEventObserverResult::Success;
 }
 

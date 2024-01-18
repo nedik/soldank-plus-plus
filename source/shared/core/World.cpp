@@ -2,13 +2,14 @@
 
 #include "core/state/Control.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <algorithm>
 #include <random>
 #include <ranges>
 #include <memory>
 #include <tuple>
 #include <chrono>
-#include <iostream>
 
 namespace Soldat
 {
@@ -50,14 +51,13 @@ void World::RunLoop(int fps_limit)
         frame_count_since_last_fps_check++;
         std::chrono::duration<double> diff = current_frame_time - last_fps_check_time;
         if (diff.count() >= 1.0) {
-            std::cout << 1000.0 / double(frame_count_since_last_fps_check) << " ms/frame"
-                      << std::endl;
-            std::cout << "FPS: " << frame_count_since_last_fps_check << std::endl;
+            spdlog::info("{} ms/frame", 1000.0 / double(frame_count_since_last_fps_check));
+            spdlog::info("FPS: {}", frame_count_since_last_fps_check);
             last_fps = frame_count_since_last_fps_check;
             frame_count_since_last_fps_check = 0;
             last_fps_check_time = current_frame_time;
 
-            std::cout << "World updates: " << world_updates << std::endl;
+            spdlog::info("World updates: {}", world_updates);
             world_updates = 0;
         }
 
@@ -199,7 +199,7 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
         }
     }
 
-    std::cout << "[SpawnSoldier] Wrong soldier_id (" << soldier_id << ")" << std::endl;
+    spdlog::critical("[SpawnSoldier] Wrong soldier_id ({})", soldier_id);
     std::unreachable();
 }
 
@@ -211,7 +211,7 @@ void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateFireButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateFireButtonState", soldier_id);
 }
 
 void World::UpdateJetsButtonState(unsigned int soldier_id, bool pressed)
@@ -222,7 +222,7 @@ void World::UpdateJetsButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateJetsButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateJetsButtonState", soldier_id);
 }
 
 void World::UpdateLeftButtonState(unsigned int soldier_id, bool pressed)
@@ -233,7 +233,7 @@ void World::UpdateLeftButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateLeftButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateLeftButtonState", soldier_id);
 }
 
 void World::UpdateRightButtonState(unsigned int soldier_id, bool pressed)
@@ -244,7 +244,7 @@ void World::UpdateRightButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateRightButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateRightButtonState", soldier_id);
 }
 
 void World::UpdateJumpButtonState(unsigned int soldier_id, bool pressed)
@@ -255,7 +255,7 @@ void World::UpdateJumpButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateJumpButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateJumpButtonState", soldier_id);
 }
 
 void World::UpdateCrouchButtonState(unsigned int soldier_id, bool pressed)
@@ -266,7 +266,7 @@ void World::UpdateCrouchButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateCrouchButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateCrouchButtonState", soldier_id);
 }
 
 void World::UpdateProneButtonState(unsigned int soldier_id, bool pressed)
@@ -277,7 +277,7 @@ void World::UpdateProneButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateProneButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateProneButtonState", soldier_id);
 }
 
 void World::UpdateChangeButtonState(unsigned int soldier_id, bool pressed)
@@ -288,7 +288,7 @@ void World::UpdateChangeButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateChangeButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateChangeButtonState", soldier_id);
 }
 
 void World::UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed)
@@ -299,7 +299,7 @@ void World::UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateThrowGrenadeButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateThrowGrenadeButtonState", soldier_id);
 }
 
 void World::UpdateDropButtonState(unsigned int soldier_id, bool pressed)
@@ -310,7 +310,7 @@ void World::UpdateDropButtonState(unsigned int soldier_id, bool pressed)
             return;
         }
     }
-    std::cout << "Wrong soldier_id in UpdateDropButtonState" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateDropButtonState", soldier_id);
 }
 
 void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position)
@@ -335,6 +335,6 @@ void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_positio
         }
     }
 
-    std::cout << "Wrong soldier_id in UpdateMousePosition" << std::endl;
+    spdlog::error("Wrong soldier_id({}) in UpdateMousePosition", soldier_id);
 }
 } // namespace Soldat

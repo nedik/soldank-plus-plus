@@ -10,7 +10,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 namespace Soldat
 {

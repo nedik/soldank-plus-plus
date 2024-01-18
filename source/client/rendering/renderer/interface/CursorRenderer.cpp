@@ -7,7 +7,6 @@
 #include "core/math/Glm.hpp"
 
 #include <filesystem>
-#include <iostream>
 
 namespace Soldat
 {

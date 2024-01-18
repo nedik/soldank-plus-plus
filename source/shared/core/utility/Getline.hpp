@@ -2,7 +2,6 @@
 #define __GETLINE_HPP__
 
 #include <string>
-#include <iostream>
 #include <fstream>
 #include <cstdlib>
 

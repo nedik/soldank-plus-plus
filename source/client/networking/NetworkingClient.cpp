@@ -2,7 +2,8 @@
 
 #include "networking/interface/NetworkingInterface.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <string>
 #include <span>
 #include <utility>
@@ -43,19 +44,16 @@ void NetworkingClient::OnSteamNetConnectionStatusChanged(
             if (connection_info->m_eOldState == k_ESteamNetworkingConnectionState_Connecting) {
                 // Note: we could distinguish between a timeout, a rejected connection,
                 // or some other transport problem.
-                std::cout << "We sought the remote host, yet our efforts were met with defeat. "
-                          << std::span<char>(connection_info->m_info.m_szEndDebug).data()
-                          << std::endl;
+                spdlog::info("We sought the remote host, yet our efforts were met with defeat. {}",
+                             std::span<char>(connection_info->m_info.m_szEndDebug).data());
             } else if (connection_info->m_info.m_eState ==
                        k_ESteamNetworkingConnectionState_ProblemDetectedLocally) {
-                std::cout << "Alas, troubles beset us; we have lost contact with the host. "
-                          << std::span<char>(connection_info->m_info.m_szEndDebug).data()
-                          << std::endl;
+                spdlog::info("Alas, troubles beset us; we have lost contact with the host. {}",
+                             std::span<char>(connection_info->m_info.m_szEndDebug).data());
             } else {
                 // NOTE: We could check the reason code for a normal disconnection
-                std::cout << "The host hath bidden us farewell. "
-                          << std::span<char>(connection_info->m_info.m_szEndDebug).data()
-                          << std::endl;
+                spdlog::info("The host hath bidden us farewell. {}",
+                             std::span<char>(connection_info->m_info.m_szEndDebug).data());
             }
 
             connection_->CloseConnection();
@@ -69,7 +67,7 @@ void NetworkingClient::OnSteamNetConnectionStatusChanged(
             break;
 
         case k_ESteamNetworkingConnectionState_Connected:
-            std::cout << "Connected to server OK" << std::endl;
+            spdlog::info("Connected to server OK");
             break;
 
         default:

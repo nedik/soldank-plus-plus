@@ -1,12 +1,13 @@
 #include "Texture.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <stb_image.h>
 
 #include <cstddef>
-#include <iostream>
 #include <span>
 
 namespace Soldat::Texture
@@ -51,7 +52,7 @@ TextureData Load(const char* texture_path)
                      GL_UNSIGNED_BYTE,
                      pixels.data());
     } else {
-        std::cerr << "Error: Failed to load texture " << texture_path << std::endl;
+        spdlog::error("Error: Failed to load texture {}", texture_path);
     }
     stbi_image_free(data);
 

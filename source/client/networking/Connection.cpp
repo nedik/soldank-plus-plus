@@ -3,7 +3,8 @@
 #include "communication/NetworkEventDispatcher.hpp"
 #include "communication/NetworkMessage.hpp"
 
-#include <iostream>
+#include "spdlog/spdlog.h"
+
 #include <string>
 #include <cassert>
 #include <span>
@@ -31,7 +32,7 @@ void Connection::PollIncomingMessages(
         return;
     }
     if (num_msgs < 0) {
-        std::cout << "Error checking for messages" << std::endl;
+        spdlog::error("Error checking for messages");
         return;
     }
 

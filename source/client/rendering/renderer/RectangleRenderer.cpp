@@ -7,7 +7,6 @@
 #include "core/math/Calc.hpp"
 
 #include <filesystem>
-#include <iostream>
 #include <cmath>
 
 namespace Soldat

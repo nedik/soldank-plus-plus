@@ -2,7 +2,7 @@
 
 #include <steam/steamnetworkingsockets.h>
 
-#include <iostream>
+#include "spdlog/spdlog.h"
 
 namespace Soldat::NetworkingInterface
 {
@@ -40,7 +40,7 @@ void Init()
                (void*)SteamNetConnectionStatusChangedCallback);
     listen_socket_handle = interface->CreateListenSocketIP(server_local_addr, 1, &opt);
     if (listen_socket_handle == k_HSteamListenSocket_Invalid) {
-        std::cout << "Failed to listen on port " << 23073 << std::endl;
+        spdlog::error("Failed to listen on port {}", 23073);
     }
 }
 

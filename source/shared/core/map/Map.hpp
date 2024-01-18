@@ -7,7 +7,6 @@
 
 #include "core/math/Glm.hpp"
 
-#include <iostream>
 #include <vector>
 #include <fstream>
 #include <cstring>
