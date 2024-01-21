@@ -38,8 +38,22 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
 NetworkEventObserverResult ServerNetworkEventObserver::OnUpdateSoldierState(
   const ConnectionMetadata& connection_metadata,
   unsigned int soldier_id,
-  glm::vec2 soldier_position)
+  glm::vec2 soldier_position,
+  const Control& player_control)
 {
+    world_->UpdateRightButtonState(soldier_id, player_control.right);
+    world_->UpdateLeftButtonState(soldier_id, player_control.left);
+    world_->UpdateJumpButtonState(soldier_id, player_control.up);
+    world_->UpdateCrouchButtonState(soldier_id, player_control.down);
+    world_->UpdateProneButtonState(soldier_id, player_control.prone);
+    world_->UpdateChangeButtonState(soldier_id, player_control.change);
+    world_->UpdateThrowGrenadeButtonState(soldier_id, player_control.throw_grenade);
+    world_->UpdateDropButtonState(soldier_id, player_control.drop);
+
+    world_->UpdateMousePosition(soldier_id,
+                                { player_control.mouse_aim_x, player_control.mouse_aim_y });
+    world_->UpdateFireButtonState(soldier_id, player_control.fire);
+    world_->UpdateJetsButtonState(soldier_id, player_control.jets);
     return NetworkEventObserverResult::Success;
 }
 } // namespace Soldat

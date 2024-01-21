@@ -16,13 +16,6 @@ namespace Soldat
 {
 class World : public IWorld
 {
-private:
-    using TShouldStopGameLoopCallback = std::function<bool()>;
-    using TPreGameLoopIterationCallback = std::function<void()>;
-    using TPreWorldUpdateCallback = std::function<void()>;
-    using TPostGameLoopIterationCallback =
-      std::function<void(const std::shared_ptr<State>&, double, int)>;
-
 public:
     World();
 
@@ -63,6 +56,11 @@ public:
         pre_world_update_callback_ = std::move(callback);
     }
 
+    void SetPostWorldUpdateCallback(TPostWorldUpdateCallback callback) override
+    {
+        post_world_update_callback_ = std::move(callback);
+    }
+
     void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) override
     {
         post_game_loop_iteration_callback_ = std::move(callback);
@@ -76,6 +74,7 @@ private:
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;
     TPreGameLoopIterationCallback pre_game_loop_iteration_callback_;
     TPreWorldUpdateCallback pre_world_update_callback_;
+    TPostWorldUpdateCallback post_world_update_callback_;
     TPostGameLoopIterationCallback post_game_loop_iteration_callback_;
 
     std::random_device random_device_;

@@ -40,11 +40,11 @@ void Connection::PollIncomingMessages(
                                           static_cast<unsigned int>(p_incoming_msg->m_cbSize) };
 
     NetworkMessage received_message(received_bytes);
-    // We don't need this anymore.
-    p_incoming_msg->Release();
     ConnectionMetadata connection_metadata{ .connection_id = p_incoming_msg->m_conn,
                                             .send_message_to_connection =
                                               [](const NetworkMessage& message) {} };
+    // We don't need this anymore.
+    p_incoming_msg->Release();
     network_event_dispatcher->ProcessNetworkMessage(connection_metadata, received_message);
 }
 
@@ -58,5 +58,14 @@ void Connection::AssertConnectionInfo(
 {
     assert(connection_info->m_hConn == connection_handle_ ||
            connection_handle_ == k_HSteamNetConnection_Invalid);
+}
+
+void Connection::SendNetworkMessage(const NetworkMessage& network_message)
+{
+    interface_->SendMessageToConnection(connection_handle_,
+                                        network_message.GetData().data(),
+                                        network_message.GetData().size(),
+                                        k_nSteamNetworkingSend_Unreliable,
+                                        nullptr);
 }
 } // namespace Soldat

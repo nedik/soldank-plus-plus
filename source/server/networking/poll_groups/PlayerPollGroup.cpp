@@ -49,13 +49,14 @@ void PlayerPollGroup::PollIncomingMessages()
 
         std::span<char> received_bytes{ static_cast<char*>(incoming_message->m_pData),
                                         static_cast<unsigned int>(incoming_message->m_cbSize) };
-        incoming_message->Release();
         NetworkMessage network_message(received_bytes);
 
         ConnectionMetadata connection_metadata{ .connection_id = incoming_message->m_conn,
                                                 .send_message_to_connection =
                                                   [](const NetworkMessage& message) { // TODO
                                                   } };
+
+        incoming_message->Release();
         network_event_dispatcher_->ProcessNetworkMessage(connection_metadata, network_message);
     }
 }

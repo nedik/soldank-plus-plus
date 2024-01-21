@@ -22,6 +22,8 @@ struct ClientState
     glm::vec2 mouse;
     float game_width;
     float game_height;
+
+    glm::vec2 soldier_position_server_pov;
 };
 } // namespace Soldat
 

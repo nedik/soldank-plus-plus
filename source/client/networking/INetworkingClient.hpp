@@ -14,6 +14,8 @@ public:
 
     virtual void Update(
       const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher) = 0;
+
+    virtual void SendNetworkMessage(const NetworkMessage& network_message) = 0;
 };
 } // namespace Soldat
 

@@ -14,6 +14,7 @@ struct State
 {
     State(const std::string& map_name);
 
+    unsigned int game_tick;
     Map map;
     float gravity;
     std::list<Bullet> bullets;

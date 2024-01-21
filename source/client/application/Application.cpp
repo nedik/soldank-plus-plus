@@ -5,6 +5,7 @@
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
 
+#include "communication/NetworkPackets.hpp"
 #include "networking/NetworkingClient.hpp"
 
 #include "core/World.hpp"
@@ -134,6 +135,16 @@ void Run()
             } else {
                 client_state->camera = { 0.0F, 0.0F };
             }
+
+            UpdateSoldierStatePacket update_soldier_state_packet{
+                .game_tick = world->GetState()->game_tick,
+                .id = client_soldier_id,
+                .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
+                .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
+                .control = world->GetSoldier(client_soldier_id).control
+            };
+            networking_client->SendNetworkMessage(
+              { NetworkEvent::UpdateSoldierState, update_soldier_state_packet });
         } else {
             client_state->camera = { 0.0F, 0.0F };
         }

@@ -57,19 +57,21 @@ void Application::Run()
     world_->SetShouldStopGameLoopCallback([&]() { return false; });
     world_->SetPreGameLoopIterationCallback([&]() {});
     world_->SetPreWorldUpdateCallback([&]() {});
-    world_->SetPostGameLoopIterationCallback(
-      [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
-          game_server_->Update();
-          for (const auto& soldier : state->soldiers) {
-              UpdateSoldierStatePacket update_soldier_state_packet{ .id = soldier.id,
-                                                                    .position_x =
-                                                                      soldier.particle.position.x,
-                                                                    .position_y =
-                                                                      soldier.particle.position.y };
-              game_server_->SendNetworkMessageToAll(
-                { NetworkEvent::UpdateSoldierState, update_soldier_state_packet });
-          }
-      });
+    world_->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
+        for (const auto& soldier : state->soldiers) {
+            UpdateSoldierStatePacket update_soldier_state_packet{ .game_tick = state->game_tick,
+                                                                  .id = soldier.id,
+                                                                  .position_x =
+                                                                    soldier.particle.position.x,
+                                                                  .position_y =
+                                                                    soldier.particle.position.y };
+            game_server_->SendNetworkMessageToAll(
+              { NetworkEvent::UpdateSoldierState, update_soldier_state_packet });
+        }
+    });
+    world_->SetPostGameLoopIterationCallback([&](const std::shared_ptr<State>& state,
+                                                 double frame_percent,
+                                                 int last_fps) { game_server_->Update(); });
 
     world_->RunLoop(60);
 

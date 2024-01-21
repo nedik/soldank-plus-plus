@@ -5,6 +5,7 @@
 #include "communication/NetworkMessage.hpp"
 
 #include "core/math/Glm.hpp"
+#include "core/state/Control.hpp"
 
 #include <memory>
 #include <variant>
@@ -48,7 +49,8 @@ public:
     virtual NetworkEventObserverResult OnUpdateSoldierState(
       const ConnectionMetadata& connection_metadata,
       unsigned int soldier_id,
-      glm::vec2 soldier_position) = 0;
+      glm::vec2 soldier_position,
+      const Control& player_control) = 0;
 };
 
 class NetworkEventDispatcher

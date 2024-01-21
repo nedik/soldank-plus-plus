@@ -41,6 +41,7 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
 
     background_renderer_.Render(camera_.GetView());
     sceneries_renderer_.Render(camera_.GetView(), 0, game_state->map.GetSceneryInstances());
+    rectangle_renderer_.Render(camera_.GetView(), client_state.soldier_position_server_pov);
     RenderSoldiers(game_state, client_state, frame_percent);
     for (const Bullet& bullet : game_state->bullets) {
         bullet_renderer_.Render(camera_.GetView(), bullet, frame_percent);

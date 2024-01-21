@@ -22,6 +22,8 @@ public:
 
     void AssertConnectionInfo(SteamNetConnectionStatusChangedCallback_t* connection_info) const;
 
+    void SendNetworkMessage(const NetworkMessage& network_message);
+
 private:
     ISteamNetworkingSockets* interface_;
     HSteamNetConnection connection_handle_;

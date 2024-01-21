@@ -32,6 +32,7 @@ void World::RunLoop(int fps_limit)
     auto timeprv = timecur;
     std::chrono::duration<double> timeacc{ 0 };
 
+    unsigned int game_tick = 0;
     int world_updates = 0;
     auto should_run_game_loop_iteration = [&]() {
         if (should_stop_game_loop_callback_) {
@@ -81,12 +82,17 @@ void World::RunLoop(int fps_limit)
             std::chrono::duration<double> dt_in_duration{ dt };
             timeacc -= dt_in_duration;
 
-            world_updates++;
-
             if (pre_world_update_callback_) {
                 pre_world_update_callback_();
             }
             Update(delta_time.count());
+            if (post_world_update_callback_) {
+                post_world_update_callback_(state_);
+            }
+
+            world_updates++;
+            game_tick++;
+            state_->game_tick = game_tick;
 
             timecur = std::chrono::system_clock::now();
             timeacc += timecur - timeprv;

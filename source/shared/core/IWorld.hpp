@@ -12,10 +12,11 @@ namespace Soldat
 {
 class IWorld
 {
-private:
+protected:
     using TShouldStopGameLoopCallback = std::function<bool()>;
     using TPreGameLoopIterationCallback = std::function<void()>;
     using TPreWorldUpdateCallback = std::function<void()>;
+    using TPostWorldUpdateCallback = std::function<void(const std::shared_ptr<State>& state)>;
     using TPostGameLoopIterationCallback =
       std::function<void(const std::shared_ptr<State>&, double, int)>;
 
@@ -46,6 +47,7 @@ public:
     virtual void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) = 0;
     virtual void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback) = 0;
     virtual void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback) = 0;
+    virtual void SetPostWorldUpdateCallback(TPostWorldUpdateCallback callback) = 0;
     virtual void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) = 0;
 };
 } // namespace Soldat

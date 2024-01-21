@@ -28,6 +28,11 @@ void NetworkingClient::Update(
     NetworkingInterface::PollConnectionStateChanges();
 }
 
+void NetworkingClient::SendNetworkMessage(const NetworkMessage& network_message)
+{
+    connection_->SendNetworkMessage(network_message);
+}
+
 void NetworkingClient::OnSteamNetConnectionStatusChanged(
   SteamNetConnectionStatusChangedCallback_t* connection_info)
 {

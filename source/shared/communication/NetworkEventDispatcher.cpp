@@ -26,7 +26,6 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
     }
 
     auto network_event = *network_event_or_error;
-    spdlog::info("[ProcessNetworkMessage] network_event = {}", std::to_underlying(network_event));
 
     NetworkEventObserverResult observer_result = NetworkEventObserverResult::Failure;
 
@@ -77,23 +76,27 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                 return { NetworkEventDispatchResult::ParseError, parsed.error() };
             }
             UpdateSoldierStatePacket update_soldier_state_packet = std::get<1>(*parsed);
+            unsigned int game_tick = update_soldier_state_packet.game_tick;
             unsigned int soldier_id = update_soldier_state_packet.id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
+            Control player_control = update_soldier_state_packet.control;
 
-            spdlog::info("[ProcessNetworkMessage] SpawnSoldier: {}, ({}, {})",
+            spdlog::info("[ProcessNetworkMessage] UpdateSoldierState({}): {}, ({}, {})",
+                         game_tick,
                          soldier_id,
                          soldier_position.x,
                          soldier_position.y);
             observer_result = network_event_observer_->OnUpdateSoldierState(
-              connection_metadata, soldier_id, soldier_position);
+              connection_metadata, soldier_id, soldier_position, player_control);
             break;
         }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80
             // when NetworkEvent has less than 80 values!
-            spdlog::error("[ProcessNetworkMessage] ParseError");
+            spdlog::error("[ProcessNetworkMessage] ParseError, {}",
+                          std::to_underlying(network_event));
             return { NetworkEventDispatchResult::ParseError, ParseError::InvalidNetworkEvent };
         }
     }

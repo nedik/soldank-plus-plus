@@ -21,6 +21,8 @@ public:
 
     void Update(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher) override;
 
+    void SendNetworkMessage(const NetworkMessage& network_message) override;
+
 private:
     void OnSteamNetConnectionStatusChanged(
       SteamNetConnectionStatusChangedCallback_t* connection_info);
