@@ -7,6 +7,10 @@
 
 #include "spdlog/spdlog.h"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Soldat
@@ -35,6 +39,10 @@ Window::Window(std::string title, int width, int height)
 
 Window::~Window()
 {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
 }
 
@@ -77,6 +85,18 @@ void Window::Create()
     glfwSetErrorCallback(GLFWErrorCallback);
 
     SetCursorMode(CursorMode::Locked);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui::StyleColorsDark();
+    // ImGui::StyleColorsLight();
+
+    ImGui_ImplGlfw_InitForOpenGL(glfw_window_, true);
+    ImGui_ImplOpenGL3_Init();
 }
 
 void Window::SetCursorMode(CursorMode cursor_mode) const

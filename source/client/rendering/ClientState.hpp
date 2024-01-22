@@ -20,6 +20,8 @@ struct ClientState
     glm::vec2 camera;
     glm::vec2 camera_prev;
     glm::vec2 mouse;
+    bool mouse_left_button_pressed;
+    bool mouse_right_button_pressed;
     float game_width;
     float game_height;
 

@@ -6,6 +6,10 @@
 #include "core/entities/Bullet.hpp"
 #include "core/math/Calc.hpp"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 #include <string>
 #include <algorithm>
 
@@ -60,7 +64,27 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
         }
     }
     sceneries_renderer_.Render(camera_.GetView(), 2, game_state->map.GetSceneryInstances());
-    cursor_renderer_.Render({ client_state.mouse.x, client_state.mouse.y });
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.AddMousePosEvent((client_state.mouse.x / 640.0F) * 1280.0F,
+                        (480.0F - client_state.mouse.y) / 480.0F * 1024.0F);
+    io.MouseDrawCursor = io.WantCaptureMouse;
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin("Debug window");
+        ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (!io.WantCaptureMouse) {
+        cursor_renderer_.Render({ client_state.mouse.x, client_state.mouse.y });
+    }
     text_renderer_.Render("FPS: " + std::to_string(fps), 50.0, 100.0, 1.0, { 1.0, 1.0, 1.0 });
     if (Config::DEBUG_DRAW) {
         for (const auto& soldier : game_state->soldiers) {

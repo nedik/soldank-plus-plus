@@ -34,6 +34,22 @@ if (freetype_ADDED)
 endif()
 
 CPMAddPackage(
+    NAME imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.90.1
+    VERSION 1.90.1
+    DOWNLOAD_ONLY YES
+)
+if (imgui_ADDED)
+    file (GLOB imgui_sources ${imgui_SOURCE_DIR}/*.cpp)
+    list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp)
+    list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+    add_library(imgui STATIC ${imgui_sources})
+    target_link_libraries(imgui PRIVATE glfw)
+    target_include_directories(imgui SYSTEM PUBLIC $<BUILD_INTERFACE:${imgui_SOURCE_DIR}>)
+endif()
+
+CPMAddPackage(
     NAME googletest
     GITHUB_REPOSITORY google/googletest
     GIT_TAG v1.14.0
