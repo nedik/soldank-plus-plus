@@ -65,16 +65,49 @@ TEST(CalcTests, TestPointLineDistance)
     ASSERT_FLOAT_EQ(expected, actual);
 }
 
-TEST(CalcTests, TestLerp)
+TEST(CalcTests, TestLerpOnVec)
 {
     glm::vec2 expected = { 6.0, 6.0 };
     glm::vec2 actual = Soldat::Calc::Lerp({ 1.0, 1.0 }, { 2.0, 2.0 }, 5.0);
     ASSERT_FLOAT_EQ(expected.x, actual.x);
     ASSERT_FLOAT_EQ(expected.y, actual.y);
+
     expected = { 25.195002, -6.7679996 };
     actual = Soldat::Calc::Lerp({ -13.4, 1.2 }, { 2.1, -2.0 }, 2.49);
     ASSERT_FLOAT_EQ(expected.x, actual.x);
     ASSERT_FLOAT_EQ(expected.y, actual.y);
+
+    expected = { 1.0F, 1.0F };
+    actual = Soldat::Calc::Lerp({ 1e8F, 1e8F }, { 1.0F, 1.0F }, 1.0F);
+    ASSERT_FLOAT_EQ(expected.x, actual.x);
+    ASSERT_FLOAT_EQ(expected.y, actual.y);
+
+    expected = { 1e8F, 1e8F };
+    actual = Soldat::Calc::Lerp({ 1e8F, 1e8F }, { 1.0F, 1.0F }, 0.0F);
+    ASSERT_FLOAT_EQ(expected.x, actual.x);
+    ASSERT_FLOAT_EQ(expected.y, actual.y);
+
+    expected = { 5e07F, 5e07F };
+    actual = Soldat::Calc::Lerp({ 1e8F, 1e8F }, { 1.0F, 1.0F }, 0.5F);
+    ASSERT_FLOAT_EQ(expected.x, actual.x);
+    ASSERT_FLOAT_EQ(expected.y, actual.y);
+}
+
+TEST(CalcTests, TestLerpOnFloats)
+{
+    float a = 1e8F;
+    float b = 1.0F;
+    float expected = 5e07F;
+    float actual = Soldat::Calc::Lerp(a, b, 0.5F);
+    ASSERT_FLOAT_EQ(expected, actual);
+
+    expected = a;
+    actual = Soldat::Calc::Lerp(1e8F, 1.0F, 0.0F);
+    ASSERT_FLOAT_EQ(expected, actual);
+
+    expected = b;
+    actual = Soldat::Calc::Lerp(1e8F, 1.0F, 1.0F);
+    ASSERT_FLOAT_EQ(expected, actual);
 }
 
 int main(int argc, char** argv)

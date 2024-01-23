@@ -42,11 +42,11 @@ float PointLineDistance(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
 
 glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float t)
 {
-    return a + (b - a) * t;
+    return glm::mix(a, b, t);
 }
 
 float Lerp(float a, float b, float t)
 {
-    return a + (b - a) * t;
+    return std::lerp(a, b, t);
 }
 } // namespace Soldat::Calc
