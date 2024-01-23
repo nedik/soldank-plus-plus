@@ -56,4 +56,11 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInput(
     world_->UpdateJetsButtonState(soldier_id, player_control.jets);
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierState(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id,
+  glm::vec2 soldier_position)
+{
+}
 } // namespace Soldat

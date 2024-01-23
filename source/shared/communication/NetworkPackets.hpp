@@ -15,6 +15,16 @@ struct SoldierInputPacket
     Control control;
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+struct SoldierStatePacket
+{
+    unsigned int game_tick;
+    unsigned int id;
+    float position_x;
+    float position_y;
+};
+#pragma pack(pop)
 } // namespace Soldat
 
 #endif

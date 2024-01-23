@@ -91,6 +91,26 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
               connection_metadata, soldier_id, soldier_position, player_control);
             break;
         }
+        case NetworkEvent::SoldierState: {
+            auto parsed = network_message.Parse<NetworkEvent, SoldierStatePacket>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            SoldierStatePacket update_soldier_state_packet = std::get<1>(*parsed);
+            unsigned int game_tick = update_soldier_state_packet.game_tick;
+            unsigned int soldier_id = update_soldier_state_packet.id;
+            glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
+                                           update_soldier_state_packet.position_y };
+
+            spdlog::info("[ProcessNetworkMessage] SoldierState({}): {}, ({}, {})",
+                         game_tick,
+                         soldier_id,
+                         soldier_position.x,
+                         soldier_position.y);
+            observer_result = network_event_observer_->OnSoldierState(
+              connection_metadata, soldier_id, soldier_position);
+            break;
+        }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80

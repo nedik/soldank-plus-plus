@@ -59,14 +59,14 @@ void Application::Run()
     world_->SetPreWorldUpdateCallback([&]() {});
     world_->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
         for (const auto& soldier : state->soldiers) {
-            SoldierInputPacket update_soldier_state_packet{ .game_tick = state->game_tick,
+            SoldierStatePacket update_soldier_state_packet{ .game_tick = state->game_tick,
                                                             .id = soldier.id,
                                                             .position_x =
                                                               soldier.particle.position.x,
                                                             .position_y =
                                                               soldier.particle.position.y };
             game_server_->SendNetworkMessageToAll(
-              { NetworkEvent::SoldierInput, update_soldier_state_packet });
+              { NetworkEvent::SoldierState, update_soldier_state_packet });
         }
     });
     world_->SetPostGameLoopIterationCallback([&](const std::shared_ptr<State>& state,

@@ -8,7 +8,8 @@ enum class NetworkEvent : unsigned int
     ChatMessage = 0,
     AssignPlayerId,
     SpawnSoldier,
-    SoldierInput
+    SoldierInput,
+    SoldierState
 };
 }
 
