@@ -70,24 +70,24 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
               connection_metadata, soldier_id, spawn_position);
             break;
         }
-        case NetworkEvent::UpdateSoldierState: {
-            auto parsed = network_message.Parse<NetworkEvent, UpdateSoldierStatePacket>();
+        case NetworkEvent::SoldierInput: {
+            auto parsed = network_message.Parse<NetworkEvent, SoldierInputPacket>();
             if (!parsed.has_value()) {
                 return { NetworkEventDispatchResult::ParseError, parsed.error() };
             }
-            UpdateSoldierStatePacket update_soldier_state_packet = std::get<1>(*parsed);
+            SoldierInputPacket update_soldier_state_packet = std::get<1>(*parsed);
             unsigned int game_tick = update_soldier_state_packet.game_tick;
             unsigned int soldier_id = update_soldier_state_packet.id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
             Control player_control = update_soldier_state_packet.control;
 
-            spdlog::info("[ProcessNetworkMessage] UpdateSoldierState({}): {}, ({}, {})",
+            spdlog::info("[ProcessNetworkMessage] SoldierInput({}): {}, ({}, {})",
                          game_tick,
                          soldier_id,
                          soldier_position.x,
                          soldier_position.y);
-            observer_result = network_event_observer_->OnUpdateSoldierState(
+            observer_result = network_event_observer_->OnSoldierInput(
               connection_metadata, soldier_id, soldier_position, player_control);
             break;
         }

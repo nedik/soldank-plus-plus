@@ -41,7 +41,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSpawnSoldier(
     return NetworkEventObserverResult::Success;
 }
 
-NetworkEventObserverResult ClientNetworkEventObserver::OnUpdateSoldierState(
+NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierInput(
   const ConnectionMetadata& connection_metadata,
   unsigned int soldier_id,
   glm::vec2 soldier_position,

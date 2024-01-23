@@ -6,7 +6,7 @@
 namespace Soldat
 {
 #pragma pack(push, 1)
-struct UpdateSoldierStatePacket
+struct SoldierInputPacket
 {
     unsigned int game_tick;
     unsigned int id;

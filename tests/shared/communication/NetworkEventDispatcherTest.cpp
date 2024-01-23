@@ -33,11 +33,10 @@ public:
         return result_;
     }
 
-    NetworkEventObserverResult OnUpdateSoldierState(
-      const ConnectionMetadata& /*connection_metadata*/,
-      unsigned int /*soldier_id*/,
-      glm::vec2 /*soldier_position*/,
-      const Control& /*player_control*/) override
+    NetworkEventObserverResult OnSoldierInput(const ConnectionMetadata& /*connection_metadata*/,
+                                              unsigned int /*soldier_id*/,
+                                              glm::vec2 /*soldier_position*/,
+                                              const Control& /*player_control*/) override
     {
         return result_;
     }

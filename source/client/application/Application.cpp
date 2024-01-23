@@ -136,7 +136,7 @@ void Run()
                 client_state->camera = { 0.0F, 0.0F };
             }
 
-            UpdateSoldierStatePacket update_soldier_state_packet{
+            SoldierInputPacket update_soldier_state_packet{
                 .game_tick = world->GetState()->game_tick,
                 .id = client_soldier_id,
                 .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
@@ -144,7 +144,7 @@ void Run()
                 .control = world->GetSoldier(client_soldier_id).control
             };
             networking_client->SendNetworkMessage(
-              { NetworkEvent::UpdateSoldierState, update_soldier_state_packet });
+              { NetworkEvent::SoldierInput, update_soldier_state_packet });
         } else {
             client_state->camera = { 0.0F, 0.0F };
         }
