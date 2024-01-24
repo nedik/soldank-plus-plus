@@ -9,7 +9,7 @@ namespace Soldat
 struct SoldierInputPacket
 {
     unsigned int game_tick;
-    unsigned int id;
+    unsigned int player_id;
     float position_x;
     float position_y;
     Control control;
@@ -20,7 +20,7 @@ struct SoldierInputPacket
 struct SoldierStatePacket
 {
     unsigned int game_tick;
-    unsigned int id;
+    unsigned int player_id;
     float position_x;
     float position_y;
 };

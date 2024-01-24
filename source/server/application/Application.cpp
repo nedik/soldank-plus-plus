@@ -60,7 +60,7 @@ void Application::Run()
     world_->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
         for (const auto& soldier : state->soldiers) {
             SoldierStatePacket update_soldier_state_packet{ .game_tick = state->game_tick,
-                                                            .id = soldier.id,
+                                                            .player_id = soldier.id,
                                                             .position_x =
                                                               soldier.particle.position.x,
                                                             .position_y =

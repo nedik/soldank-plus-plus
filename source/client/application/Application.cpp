@@ -138,7 +138,7 @@ void Run()
 
             SoldierInputPacket update_soldier_state_packet{
                 .game_tick = world->GetState()->game_tick,
-                .id = client_soldier_id,
+                .player_id = client_soldier_id,
                 .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
                 .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
                 .control = world->GetSoldier(client_soldier_id).control

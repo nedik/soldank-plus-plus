@@ -77,7 +77,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             }
             SoldierInputPacket update_soldier_state_packet = std::get<1>(*parsed);
             unsigned int game_tick = update_soldier_state_packet.game_tick;
-            unsigned int soldier_id = update_soldier_state_packet.id;
+            unsigned int soldier_id = update_soldier_state_packet.player_id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
             Control player_control = update_soldier_state_packet.control;
@@ -98,7 +98,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             }
             SoldierStatePacket update_soldier_state_packet = std::get<1>(*parsed);
             unsigned int game_tick = update_soldier_state_packet.game_tick;
-            unsigned int soldier_id = update_soldier_state_packet.id;
+            unsigned int soldier_id = update_soldier_state_packet.player_id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
 
