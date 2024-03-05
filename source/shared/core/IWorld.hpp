@@ -24,6 +24,7 @@ public:
     virtual ~IWorld() = default;
     virtual void RunLoop(int fps_limit) = 0;
     virtual void Update(double delta_time) = 0;
+    virtual void UpdateSoldier(unsigned int soldier_id) = 0;
     virtual const std::shared_ptr<State>& GetState() const = 0;
     virtual const Soldier& GetSoldier(unsigned int soldier_id) const = 0;
 

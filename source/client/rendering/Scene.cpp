@@ -76,6 +76,13 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
     {
         ImGui::Begin("Debug window");
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
+        ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
+        for (const auto& soldier : game_state->soldiers) {
+            if (soldier.active && soldier.on_ground &&
+                *client_state.client_soldier_id == soldier.id) {
+                ImGui::Text("SOLDIER IS ON GROUND");
+            }
+        }
         ImGui::End();
     }
 

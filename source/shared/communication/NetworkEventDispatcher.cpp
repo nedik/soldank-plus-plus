@@ -76,10 +76,13 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                 return { NetworkEventDispatchResult::ParseError, parsed.error() };
             }
             SoldierInputPacket update_soldier_state_packet = std::get<1>(*parsed);
+            unsigned int input_sequence_id = update_soldier_state_packet.input_sequence_id;
             unsigned int game_tick = update_soldier_state_packet.game_tick;
             unsigned int soldier_id = update_soldier_state_packet.player_id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
+            glm::vec2 mouse_position = { update_soldier_state_packet.mouse_position_x,
+                                         update_soldier_state_packet.mouse_position_y };
             Control player_control = update_soldier_state_packet.control;
 
             spdlog::info("[ProcessNetworkMessage] SoldierInput({}): {}, ({}, {})",
@@ -87,8 +90,12 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                          soldier_id,
                          soldier_position.x,
                          soldier_position.y);
-            observer_result = network_event_observer_->OnSoldierInput(
-              connection_metadata, soldier_id, soldier_position, player_control);
+            observer_result = network_event_observer_->OnSoldierInput(connection_metadata,
+                                                                      input_sequence_id,
+                                                                      soldier_id,
+                                                                      soldier_position,
+                                                                      mouse_position,
+                                                                      player_control);
             break;
         }
         case NetworkEvent::SoldierState: {
@@ -101,14 +108,51 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             unsigned int soldier_id = update_soldier_state_packet.player_id;
             glm::vec2 soldier_position = { update_soldier_state_packet.position_x,
                                            update_soldier_state_packet.position_y };
+            glm::vec2 soldier_old_position = { update_soldier_state_packet.old_position_x,
+                                               update_soldier_state_packet.old_position_y };
+
+            AnimationType body_animation_type = update_soldier_state_packet.body_animation_type;
+            unsigned int body_animation_frame = update_soldier_state_packet.body_animation_frame;
+            int body_animation_speed = update_soldier_state_packet.body_animation_speed;
+            AnimationType legs_animation_type = update_soldier_state_packet.legs_animation_type;
+            unsigned int legs_animation_frame = update_soldier_state_packet.legs_animation_frame;
+            int legs_animation_speed = update_soldier_state_packet.legs_animation_speed;
+
+            glm::vec2 soldier_velocity = { update_soldier_state_packet.velocity_x,
+                                           update_soldier_state_packet.velocity_y };
+            glm::vec2 soldier_force = { update_soldier_state_packet.force_x,
+                                        update_soldier_state_packet.force_y };
+
+            bool on_ground = update_soldier_state_packet.on_ground;
+            bool on_ground_for_law = update_soldier_state_packet.on_ground_for_law;
+            bool on_ground_last_frame = update_soldier_state_packet.on_ground_last_frame;
+            bool on_ground_permanent = update_soldier_state_packet.on_ground_permanent;
+
+            unsigned int last_processed_input_id =
+              update_soldier_state_packet.last_processed_input_id;
 
             spdlog::info("[ProcessNetworkMessage] SoldierState({}): {}, ({}, {})",
                          game_tick,
                          soldier_id,
                          soldier_position.x,
                          soldier_position.y);
-            observer_result = network_event_observer_->OnSoldierState(
-              connection_metadata, soldier_id, soldier_position);
+            observer_result = network_event_observer_->OnSoldierState(connection_metadata,
+                                                                      soldier_id,
+                                                                      soldier_position,
+                                                                      soldier_old_position,
+                                                                      body_animation_type,
+                                                                      body_animation_frame,
+                                                                      body_animation_speed,
+                                                                      legs_animation_type,
+                                                                      legs_animation_frame,
+                                                                      legs_animation_speed,
+                                                                      soldier_velocity,
+                                                                      soldier_force,
+                                                                      on_ground,
+                                                                      on_ground_for_law,
+                                                                      on_ground_last_frame,
+                                                                      on_ground_permanent,
+                                                                      last_processed_input_id);
             break;
         }
         default: {

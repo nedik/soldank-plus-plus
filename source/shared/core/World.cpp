@@ -85,6 +85,7 @@ void World::RunLoop(int fps_limit)
             if (pre_world_update_callback_) {
                 pre_world_update_callback_();
             }
+            spdlog::info("World update");
             Update(delta_time.count());
             if (post_world_update_callback_) {
                 post_world_update_callback_(state_);
@@ -122,6 +123,21 @@ void World::Update(double /*delta_time*/)
 
     for (auto& bullet : state_->bullets) {
         bullet_physics_->UpdateBullet(bullet, state_->map);
+    }
+
+    for (const auto& bullet_params : bullet_emitter) {
+        state_->bullets.emplace_back(bullet_params);
+    }
+}
+
+void World::UpdateSoldier(unsigned int soldier_id)
+{
+    std::vector<BulletParams> bullet_emitter;
+
+    for (auto& soldier : state_->soldiers) {
+        if (soldier.active && soldier.id == soldier_id) {
+            soldier_physics_->Update(*state_, soldier, bullet_emitter);
+        }
     }
 
     for (const auto& bullet_params : bullet_emitter) {

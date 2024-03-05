@@ -39,7 +39,10 @@ Application::Application()
     SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
                                                    DebugOutput);
 
-    server_network_event_observer_ = std::make_shared<ServerNetworkEventObserver>(world_);
+    server_state_ = std::make_shared<ServerState>();
+    server_state_->last_processed_input_id = 0;
+    server_network_event_observer_ =
+      std::make_shared<ServerNetworkEventObserver>(world_, server_state_);
     server_network_event_dispatcher_ =
       std::make_shared<NetworkEventDispatcher>(server_network_event_observer_);
     game_server_ = std::make_shared<GameServer>(server_network_event_dispatcher_, world_);
@@ -56,22 +59,52 @@ void Application::Run()
 
     world_->SetShouldStopGameLoopCallback([&]() { return false; });
     world_->SetPreGameLoopIterationCallback([&]() {});
-    world_->SetPreWorldUpdateCallback([&]() {});
+    world_->SetPreWorldUpdateCallback([&]() { game_server_->Update(); });
     world_->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
         for (const auto& soldier : state->soldiers) {
-            SoldierStatePacket update_soldier_state_packet{ .game_tick = state->game_tick,
-                                                            .player_id = soldier.id,
-                                                            .position_x =
-                                                              soldier.particle.position.x,
-                                                            .position_y =
-                                                              soldier.particle.position.y };
+            SoldierStatePacket update_soldier_state_packet{
+                .game_tick = state->game_tick,
+                .player_id = soldier.id,
+                .position_x = soldier.particle.position.x,
+                .position_y = soldier.particle.position.y,
+                .old_position_x = soldier.particle.old_position.x,
+                .old_position_y = soldier.particle.old_position.y,
+                .body_animation_type = soldier.body_animation.GetType(),
+                .body_animation_frame = soldier.body_animation.GetFrame(),
+                .body_animation_speed = soldier.body_animation.GetSpeed(),
+                .legs_animation_type = soldier.legs_animation.GetType(),
+                .legs_animation_frame = soldier.legs_animation.GetFrame(),
+                .legs_animation_speed = soldier.legs_animation.GetSpeed(),
+                .velocity_x = soldier.particle.GetVelocity().x,
+                .velocity_y = soldier.particle.GetVelocity().y,
+                .force_x = soldier.particle.GetForce().x,
+                .force_y = soldier.particle.GetForce().y,
+                .on_ground = soldier.on_ground,
+                .on_ground_for_law = soldier.on_ground_for_law,
+                .on_ground_last_frame = soldier.on_ground_last_frame,
+                .on_ground_permanent = soldier.on_ground_permanent,
+                .last_processed_input_id = server_state_->last_processed_input_id
+            };
             game_server_->SendNetworkMessageToAll(
               { NetworkEvent::SoldierState, update_soldier_state_packet });
         }
+
+        // for (const auto& soldier : state->soldiers) {
+        //     if (soldier.active) {
+        //         spdlog::info("{}, Player {} pos: {}, {}; velocity: {} {}; force: {} {}",
+        //                      server_state_->last_processed_input_id,
+        //                      soldier.id,
+        //                      soldier.particle.position.x,
+        //                      soldier.particle.position.y,
+        //                      soldier.particle.GetVelocity().x,
+        //                      soldier.particle.GetVelocity().y,
+        //                      soldier.particle.GetForce().x,
+        //                      soldier.particle.GetForce().y);
+        //     }
+        // }
     });
-    world_->SetPostGameLoopIterationCallback([&](const std::shared_ptr<State>& state,
-                                                 double frame_percent,
-                                                 int last_fps) { game_server_->Update(); });
+    world_->SetPostGameLoopIterationCallback(
+      [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {});
 
     world_->RunLoop(60);
 

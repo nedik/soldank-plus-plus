@@ -74,7 +74,7 @@ void PollGroupBase::SendNetworkMessage(HSteamNetConnection connection_id,
     GetInterface()->SendMessageToConnection(connection_id,
                                             network_message.GetData().data(),
                                             network_message.GetData().size(),
-                                            k_nSteamNetworkingSend_Reliable,
+                                            k_nSteamNetworkingSend_Unreliable,
                                             nullptr);
 }
 
@@ -84,7 +84,7 @@ void PollGroupBase::SendNetworkMessageToAll(const NetworkMessage& network_messag
         GetInterface()->SendMessageToConnection(connection.second.connection_handle,
                                                 network_message.GetData().data(),
                                                 network_message.GetData().size(),
-                                                k_nSteamNetworkingSend_Reliable,
+                                                k_nSteamNetworkingSend_Unreliable,
                                                 nullptr);
     }
 }

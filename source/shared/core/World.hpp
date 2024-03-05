@@ -21,6 +21,7 @@ public:
 
     void RunLoop(int fps_limit) override;
     void Update(double delta_time) override;
+    void UpdateSoldier(unsigned int soldier_id) override;
     const std::shared_ptr<State>& GetState() const override;
     const Soldier& GetSoldier(unsigned int soldier_id) const override;
 

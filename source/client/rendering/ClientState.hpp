@@ -3,7 +3,10 @@
 
 #include "core/math/Glm.hpp"
 
+#include "communication/NetworkPackets.hpp"
+
 #include <optional>
+#include <list>
 
 namespace Soldat
 {
@@ -26,6 +29,9 @@ struct ClientState
     float game_height;
 
     glm::vec2 soldier_position_server_pov;
+
+    std::list<SoldierInputPacket> pending_inputs;
+    bool server_reconciliation;
 };
 } // namespace Soldat
 

@@ -55,6 +55,7 @@ void Init()
     window = std::make_unique<Window>();
     world = std::make_shared<World>();
     client_state = std::make_shared<ClientState>();
+    client_state->server_reconciliation = true;
     client_network_event_observer =
       std::make_shared<ClientNetworkEventObserver>(world, client_state);
     client_network_event_dispatcher =
@@ -100,7 +101,10 @@ void Run()
             window->Close();
         }
     });
+    unsigned int input_sequence_id = 1;
     world->SetPreWorldUpdateCallback([&]() {
+        // spdlog::info("netowrking_client->Update");
+        networking_client->Update(client_network_event_dispatcher);
         glm::vec2 mouse_position = { Mouse::GetX(), Mouse::GetY() };
 
         client_state->game_width = 640.0;
@@ -137,17 +141,42 @@ void Run()
             }
 
             SoldierInputPacket update_soldier_state_packet{
+                .input_sequence_id = input_sequence_id,
                 .game_tick = world->GetState()->game_tick,
                 .player_id = client_soldier_id,
                 .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
                 .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
+                .mouse_position_x = mouse_position.x,
+                .mouse_position_y = mouse_position.y,
                 .control = world->GetSoldier(client_soldier_id).control
             };
+            input_sequence_id++;
+            if (client_state->server_reconciliation) {
+                client_state->pending_inputs.push_back(update_soldier_state_packet);
+            }
+            // spdlog::info("networking_client->SendNetworkMessage");
             networking_client->SendNetworkMessage(
               { NetworkEvent::SoldierInput, update_soldier_state_packet });
         } else {
             client_state->camera = { 0.0F, 0.0F };
         }
+    });
+    world->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
+        // spdlog::info("Post World Update Call");
+        // for (const auto& soldier : state->soldiers) {
+        //     spdlog::info(
+        //       "{}, Player {} pos: {}, {}; old_pos: {}, {}; velocity: {}, {}; force: {}, {}",
+        //       input_sequence_id - 1,
+        //       soldier.id,
+        //       soldier.particle.position.x,
+        //       soldier.particle.position.y,
+        //       soldier.particle.old_position.x,
+        //       soldier.particle.old_position.y,
+        //       soldier.particle.GetVelocity().x,
+        //       soldier.particle.GetVelocity().y,
+        //       soldier.particle.GetForce().x,
+        //       soldier.particle.GetForce().y);
+        // }
     });
     world->SetPostGameLoopIterationCallback(
       [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
@@ -155,8 +184,6 @@ void Run()
 
           window->SwapBuffers();
           window->PollInput();
-
-          networking_client->Update(client_network_event_dispatcher);
       });
 
     world->RunLoop(Config::FPS_LIMIT);
