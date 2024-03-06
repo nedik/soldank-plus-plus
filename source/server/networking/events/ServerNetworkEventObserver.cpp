@@ -90,5 +90,6 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierState(
   bool on_ground_permanent,
   unsigned int last_processed_input_id)
 {
+    return NetworkEventObserverResult::Success;
 }
 } // namespace Soldat
