@@ -40,6 +40,8 @@ std::shared_ptr<INetworkEventObserver> client_network_event_observer;
 
 SteamNetworkingMicroseconds log_time_zero;
 
+bool is_online;
+
 void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char* message)
 {
     SteamNetworkingMicroseconds time = SteamNetworkingUtils()->GetLocalTimestamp() - log_time_zero;
@@ -52,26 +54,30 @@ void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char*
 
 void Init()
 {
+    is_online = false;
     window = std::make_unique<Window>();
     world = std::make_shared<World>();
     client_state = std::make_shared<ClientState>();
     client_state->server_reconciliation = true;
-    client_network_event_observer =
-      std::make_shared<ClientNetworkEventObserver>(world, client_state);
-    client_network_event_dispatcher =
-      std::make_shared<NetworkEventDispatcher>(client_network_event_observer);
 
-    SteamDatagramErrMsg err_msg;
-    if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
-        spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
+    if (is_online) {
+        client_network_event_observer =
+          std::make_shared<ClientNetworkEventObserver>(world, client_state);
+        client_network_event_dispatcher =
+          std::make_shared<NetworkEventDispatcher>(client_network_event_observer);
+
+        SteamDatagramErrMsg err_msg;
+        if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
+            spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
+        }
+
+        log_time_zero = SteamNetworkingUtils()->GetLocalTimestamp();
+
+        SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
+                                                       DebugOutput);
+
+        networking_client = std::make_unique<NetworkingClient>();
     }
-
-    log_time_zero = SteamNetworkingUtils()->GetLocalTimestamp();
-
-    SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
-                                                   DebugOutput);
-
-    networking_client = std::make_unique<NetworkingClient>();
 }
 
 void UpdateMouseButton(int button, int action)
@@ -104,7 +110,10 @@ void Run()
     unsigned int input_sequence_id = 1;
     world->SetPreWorldUpdateCallback([&]() {
         // spdlog::info("netowrking_client->Update");
-        networking_client->Update(client_network_event_dispatcher);
+        if (is_online) {
+            networking_client->Update(client_network_event_dispatcher);
+        }
+
         glm::vec2 mouse_position = { Mouse::GetX(), Mouse::GetY() };
 
         client_state->game_width = 640.0;
@@ -140,23 +149,25 @@ void Run()
                 client_state->camera = { 0.0F, 0.0F };
             }
 
-            SoldierInputPacket update_soldier_state_packet{
-                .input_sequence_id = input_sequence_id,
-                .game_tick = world->GetState()->game_tick,
-                .player_id = client_soldier_id,
-                .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
-                .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
-                .mouse_position_x = mouse_position.x,
-                .mouse_position_y = mouse_position.y,
-                .control = world->GetSoldier(client_soldier_id).control
-            };
-            input_sequence_id++;
-            if (client_state->server_reconciliation) {
-                client_state->pending_inputs.push_back(update_soldier_state_packet);
+            if (is_online) {
+                SoldierInputPacket update_soldier_state_packet{
+                    .input_sequence_id = input_sequence_id,
+                    .game_tick = world->GetState()->game_tick,
+                    .player_id = client_soldier_id,
+                    .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
+                    .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
+                    .mouse_position_x = mouse_position.x,
+                    .mouse_position_y = mouse_position.y,
+                    .control = world->GetSoldier(client_soldier_id).control
+                };
+                input_sequence_id++;
+                if (client_state->server_reconciliation) {
+                    client_state->pending_inputs.push_back(update_soldier_state_packet);
+                }
+                // spdlog::info("networking_client->SendNetworkMessage");
+                networking_client->SendNetworkMessage(
+                  { NetworkEvent::SoldierInput, update_soldier_state_packet });
             }
-            // spdlog::info("networking_client->SendNetworkMessage");
-            networking_client->SendNetworkMessage(
-              { NetworkEvent::SoldierInput, update_soldier_state_packet });
         } else {
             client_state->camera = { 0.0F, 0.0F };
         }
@@ -186,6 +197,12 @@ void Run()
           window->PollInput();
       });
 
+    if (!is_online) {
+        const auto& soldier = world->CreateSoldier();
+        client_state->client_soldier_id = soldier.id;
+        world->SpawnSoldier(soldier.id);
+    }
+
     world->RunLoop(Config::FPS_LIMIT);
 }
 
@@ -194,13 +211,15 @@ void Free()
     window.reset(nullptr);
     networking_client.reset(nullptr);
 
-    // Give connections time to finish up.  This is an application layer protocol
-    // here, it's not TCP.  Note that if you have an application and you need to be
-    // more sure about cleanup, you won't be able to do this.  You will need to send
-    // a message and then either wait for the peer to close the connection, or
-    // you can pool the connection to see if any reliable data is pending.
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    if (is_online) {
+        // Give connections time to finish up.  This is an application layer protocol
+        // here, it's not TCP.  Note that if you have an application and you need to be
+        // more sure about cleanup, you won't be able to do this.  You will need to send
+        // a message and then either wait for the peer to close the connection, or
+        // you can pool the connection to see if any reliable data is pending.
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    GameNetworkingSockets_Kill();
+        GameNetworkingSockets_Kill();
+    }
 }
 } // namespace Soldat::Application
