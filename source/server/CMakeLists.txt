@@ -5,7 +5,7 @@ list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
 add_library(server_lib ${LIB_SOURCES} ${HEADER_SOURCES})
 
-target_compile_definitions(server_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
+target_compile_definitions(server_lib PUBLIC ${SERVER_COMPILE_DEFINITIONS})
 
 if(MSVC)
   target_compile_options(server_lib PRIVATE /Wall)
@@ -22,7 +22,7 @@ target_link_libraries(server_lib
 target_link_libraries(server_lib PRIVATE spdlog)
 
 add_executable(server main.cpp)
-target_compile_definitions(client PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
+target_compile_definitions(server PUBLIC ${SERVER_COMPILE_DEFINITIONS})
 
 if(MSVC)
   target_compile_options(server PRIVATE /Wall)

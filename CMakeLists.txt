@@ -1,6 +1,5 @@
 cmake_minimum_required (VERSION 3.20)
 
-
 if( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake )
 	message(STATUS "Found ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake; using it!")
 	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
@@ -17,36 +16,47 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS On)
 
-CPMAddPackage("gh:glfw/glfw#3.3.8")
-CPMAddPackage("gh:g-truc/glm#0.9.9.8")
+
 CPMAddPackage("gh:brofield/simpleini#v4.20")
 CPMAddPackage("gh:gabime/spdlog#v1.13.0")
-CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
-CPMAddPackage(
-    NAME freetype
-    GITHUB_REPOSITORY freetype/freetype
-    GIT_TAG VER-2-13-2
-    VERSION 2.13.2
-    OPTIONS "FT_DISABLE_HARFBUZZ 1"
-)
-if (freetype_ADDED)
-    add_library(Freetype::Freetype ALIAS freetype)
+CPMAddPackage("gh:g-truc/glm#0.9.9.8")
+
+if (NOT DEFINED NO_BUILD_SERVER)
+    set(SHOULD_BUILD_SERVER 1)
+endif()
+if (NOT DEFINED NO_BUILD_CLIENT)
+    set(SHOULD_BUILD_CLIENT 1)
 endif()
 
-CPMAddPackage(
-    NAME imgui
-    GIT_REPOSITORY https://github.com/ocornut/imgui.git
-    GIT_TAG v1.90.1
-    VERSION 1.90.1
-    DOWNLOAD_ONLY YES
-)
-if (imgui_ADDED)
-    file (GLOB imgui_sources ${imgui_SOURCE_DIR}/*.cpp)
-    list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp)
-    list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
-    add_library(imgui STATIC ${imgui_sources})
-    target_link_libraries(imgui PRIVATE glfw)
-    target_include_directories(imgui SYSTEM PUBLIC $<BUILD_INTERFACE:${imgui_SOURCE_DIR}>)
+if (DEFINED SHOULD_BUILD_CLIENT)
+    CPMAddPackage("gh:glfw/glfw#3.3.8")
+    CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
+    CPMAddPackage(
+        NAME freetype
+        GITHUB_REPOSITORY freetype/freetype
+        GIT_TAG VER-2-13-2
+        VERSION 2.13.2
+        OPTIONS "FT_DISABLE_HARFBUZZ 1"
+    )
+    if (freetype_ADDED)
+        add_library(Freetype::Freetype ALIAS freetype)
+    endif()
+
+    CPMAddPackage(
+        NAME imgui
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG v1.90.1
+        VERSION 1.90.1
+        DOWNLOAD_ONLY YES
+    )
+    if (imgui_ADDED)
+        file (GLOB imgui_sources ${imgui_SOURCE_DIR}/*.cpp)
+        list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp)
+        list (APPEND imgui_sources ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp)
+        add_library(imgui STATIC ${imgui_sources})
+        target_link_libraries(imgui PRIVATE glfw)
+        target_include_directories(imgui SYSTEM PUBLIC $<BUILD_INTERFACE:${imgui_SOURCE_DIR}>)
+    endif()
 endif()
 
 CPMAddPackage(
