@@ -1160,7 +1160,8 @@ void SoldierPhysics::Update(State& state,
           CheckMapCollision(soldier, map, xy.x + 2.0, xy.y + 2.0 - body_y, 0, state);
 
         xy = soldier.particle.position;
-        soldier.on_ground |=
+        soldier.on_ground =
+          soldier.on_ground ||
           CheckMapCollision(soldier, map, xy.x - 2.0, xy.y + 2.0 - arm_s, 0, state);
 
         xy = soldier.particle.position;
@@ -1170,8 +1171,8 @@ void SoldierPhysics::Update(State& state,
 
         xy = soldier.particle.position;
         grounded = soldier.on_ground || soldier.on_ground_for_law;
-        soldier.on_ground |=
-          CheckMapVerticesCollision(soldier, map, xy.x, xy.y, 3.0, grounded, state);
+        soldier.on_ground = soldier.on_ground || CheckMapVerticesCollision(
+                                                   soldier, map, xy.x, xy.y, 3.0, grounded, state);
 
         if (!(soldier.on_ground ^ soldier.on_ground_last_frame)) {
             soldier.on_ground_permanent = soldier.on_ground;
