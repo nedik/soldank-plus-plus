@@ -78,9 +78,21 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
         for (const auto& soldier : game_state->soldiers) {
-            if (soldier.active && soldier.on_ground &&
-                *client_state.client_soldier_id == soldier.id) {
-                ImGui::Text("SOLDIER IS ON GROUND");
+            if (*client_state.client_soldier_id == soldier.id) {
+                ImGui::Text(
+                  "Position: %.3f, %.3f", soldier.particle.position.x, soldier.particle.position.y);
+
+                auto rx =
+                  ((int)((soldier.particle.position.x / (float)game_state->map.GetSectorsSize()))) +
+                  25;
+                auto ry =
+                  ((int)((soldier.particle.position.y / (float)game_state->map.GetSectorsSize()))) +
+                  25;
+
+                ImGui::Text("Sector: %d, %d", rx, ry);
+                if (soldier.active && soldier.on_ground) {
+                    ImGui::Text("SOLDIER IS ON GROUND");
+                }
             }
         }
         ImGui::End();

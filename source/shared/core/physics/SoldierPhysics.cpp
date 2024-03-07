@@ -1220,17 +1220,13 @@ bool SoldierPhysics::CheckMapCollision(Soldier& soldier,
                                        State& state)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
-    auto rx = (int)((pos.x / (float)map.GetSectorsSize())) + 25;
-    auto ry = (int)((pos.y / (float)map.GetSectorsSize())) + 25;
+    auto rx = ((int)std::round((pos.x / (float)map.GetSectorsSize()))) + 25;
+    auto ry = ((int)std::round((pos.y / (float)map.GetSectorsSize()))) + 25;
 
-    // if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) && (ry <
-    // map.GetSectorsCount()
-    // + 25)) {
-    //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
-    if (true) { // TODO: sektory nie działają
-        for (int j = 0; j < map.GetPolygons().size(); j++) {
-            // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-            int poly = j;
+    if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+        (ry < map.GetSectorsCount() + 25)) {
+        for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+            auto poly = map.GetSector(rx, ry).polygons[j] - 1;
             auto polytype = map.GetPolygons()[poly].polygon_type;
 
             if ((polytype != PMSPolygonType::NoCollide) &&
@@ -1335,8 +1331,6 @@ bool SoldierPhysics::CheckMapCollision(Soldier& soldier,
                         }
                     }
 
-                    // AddCollidingPoly(state,
-                    //  poly); // TODO: remove later, this is only a debug
                     return true;
                 }
             }
@@ -1355,18 +1349,13 @@ bool SoldierPhysics::CheckMapVerticesCollision(Soldier& soldier,
                                                State& state)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
-    auto rx = ((int)(pos.x / (float)map.GetSectorsSize())) + 25;
-    auto ry = ((int)(pos.y / (float)map.GetSectorsSize())) + 25;
+    auto rx = ((int)std::round(pos.x / (float)map.GetSectorsSize())) + 25;
+    auto ry = ((int)std::round(pos.y / (float)map.GetSectorsSize())) + 25;
 
-    // TODO: sektory nie działają
-    if (true) { // TODO: sektory nie działają
-        for (int j = 0; j < map.GetPolygons().size(); j++) {
-            // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-            int poly = j;
-            // if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) && (ry <
-            // map.GetSectorsCount() + 25)) {
-            //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
-            //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
+    if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+        (ry < map.GetSectorsCount() + 25)) {
+        for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+            auto poly = map.GetSector(rx, ry).polygons[j] - 1;
             PMSPolygonType polytype = map.GetPolygons()[poly].polygon_type;
 
             if (polytype != PMSPolygonType::NoCollide &&
@@ -1383,8 +1372,7 @@ bool SoldierPhysics::CheckMapVerticesCollision(Soldier& soldier,
                         auto dir = pos - vert;
                         dir = Calc::Vec2Normalize(dir);
                         soldier.particle.position += dir;
-                        // AddCollidingPoly(state,
-                        //  poly); // TODO: remove later, this is only a debug
+
                         return true;
                     }
                 }
@@ -1413,17 +1401,13 @@ bool SoldierPhysics::CheckRadiusMapCollision(Soldier& soldier,
     for (int _z = 0; _z < det_acc; _z++) {
         s_pos += step;
 
-        auto rx = ((int)(s_pos.x / (float)map.GetSectorsSize())) + 25;
-        auto ry = ((int)(s_pos.y / (float)map.GetSectorsSize())) + 25;
+        auto rx = ((int)std::round(s_pos.x / (float)map.GetSectorsSize())) + 25;
+        auto ry = ((int)std::round(s_pos.y / (float)map.GetSectorsSize())) + 25;
 
-        if (true) { // TODO: sektory nie działają
-            for (int j = 0; j < map.GetPolygons().size(); j++) {
-                // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-                int poly = j;
-                // if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) && (ry
-                // < map.GetSectorsCount() + 25)) {
-                //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
-                //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
+        if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+            (ry < map.GetSectorsCount() + 25)) {
+            for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+                auto poly = map.GetSector(rx, ry).polygons[j] - 1;
                 auto polytype = map.GetPolygons()[poly].polygon_type;
 
                 if (polytype != PMSPolygonType::NoCollide &&
@@ -1476,8 +1460,6 @@ bool SoldierPhysics::CheckRadiusMapCollision(Soldier& soldier,
                             soldier.particle.position = soldier.particle.old_position;
                             soldier.particle.velocity_ = soldier.particle.GetForce() - perp;
 
-                            // AddCollidingPoly(state,
-                            //  poly); // TODO: remove later, this is only a debug
                             return true;
                         }
                     }
@@ -1498,17 +1480,13 @@ bool SoldierPhysics::CheckSkeletonMapCollision(Soldier& soldier,
 {
     auto result = false;
     auto pos = glm::vec2(x - 1.0f, y + 4.0f);
-    auto rx = ((int)(pos.x / (float)map.GetSectorsSize())) + 25;
-    auto ry = ((int)(pos.y / (float)map.GetSectorsSize())) + 25;
+    auto rx = ((int)std::round(pos.x / (float)map.GetSectorsSize())) + 25;
+    auto ry = ((int)std::round(pos.y / (float)map.GetSectorsSize())) + 25;
 
-    if (true) { // TODO: sektory nie działają
-        for (int j = 0; j < map.GetPolygons().size(); j++) {
-            // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-            int poly = j;
-            // if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) && (ry <
-            // map.GetSectorsCount() + 25)) {
-            //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
-            //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
+    if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+        (ry < map.GetSectorsCount() + 25)) {
+        for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+            auto poly = map.GetSector(rx, ry).polygons[j] - 1;
 
             if (map.PointInPolyEdges(pos.x, pos.y, poly)) {
                 auto dist = 0.0f;
@@ -1518,8 +1496,7 @@ bool SoldierPhysics::CheckSkeletonMapCollision(Soldier& soldier,
                 perp *= dist;
 
                 soldier.skeleton->SetPos(i, soldier.skeleton->GetOldPos(i) - perp);
-                // AddCollidingPoly(state,
-                //                  poly); // TODO: remove later, this is only a debug
+
                 result = true;
             }
         }
@@ -1527,29 +1504,24 @@ bool SoldierPhysics::CheckSkeletonMapCollision(Soldier& soldier,
 
     if (result) {
         auto pos = glm::vec2(x, y + 1.0);
-        auto rx = ((int)(pos.x / (float)map.GetSectorsSize())) + 25;
-        auto ry = ((int)(pos.y / (float)map.GetSectorsSize())) + 25;
+        auto rx = ((int)std::round(pos.x / (float)map.GetSectorsSize())) + 25;
+        auto ry = ((int)std::round(pos.y / (float)map.GetSectorsSize())) + 25;
 
-        if (true) { // TODO: sektory nie działają
-            for (int j = 0; j < map.GetPolygons().size(); j++) {
-                // auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-                int poly = j;
-                // if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) && (ry
-                // < map.GetSectorsCount() + 25)) {
-                //     for (int j = 0; j < map.GetSector(rx, ry).polygonsCount; j++) {
-                //         auto poly = map.GetSector(rx, ry).polygons[j] - 1;
-                // if (Map.PolyType[poly] <> POLY_TYPE_DOESNT) and (Map.PolyType[poly]
-                // <> POLY_TYPE_ONLY_BULLETS) then
+        if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+            (ry < map.GetSectorsCount() + 25)) {
+            for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+                auto poly = map.GetSector(rx, ry).polygons[j] - 1;
+                // if (Map.PolyType[poly] <> POLY_TYPE_DOESNT) and (Map.PolyType[poly] <>
+                // POLY_TYPE_ONLY_BULLETS) then
                 if (map.PointInPolyEdges(pos.x, pos.y, poly)) {
-                    auto dist = 0.0f;
+                    auto dist = 0.0F;
                     auto b = 0;
                     auto perp = map.ClosestPerpendicular(poly, pos, &dist, &b);
                     perp = Calc::Vec2Normalize(perp);
                     perp *= dist;
 
                     soldier.skeleton->SetPos(i, soldier.skeleton->GetOldPos(i) - perp);
-                    // AddCollidingPoly(state,
-                    //  poly); // TODO: remove later, this is only a debug
+
                     result = true;
                 }
             }

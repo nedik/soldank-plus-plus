@@ -130,7 +130,6 @@ struct PMSSceneryType
 
 struct PMSSector
 {
-    unsigned short polygons_count;
     std::vector<unsigned short> polygons;
 };
 

@@ -132,49 +132,18 @@ void Map::LoadMap(const std::string& map_path)
             sector.polygons.push_back(poly_id);
         }
 
-        sector.polygons_count = sector.polygons.size();
         sectors2_.push_back(sector);
     }
 
     auto k = 0;
-
     sectors_poly_ = std::vector<std::vector<PMSSector>>(51, std::vector<PMSSector>(51));
-
-    // for (int sec_i = 0; sec_i < sectors_poly.size(); sec_i++) {
-    // 	for (int sec_ij = 0; sec_ij < sectors_poly[sec_i].size(); sec_ij++) {
-    // 		sectors_poly[sec_i][sec_ij] = sectors[k];
-    // 		k++;
-    // 	}
-    // }
 
     for (auto& sec_i : sectors_poly_) {
         for (auto& sec_ij : sec_i) {
             sec_ij = sectors2_[k];
             k++;
-            if (k >= 51 * 51) {
-                break;
-            }
-        }
-        if (k >= 51 * 51) {
-            break;
         }
     }
-
-    // TODO: w soldanku jest inaczej
-    // for (int x = 0; x <= m_sectorsCount * 2; ++x)
-    // {
-    // 	for (int y = 0; y <= m_sectorsCount * 2; ++y)
-    // 	{
-    // 		file.read((char *)(&m_sectors[x][y].polygonsCount), sizeof(unsigned short));
-
-    // 		for (i = 0; i < m_sectors[x][y].polygonsCount; ++i)
-    // 		{
-    // 			unsigned short tmpPolygonIndex;
-    // 			file.read((char *)(&tmpPolygonIndex), sizeof(unsigned short));
-    // 			m_sectors[x][y].polygons.push_back(tmpPolygonIndex);
-    // 		}
-    // 	}
-    // }
 
     int scenery_instances_count = 0;
     file.read((char*)(&scenery_instances_count), sizeof(int));
