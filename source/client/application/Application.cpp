@@ -26,7 +26,6 @@
 #include <memory>
 #include <chrono>
 #include <thread>
-#include <format>
 #include <span>
 
 namespace Soldat::Application

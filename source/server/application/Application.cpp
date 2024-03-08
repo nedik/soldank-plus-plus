@@ -9,7 +9,6 @@
 
 #include <span>
 #include <cstdlib>
-#include <format>
 
 namespace Soldat
 {

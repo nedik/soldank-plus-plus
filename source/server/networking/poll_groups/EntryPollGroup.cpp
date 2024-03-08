@@ -5,7 +5,6 @@
 #include <utility>
 #include <span>
 #include <cassert>
-#include <format>
 
 namespace Soldat
 {

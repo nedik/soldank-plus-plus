@@ -9,7 +9,6 @@
 
 #include <cassert>
 #include <span>
-#include <format>
 
 namespace Soldat
 {

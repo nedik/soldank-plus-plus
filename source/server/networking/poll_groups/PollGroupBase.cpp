@@ -3,7 +3,6 @@
 #include "spdlog/spdlog.h"
 
 #include <cassert>
-#include <format>
 #include <utility>
 
 namespace Soldat
