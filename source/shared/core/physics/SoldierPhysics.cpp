@@ -11,6 +11,7 @@
 #include <cmath>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 const float SLIDELIMIT = 0.2F;
 const float GRAV = 0.06F;
@@ -302,7 +303,7 @@ void SoldierPhysics::UpdateControl(State& state,
         auto aim_y = (float)soldier.control.mouse_aim_y;
         auto dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - soldier.skeleton->GetPos(15));
         auto frame = (float)soldier.body_animation.GetFrame();
-        auto thrown_mul = 1.5F * min(16.0F, max(8.0F, frame)) / 16.0F;
+        auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
         auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
         auto inherited_vel =
           soldier.particle.GetVelocity() * weapon.GetWeaponParameters().inherited_velocity;

@@ -1,6 +1,7 @@
 build/
 build_linux/
 build-linux/
+linux-build/
 
 .vscode/
 .cache/

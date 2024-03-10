@@ -5,6 +5,7 @@
 #include "core/entities/WeaponParameters.hpp"
 
 #include <vector>
+#include <cstdint>
 
 namespace Soldat
 {

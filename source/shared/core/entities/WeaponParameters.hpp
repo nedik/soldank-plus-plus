@@ -5,6 +5,7 @@
 #include "core/types/BulletType.hpp"
 
 #include <string>
+#include <cstdint>
 
 namespace Soldat
 {

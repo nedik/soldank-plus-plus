@@ -4,7 +4,7 @@ list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
 add_library(shared_lib ${LIB_SOURCES} ${HEADER_SOURCES})
 
-target_compile_definitions(shared_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS})
+target_compile_definitions(shared_lib PUBLIC ${CLIENT_COMPILE_DEFINITIONS} -DNOMINMAX)
 
 if(MSVC)
   target_compile_options(shared_lib PRIVATE /Wall)

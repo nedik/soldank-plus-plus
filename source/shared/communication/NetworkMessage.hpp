@@ -9,6 +9,7 @@
 #include <tuple>
 #include <expected>
 #include <cmath>
+#include <utility>
 
 namespace Soldat
 {
@@ -27,7 +28,9 @@ template<unsigned int N>
 struct NetworkMessageData
 {
     template<typename Arg>
-    static std::expected<Arg, ParseError> ParseDataParameter(std::span<const char> data)
+    static typename std::enable_if<!std::is_same<std::string, Arg>::value,
+                                   std::expected<Arg, ParseError>>::type
+    ParseDataParameter(std::span<const char> data)
     {
         if (data.size() < sizeof(Arg)) {
             return std::unexpected(ParseError::BufferTooSmall);
@@ -38,9 +41,10 @@ struct NetworkMessageData
         return converted_data;
     }
 
-    template<>
-    static std::expected<std::string, ParseError> ParseDataParameter<std::string>(
-      std::span<const char> data)
+    template<typename Arg>
+    static typename std::enable_if<std::is_same<std::string, Arg>::value,
+                                   std::expected<std::string, ParseError>>::type
+    ParseDataParameter(std::span<const char> data)
     {
         auto text_size_or_error =
           ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
@@ -65,8 +69,9 @@ struct NetworkMessageData
     }
 
     template<typename Arg>
-    static std::expected<unsigned int, ParseError> ParseDataParameterSize(
-      std::span<const char> data)
+    static typename std::enable_if<!std::is_same<std::string, Arg>::value,
+                                   std::expected<unsigned int, ParseError>>::type
+    ParseDataParameterSize(std::span<const char> data)
     {
         if (data.size() < sizeof(Arg)) {
             return std::unexpected(ParseError::BufferTooSmall);
@@ -75,9 +80,10 @@ struct NetworkMessageData
         return sizeof(Arg);
     }
 
-    template<>
-    static std::expected<unsigned int, ParseError> ParseDataParameterSize<std::string>(
-      std::span<const char> data)
+    template<typename Arg>
+    static typename std::enable_if<std::is_same<std::string, Arg>::value,
+                                   std::expected<unsigned int, ParseError>>::type
+    ParseDataParameterSize(std::span<const char> data)
     {
         auto text_size_or_error =
           ParseDataParameter<unsigned short>(data.subspan(0, sizeof(unsigned short)));
@@ -93,8 +99,9 @@ struct NetworkMessageData
     }
 
     template<typename Head, typename... Tail>
-    static std::expected<std::tuple<Head, Tail...>, ParseError> ParseData(
-      std::span<const char> data)
+    static
+      typename std::enable_if<N != 1, std::expected<std::tuple<Head, Tail...>, ParseError>>::type
+      ParseData(std::span<const char> data)
     {
         auto head_or_error = ParseDataParameter<Head>(data);
         if (!head_or_error.has_value()) {
@@ -114,16 +121,12 @@ struct NetworkMessageData
         std::tuple<Head> head_in_tuple{ *head_or_error };
         return std::tuple_cat(head_in_tuple, *tail_or_error);
     }
-};
 
-template<>
-struct NetworkMessageData<1>
-{
     template<typename Arg>
-    static std::expected<std::tuple<Arg>, ParseError> ParseData(std::span<const char> data)
+    static typename std::enable_if<N == 1, std::expected<std::tuple<Arg>, ParseError>>::type
+    ParseData(std::span<const char> data)
     {
-        auto last_parameter_size_or_error =
-          NetworkMessageData<2>::ParseDataParameterSize<Arg>(data);
+        auto last_parameter_size_or_error = ParseDataParameterSize<Arg>(data);
         if (!last_parameter_size_or_error.has_value()) {
             return std::unexpected(last_parameter_size_or_error.error());
         }
@@ -132,7 +135,7 @@ struct NetworkMessageData<1>
             return std::unexpected(ParseError::BufferTooBig);
         }
 
-        auto parsed_or_error = NetworkMessageData<2>::ParseDataParameter<Arg>(data);
+        auto parsed_or_error = ParseDataParameter<Arg>(data);
         if (!parsed_or_error.has_value()) {
             return std::unexpected(parsed_or_error.error());
         }
@@ -182,27 +185,38 @@ public:
     void AppendBytes(const std::string& text)
     {
         unsigned short text_length = text.length();
-        data_.append_range(std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
-                                      sizeof(text_length) });
-        data_.append_range(std::span{
-          static_cast<const char*>(static_cast<const void*>(text.c_str())), text_length });
+        auto text_length_bytes_to_append =
+          std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
+                     sizeof(text_length) };
+        data_.insert(
+          data_.end(), text_length_bytes_to_append.cbegin(), text_length_bytes_to_append.cend());
+        auto text_bytes_to_append =
+          std::span{ static_cast<const char*>(static_cast<const void*>(text.c_str())),
+                     text_length };
+        data_.insert(data_.end(), text_bytes_to_append.cbegin(), text_bytes_to_append.cend());
     }
 
     void AppendBytes(const char* head)
     {
         std::string text = head;
         unsigned short text_length = text.length();
-        data_.append_range(std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
-                                      sizeof(text_length) });
-        data_.append_range(std::span{
-          static_cast<const char*>(static_cast<const void*>(text.c_str())), text_length });
+        auto text_length_bytes_to_append =
+          std::span{ static_cast<const char*>(static_cast<void*>(&text_length)),
+                     sizeof(text_length) };
+        data_.insert(
+          data_.end(), text_length_bytes_to_append.cbegin(), text_length_bytes_to_append.cend());
+        auto text_bytes_to_append =
+          std::span{ static_cast<const char*>(static_cast<const void*>(text.c_str())),
+                     text_length };
+        data_.insert(data_.end(), text_bytes_to_append.cbegin(), text_bytes_to_append.cend());
     }
 
     template<typename Head>
     void AppendBytes(Head head)
     {
-        data_.append_range(
-          std::span{ static_cast<const char*>(static_cast<void*>(&head)), sizeof(Head) });
+        auto head_bytes_to_append =
+          std::span{ static_cast<const char*>(static_cast<void*>(&head)), sizeof(Head) };
+        data_.insert(data_.end(), head_bytes_to_append.cbegin(), head_bytes_to_append.cend());
     }
 
     std::span<const char> GetData() const { return { data_ }; }

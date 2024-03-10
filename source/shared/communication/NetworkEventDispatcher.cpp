@@ -2,6 +2,7 @@
 
 #include "communication/NetworkEvent.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
+#include "communication/NetworkMessage.hpp"
 #include "communication/NetworkPackets.hpp"
 
 #include "core/math/Glm.hpp"

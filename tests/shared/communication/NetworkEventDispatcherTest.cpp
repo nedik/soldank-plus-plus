@@ -120,10 +120,10 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseError)
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherProcessAssignPlayerIdEvent)
 {
-    NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5UL);
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5U);
     auto result = ProcessNetworkMessage(network_message);
     ASSERT_EQ(result.first, NetworkEventDispatchResult::Success);
-    ASSERT_EQ(GetObserver().GetLastAssignedPlayerId(), 5ULL);
+    ASSERT_EQ(GetObserver().GetLastAssignedPlayerId(), 5U);
 }
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInAssignPlayerIdEvent)
@@ -138,7 +138,7 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInAssign
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherAssignPlayerIdEventFailure)
 {
     GetObserver().SetResult(NetworkEventObserverResult::Failure);
-    NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5UL);
+    NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5U);
     auto result = ProcessNetworkMessage(network_message);
     ASSERT_EQ(result.first, NetworkEventDispatchResult::ObserverFailure);
     ASSERT_EQ(std::get<NetworkEventObserverResult>(result.second),
