@@ -183,7 +183,7 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
     }
 
     std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
-      0, state_->map.GetSpawnPoints().size()); // distribution in range [1, 6]
+      0, state_->map.GetSpawnPoints().size() - 1);
 
     unsigned int random_spawnpoint_id = spawnpoint_id_random_distribution(mersenne_twister_engine_);
 
@@ -202,7 +202,7 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
         initial_player_position = *spawn_position;
     } else {
         std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
-          0, state_->map.GetSpawnPoints().size()); // distribution in range [1, 6]
+          0, state_->map.GetSpawnPoints().size() - 1);
 
         unsigned int random_spawnpoint_id =
           spawnpoint_id_random_distribution(mersenne_twister_engine_);
