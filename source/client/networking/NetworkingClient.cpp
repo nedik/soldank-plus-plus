@@ -10,7 +10,7 @@
 
 namespace Soldat
 {
-NetworkingClient::NetworkingClient()
+NetworkingClient::NetworkingClient(const char* server_ip, std::uint16_t server_port)
 {
     NetworkingInterface::Init();
     NetworkingInterface::RegisterObserver(
@@ -18,7 +18,7 @@ NetworkingClient::NetworkingClient()
           OnSteamNetConnectionStatusChanged(connection_info);
       });
 
-    connection_ = NetworkingInterface::CreateConnection();
+    connection_ = NetworkingInterface::CreateConnection(server_ip, server_port);
 }
 
 void NetworkingClient::Update(

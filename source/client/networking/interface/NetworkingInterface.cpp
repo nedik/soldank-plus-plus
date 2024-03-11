@@ -26,12 +26,12 @@ void Init()
     interface = SteamNetworkingSockets();
 }
 
-std::shared_ptr<Connection> CreateConnection()
+std::shared_ptr<Connection> CreateConnection(const char* server_ip, std::uint16_t server_port)
 {
     SteamNetworkingIPAddr server_addr{};
     server_addr.Clear();
-    server_addr.ParseString("127.0.0.1");
-    server_addr.m_port = 23073;
+    server_addr.ParseString(server_ip); // TODO: ip=localhost doesn't work
+    server_addr.m_port = server_port;
     spdlog::info("Connecting to server");
 
     SteamNetworkingConfigValue_t opt{};

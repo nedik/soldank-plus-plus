@@ -22,6 +22,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <SimpleIni.h>
+
 #include <cmath>
 #include <memory>
 #include <chrono>
@@ -53,13 +55,38 @@ void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char*
 
 void Init()
 {
-    is_online = false;
+    CSimpleIniA ini_config;
+    SI_Error rc = ini_config.LoadFile("debug_config.ini");
+    std::string server_ip;
+    int server_port = 0;
+    if (rc < 0) {
+        spdlog::warn("Error: INI File could not be loaded: debug_config.ini");
+        is_online = false;
+    } else {
+        is_online = ini_config.GetBoolValue("Network", "Online");
+        if (is_online) {
+            spdlog::info("Online = true");
+            const auto* ip = ini_config.GetValue("Network", "Server_IP");
+            int port = ini_config.GetLongValue("Network", "Server_Port");
+            if (ip == nullptr || port == 0) {
+                spdlog::warn("Server_IP or Server_Port not set, setting is_online to false");
+                is_online = false;
+            } else {
+                server_ip = ip;
+                server_port = port;
+            }
+        } else {
+            spdlog::info("Online = false");
+        }
+    }
+
     window = std::make_unique<Window>();
     world = std::make_shared<World>();
     client_state = std::make_shared<ClientState>();
     client_state->server_reconciliation = true;
 
     if (is_online) {
+        spdlog::info("Connecting to {}:{}", server_ip, server_port);
         client_network_event_observer =
           std::make_shared<ClientNetworkEventObserver>(world, client_state);
         client_network_event_dispatcher =
@@ -75,7 +102,7 @@ void Init()
         SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
                                                        DebugOutput);
 
-        networking_client = std::make_unique<NetworkingClient>();
+        networking_client = std::make_unique<NetworkingClient>(server_ip.c_str(), server_port);
     }
 }
 

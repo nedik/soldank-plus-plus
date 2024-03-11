@@ -8,11 +8,12 @@
 
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 namespace Soldat::NetworkingInterface
 {
 void Init();
-std::shared_ptr<Connection> CreateConnection();
+std::shared_ptr<Connection> CreateConnection(const char* server_ip, std::uint16_t server_port);
 void PollConnectionStateChanges();
 void RegisterObserver(
   const std::function<void(SteamNetConnectionStatusChangedCallback_t*)>& observer);

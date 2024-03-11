@@ -11,13 +11,14 @@
 #include <steam/isteamnetworkingutils.h>
 
 #include <memory>
+#include <cstdint>
 
 namespace Soldat
 {
 class NetworkingClient : public INetworkingClient
 {
 public:
-    NetworkingClient();
+    NetworkingClient(const char* server_ip, std::uint16_t server_port);
 
     void Update(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher) override;
 
