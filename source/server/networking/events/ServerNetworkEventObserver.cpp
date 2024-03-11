@@ -46,16 +46,17 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInput(
   glm::vec2 mouse_position,
   const Control& player_control)
 {
+    // TODO: validate arguments
     // spdlog::info("{} Soldier pos from client: {} {}",
     //              input_sequence_id - 1,
     //              soldier_position.x,
     //              soldier_position.y);
-    if (input_sequence_id <= server_state_->last_processed_input_id) {
+    if (input_sequence_id <= server_state_->last_processed_input_id.at(soldier_id)) {
         spdlog::info("*************** LATE PACKET ***************************");
         return NetworkEventObserverResult::Success;
     }
 
-    server_state_->last_processed_input_id = input_sequence_id;
+    server_state_->last_processed_input_id.at(soldier_id) = input_sequence_id;
     world_->UpdateRightButtonState(soldier_id, player_control.right);
     world_->UpdateLeftButtonState(soldier_id, player_control.left);
     world_->UpdateJumpButtonState(soldier_id, player_control.up);

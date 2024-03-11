@@ -39,7 +39,9 @@ Application::Application()
                                                    DebugOutput);
 
     server_state_ = std::make_shared<ServerState>();
-    server_state_->last_processed_input_id = 0;
+    for (unsigned int& last_processed_input_id : server_state_->last_processed_input_id) {
+        last_processed_input_id = 0;
+    }
     server_network_event_observer_ =
       std::make_shared<ServerNetworkEventObserver>(world_, server_state_);
     server_network_event_dispatcher_ =
@@ -82,7 +84,7 @@ void Application::Run()
                 .on_ground_for_law = soldier.on_ground_for_law,
                 .on_ground_last_frame = soldier.on_ground_last_frame,
                 .on_ground_permanent = soldier.on_ground_permanent,
-                .last_processed_input_id = server_state_->last_processed_input_id
+                .last_processed_input_id = server_state_->last_processed_input_id.at(soldier.id)
             };
             game_server_->SendNetworkMessageToAll(
               { NetworkEvent::SoldierState, update_soldier_state_packet });

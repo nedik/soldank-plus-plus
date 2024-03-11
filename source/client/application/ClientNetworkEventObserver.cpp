@@ -71,7 +71,13 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
   bool on_ground_permanent,
   unsigned int last_processed_input_id)
 {
-    client_state_->soldier_position_server_pov = { soldier_position.x, soldier_position.y };
+    bool is_soldier_id_me = false;
+    if (client_state_->client_soldier_id.has_value()) {
+        is_soldier_id_me = *client_state_->client_soldier_id == soldier_id;
+    }
+    if (is_soldier_id_me) {
+        client_state_->soldier_position_server_pov = { soldier_position.x, soldier_position.y };
+    }
     auto state = world_->GetState();
 
     for (auto& soldier : state->soldiers) {
@@ -109,7 +115,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
         }
     }
 
-    if (client_state_->server_reconciliation && soldier_id == client_state_->client_soldier_id) {
+    if (client_state_->server_reconciliation && is_soldier_id_me) {
         for (auto it = client_state_->pending_inputs.begin();
              it != client_state_->pending_inputs.end();) {
             if (it->input_sequence_id <= last_processed_input_id) {
