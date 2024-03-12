@@ -46,6 +46,13 @@ struct SoldierStatePacket
     unsigned int last_processed_input_id;
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+struct SoldierInfoPacket
+{
+    unsigned int soldier_id;
+};
+#pragma pack(pop)
 } // namespace Soldat
 
 #endif

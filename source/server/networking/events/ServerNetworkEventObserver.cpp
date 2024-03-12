@@ -93,4 +93,11 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierState(
 {
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInfo(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id)
+{
+    return NetworkEventObserverResult::Success;
+}
 } // namespace Soldat

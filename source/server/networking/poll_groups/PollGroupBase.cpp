@@ -77,13 +77,45 @@ void PollGroupBase::SendNetworkMessage(HSteamNetConnection connection_id,
                                             nullptr);
 }
 
-void PollGroupBase::SendNetworkMessageToAll(const NetworkMessage& network_message)
+void PollGroupBase::SendNetworkMessageToAll(const NetworkMessage& network_message,
+                                            std::optional<unsigned int> except_connection_id)
 {
     for (auto& connection : connections_) {
+        if (except_connection_id.has_value() &&
+            *except_connection_id == connection.second.connection_handle) {
+            continue;
+        }
         GetInterface()->SendMessageToConnection(connection.second.connection_handle,
                                                 network_message.GetData().data(),
                                                 network_message.GetData().size(),
                                                 k_nSteamNetworkingSend_Unreliable,
+                                                nullptr);
+    }
+}
+
+void PollGroupBase::SendReliableNetworkMessage(unsigned int connection_id,
+                                               const NetworkMessage& network_message)
+{
+    GetInterface()->SendMessageToConnection(connection_id,
+                                            network_message.GetData().data(),
+                                            network_message.GetData().size(),
+                                            k_nSteamNetworkingSend_Reliable,
+                                            nullptr);
+}
+
+void PollGroupBase::SendReliableNetworkMessageToAll(
+  const NetworkMessage& network_message,
+  std::optional<unsigned int> except_connection_id)
+{
+    for (auto& connection : connections_) {
+        if (except_connection_id.has_value() &&
+            *except_connection_id == connection.second.connection_handle) {
+            continue;
+        }
+        GetInterface()->SendMessageToConnection(connection.second.connection_handle,
+                                                network_message.GetData().data(),
+                                                network_message.GetData().size(),
+                                                k_nSteamNetworkingSend_Reliable,
                                                 nullptr);
     }
 }

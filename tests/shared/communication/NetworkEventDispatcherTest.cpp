@@ -60,6 +60,13 @@ public:
                                               bool /*on_ground_last_frame*/,
                                               bool /*on_ground_permanent*/,
                                               unsigned int /*last_processed_input_id*/) override
+
+    {
+        return result_;
+    }
+
+    NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& /*connection_metadata*/,
+                                             unsigned int /*soldier_id*/) override
     {
         return result_;
     }

@@ -48,6 +48,9 @@ public:
                                               bool on_ground_permanent,
                                               unsigned int last_processed_input_id) override;
 
+    NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& connection_metadata,
+                                             unsigned int soldier_id) override;
+
 private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ClientState> client_state_;

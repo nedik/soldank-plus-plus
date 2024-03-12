@@ -155,4 +155,21 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
     }
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierInfo(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id)
+{
+    bool is_soldier_id_me = false;
+    if (client_state_->client_soldier_id.has_value()) {
+        is_soldier_id_me = *client_state_->client_soldier_id == soldier_id;
+    }
+
+    if (!is_soldier_id_me) {
+        world_->CreateSoldier(soldier_id);
+        world_->SpawnSoldier(soldier_id);
+    }
+
+    return NetworkEventObserverResult::Success;
+}
 } // namespace Soldat

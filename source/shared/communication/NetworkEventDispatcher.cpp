@@ -156,6 +156,20 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                                                                       last_processed_input_id);
             break;
         }
+        case NetworkEvent::SoldierInfo: {
+            auto parsed = network_message.Parse<NetworkEvent, SoldierInfoPacket>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            SoldierInfoPacket soldier_info_packet = std::get<1>(*parsed);
+            unsigned int soldier_id = soldier_info_packet.soldier_id;
+
+            spdlog::info("[ProcessNetworkMessage] SoldierInfo: {}", soldier_id);
+
+            observer_result =
+              network_event_observer_->OnSoldierInfo(connection_metadata, soldier_id);
+            break;
+        }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80

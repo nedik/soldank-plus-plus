@@ -71,6 +71,9 @@ public:
                                                       bool on_ground_last_frame,
                                                       bool on_ground_permanent,
                                                       unsigned int last_processed_input_id) = 0;
+
+    virtual NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& connection_metadata,
+                                                     unsigned int soldier_id) = 0;
 };
 
 class NetworkEventDispatcher

@@ -7,6 +7,7 @@
 #include "communication/NetworkMessage.hpp"
 
 #include <memory>
+#include <optional>
 
 class ISteamNetworkingSockets;
 struct SteamNetConnectionStatusChangedCallback_t;
@@ -32,7 +33,15 @@ public:
 
     virtual void SendNetworkMessage(unsigned int connection_id,
                                     const NetworkMessage& network_message) = 0;
-    virtual void SendNetworkMessageToAll(const NetworkMessage& network_message) = 0;
+    virtual void SendNetworkMessageToAll(
+      const NetworkMessage& network_message,
+      std::optional<unsigned int> except_connection_id = std::nullopt) = 0;
+
+    virtual void SendReliableNetworkMessage(unsigned int connection_id,
+                                            const NetworkMessage& network_message) = 0;
+    virtual void SendReliableNetworkMessageToAll(
+      const NetworkMessage& network_message,
+      std::optional<unsigned int> except_connection_id = std::nullopt) = 0;
 
 protected:
     IPollGroup(ISteamNetworkingSockets* interface)

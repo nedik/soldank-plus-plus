@@ -24,7 +24,15 @@ public:
 
     void SendNetworkMessage(HSteamNetConnection connection_id,
                             const NetworkMessage& network_message) override;
-    void SendNetworkMessageToAll(const NetworkMessage& network_message) override;
+    void SendNetworkMessageToAll(
+      const NetworkMessage& network_message,
+      std::optional<unsigned int> except_connection_id = std::nullopt) override;
+
+    void SendReliableNetworkMessage(unsigned int connection_id,
+                                    const NetworkMessage& network_message) override;
+    void SendReliableNetworkMessageToAll(
+      const NetworkMessage& network_message,
+      std::optional<unsigned int> except_connection_id = std::nullopt) override;
 
 protected:
     virtual void OnAssignConnection(const Connection& connection);

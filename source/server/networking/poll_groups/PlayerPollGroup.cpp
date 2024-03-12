@@ -67,6 +67,12 @@ void PlayerPollGroup::AcceptConnection(
 
 void PlayerPollGroup::OnAssignConnection(const Connection& connection)
 {
+    const auto& state = world_->GetState();
+    for (const auto& soldier : state->soldiers) {
+        NetworkMessage network_message(NetworkEvent::SoldierInfo, soldier.id);
+        SendReliableNetworkMessage(connection.connection_handle, network_message);
+    }
+
     unsigned int soldier_id = world_->CreateSoldier().id;
     spdlog::info("OnAssignPlayerId: {}", soldier_id);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
@@ -76,5 +82,10 @@ void PlayerPollGroup::OnAssignConnection(const Connection& connection)
     SendNetworkMessage(
       connection.connection_handle,
       { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });
+
+    network_message = { NetworkEvent::SoldierInfo, soldier_id };
+    SendReliableNetworkMessage(connection.connection_handle, network_message);
+
+    SendReliableNetworkMessageToAll(network_message, connection.connection_handle);
 }
 } // namespace Soldat
