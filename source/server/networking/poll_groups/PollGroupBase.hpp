@@ -21,6 +21,7 @@ public:
     void CloseConnection(SteamNetConnectionStatusChangedCallback_t* connection_info) override;
     bool AssignConnection(const Connection& connection) override;
     bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) override;
+    unsigned int GetConnectionSoldierId(HSteamNetConnection steam_net_connection_handle) override;
 
     void SendNetworkMessage(HSteamNetConnection connection_id,
                             const NetworkMessage& network_message) override;
@@ -35,7 +36,7 @@ public:
       std::optional<unsigned int> except_connection_id = std::nullopt) override;
 
 protected:
-    virtual void OnAssignConnection(const Connection& connection);
+    virtual void OnAssignConnection(Connection& connection);
 
     HSteamNetPollGroup GetPollGroupHandle() const;
 

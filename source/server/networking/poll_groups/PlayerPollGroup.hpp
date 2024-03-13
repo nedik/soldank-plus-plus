@@ -28,7 +28,7 @@ public:
     void AcceptConnection(SteamNetConnectionStatusChangedCallback_t* new_connection_info) override;
 
 private:
-    void OnAssignConnection(const Connection& connection) override;
+    void OnAssignConnection(Connection& connection) override;
 
     std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
     std::shared_ptr<IWorld> world_;

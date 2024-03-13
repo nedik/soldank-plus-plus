@@ -172,4 +172,20 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierInfo(
 
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ClientNetworkEventObserver::OnPlayerLeave(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int soldier_id)
+{
+    const auto& state = world_->GetState();
+    for (auto it = state->soldiers.begin(); it != state->soldiers.end();) {
+        if (it->id == soldier_id) {
+            it = state->soldiers.erase(it);
+        } else {
+            it++;
+        }
+    }
+
+    return NetworkEventObserverResult::Success;
+}
 } // namespace Soldat

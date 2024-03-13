@@ -9,6 +9,8 @@
 #include "communication/NetworkMessage.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
 
+#include "application/ServerState.hpp"
+
 #include "core/IWorld.hpp"
 
 #include <steam/steamnetworkingsockets.h>
@@ -23,7 +25,8 @@ class GameServer : public IGameServer
 {
 public:
     GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
-               const std::shared_ptr<IWorld>& world);
+               const std::shared_ptr<IWorld>& world,
+               const std::shared_ptr<ServerState>& server_state);
     ~GameServer() override;
 
     GameServer(GameServer&& other) = delete;
@@ -42,6 +45,9 @@ private:
     std::shared_ptr<PlayerPollGroup> player_poll_group_;
 
     void OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* p_info);
+
+    std::shared_ptr<IWorld> world_;
+    std::shared_ptr<ServerState> server_state_;
 };
 } // namespace Soldat
 

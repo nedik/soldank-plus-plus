@@ -66,7 +66,8 @@ void EntryPollGroup::AcceptConnection(
     spdlog::info("[EntryPollGroup] Connection accepted: {}\n",
                  std::span{ new_connection_info->m_info.m_szConnectionDescription }.data());
 
-    if (!AssignConnection({ new_connection_info->m_hConn, "NEW CONNECTION PLACEHOLDER" })) {
+    if (!AssignConnection({ .connection_handle = new_connection_info->m_hConn,
+                            .nick = "NEW CONNECTION PLACEHOLDER" })) {
         return;
     }
 

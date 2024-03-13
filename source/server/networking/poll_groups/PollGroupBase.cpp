@@ -51,7 +51,13 @@ void PollGroupBase::CloseConnection(SteamNetConnectionStatusChangedCallback_t* c
         assert(connection_info->m_eOldState == k_ESteamNetworkingConnectionState_Connecting);
     }
 
+    auto it_client = FindConnection(connection_info->m_hConn);
+
     GetInterface()->CloseConnection(connection_info->m_hConn, 0, nullptr, false);
+
+    if (it_client != connections_.end()) {
+        EraseConnection(it_client);
+    }
 }
 
 bool PollGroupBase::AssignConnection(const Connection& connection)
@@ -62,7 +68,7 @@ bool PollGroupBase::AssignConnection(const Connection& connection)
         return false;
     }
     connections_[connection.connection_handle] = connection;
-    OnAssignConnection(connection);
+    OnAssignConnection(connections_[connection.connection_handle]);
 
     return true;
 }
@@ -120,12 +126,18 @@ void PollGroupBase::SendReliableNetworkMessageToAll(
     }
 }
 
-void PollGroupBase::OnAssignConnection(const Connection& /* connection */) {}
+void PollGroupBase::OnAssignConnection(Connection& /* connection */) {}
 
 bool PollGroupBase::IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle)
 {
     auto it_client = connections_.find(steam_net_connection_handle);
     return it_client != connections_.end();
+}
+
+unsigned int PollGroupBase::GetConnectionSoldierId(HSteamNetConnection steam_net_connection_handle)
+{
+    auto it_client = connections_.find(steam_net_connection_handle);
+    return it_client->second.soldier_id;
 }
 
 HSteamNetPollGroup PollGroupBase::GetPollGroupHandle() const

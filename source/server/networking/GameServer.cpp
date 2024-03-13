@@ -5,6 +5,8 @@
 
 #include <steam/isteamnetworkingutils.h>
 
+#include "spdlog/spdlog.h"
+
 #include <memory>
 #include <chrono>
 #include <cassert>
@@ -12,7 +14,10 @@
 namespace Soldat
 {
 GameServer::GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
-                       const std::shared_ptr<IWorld>& world)
+                       const std::shared_ptr<IWorld>& world,
+                       const std::shared_ptr<ServerState>& server_state)
+    : world_(world)
+    , server_state_(server_state)
 {
 
     NetworkingInterface::Init();
@@ -70,10 +75,29 @@ void GameServer::OnSteamNetConnectionStatusChanged(
                 entry_poll_group_->CloseConnection(p_info);
             }
             if (player_poll_group_->IsConnectionAssigned(p_info->m_hConn)) {
+                spdlog::info("CLOSING CONNECTION conn: {}", p_info->m_hConn);
+                unsigned int soldier_id =
+                  player_poll_group_->GetConnectionSoldierId(p_info->m_hConn);
+                spdlog::info("CLOSING CONNECTION soldier_id: {}", soldier_id);
+                NetworkMessage network_message(NetworkEvent::PlayerLeave, soldier_id);
+                player_poll_group_->SendReliableNetworkMessageToAll(network_message,
+                                                                    p_info->m_hConn);
                 player_poll_group_->CloseConnection(p_info);
+
+                const auto& state = world_->GetState();
+                spdlog::info("CLOSING CONNECTION soldiers size before: {}", state->soldiers.size());
+                for (auto it = state->soldiers.begin(); it != state->soldiers.end();) {
+                    if (it->id == soldier_id) {
+                        it = state->soldiers.erase(it);
+                    } else {
+                        it++;
+                    }
+                }
+
+                spdlog::info("CLOSING CONNECTION soldiers size after: {}", state->soldiers.size());
+
+                server_state_->last_processed_input_id.at(soldier_id) = 0;
             }
-            // TODO: remove connection's soldier
-            // TODO: Send info to clients about this player leaving so they can also remove them
             break;
         }
 

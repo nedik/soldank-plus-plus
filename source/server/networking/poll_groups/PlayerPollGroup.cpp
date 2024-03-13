@@ -65,7 +65,7 @@ void PlayerPollGroup::AcceptConnection(
 {
 }
 
-void PlayerPollGroup::OnAssignConnection(const Connection& connection)
+void PlayerPollGroup::OnAssignConnection(Connection& connection)
 {
     const auto& state = world_->GetState();
     for (const auto& soldier : state->soldiers) {
@@ -74,6 +74,7 @@ void PlayerPollGroup::OnAssignConnection(const Connection& connection)
     }
 
     unsigned int soldier_id = world_->CreateSoldier().id;
+    connection.soldier_id = soldier_id;
     spdlog::info("OnAssignPlayerId: {}", soldier_id);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
     SendNetworkMessage(connection.connection_handle, network_message);

@@ -74,6 +74,9 @@ public:
 
     virtual NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& connection_metadata,
                                                      unsigned int soldier_id) = 0;
+
+    virtual NetworkEventObserverResult OnPlayerLeave(const ConnectionMetadata& connection_metadata,
+                                                     unsigned int soldier_id) = 0;
 };
 
 class NetworkEventDispatcher

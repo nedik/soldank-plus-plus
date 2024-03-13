@@ -11,6 +11,7 @@ struct Connection
 {
     HSteamNetConnection connection_handle;
     std::string nick;
+    unsigned int soldier_id;
 };
 } // namespace Soldat
 

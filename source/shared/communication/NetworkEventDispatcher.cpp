@@ -170,6 +170,19 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
               network_event_observer_->OnSoldierInfo(connection_metadata, soldier_id);
             break;
         }
+        case NetworkEvent::PlayerLeave: {
+            auto parsed = network_message.Parse<NetworkEvent, unsigned int>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            unsigned int soldier_id = std::get<1>(*parsed);
+
+            spdlog::info("[ProcessNetworkMessage] PlayerLeave: {}", soldier_id);
+
+            observer_result =
+              network_event_observer_->OnPlayerLeave(connection_metadata, soldier_id);
+            break;
+        }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80

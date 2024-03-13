@@ -10,7 +10,8 @@ enum class NetworkEvent : unsigned int
     SpawnSoldier,
     SoldierInput,
     SoldierState,
-    SoldierInfo
+    SoldierInfo,
+    PlayerLeave
 };
 }
 
