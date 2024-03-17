@@ -19,6 +19,12 @@ target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/client)
 target_link_libraries(client_lib PUBLIC glfw)
 target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
+
+# TODO: check if PNG, ZLIB and BZip2 are needed for linking here
+target_link_libraries(client_lib PRIVATE PNG::PNG)
+target_link_libraries(client_lib PRIVATE ZLIB::ZLIB)
+target_link_libraries(client_lib PRIVATE BZip2::BZip2)
+
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
 target_link_libraries(client_lib PRIVATE spdlog)
 target_link_libraries(client_lib PRIVATE imgui)

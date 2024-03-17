@@ -9,6 +9,9 @@ endif()
 project (Soldat++)
 
 find_package(GameNetworkingSockets CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(BZip2 REQUIRED)
+find_package(PNG REQUIRED)
 
 include(cmake/CPM.cmake)
 

@@ -1,5 +1,8 @@
 {
 	"dependencies": [
-		"gamenetworkingsockets"
+		"gamenetworkingsockets",
+		"zlib",
+		"bzip2",
+		"libpng"
 	]
 }
