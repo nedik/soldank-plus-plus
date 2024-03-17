@@ -84,6 +84,7 @@ void Init()
     world = std::make_shared<World>();
     client_state = std::make_shared<ClientState>();
     client_state->server_reconciliation = true;
+    client_state->client_side_prediction = true;
 
     if (is_online) {
         spdlog::info("Connecting to {}:{}", server_ip, server_port);
@@ -222,6 +223,21 @@ void Run()
           window->SwapBuffers();
           window->PollInput();
       });
+
+    world->SetPreSoldierUpdateCallback([&](const Soldier& soldier) {
+        if (!is_online) {
+            return true;
+        }
+
+        if (client_state->client_soldier_id.has_value()) {
+            if (*client_state->client_soldier_id == soldier.id &&
+                client_state->client_side_prediction) {
+                return true;
+            }
+        }
+
+        return false;
+    });
 
     if (!is_online) {
         const auto& soldier = world->CreateSoldier();

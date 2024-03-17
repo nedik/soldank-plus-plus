@@ -32,6 +32,7 @@ struct ClientState
 
     std::list<SoldierInputPacket> pending_inputs;
     bool server_reconciliation;
+    bool client_side_prediction;
 };
 } // namespace Soldat
 

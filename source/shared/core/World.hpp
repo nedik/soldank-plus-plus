@@ -67,6 +67,11 @@ public:
         post_game_loop_iteration_callback_ = std::move(callback);
     }
 
+    void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) override
+    {
+        pre_soldier_update_callback_ = std::move(callback);
+    }
+
 private:
     std::shared_ptr<State> state_;
     std::unique_ptr<SoldierPhysics> soldier_physics_;
@@ -77,6 +82,8 @@ private:
     TPreWorldUpdateCallback pre_world_update_callback_;
     TPostWorldUpdateCallback post_world_update_callback_;
     TPostGameLoopIterationCallback post_game_loop_iteration_callback_;
+
+    TPreSoldierUpdateCallback pre_soldier_update_callback_;
 
     std::random_device random_device_;
     std::mt19937 mersenne_twister_engine_;

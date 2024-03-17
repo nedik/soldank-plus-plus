@@ -117,7 +117,14 @@ void World::Update(double /*delta_time*/)
 
     for (auto& soldier : state_->soldiers) {
         if (soldier.active) {
-            soldier_physics_->Update(*state_, soldier, bullet_emitter);
+            bool should_update_current_soldier = true;
+            if (pre_soldier_update_callback_) {
+                should_update_current_soldier = pre_soldier_update_callback_(soldier);
+            }
+
+            if (should_update_current_soldier) {
+                soldier_physics_->Update(*state_, soldier, bullet_emitter);
+            }
         }
     }
 

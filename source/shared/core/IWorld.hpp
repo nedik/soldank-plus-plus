@@ -20,6 +20,8 @@ protected:
     using TPostGameLoopIterationCallback =
       std::function<void(const std::shared_ptr<State>&, double, int)>;
 
+    using TPreSoldierUpdateCallback = std::function<bool(const Soldier&)>;
+
 public:
     virtual ~IWorld() = default;
     virtual void RunLoop(int fps_limit) = 0;
@@ -50,6 +52,8 @@ public:
     virtual void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback) = 0;
     virtual void SetPostWorldUpdateCallback(TPostWorldUpdateCallback callback) = 0;
     virtual void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) = 0;
+
+    virtual void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) = 0;
 };
 } // namespace Soldat
 

@@ -1,5 +1,7 @@
 #include "application/ClientNetworkEventObserver.hpp"
 #include "communication/NetworkEventDispatcher.hpp"
+#include "core/math/Calc.hpp"
+#include "core/physics/SoldierSkeletonPhysics.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -69,6 +71,9 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
   bool on_ground_for_law,
   bool on_ground_last_frame,
   bool on_ground_permanent,
+  std::uint8_t stance,
+  float mouse_position_x,
+  float mouse_position_y,
   unsigned int last_processed_input_id)
 {
     bool is_soldier_id_me = false;
@@ -100,6 +105,40 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
             soldier.on_ground_last_frame = on_ground_last_frame;
             soldier.on_ground_permanent = on_ground_permanent;
 
+            soldier.position = stance;
+
+            // TODO: make mouse position not game width and game height dependent
+            soldier.game_width = 640.0;
+            soldier.game_height = 480.0;
+            soldier.mouse.x = mouse_position_x;
+            soldier.mouse.y = mouse_position_y;
+
+            soldier.camera.x =
+              soldier.particle.position.x + (float)(soldier.mouse.x - (soldier.game_width / 2));
+            soldier.camera.y = soldier.particle.position.y -
+                               (float)((480.0F - soldier.mouse.y) - (soldier.game_height / 2));
+
+            soldier.control.mouse_aim_x =
+              (soldier.mouse.x - (float)soldier.game_width / 2.0F + soldier.camera.x);
+            soldier.control.mouse_aim_y =
+              (soldier.mouse.y - (float)soldier.game_height / 2.0F + soldier.camera.y);
+
+            if (!is_soldier_id_me) {
+                RepositionSoldierSkeletonParts(soldier);
+
+                if (!soldier.dead_meat) {
+                    soldier.body_animation.DoAnimation();
+                    soldier.legs_animation.DoAnimation();
+                    soldier.skeleton->DoVerletTimestepFor(22, 29);
+                    soldier.skeleton->DoVerletTimestepFor(24, 30);
+                }
+
+                if (soldier.dead_meat) {
+                    soldier.skeleton->DoVerletTimestep();
+                    soldier.particle.position = soldier.skeleton->GetPos(12);
+                    // CheckSkeletonOutOfBounds;
+                }
+            }
             // spdlog::info(
             //   "{}, Soldier {} pos: {}, {}; old_pod: {}, {}; velocity: {}, {}; force: {}, {}",
             //   last_processed_input_id,
@@ -133,14 +172,13 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
 
                 world_->UpdateMousePosition(soldier_id,
                                             { it->mouse_position_x, it->mouse_position_y });
-                // world_->UpdateFireButtonState(soldier_id, player_control.fire); // TODO: is it
-                // needed?
+                // world_->UpdateFireButtonState(soldier_id, player_control.fire); // TODO: is
+                // it needed?
                 world_->UpdateJetsButtonState(soldier_id, player_control.jets);
                 world_->UpdateSoldier(soldier_id);
                 // spdlog::info(
-                //   "{}, Soldier {} pos: {}, {}; old_pos: {}, {}; velocity: {}, {}; force: {}, {}",
-                //   it->input_sequence_id,
-                //   soldier_id,
+                //   "{}, Soldier {} pos: {}, {}; old_pos: {}, {}; velocity: {}, {}; force: {},
+                //   {}", it->input_sequence_id, soldier_id,
                 //   world_->GetSoldier(soldier_id).particle.position.x,
                 //   world_->GetSoldier(soldier_id).particle.position.y,
                 //   world_->GetSoldier(soldier_id).particle.old_position.x,

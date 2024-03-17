@@ -4,6 +4,8 @@
 #include "core/state/Control.hpp"
 #include "core/animations/Animation.hpp"
 
+#include <cstdint>
+
 namespace Soldat
 {
 #pragma pack(push, 1)
@@ -43,6 +45,9 @@ struct SoldierStatePacket
     bool on_ground_for_law;
     bool on_ground_last_frame;
     bool on_ground_permanent;
+    std::uint8_t stance;
+    float mouse_position_x;
+    float mouse_position_y;
     unsigned int last_processed_input_id;
 };
 #pragma pack(pop)

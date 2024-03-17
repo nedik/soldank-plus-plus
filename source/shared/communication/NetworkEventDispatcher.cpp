@@ -129,6 +129,11 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             bool on_ground_last_frame = update_soldier_state_packet.on_ground_last_frame;
             bool on_ground_permanent = update_soldier_state_packet.on_ground_permanent;
 
+            std::uint8_t stance = update_soldier_state_packet.stance;
+
+            float mouse_position_x = update_soldier_state_packet.mouse_position_x;
+            float mouse_position_y = update_soldier_state_packet.mouse_position_y;
+
             unsigned int last_processed_input_id =
               update_soldier_state_packet.last_processed_input_id;
 
@@ -153,6 +158,9 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                                                                       on_ground_for_law,
                                                                       on_ground_last_frame,
                                                                       on_ground_permanent,
+                                                                      stance,
+                                                                      mouse_position_x,
+                                                                      mouse_position_y,
                                                                       last_processed_input_id);
             break;
         }
