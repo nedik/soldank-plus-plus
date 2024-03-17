@@ -27,7 +27,7 @@ public:
     Scene(const std::shared_ptr<State>& game_state);
 
     void Render(const std::shared_ptr<State>& game_state,
-                const ClientState& client_state,
+                ClientState& client_state,
                 double frame_percent,
                 int fps);
 

@@ -32,7 +32,7 @@ Scene::Scene(const std::shared_ptr<State>& game_state)
 }
 
 void Scene::Render(const std::shared_ptr<State>& game_state,
-                   const ClientState& client_state,
+                   ClientState& client_state,
                    double frame_percent,
                    int fps)
 {
@@ -75,6 +75,8 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
 
     {
         ImGui::Begin("Debug window");
+        ImGui::Checkbox("Server reconciliation", &client_state.server_reconciliation);
+        ImGui::Checkbox("Client side prediction", &client_state.client_side_prediction);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
         if (client_state.client_soldier_id.has_value()) {

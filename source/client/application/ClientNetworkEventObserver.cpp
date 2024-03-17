@@ -123,7 +123,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
             soldier.control.mouse_aim_y =
               (soldier.mouse.y - (float)soldier.game_height / 2.0F + soldier.camera.y);
 
-            if (!is_soldier_id_me) {
+            if (!is_soldier_id_me || !client_state_->client_side_prediction) {
                 RepositionSoldierSkeletonParts(soldier);
 
                 if (!soldier.dead_meat) {
