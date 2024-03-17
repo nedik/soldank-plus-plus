@@ -64,12 +64,18 @@ std::optional<std::pair<glm::vec2, unsigned int>> BulletPhysics::CheckMapCollisi
     for (float i = 0; i <= steps; i++) {
         auto xy = Calc::Lerp(a, b, i / steps);
 
-        // TODO: Take from sectors
-        for (int poly_id = 0; poly_id < map.GetPolygons().size(); poly_id++) {
-            const PMSPolygon& poly = map.GetPolygons()[poly_id];
-            if (CollidesWithPoly(poly, bullet.team) &&
-                Map::PointInPoly(glm::vec2(xy.x, xy.y), poly)) {
-                return std::make_pair(xy, poly_id);
+        auto rx = ((int)std::round((xy.x / (float)map.GetSectorsSize()))) + 25;
+        auto ry = ((int)std::round((xy.y / (float)map.GetSectorsSize()))) + 25;
+
+        if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
+            (ry < map.GetSectorsCount() + 25)) {
+            for (int j = 0; j < map.GetSector(rx, ry).polygons.size(); j++) {
+                auto poly_id = map.GetSector(rx, ry).polygons[j] - 1;
+                const PMSPolygon& poly = map.GetPolygons()[poly_id];
+                if (CollidesWithPoly(poly, bullet.team) &&
+                    Map::PointInPoly(glm::vec2(xy.x, xy.y), poly)) {
+                    return std::make_pair(xy, poly_id);
+                }
             }
         }
     }
