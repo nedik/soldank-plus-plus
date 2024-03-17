@@ -113,10 +113,6 @@ void UpdateMouseButton(int button, int action)
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             world->UpdateFireButtonState(*client_state->client_soldier_id, action == GLFW_PRESS);
         }
-
-        if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-            world->UpdateJetsButtonState(*client_state->client_soldier_id, action == GLFW_PRESS);
-        }
     }
 }
 
@@ -171,6 +167,8 @@ void Run()
                 world->UpdateProneButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_X));
 
                 world->UpdateMousePosition(client_soldier_id, mouse_position);
+                world->UpdateJetsButtonState(client_soldier_id,
+                                             Mouse::Button(GLFW_MOUSE_BUTTON_RIGHT));
                 client_state->camera = world->GetSoldier(client_soldier_id).camera;
             } else {
                 client_state->camera = { 0.0F, 0.0F };

@@ -48,6 +48,8 @@ struct SoldierStatePacket
     std::uint8_t stance;
     float mouse_position_x;
     float mouse_position_y;
+    bool using_jets;
+    std::int32_t jets_count;
     unsigned int last_processed_input_id;
 };
 #pragma pack(pop)

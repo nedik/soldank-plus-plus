@@ -134,6 +134,9 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             float mouse_position_x = update_soldier_state_packet.mouse_position_x;
             float mouse_position_y = update_soldier_state_packet.mouse_position_y;
 
+            bool using_jets = update_soldier_state_packet.using_jets;
+            std::int32_t jets_count = update_soldier_state_packet.jets_count;
+
             unsigned int last_processed_input_id =
               update_soldier_state_packet.last_processed_input_id;
 
@@ -161,6 +164,8 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                                                                       stance,
                                                                       mouse_position_x,
                                                                       mouse_position_y,
+                                                                      using_jets,
+                                                                      jets_count,
                                                                       last_processed_input_id);
             break;
         }

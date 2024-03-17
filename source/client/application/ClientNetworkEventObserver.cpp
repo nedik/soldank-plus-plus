@@ -74,6 +74,8 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
   std::uint8_t stance,
   float mouse_position_x,
   float mouse_position_y,
+  bool using_jets,
+  std::int32_t jets_count,
   unsigned int last_processed_input_id)
 {
     bool is_soldier_id_me = false;
@@ -83,7 +85,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
     if (is_soldier_id_me) {
         client_state_->soldier_position_server_pov = { soldier_position.x, soldier_position.y };
     }
-    auto state = world_->GetState();
+    const auto& state = world_->GetState();
 
     for (auto& soldier : state->soldiers) {
         if (soldier.id == soldier_id) {
@@ -122,6 +124,11 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
               (soldier.mouse.x - (float)soldier.game_width / 2.0F + soldier.camera.x);
             soldier.control.mouse_aim_y =
               (soldier.mouse.y - (float)soldier.game_height / 2.0F + soldier.camera.y);
+
+            // TODO: there is a visual bug with feet when another soldier is using jets and going
+            // backwards
+            soldier.control.jets = using_jets;
+            soldier.jets_count = jets_count;
 
             if (!is_soldier_id_me || !client_state_->client_side_prediction) {
                 RepositionSoldierSkeletonParts(soldier);

@@ -118,6 +118,11 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
                                   100.0,
                                   1.0,
                                   { 1.0, 1.0, 1.0 });
+            text_renderer_.Render("Jets: " + std::to_string((int)soldier.jets_count),
+                                  50.0,
+                                  50.0,
+                                  1.0,
+                                  { 1.0, 1.0, 1.0 });
         }
     }
     if (Config::DEBUG_DRAW) {
