@@ -85,6 +85,7 @@ void Init()
     client_state = std::make_shared<ClientState>();
     client_state->server_reconciliation = true;
     client_state->client_side_prediction = true;
+    client_state->objects_interpolation = true;
 
     if (is_online) {
         spdlog::info("Connecting to {}:{}", server_ip, server_port);
@@ -216,6 +217,9 @@ void Run()
     });
     world->SetPostGameLoopIterationCallback(
       [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
+          if (!client_state->objects_interpolation) {
+              frame_percent = 1.0F;
+          }
           scene.Render(state, *client_state, frame_percent, last_fps);
 
           window->SwapBuffers();

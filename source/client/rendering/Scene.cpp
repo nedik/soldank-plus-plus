@@ -77,6 +77,7 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
         ImGui::Begin("Debug window");
         ImGui::Checkbox("Server reconciliation", &client_state.server_reconciliation);
         ImGui::Checkbox("Client side prediction", &client_state.client_side_prediction);
+        ImGui::Checkbox("Objects interpolation", &client_state.objects_interpolation);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
         if (client_state.client_soldier_id.has_value()) {
