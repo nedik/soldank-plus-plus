@@ -85,7 +85,7 @@ void Application::Run()
                 .on_ground_for_law = soldier.on_ground_for_law,
                 .on_ground_last_frame = soldier.on_ground_last_frame,
                 .on_ground_permanent = soldier.on_ground_permanent,
-                .stance = soldier.position,
+                .stance = soldier.stance,
                 .mouse_position_x = soldier.mouse.x,
                 .mouse_position_y = soldier.mouse.y,
                 .last_processed_input_id = server_state_->last_processed_input_id.at(soldier.id)

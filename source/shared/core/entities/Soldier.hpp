@@ -46,7 +46,7 @@ struct Soldier
     float vest;
     std::int32_t idle_time;
     std::int8_t idle_random;
-    std::uint8_t position;
+    std::uint8_t stance;
     std::uint8_t on_fire;
     std::uint8_t collider_distance;
     bool half_dead;

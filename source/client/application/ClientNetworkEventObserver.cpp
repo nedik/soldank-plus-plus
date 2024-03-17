@@ -105,7 +105,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
             soldier.on_ground_last_frame = on_ground_last_frame;
             soldier.on_ground_permanent = on_ground_permanent;
 
-            soldier.position = stance;
+            soldier.stance = stance;
 
             // TODO: make mouse position not game width and game height dependent
             soldier.game_width = 640.0;

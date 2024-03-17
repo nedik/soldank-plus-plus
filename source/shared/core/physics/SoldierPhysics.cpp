@@ -24,9 +24,9 @@ const float CROUCHMOVESURFACECOEFY = 0.97F;
 const float STANDSURFACECOEFX = 0.00F;
 const float STANDSURFACECOEFY = 0.00F;
 
-const std::uint8_t POS_STAND = 1;
-const std::uint8_t POS_CROUCH = 2;
-const std::uint8_t POS_PRONE = 3;
+const std::uint8_t STANCE_STAND = 1;
+const std::uint8_t STANCE_CROUCH = 2;
+const std::uint8_t STANCE_PRONE = 3;
 
 const float MAX_VELOCITY = 11.0F;
 const float SOLDIER_COL_RADIUS = 3.0F;
@@ -205,7 +205,7 @@ void SoldierPhysics::UpdateControl(State& state,
             } else {
                 soldier.particle.SetForce({ particle_force.x, -2.5 * (state.gravity * 2.0F) });
             }
-        } else if (soldier.position != POS_PRONE) {
+        } else if (soldier.stance != STANCE_PRONE) {
             // particle.force.y -= (state.gravity > 0.05 ? JETSPEED : state.gravity
             // * 2.0);
             glm::vec2 particle_force = soldier.particle.GetForce();
@@ -364,7 +364,7 @@ void SoldierPhysics::UpdateControl(State& state,
     }
 
     // Get up
-    if (soldier.position == POS_PRONE) {
+    if (soldier.stance == STANCE_PRONE) {
         if (soldier.control.prone || (soldier.direction != soldier.old_direction)) {
             if (((soldier.legs_animation.GetType() == AnimationType::Prone) &&
                  (soldier.legs_animation.GetFrame() > 23)) ||
@@ -417,7 +417,7 @@ void SoldierPhysics::UpdateControl(State& state,
     }
 
     if (unprone) {
-        soldier.position = POS_STAND;
+        soldier.stance = STANCE_STAND;
 
         if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
             (soldier.body_animation.GetType() != AnimationType::Change) &&
@@ -559,7 +559,7 @@ void SoldierPhysics::UpdateControl(State& state,
                              (soldier.legs_animation.GetFrame() ==
                               soldier.legs_animation.GetFramesCount()))) {
                             soldier.control.prone = false;
-                            soldier.position = POS_STAND;
+                            soldier.stance = STANCE_STAND;
                         }
 
                         if (soldier.direction == 1) {
@@ -604,7 +604,7 @@ void SoldierPhysics::UpdateControl(State& state,
                              (soldier.legs_animation.GetFrame() ==
                               soldier.legs_animation.GetFramesCount()))) {
                             soldier.control.prone = false;
-                            soldier.position = POS_STAND;
+                            soldier.stance = STANCE_STAND;
                         }
 
                         if (soldier.direction == 1) {
@@ -934,12 +934,12 @@ void SoldierPhysics::UpdateControl(State& state,
              (soldier.body_animation.GetType() != AnimationType::Melee)) ||
             ((soldier.body_animation.GetFrame() == soldier.body_animation.GetFramesCount()) &&
              (soldier.body_animation.GetType() != AnimationType::Prone))) {
-            if (soldier.position != POS_PRONE) {
-                if (soldier.position == POS_STAND) {
+            if (soldier.stance != STANCE_PRONE) {
+                if (soldier.stance == STANCE_STAND) {
                     BodyApplyAnimation(soldier, AnimationType::Stand, 1);
                 }
 
-                if (soldier.position == POS_CROUCH) {
+                if (soldier.stance == STANCE_CROUCH) {
                     if (soldier.collider_distance < 255) {
                         if (soldier.body_animation.GetType() == AnimationType::HandsUpRecoil) {
                             BodyApplyAnimation(soldier, AnimationType::HandsUpAim, 11);
@@ -962,13 +962,13 @@ void SoldierPhysics::UpdateControl(State& state,
         if ((soldier.legs_animation.GetType() == AnimationType::Crouch) ||
             (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
             (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-            soldier.position = POS_CROUCH;
+            soldier.stance = STANCE_CROUCH;
         } else {
-            soldier.position = POS_STAND;
+            soldier.stance = STANCE_STAND;
         }
         if ((soldier.legs_animation.GetType() == AnimationType::Prone) ||
             (soldier.legs_animation.GetType() == AnimationType::ProneMove)) {
-            soldier.position = POS_PRONE;
+            soldier.stance = STANCE_PRONE;
         }
     }
 }

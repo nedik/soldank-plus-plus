@@ -6,9 +6,9 @@ namespace Soldat
 {
 void RepositionSoldierSkeletonParts(Soldier& soldier)
 {
-    const std::uint8_t pos_stand = 1;
-    const std::uint8_t pos_crouch = 2;
-    const std::uint8_t pos_prone = 3;
+    const std::uint8_t stance_stand = 1;
+    const std::uint8_t stance_crouch = 2;
+    const std::uint8_t stance_prone = 3;
     float body_y = 0.0F;
     float arm_s = NAN;
 
@@ -24,14 +24,14 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
         soldier.skeleton->SetPos(23, soldier.skeleton->GetPos(23) + soldier.particle.velocity_);
         // skeleton->SetPos(25, skeleton.GetPos(25) + particle.velocity);
     }
-    switch (soldier.position) {
-        case pos_stand:
+    switch (soldier.stance) {
+        case stance_stand:
             body_y = 8.0F;
             break;
-        case pos_crouch:
+        case stance_crouch:
             body_y = 9.0F;
             break;
-        case pos_prone: {
+        case stance_prone: {
             if (soldier.body_animation.GetType() == AnimationType::Prone) {
                 if (soldier.body_animation.GetFrame() > 9) {
                     body_y = -2.0F;
