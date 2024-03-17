@@ -108,7 +108,16 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
     if (!io.WantCaptureMouse) {
         cursor_renderer_.Render({ client_state.mouse.x, client_state.mouse.y });
     }
-    text_renderer_.Render("FPS: " + std::to_string(fps), 50.0, 100.0, 1.0, { 1.0, 1.0, 1.0 });
+    for (const auto& soldier : game_state->soldiers) {
+        if (client_state.client_soldier_id.has_value() &&
+            *client_state.client_soldier_id == soldier.id) {
+            text_renderer_.Render("Health: " + std::to_string((int)soldier.health),
+                                  50.0,
+                                  100.0,
+                                  1.0,
+                                  { 1.0, 1.0, 1.0 });
+        }
+    }
     if (Config::DEBUG_DRAW) {
         for (const auto& soldier : game_state->soldiers) {
             rectangle_renderer_.Render(
