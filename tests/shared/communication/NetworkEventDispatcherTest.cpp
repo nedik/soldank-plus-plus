@@ -82,6 +82,12 @@ public:
         return result_;
     }
 
+    NetworkEventObserverResult OnPingCheck(
+      const ConnectionMetadata& /*connection_metadata*/) override
+    {
+        return result_;
+    }
+
     void SetResult(NetworkEventObserverResult result) { result_ = result; }
 
     unsigned int GetLastAssignedPlayerId() const { return last_assigned_player_id_; }

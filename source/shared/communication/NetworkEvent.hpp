@@ -11,7 +11,8 @@ enum class NetworkEvent : unsigned int
     SoldierInput,
     SoldierState,
     SoldierInfo,
-    PlayerLeave
+    PlayerLeave,
+    PingCheck,
 };
 }
 

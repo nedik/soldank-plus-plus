@@ -58,6 +58,8 @@ public:
     NetworkEventObserverResult OnPlayerLeave(const ConnectionMetadata& connection_metadata,
                                              unsigned int soldier_id) override;
 
+    NetworkEventObserverResult OnPingCheck(const ConnectionMetadata& connection_metadata) override;
+
 private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerState> server_state_;

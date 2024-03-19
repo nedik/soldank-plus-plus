@@ -80,6 +80,7 @@ void Scene::Render(const std::shared_ptr<State>& game_state,
         ImGui::Checkbox("Objects interpolation", &client_state.objects_interpolation);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
+        ImGui::Text("Ping: %hu", client_state.last_ping);
         if (client_state.client_soldier_id.has_value()) {
             for (const auto& soldier : game_state->soldiers) {
                 if (*client_state.client_soldier_id == soldier.id) {

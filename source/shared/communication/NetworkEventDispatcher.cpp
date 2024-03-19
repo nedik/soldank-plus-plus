@@ -196,6 +196,11 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
               network_event_observer_->OnPlayerLeave(connection_metadata, soldier_id);
             break;
         }
+        case NetworkEvent::PingCheck: {
+            spdlog::info("[ProcessNetworkMessage] PingCheck");
+            observer_result = network_event_observer_->OnPingCheck(connection_metadata);
+            break;
+        }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80

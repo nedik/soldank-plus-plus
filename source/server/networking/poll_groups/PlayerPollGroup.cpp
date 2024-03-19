@@ -50,9 +50,12 @@ void PlayerPollGroup::PollIncomingMessages()
                                         static_cast<unsigned int>(incoming_message->m_cbSize) };
         NetworkMessage network_message(received_bytes);
 
-        ConnectionMetadata connection_metadata{ .connection_id = incoming_message->m_conn,
+        unsigned int connection_id = incoming_message->m_conn;
+
+        ConnectionMetadata connection_metadata{ .connection_id = connection_id,
                                                 .send_message_to_connection =
-                                                  [](const NetworkMessage& message) { // TODO
+                                                  [&](const NetworkMessage& message) {
+                                                      SendNetworkMessage(connection_id, message);
                                                   } };
 
         incoming_message->Release();

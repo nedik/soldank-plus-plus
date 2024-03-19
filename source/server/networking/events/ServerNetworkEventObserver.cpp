@@ -112,4 +112,11 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnPlayerLeave(
 {
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ServerNetworkEventObserver::OnPingCheck(
+  const ConnectionMetadata& connection_metadata)
+{
+    connection_metadata.send_message_to_connection({ NetworkEvent::PingCheck });
+    return NetworkEventObserverResult::Success;
+}
 } // namespace Soldat

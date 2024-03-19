@@ -7,6 +7,8 @@
 
 #include <optional>
 #include <list>
+#include <chrono>
+#include <cstdint>
 
 namespace Soldat
 {
@@ -34,6 +36,9 @@ struct ClientState
     bool server_reconciliation;
     bool client_side_prediction;
     bool objects_interpolation;
+
+    std::optional<std::chrono::time_point<std::chrono::system_clock>> last_ping_check_time;
+    std::uint16_t last_ping;
 };
 } // namespace Soldat
 

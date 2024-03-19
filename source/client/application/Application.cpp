@@ -136,6 +136,25 @@ void Run()
         // spdlog::info("netowrking_client->Update");
         if (is_online) {
             networking_client->Update(client_network_event_dispatcher);
+
+            auto current_time = std::chrono::system_clock::now();
+
+            if (client_state->last_ping_check_time.has_value()) {
+                std::chrono::duration<double> diff =
+                  current_time - *client_state->last_ping_check_time;
+
+                if (diff.count() > 9999.0) {
+                    client_state->last_ping_check_time = std::nullopt;
+                    client_state->last_ping = 9999;
+                }
+            }
+
+            if ((world->GetState()->game_tick % 60 == 0) &&
+                !client_state->last_ping_check_time.has_value()) {
+
+                client_state->last_ping_check_time = current_time;
+                networking_client->SendNetworkMessage({ NetworkEvent::PingCheck });
+            }
         }
 
         glm::vec2 mouse_position = { Mouse::GetX(), Mouse::GetY() };
