@@ -120,4 +120,20 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnPingCheck(
     connection_metadata.send_message_to_connection({ NetworkEvent::PingCheck });
     return NetworkEventObserverResult::Success;
 }
+
+NetworkEventObserverResult ServerNetworkEventObserver::OnProjectileSpawn(
+  const ConnectionMetadata& connection_metadata,
+  unsigned int projectile_id,
+  BulletType style,
+  WeaponType weapon,
+  float position_x,
+  float position_y,
+  float velocity_x,
+  float velocity_y,
+  std::int16_t timeout,
+  float hit_multiply,
+  TeamType team)
+{
+    return NetworkEventObserverResult::Success;
+}
 } // namespace Soldat

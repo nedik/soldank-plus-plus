@@ -204,6 +204,37 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             observer_result = network_event_observer_->OnPingCheck(connection_metadata);
             break;
         }
+        case NetworkEvent::ProjectileSpawn: {
+            auto parsed = network_message.Parse<NetworkEvent, ProjectileSpawnPacket>();
+            if (!parsed.has_value()) {
+                return { NetworkEventDispatchResult::ParseError, parsed.error() };
+            }
+            ProjectileSpawnPacket projectile_spawn_packet = std::get<1>(*parsed);
+            unsigned int projectile_id = projectile_spawn_packet.projectile_id;
+            BulletType style = projectile_spawn_packet.style;
+            WeaponType weapon = projectile_spawn_packet.weapon;
+            float position_x = projectile_spawn_packet.position_x;
+            float position_y = projectile_spawn_packet.position_y;
+            float velocity_x = projectile_spawn_packet.velocity_x;
+            float velocity_y = projectile_spawn_packet.velocity_y;
+            std::int16_t timeout = projectile_spawn_packet.timeout;
+            float hit_multiply = projectile_spawn_packet.hit_multiply;
+            TeamType team = projectile_spawn_packet.team;
+
+            spdlog::info("[ProcessNetworkMessage] ProjectileSpawn: {}", projectile_id);
+
+            observer_result = network_event_observer_->OnProjectileSpawn(connection_metadata,
+                                                                         projectile_id,
+                                                                         style,
+                                                                         weapon,
+                                                                         position_x,
+                                                                         position_y,
+                                                                         velocity_x,
+                                                                         velocity_y,
+                                                                         timeout,
+                                                                         hit_multiply,
+                                                                         team);
+        }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
             // when we get out of range NetworkEvent For example, a user can send us a value of 80

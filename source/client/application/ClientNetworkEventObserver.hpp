@@ -62,6 +62,18 @@ public:
 
     NetworkEventObserverResult OnPingCheck(const ConnectionMetadata& connection_metadata) override;
 
+    NetworkEventObserverResult OnProjectileSpawn(const ConnectionMetadata& connection_metadata,
+                                                 unsigned int projectile_id,
+                                                 BulletType style,
+                                                 WeaponType weapon,
+                                                 float position_x,
+                                                 float position_y,
+                                                 float velocity_x,
+                                                 float velocity_y,
+                                                 std::int16_t timeout,
+                                                 float hit_multiply,
+                                                 TeamType team) override;
+
 private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ClientState> client_state_;

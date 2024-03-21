@@ -3,6 +3,9 @@
 
 #include "core/state/Control.hpp"
 #include "core/animations/Animation.hpp"
+#include "core/types/BulletType.hpp"
+#include "core/types/TeamType.hpp"
+#include "core/types/WeaponType.hpp"
 
 #include <cstdint>
 
@@ -59,6 +62,22 @@ struct SoldierStatePacket
 struct SoldierInfoPacket
 {
     unsigned int soldier_id;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+struct ProjectileSpawnPacket
+{
+    unsigned int projectile_id;
+    BulletType style;
+    WeaponType weapon;
+    float position_x;
+    float position_y;
+    float velocity_x;
+    float velocity_y;
+    std::int16_t timeout;
+    float hit_multiply;
+    TeamType team;
 };
 #pragma pack(pop)
 } // namespace Soldat

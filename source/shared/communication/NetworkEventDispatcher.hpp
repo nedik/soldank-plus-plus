@@ -7,6 +7,9 @@
 #include "core/math/Glm.hpp"
 #include "core/state/Control.hpp"
 #include "core/animations/Animation.hpp"
+#include "core/types/BulletType.hpp"
+#include "core/types/TeamType.hpp"
+#include "core/types/WeaponType.hpp"
 
 #include <memory>
 #include <variant>
@@ -86,6 +89,19 @@ public:
 
     virtual NetworkEventObserverResult OnPingCheck(
       const ConnectionMetadata& connection_metadata) = 0;
+
+    virtual NetworkEventObserverResult OnProjectileSpawn(
+      const ConnectionMetadata& connection_metadata,
+      unsigned int projectile_id,
+      BulletType style,
+      WeaponType weapon,
+      float position_x,
+      float position_y,
+      float velocity_x,
+      float velocity_y,
+      std::int16_t timeout,
+      float hit_multiply,
+      TeamType team) = 0;
 };
 
 class NetworkEventDispatcher
