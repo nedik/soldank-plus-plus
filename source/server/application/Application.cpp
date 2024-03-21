@@ -90,6 +90,7 @@ void Application::Run()
                 .mouse_position_y = soldier.mouse.y,
                 .using_jets = soldier.control.jets,
                 .jets_count = soldier.jets_count,
+                .active_weapon = soldier.active_weapon,
                 .last_processed_input_id = server_state_->last_processed_input_id.at(soldier.id)
             };
             game_server_->SendNetworkMessageToAll(

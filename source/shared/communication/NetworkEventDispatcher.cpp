@@ -137,6 +137,8 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             bool using_jets = update_soldier_state_packet.using_jets;
             std::int32_t jets_count = update_soldier_state_packet.jets_count;
 
+            unsigned int active_weapon = update_soldier_state_packet.active_weapon;
+
             unsigned int last_processed_input_id =
               update_soldier_state_packet.last_processed_input_id;
 
@@ -166,6 +168,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                                                                       mouse_position_y,
                                                                       using_jets,
                                                                       jets_count,
+                                                                      active_weapon,
                                                                       last_processed_input_id);
             break;
         }

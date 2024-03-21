@@ -76,6 +76,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
   float mouse_position_y,
   bool using_jets,
   std::int32_t jets_count,
+  unsigned int active_weapon,
   unsigned int last_processed_input_id)
 {
     bool is_soldier_id_me = false;
@@ -129,6 +130,8 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
             // backwards
             soldier.control.jets = using_jets;
             soldier.jets_count = jets_count;
+
+            soldier.active_weapon = active_weapon;
 
             if (!is_soldier_id_me || !client_state_->client_side_prediction) {
                 RepositionSoldierSkeletonParts(soldier);

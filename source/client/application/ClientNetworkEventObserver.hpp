@@ -51,6 +51,7 @@ public:
                                               float mouse_position_y,
                                               bool using_jets,
                                               std::int32_t jets_count,
+                                              unsigned int active_weapon,
                                               unsigned int last_processed_input_id) override;
 
     NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& connection_metadata,
