@@ -96,6 +96,10 @@ void SoldierPhysics::UpdateControl(State& state,
                                    Soldier& soldier,
                                    std::vector<BulletParams>& bullet_emitter)
 {
+    if (!soldier.control.fire) {
+        soldier.is_shooting = false;
+    }
+
     bool player_pressed_left_right = false;
 
     if (soldier.legs_animation.GetSpeed() < 1) {
@@ -248,7 +252,6 @@ void SoldierPhysics::UpdateControl(State& state,
                     BodyApplyAnimation(soldier, AnimationType::Punch, 1);
                 } else {
                     Fire(soldier, bullet_emitter);
-                    soldier.control.fire = false;
                 }
             }
         }
@@ -1450,13 +1453,15 @@ void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_em
 
     switch (weapon.GetWeaponParameters().kind) {
         case WeaponType::DesertEagles: {
-            bullet_emitter.push_back(params);
+            if (!soldier.is_shooting) {
+                bullet_emitter.push_back(params);
 
-            auto signx = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
-            auto signy = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
+                auto signx = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
+                auto signy = dir.x > 0.0F ? 1.0F : (dir.x < 0.0F ? -1.0F : 0.0F);
 
-            params.position += glm::vec2(-signx * dir.y, signy * dir.x) * 3.0F;
-            bullet_emitter.push_back(params);
+                params.position += glm::vec2(-signx * dir.y, signy * dir.x) * 3.0F;
+                bullet_emitter.push_back(params);
+            }
             break;
         }
         case WeaponType::Spas12:
@@ -1470,5 +1475,7 @@ void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_em
             bullet_emitter.push_back(params);
         }
     };
+
+    soldier.is_shooting = true;
 }
 } // namespace Soldat

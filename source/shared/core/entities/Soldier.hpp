@@ -58,6 +58,7 @@ struct Soldier
     std::vector<Weapon> weapons;
     std::uint8_t fired;
     Particle particle;
+    bool is_shooting;
 };
 } // namespace Soldat
 

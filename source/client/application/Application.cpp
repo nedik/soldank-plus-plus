@@ -108,22 +108,11 @@ void Init()
     }
 }
 
-void UpdateMouseButton(int button, int action)
-{
-    if (client_state->client_soldier_id.has_value()) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
-            world->UpdateFireButtonState(*client_state->client_soldier_id, action == GLFW_PRESS);
-        }
-    }
-}
-
 void Run()
 {
     window->Create();
 
     Scene scene(world->GetState());
-    Mouse::SubscribeButtonObserver(
-      [](int button, int action) { UpdateMouseButton(button, action); });
 
     world->SetShouldStopGameLoopCallback([&]() { return window->ShouldClose(); });
     world->SetPreGameLoopIterationCallback([&]() {
@@ -189,6 +178,8 @@ void Run()
                 world->UpdateMousePosition(client_soldier_id, mouse_position);
                 world->UpdateJetsButtonState(client_soldier_id,
                                              Mouse::Button(GLFW_MOUSE_BUTTON_RIGHT));
+                world->UpdateFireButtonState(client_soldier_id,
+                                             Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
                 client_state->camera = world->GetSoldier(client_soldier_id).camera;
             } else {
                 client_state->camera = { 0.0F, 0.0F };

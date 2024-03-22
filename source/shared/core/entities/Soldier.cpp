@@ -51,6 +51,7 @@ Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
                GRAV,
                0.99,
                0.0F)
+    , is_shooting(false)
 {
 }
 } // namespace Soldat
