@@ -21,6 +21,7 @@ protected:
       std::function<void(const std::shared_ptr<State>&, double, int)>;
 
     using TPreSoldierUpdateCallback = std::function<bool(const Soldier&)>;
+    using TPreProjectileSpawnCallback = std::function<bool(const BulletParams&)>;
 
 public:
     virtual ~IWorld() = default;
@@ -54,6 +55,7 @@ public:
     virtual void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) = 0;
 
     virtual void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) = 0;
+    virtual void SetPreProjectileSpawnCallback(TPreProjectileSpawnCallback callback) = 0;
 };
 } // namespace Soldat
 

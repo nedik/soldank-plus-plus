@@ -250,6 +250,8 @@ void Run()
 
         return false;
     });
+    world->SetPreProjectileSpawnCallback(
+      [&](const BulletParams& bullet_params) { return !is_online; });
 
     if (!is_online) {
         const auto& soldier = world->CreateSoldier();

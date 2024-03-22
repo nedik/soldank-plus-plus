@@ -133,7 +133,14 @@ void World::Update(double /*delta_time*/)
     }
 
     for (const auto& bullet_params : bullet_emitter) {
-        state_->bullets.emplace_back(bullet_params);
+        bool should_spawn_projectile = false;
+        if (pre_projectile_spawn_callback_) {
+            should_spawn_projectile = pre_projectile_spawn_callback_(bullet_params);
+        }
+
+        if (should_spawn_projectile) {
+            state_->bullets.emplace_back(bullet_params);
+        }
     }
 }
 
