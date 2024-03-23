@@ -18,7 +18,8 @@ NetworkingClient::NetworkingClient(const char* server_ip, std::uint16_t server_p
           OnSteamNetConnectionStatusChanged(connection_info);
       });
 
-    connection_ = NetworkingInterface::CreateConnection(server_ip, server_port);
+    connection_ = NetworkingInterface::CreateLagConnection(server_ip, server_port);
+    // connection_ = NetworkingInterface::CreateConnection(server_ip, server_port);
 }
 
 void NetworkingClient::Update(
@@ -80,4 +81,10 @@ void NetworkingClient::OnSteamNetConnectionStatusChanged(
             break;
     }
 }
+
+void NetworkingClient::SetLag(unsigned int lag_to_add_milliseconds)
+{
+    connection_->SetLag(lag_to_add_milliseconds);
+}
+
 } // namespace Soldat

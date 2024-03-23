@@ -127,6 +127,7 @@ void Run()
     world->SetPreWorldUpdateCallback([&]() {
         // spdlog::info("netowrking_client->Update");
         if (is_online) {
+            networking_client->SetLag(client_state->network_lag);
             networking_client->Update(client_network_event_dispatcher);
 
             auto current_time = std::chrono::system_clock::now();

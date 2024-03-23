@@ -39,6 +39,7 @@ struct ClientState
 
     std::optional<std::chrono::time_point<std::chrono::system_clock>> last_ping_check_time;
     std::uint16_t last_ping;
+    int network_lag;
 };
 } // namespace Soldat
 

@@ -16,6 +16,9 @@ public:
       const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher) = 0;
 
     virtual void SendNetworkMessage(const NetworkMessage& network_message) = 0;
+
+    // TODO: implement it better
+    virtual void SetLag(unsigned int lag_to_add_milliseconds) = 0;
 };
 } // namespace Soldat
 
