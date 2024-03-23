@@ -153,10 +153,6 @@ void World::UpdateSoldier(unsigned int soldier_id)
             soldier_physics_->Update(*state_, soldier, bullet_emitter);
         }
     }
-
-    for (const auto& bullet_params : bullet_emitter) {
-        state_->bullets.emplace_back(bullet_params);
-    }
 }
 
 const std::shared_ptr<State>& World::GetState() const

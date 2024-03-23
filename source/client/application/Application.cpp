@@ -17,6 +17,7 @@
 
 #include "spdlog/spdlog.h"
 
+#include <spdlog/common.h>
 #include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
 
@@ -55,6 +56,8 @@ void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char*
 
 void Init()
 {
+    spdlog::set_level(spdlog::level::debug);
+
     CSimpleIniA ini_config;
     SI_Error rc = ini_config.LoadFile("debug_config.ini");
     std::string server_ip;
