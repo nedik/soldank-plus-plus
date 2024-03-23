@@ -5,6 +5,7 @@
 
 #include "spdlog/spdlog.h"
 
+#include <spdlog/common.h>
 #include <steam/steamnetworkingsockets.h>
 
 #include <span>
@@ -28,6 +29,8 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
 Application::Application()
     : world_(std::make_shared<World>())
 {
+    spdlog::set_level(spdlog::level::debug);
+
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
         spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
@@ -113,6 +116,24 @@ void Application::Run()
     });
     world_->SetPostGameLoopIterationCallback(
       [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {});
+    world_->SetPreProjectileSpawnCallback([&](const BulletParams& bullet_params) {
+        ProjectileSpawnPacket projectile_spawn_packet{
+            .projectile_id = 0, // TODO: set the correct ID
+            .style = bullet_params.style,
+            .weapon = bullet_params.weapon,
+            .position_x = bullet_params.position.x,
+            .position_y = bullet_params.position.y,
+            .velocity_x = bullet_params.velocity.x,
+            .velocity_y = bullet_params.velocity.y,
+            .timeout = bullet_params.timeout,
+            .hit_multiply = bullet_params.hit_multiply,
+            .team = bullet_params.team,
+        };
+        game_server_->SendNetworkMessageToAll(
+          { NetworkEvent::ProjectileSpawn, projectile_spawn_packet });
+
+        return true;
+    });
 
     world_->RunLoop(60);
 

@@ -265,6 +265,12 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnProjectileSpawn(
   float hit_multiply,
   TeamType team)
 {
+    const auto& state = world_->GetState();
+    BulletParams bullet_params{
+        style,        weapon, { position_x, position_y }, { velocity_x, velocity_y }, timeout,
+        hit_multiply, team
+    };
+    state->bullets.emplace_back(bullet_params);
     return NetworkEventObserverResult::Success;
 }
 } // namespace Soldat

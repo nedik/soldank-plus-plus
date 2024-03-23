@@ -234,6 +234,7 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
                                                                          timeout,
                                                                          hit_multiply,
                                                                          team);
+            break;
         }
         default: {
             // Since parsing directly writes bytes to variables, we need to handle a situation here
