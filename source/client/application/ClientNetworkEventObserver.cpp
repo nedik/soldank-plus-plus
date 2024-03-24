@@ -189,7 +189,7 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
 
                 world_->UpdateMousePosition(soldier_id,
                                             { it->mouse_position_x, it->mouse_position_y });
-                // world_->UpdateFireButtonState(soldier_id, player_control.fire); // TODO: is
+                world_->UpdateFireButtonState(soldier_id, player_control.fire); // TODO: is
                 // it needed?
                 world_->UpdateJetsButtonState(soldier_id, player_control.jets);
                 world_->UpdateSoldier(soldier_id);
