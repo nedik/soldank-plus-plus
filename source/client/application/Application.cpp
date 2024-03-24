@@ -89,6 +89,7 @@ void Init()
     client_state->server_reconciliation = true;
     client_state->client_side_prediction = true;
     client_state->objects_interpolation = true;
+    client_state->draw_server_pov_client_pos = true;
 
     if (is_online) {
         spdlog::info("Connecting to {}:{}", server_ip, server_port);

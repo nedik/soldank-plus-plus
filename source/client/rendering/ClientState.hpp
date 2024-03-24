@@ -36,6 +36,7 @@ struct ClientState
     bool server_reconciliation;
     bool client_side_prediction;
     bool objects_interpolation;
+    bool draw_server_pov_client_pos;
 
     std::optional<std::chrono::time_point<std::chrono::system_clock>> last_ping_check_time;
     std::uint16_t last_ping;
