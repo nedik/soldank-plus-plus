@@ -121,10 +121,17 @@ NetworkEventObserverResult ClientNetworkEventObserver::OnSoldierState(
             soldier.camera.y = soldier.particle.position.y -
                                (float)((480.0F - soldier.mouse.y) - (soldier.game_height / 2));
 
+            // TODO: server should send mouse_aim and here we should recalculate the rest
             soldier.control.mouse_aim_x =
               (soldier.mouse.x - (float)soldier.game_width / 2.0F + soldier.camera.x);
             soldier.control.mouse_aim_y =
               (soldier.mouse.y - (float)soldier.game_height / 2.0F + soldier.camera.y);
+
+            if ((float)soldier.control.mouse_aim_x >= soldier.particle.position.x) {
+                soldier.direction = 1;
+            } else {
+                soldier.direction = -1;
+            }
 
             // TODO: there is a visual bug with feet when another soldier is using jets and going
             // backwards
