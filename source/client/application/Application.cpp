@@ -1,6 +1,5 @@
 #include "Application.hpp"
 
-#include "application/ClientNetworkEventObserver.hpp"
 #include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
@@ -45,7 +44,6 @@ std::shared_ptr<IWorld> world;
 std::unique_ptr<INetworkingClient> networking_client;
 std::shared_ptr<ClientState> client_state;
 std::shared_ptr<NetworkEventDispatcher> client_network_event_dispatcher;
-std::shared_ptr<INetworkEventObserver> client_network_event_observer;
 
 SteamNetworkingMicroseconds log_time_zero;
 
@@ -100,8 +98,6 @@ void Init()
 
     if (is_online) {
         spdlog::info("Connecting to {}:{}", server_ip, server_port);
-        client_network_event_observer =
-          std::make_shared<ClientNetworkEventObserver>(world, client_state);
         std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{
             std::make_shared<AssignPlayerIdNetworkEventHandler>(world, client_state),
             std::make_shared<PingCheckNetworkEventHandler>(client_state),
@@ -111,8 +107,8 @@ void Init()
             std::make_shared<SoldierStateNetworkEventHandler>(world, client_state),
             std::make_shared<SpawnSoldierNetworkEventHandler>(world)
         };
-        client_network_event_dispatcher = std::make_shared<NetworkEventDispatcher>(
-          client_network_event_observer, network_event_handlers);
+        client_network_event_dispatcher =
+          std::make_shared<NetworkEventDispatcher>(network_event_handlers);
 
         SteamDatagramErrMsg err_msg;
         if (!GameNetworkingSockets_Init(nullptr, err_msg)) {

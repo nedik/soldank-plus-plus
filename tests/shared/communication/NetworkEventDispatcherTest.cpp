@@ -9,112 +9,6 @@
 
 using namespace Soldat;
 
-class NetworkEventObserverExample : public INetworkEventObserver
-{
-public:
-    NetworkEventObserverResult OnAssignPlayerId(const ConnectionMetadata& /*connection_metadata*/,
-                                                unsigned int assigned_player_id) override
-    {
-        last_assigned_player_id_ = assigned_player_id;
-        return result_;
-    }
-
-    NetworkEventObserverResult OnChatMessage(const ConnectionMetadata& /*connection_metadata*/,
-                                             const std::string& chat_message) override
-    {
-        last_chat_message_ = chat_message;
-        return result_;
-    }
-
-    NetworkEventObserverResult OnSpawnSoldier(const ConnectionMetadata& /*connection_metadata*/,
-                                              unsigned int /*soldier_id*/,
-                                              glm::vec2 /*spawn_position*/) override
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnSoldierInput(const ConnectionMetadata& /*connection_metadata*/,
-                                              unsigned int /*input_sequence_id*/,
-                                              unsigned int /*soldier_id*/,
-                                              glm::vec2 /*soldier_position*/,
-                                              glm::vec2 /*mouse_position*/,
-                                              const Control& /*player_control*/) override
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnSoldierState(const ConnectionMetadata& /*connection_metadata*/,
-                                              unsigned int /*soldier_id*/,
-                                              glm::vec2 /*soldier_position*/,
-                                              glm::vec2 /*soldier_old_position*/,
-                                              AnimationType /*body_animation_type*/,
-                                              unsigned int /*body_animation_frame*/,
-                                              int /*body_animation_speed*/,
-                                              AnimationType /*legs_animation_type*/,
-                                              unsigned int /*legs_animation_frame*/,
-                                              int /*legs_animation_speed*/,
-                                              glm::vec2 /*soldier_velocity*/,
-                                              glm::vec2 /*soldier_force*/,
-                                              bool /*on_ground*/,
-                                              bool /*on_ground_for_law*/,
-                                              bool /*on_ground_last_frame*/,
-                                              bool /*on_ground_permanent*/,
-                                              std::uint8_t /*stance*/,
-                                              float /*mouse_position_x*/,
-                                              float /*mouse_position_y*/,
-                                              bool /*using_jets*/,
-                                              std::int32_t /*jets_count*/,
-                                              unsigned int /*active_weapon*/,
-                                              unsigned int /*last_processed_input_id*/) override
-
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnSoldierInfo(const ConnectionMetadata& /*connection_metadata*/,
-                                             unsigned int /*soldier_id*/) override
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnPlayerLeave(const ConnectionMetadata& /*connection_metadata*/,
-                                             unsigned int /*soldier_id*/) override
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnPingCheck(
-      const ConnectionMetadata& /*connection_metadata*/) override
-    {
-        return result_;
-    }
-
-    NetworkEventObserverResult OnProjectileSpawn(const ConnectionMetadata& /*connection_metadata*/,
-                                                 unsigned int /*projectile_id*/,
-                                                 BulletType /*style*/,
-                                                 WeaponType /*weapon*/,
-                                                 float /*position_x*/,
-                                                 float /*position_y*/,
-                                                 float /*velocity_x*/,
-                                                 float /*velocity_y*/,
-                                                 std::int16_t /*timeout*/,
-                                                 float /*hit_multiply*/,
-                                                 TeamType /*team*/) override
-    {
-        return result_;
-    }
-
-    void SetResult(NetworkEventObserverResult result) { result_ = result; }
-
-    unsigned int GetLastAssignedPlayerId() const { return last_assigned_player_id_; }
-    std::string GetLastChatMessage() const { return last_chat_message_; }
-
-private:
-    NetworkEventObserverResult result_{ NetworkEventObserverResult::Success };
-    unsigned int last_assigned_player_id_{};
-    std::string last_chat_message_;
-};
-
 class NetworkEventHandlerForAssignPlayerIdExample : public NetworkEventHandlerBase<unsigned int>
 {
 public:
@@ -162,8 +56,6 @@ protected:
 
     void SetUp() override
     {
-        observer_.SetResult(NetworkEventObserverResult::Success);
-        observer_ptr_ = std::shared_ptr<NetworkEventObserverExample>(&observer_, [](auto*) {});
         assign_player_id_network_event_handler_.SetResult(NetworkEventHandlerResult::Success);
         chat_message_network_event_handler_.SetResult(NetworkEventHandlerResult::Success);
         auto assign_player_id_network_event_handler_ptr =
@@ -176,14 +68,10 @@ protected:
             assign_player_id_network_event_handler_ptr, chat_message_network_event_handler_ptr
         };
         network_event_dispatcher_ =
-          std::make_shared<NetworkEventDispatcher>(observer_ptr_, network_event_handlers);
+          std::make_shared<NetworkEventDispatcher>(network_event_handlers);
     }
 
-    void TearDown() override
-    {
-        observer_ptr_.reset();
-        network_event_dispatcher_.reset();
-    }
+    void TearDown() override { network_event_dispatcher_.reset(); }
 
     NetworkEventDispatcher::TDispatchResult ProcessNetworkMessage(
       const NetworkMessage& network_message)
@@ -193,7 +81,6 @@ protected:
                                                                 network_message);
     }
 
-    NetworkEventObserverExample& GetObserver() { return observer_; }
     NetworkEventHandlerForAssignPlayerIdExample& GetAssignPlayerIdHandler()
     {
         return assign_player_id_network_event_handler_;
@@ -205,8 +92,6 @@ protected:
     }
 
 private:
-    NetworkEventObserverExample observer_;
-    std::shared_ptr<INetworkEventObserver> observer_ptr_;
     std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
     NetworkEventHandlerForAssignPlayerIdExample assign_player_id_network_event_handler_;
     NetworkEventHandlerForChatMessageExample chat_message_network_event_handler_;
