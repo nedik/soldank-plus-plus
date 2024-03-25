@@ -15,7 +15,8 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::SpawnSoldier; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int soldier_id,
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id,
+                                                       unsigned int soldier_id,
                                                        float spawn_position_x,
                                                        float spawn_position_y) override;
 

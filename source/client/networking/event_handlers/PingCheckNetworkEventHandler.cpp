@@ -12,7 +12,8 @@ PingCheckNetworkEventHandler::PingCheckNetworkEventHandler(
 {
 }
 
-NetworkEventHandlerResult PingCheckNetworkEventHandler::HandleNetworkMessageImpl()
+NetworkEventHandlerResult PingCheckNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/)
 {
     if (client_state_->last_ping_check_time.has_value()) {
         auto current_time = std::chrono::system_clock::now();

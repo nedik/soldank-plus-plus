@@ -14,6 +14,7 @@ SoldierInfoNetworkEventHandler::SoldierInfoNetworkEventHandler(
 }
 
 NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/,
   unsigned int soldier_id)
 {
     bool is_soldier_id_me = false;

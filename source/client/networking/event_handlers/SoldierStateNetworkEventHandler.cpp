@@ -17,6 +17,7 @@ SoldierStateNetworkEventHandler::SoldierStateNetworkEventHandler(
 }
 
 NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/,
   SoldierStatePacket soldier_state_packet)
 {
     unsigned int soldier_id = soldier_state_packet.player_id;

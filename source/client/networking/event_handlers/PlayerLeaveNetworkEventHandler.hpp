@@ -15,7 +15,8 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::PlayerLeave; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int soldier_id) override;
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id,
+                                                       unsigned int soldier_id) override;
 
     std::shared_ptr<IWorld> world_;
 };

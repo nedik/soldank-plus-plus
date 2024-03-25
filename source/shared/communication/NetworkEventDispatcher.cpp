@@ -43,7 +43,8 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
             return { NetworkEventDispatchResult::ParseError, parse_error_or_nothing.value() };
         }
 
-        auto handler_result = network_event_handler->HandleNetworkMessage(network_message);
+        auto handler_result = network_event_handler->HandleNetworkMessage(
+          connection_metadata.connection_id, network_message);
         switch (handler_result) {
             case NetworkEventHandlerResult::Success:
                 return { NetworkEventDispatchResult::Success, handler_result };

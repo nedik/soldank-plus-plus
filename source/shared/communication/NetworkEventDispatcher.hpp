@@ -121,6 +121,7 @@ public:
     virtual std::optional<ParseError> ValidateNetworkMessage(
       const NetworkMessage& network_message) const = 0;
     virtual NetworkEventHandlerResult HandleNetworkMessage(
+      unsigned int sender_connection_id,
       const NetworkMessage& network_message) = 0;
 };
 
@@ -144,7 +145,8 @@ public:
         return std::nullopt;
     }
 
-    NetworkEventHandlerResult HandleNetworkMessage(const NetworkMessage& network_message) override
+    NetworkEventHandlerResult HandleNetworkMessage(unsigned int sender_connection_id,
+                                                   const NetworkMessage& network_message) override
     {
         auto parsed = GetNetworkMessageOrError(network_message);
         if (!parsed.has_value()) {
@@ -154,8 +156,9 @@ public:
         }
 
         return std::apply(
-          [this](NetworkEvent ignore, NetworkMessageArgs... network_message_args) {
-              return HandleNetworkMessageImpl(network_message_args...);
+          [this, sender_connection_id](NetworkEvent /*ignore*/,
+                                       NetworkMessageArgs... network_message_args) {
+              return HandleNetworkMessageImpl(sender_connection_id, network_message_args...);
           },
           *parsed);
     }
@@ -168,7 +171,8 @@ protected:
     }
 
     virtual NetworkEvent GetTargetNetworkEvent() const = 0;
-    virtual NetworkEventHandlerResult HandleNetworkMessageImpl(NetworkMessageArgs...) = 0;
+    virtual NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id,
+                                                               NetworkMessageArgs...) = 0;
 };
 
 class NetworkEventDispatcher

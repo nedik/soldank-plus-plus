@@ -12,6 +12,7 @@ PlayerLeaveNetworkEventHandler::PlayerLeaveNetworkEventHandler(const std::shared
 }
 
 NetworkEventHandlerResult PlayerLeaveNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/,
   unsigned int soldier_id)
 {
     const auto& state = world_->GetState();

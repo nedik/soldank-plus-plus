@@ -15,7 +15,7 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::PingCheck; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl() override;
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id) override;
 
     std::shared_ptr<ClientState> client_state_;
 };

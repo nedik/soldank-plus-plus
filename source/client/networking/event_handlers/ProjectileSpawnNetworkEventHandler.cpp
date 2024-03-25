@@ -12,6 +12,7 @@ ProjectileSpawnNetworkEventHandler::ProjectileSpawnNetworkEventHandler(
 }
 
 NetworkEventHandlerResult ProjectileSpawnNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/,
   ProjectileSpawnPacket projectile_spawn_packet)
 {
     // unsigned int projectile_id = projectile_spawn_packet.projectile_id;

@@ -13,6 +13,7 @@ AssignPlayerIdNetworkEventHandler::AssignPlayerIdNetworkEventHandler(
 }
 
 NetworkEventHandlerResult AssignPlayerIdNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int /*sender_connection_id*/,
   unsigned int assigned_player_id)
 {
     const auto& soldier = world_->CreateSoldier(assigned_player_id);

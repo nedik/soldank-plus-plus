@@ -18,7 +18,8 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::AssignPlayerId; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int assigned_player_id) override;
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id,
+                                                       unsigned int assigned_player_id) override;
 
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ClientState> client_state_;

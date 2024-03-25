@@ -20,6 +20,7 @@ private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::SoldierState; }
 
     NetworkEventHandlerResult HandleNetworkMessageImpl(
+      unsigned int sender_connection_id,
       SoldierStatePacket soldier_state_packet) override;
 
     std::shared_ptr<IWorld> world_;

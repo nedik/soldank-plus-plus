@@ -124,7 +124,8 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::AssignPlayerId; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int assigned_player_id) override
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int /*sender_connection_id*/,
+                                                       unsigned int assigned_player_id) override
     {
         last_assigned_player_id_ = assigned_player_id;
         return result_;
@@ -143,7 +144,8 @@ public:
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::ChatMessage; }
 
-    NetworkEventHandlerResult HandleNetworkMessageImpl(std::string chat_message) override
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int /*sender_connection_id*/,
+                                                       std::string chat_message) override
     {
         last_chat_message_ = chat_message;
         return result_;
