@@ -12,9 +12,11 @@
 #include "core/types/WeaponType.hpp"
 
 #include <memory>
+#include <optional>
 #include <variant>
 #include <utility>
 #include <functional>
+#include <vector>
 
 namespace Soldat
 {
@@ -23,9 +25,16 @@ enum class NetworkEventDispatchResult
     Success = 0,
     ParseError,
     ObserverFailure,
+    HandlerFailure
 };
 
 enum class NetworkEventObserverResult
+{
+    Success = 0,
+    Failure = 1,
+};
+
+enum class NetworkEventHandlerResult
 {
     Success = 0,
     Failure = 1,
@@ -104,14 +113,75 @@ public:
       TeamType team) = 0;
 };
 
+class INetworkEventHandler
+{
+public:
+    virtual ~INetworkEventHandler() = default;
+    virtual bool ShouldHandleNetworkEvent(NetworkEvent network_event) const = 0;
+    virtual std::optional<ParseError> ValidateNetworkMessage(
+      const NetworkMessage& network_message) const = 0;
+    virtual NetworkEventHandlerResult HandleNetworkMessage(
+      const NetworkMessage& network_message) = 0;
+};
+
+template<typename... NetworkMessageArgs>
+class NetworkEventHandlerBase : public INetworkEventHandler
+{
+public:
+    bool ShouldHandleNetworkEvent(NetworkEvent network_event) const override
+    {
+        return network_event == GetTargetNetworkEvent();
+    }
+
+    std::optional<ParseError> ValidateNetworkMessage(
+      const NetworkMessage& network_message) const override
+    {
+        auto parsed = GetNetworkMessageOrError(network_message);
+        if (!parsed.has_value()) {
+            return parsed.error();
+        }
+
+        return std::nullopt;
+    }
+
+    NetworkEventHandlerResult HandleNetworkMessage(const NetworkMessage& network_message) override
+    {
+        auto parsed = GetNetworkMessageOrError(network_message);
+        if (!parsed.has_value()) {
+            // Before using this method, the network_message should be validated. Here we just
+            // assume the network_message is correct
+            return NetworkEventHandlerResult::Failure;
+        }
+
+        return std::apply(
+          [this](NetworkEvent ignore, NetworkMessageArgs... network_message_args) {
+              return HandleNetworkMessageImpl(network_message_args...);
+          },
+          *parsed);
+    }
+
+protected:
+    std::expected<std::tuple<NetworkEvent, NetworkMessageArgs...>, ParseError>
+    GetNetworkMessageOrError(const NetworkMessage& network_message) const
+    {
+        return network_message.Parse<NetworkEvent, NetworkMessageArgs...>();
+    }
+
+    virtual NetworkEvent GetTargetNetworkEvent() const = 0;
+    virtual NetworkEventHandlerResult HandleNetworkMessageImpl(NetworkMessageArgs...) = 0;
+};
+
 class NetworkEventDispatcher
 {
 
 public:
     using TDispatchResult =
-      std::pair<NetworkEventDispatchResult, std::variant<ParseError, NetworkEventObserverResult>>;
+      std::pair<NetworkEventDispatchResult,
+                std::variant<ParseError, NetworkEventObserverResult, NetworkEventHandlerResult>>;
 
-    NetworkEventDispatcher(std::shared_ptr<INetworkEventObserver> network_event_observer);
+    NetworkEventDispatcher(
+      std::shared_ptr<INetworkEventObserver> network_event_observer,
+      const std::vector<std::shared_ptr<INetworkEventHandler>>& network_event_handlers);
 
     TDispatchResult ProcessNetworkMessage(const ConnectionMetadata& connection_metadata,
                                           const NetworkMessage& network_message);
@@ -120,6 +190,7 @@ private:
     static TDispatchResult HandleObserverResult(NetworkEventObserverResult observer_result);
 
     std::shared_ptr<INetworkEventObserver> network_event_observer_;
+    std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers_;
 };
 } // namespace Soldat
 

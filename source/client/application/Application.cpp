@@ -95,8 +95,9 @@ void Init()
         spdlog::info("Connecting to {}:{}", server_ip, server_port);
         client_network_event_observer =
           std::make_shared<ClientNetworkEventObserver>(world, client_state);
-        client_network_event_dispatcher =
-          std::make_shared<NetworkEventDispatcher>(client_network_event_observer);
+        std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers;
+        client_network_event_dispatcher = std::make_shared<NetworkEventDispatcher>(
+          client_network_event_observer, network_event_handlers);
 
         SteamDatagramErrMsg err_msg;
         if (!GameNetworkingSockets_Init(nullptr, err_msg)) {

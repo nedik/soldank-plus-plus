@@ -115,6 +115,44 @@ private:
     std::string last_chat_message_;
 };
 
+class NetworkEventHandlerForAssignPlayerIdExample : public NetworkEventHandlerBase<unsigned int>
+{
+public:
+    unsigned int GetLastAssignedPlayerId() const { return last_assigned_player_id_; }
+    void SetResult(NetworkEventHandlerResult result) { result_ = result; }
+
+private:
+    NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::AssignPlayerId; }
+
+    NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int assigned_player_id) override
+    {
+        last_assigned_player_id_ = assigned_player_id;
+        return result_;
+    }
+
+    NetworkEventHandlerResult result_{ NetworkEventHandlerResult::Success };
+    unsigned int last_assigned_player_id_{};
+};
+
+class NetworkEventHandlerForChatMessageExample : public NetworkEventHandlerBase<std::string>
+{
+public:
+    std::string GetLastChatMessage() const { return last_chat_message_; }
+    void SetResult(NetworkEventHandlerResult result) { result_ = result; }
+
+private:
+    NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::ChatMessage; }
+
+    NetworkEventHandlerResult HandleNetworkMessageImpl(std::string chat_message) override
+    {
+        last_chat_message_ = chat_message;
+        return result_;
+    }
+
+    NetworkEventHandlerResult result_{ NetworkEventHandlerResult::Success };
+    std::string last_chat_message_;
+};
+
 class NetworkEventDispatcherTests : public ::testing::Test
 {
 protected:
@@ -124,7 +162,19 @@ protected:
     {
         observer_.SetResult(NetworkEventObserverResult::Success);
         observer_ptr_ = std::shared_ptr<NetworkEventObserverExample>(&observer_, [](auto*) {});
-        network_event_dispatcher_ = std::make_shared<NetworkEventDispatcher>(observer_ptr_);
+        assign_player_id_network_event_handler_.SetResult(NetworkEventHandlerResult::Success);
+        chat_message_network_event_handler_.SetResult(NetworkEventHandlerResult::Success);
+        auto assign_player_id_network_event_handler_ptr =
+          std::shared_ptr<NetworkEventHandlerForAssignPlayerIdExample>(
+            &assign_player_id_network_event_handler_, [](auto*) {});
+        auto chat_message_network_event_handler_ptr =
+          std::shared_ptr<NetworkEventHandlerForChatMessageExample>(
+            &chat_message_network_event_handler_, [](auto*) {});
+        std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{
+            assign_player_id_network_event_handler_ptr, chat_message_network_event_handler_ptr
+        };
+        network_event_dispatcher_ =
+          std::make_shared<NetworkEventDispatcher>(observer_ptr_, network_event_handlers);
     }
 
     void TearDown() override
@@ -142,11 +192,22 @@ protected:
     }
 
     NetworkEventObserverExample& GetObserver() { return observer_; }
+    NetworkEventHandlerForAssignPlayerIdExample& GetAssignPlayerIdHandler()
+    {
+        return assign_player_id_network_event_handler_;
+    }
+
+    NetworkEventHandlerForChatMessageExample& GetChatMessageHandler()
+    {
+        return chat_message_network_event_handler_;
+    }
 
 private:
     NetworkEventObserverExample observer_;
     std::shared_ptr<INetworkEventObserver> observer_ptr_;
     std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
+    NetworkEventHandlerForAssignPlayerIdExample assign_player_id_network_event_handler_;
+    NetworkEventHandlerForChatMessageExample chat_message_network_event_handler_;
 };
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseError)
@@ -163,7 +224,7 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherProcessAssignPlaye
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5U);
     auto result = ProcessNetworkMessage(network_message);
     ASSERT_EQ(result.first, NetworkEventDispatchResult::Success);
-    ASSERT_EQ(GetObserver().GetLastAssignedPlayerId(), 5U);
+    ASSERT_EQ(GetAssignPlayerIdHandler().GetLastAssignedPlayerId(), 5U);
 }
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInAssignPlayerIdEvent)
@@ -177,12 +238,12 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInAssign
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherAssignPlayerIdEventFailure)
 {
-    GetObserver().SetResult(NetworkEventObserverResult::Failure);
+    GetAssignPlayerIdHandler().SetResult(NetworkEventHandlerResult::Failure);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, 5U);
     auto result = ProcessNetworkMessage(network_message);
-    ASSERT_EQ(result.first, NetworkEventDispatchResult::ObserverFailure);
-    ASSERT_EQ(std::get<NetworkEventObserverResult>(result.second),
-              NetworkEventObserverResult::Failure);
+    ASSERT_EQ(result.first, NetworkEventDispatchResult::HandlerFailure);
+    ASSERT_EQ(std::get<NetworkEventHandlerResult>(result.second),
+              NetworkEventHandlerResult::Failure);
 }
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherProcessChatMessageEvent)
@@ -190,7 +251,7 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherProcessChatMessage
     NetworkMessage network_message(NetworkEvent::ChatMessage, "Test Message");
     auto result = ProcessNetworkMessage(network_message);
     ASSERT_EQ(result.first, NetworkEventDispatchResult::Success);
-    ASSERT_EQ(GetObserver().GetLastChatMessage(), "Test Message");
+    ASSERT_EQ(GetChatMessageHandler().GetLastChatMessage(), "Test Message");
 }
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInChatMessageEvent)
@@ -204,12 +265,12 @@ TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInChatMe
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherProcessChatMessageEventFailure)
 {
-    GetObserver().SetResult(NetworkEventObserverResult::Failure);
+    GetChatMessageHandler().SetResult(NetworkEventHandlerResult::Failure);
     NetworkMessage network_message(NetworkEvent::ChatMessage, "Test Message");
     auto result = ProcessNetworkMessage(network_message);
-    ASSERT_EQ(result.first, NetworkEventDispatchResult::ObserverFailure);
-    ASSERT_EQ(std::get<NetworkEventObserverResult>(result.second),
-              NetworkEventObserverResult::Failure);
+    ASSERT_EQ(result.first, NetworkEventDispatchResult::HandlerFailure);
+    ASSERT_EQ(std::get<NetworkEventHandlerResult>(result.second),
+              NetworkEventHandlerResult::Failure);
 }
 
 TEST_F(NetworkEventDispatcherTests, TestNetworkEventDispatcherParseErrorInvalidNetworkEvent)

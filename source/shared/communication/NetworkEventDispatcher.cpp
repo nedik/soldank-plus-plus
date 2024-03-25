@@ -12,8 +12,10 @@
 namespace Soldat
 {
 NetworkEventDispatcher::NetworkEventDispatcher(
-  std::shared_ptr<INetworkEventObserver> network_event_observer)
+  std::shared_ptr<INetworkEventObserver> network_event_observer,
+  const std::vector<std::shared_ptr<INetworkEventHandler>>& network_event_handlers)
     : network_event_observer_(std::move(network_event_observer))
+    , network_event_handlers_(network_event_handlers)
 {
 }
 
@@ -29,6 +31,29 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
     auto network_event = *network_event_or_error;
 
     NetworkEventObserverResult observer_result = NetworkEventObserverResult::Failure;
+
+    for (const auto& network_event_handler : network_event_handlers_) {
+        if (!network_event_handler->ShouldHandleNetworkEvent(network_event)) {
+            continue;
+        }
+
+        auto parse_error_or_nothing =
+          network_event_handler->ValidateNetworkMessage(network_message);
+        if (parse_error_or_nothing.has_value()) {
+            return { NetworkEventDispatchResult::ParseError, parse_error_or_nothing.value() };
+        }
+
+        auto handler_result = network_event_handler->HandleNetworkMessage(network_message);
+        switch (handler_result) {
+            case NetworkEventHandlerResult::Success:
+                return { NetworkEventDispatchResult::Success, handler_result };
+            case NetworkEventHandlerResult::Failure:
+                return { NetworkEventDispatchResult::HandlerFailure, handler_result };
+        }
+    }
+
+    // TODO: uncomment when handlers fully replaced observers
+    // return { NetworkEventDispatchResult::ParseError, ParseError::InvalidNetworkEvent };
 
     switch (network_event) {
         case NetworkEvent::AssignPlayerId: {
