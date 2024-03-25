@@ -7,6 +7,13 @@
 
 #include "communication/NetworkPackets.hpp"
 #include "networking/NetworkingClient.hpp"
+#include "networking/event_handlers/AssignPlayerIdNetworkEventHandler.hpp"
+#include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
+#include "networking/event_handlers/PlayerLeaveNetworkEventHandler.hpp"
+#include "networking/event_handlers/ProjectileSpawnNetworkEventHandler.hpp"
+#include "networking/event_handlers/SoldierInfoNetworkEventHandler.hpp"
+#include "networking/event_handlers/SoldierStateNetworkEventHandler.hpp"
+#include "networking/event_handlers/SpawnSoldierNetworkEventHandler.hpp"
 
 #include "core/World.hpp"
 
@@ -95,7 +102,15 @@ void Init()
         spdlog::info("Connecting to {}:{}", server_ip, server_port);
         client_network_event_observer =
           std::make_shared<ClientNetworkEventObserver>(world, client_state);
-        std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers;
+        std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{
+            std::make_shared<AssignPlayerIdNetworkEventHandler>(world, client_state),
+            std::make_shared<PingCheckNetworkEventHandler>(client_state),
+            std::make_shared<PlayerLeaveNetworkEventHandler>(world),
+            std::make_shared<ProjectileSpawnNetworkEventHandler>(world),
+            std::make_shared<SoldierInfoNetworkEventHandler>(world, client_state),
+            std::make_shared<SoldierStateNetworkEventHandler>(world, client_state),
+            std::make_shared<SpawnSoldierNetworkEventHandler>(world)
+        };
         client_network_event_dispatcher = std::make_shared<NetworkEventDispatcher>(
           client_network_event_observer, network_event_handlers);
 

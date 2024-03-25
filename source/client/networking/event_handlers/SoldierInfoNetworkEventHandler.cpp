@@ -1,0 +1,31 @@
+#include "networking/event_handlers/SoldierInfoNetworkEventHandler.hpp"
+
+#include "communication/NetworkPackets.hpp"
+#include "spdlog/spdlog.h"
+
+namespace Soldat
+{
+SoldierInfoNetworkEventHandler::SoldierInfoNetworkEventHandler(
+  const std::shared_ptr<IWorld>& world,
+  const std::shared_ptr<ClientState>& client_state)
+    : world_(world)
+    , client_state_(client_state)
+{
+}
+
+NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageImpl(
+  unsigned int soldier_id)
+{
+    bool is_soldier_id_me = false;
+    if (client_state_->client_soldier_id.has_value()) {
+        is_soldier_id_me = *client_state_->client_soldier_id == soldier_id;
+    }
+
+    if (!is_soldier_id_me) {
+        world_->CreateSoldier(soldier_id);
+        world_->SpawnSoldier(soldier_id);
+    }
+
+    return NetworkEventHandlerResult::Success;
+}
+} // namespace Soldat

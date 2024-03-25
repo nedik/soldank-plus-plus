@@ -1,0 +1,36 @@
+#include "networking/event_handlers/ProjectileSpawnNetworkEventHandler.hpp"
+
+#include "communication/NetworkPackets.hpp"
+#include "spdlog/spdlog.h"
+
+namespace Soldat
+{
+ProjectileSpawnNetworkEventHandler::ProjectileSpawnNetworkEventHandler(
+  const std::shared_ptr<IWorld>& world)
+    : world_(world)
+{
+}
+
+NetworkEventHandlerResult ProjectileSpawnNetworkEventHandler::HandleNetworkMessageImpl(
+  ProjectileSpawnPacket projectile_spawn_packet)
+{
+    // unsigned int projectile_id = projectile_spawn_packet.projectile_id;
+    BulletType style = projectile_spawn_packet.style;
+    WeaponType weapon = projectile_spawn_packet.weapon;
+    float position_x = projectile_spawn_packet.position_x;
+    float position_y = projectile_spawn_packet.position_y;
+    float velocity_x = projectile_spawn_packet.velocity_x;
+    float velocity_y = projectile_spawn_packet.velocity_y;
+    std::int16_t timeout = projectile_spawn_packet.timeout;
+    float hit_multiply = projectile_spawn_packet.hit_multiply;
+    TeamType team = projectile_spawn_packet.team;
+
+    const auto& state = world_->GetState();
+    BulletParams bullet_params{
+        style,        weapon, { position_x, position_y }, { velocity_x, velocity_y }, timeout,
+        hit_multiply, team
+    };
+    state->bullets.emplace_back(bullet_params);
+    return NetworkEventHandlerResult::Success;
+}
+} // namespace Soldat
