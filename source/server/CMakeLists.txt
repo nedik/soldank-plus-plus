@@ -16,9 +16,7 @@ endif()
 target_include_directories(server_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/server)
 
 target_link_libraries(server_lib PUBLIC shared_lib)
-target_link_libraries(server_lib
-    PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
-)
+target_link_libraries(server_lib PRIVATE GameNetworkingSockets::static)
 target_link_libraries(server_lib PRIVATE spdlog)
 
 add_executable(server main.cpp)
@@ -33,8 +31,6 @@ else()
 endif()
 
 target_link_libraries(server PRIVATE server_lib)
-target_link_libraries(server
-    PRIVATE GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets
-)
+target_link_libraries(server PRIVATE GameNetworkingSockets::static)
 target_link_libraries(server PRIVATE spdlog)
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/source/server)
