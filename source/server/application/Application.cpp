@@ -3,6 +3,8 @@
 #include "communication/NetworkEventDispatcher.hpp"
 #include "communication/NetworkPackets.hpp"
 #include "networking/events/ServerNetworkEventObserver.hpp"
+#include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
+#include "networking/event_handlers/SoldierInputNetworkEventHandler.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -48,11 +50,15 @@ Application::Application()
     }
     server_network_event_observer_ =
       std::make_shared<ServerNetworkEventObserver>(world_, server_state_);
-    std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers;
+    std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{
+        std::make_shared<SoldierInputNetworkEventHandler>(world_, server_state_)
+    };
     server_network_event_dispatcher_ = std::make_shared<NetworkEventDispatcher>(
       server_network_event_observer_, network_event_handlers);
     game_server_ =
       std::make_shared<GameServer>(server_network_event_dispatcher_, world_, server_state_);
+    server_network_event_dispatcher_->AddNetworkEventHandler(
+      std::make_shared<PingCheckNetworkEventHandler>(game_server_));
 }
 
 Application::~Application()

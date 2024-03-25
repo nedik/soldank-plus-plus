@@ -190,6 +190,8 @@ public:
     TDispatchResult ProcessNetworkMessage(const ConnectionMetadata& connection_metadata,
                                           const NetworkMessage& network_message);
 
+    void AddNetworkEventHandler(const std::shared_ptr<INetworkEventHandler>& network_event_handler);
+
 private:
     static TDispatchResult HandleObserverResult(NetworkEventObserverResult observer_result);
 

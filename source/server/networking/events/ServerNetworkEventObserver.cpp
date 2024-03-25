@@ -18,16 +18,14 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnAssignPlayerId(
   const ConnectionMetadata& connection_metadata,
   unsigned int assigned_player_id)
 {
-    // TODO: this is not used
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnChatMessage(
   const ConnectionMetadata& connection_metadata,
   const std::string& chat_message)
 {
-    spdlog::info("OnChatMessage: {}", chat_message);
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
@@ -35,7 +33,7 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSpawnSoldier(
   unsigned int soldier_id,
   glm::vec2 spawn_position)
 {
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInput(
@@ -46,30 +44,7 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInput(
   glm::vec2 mouse_position,
   const Control& player_control)
 {
-    // TODO: validate arguments
-    // spdlog::info("{} Soldier pos from client: {} {}",
-    //              input_sequence_id - 1,
-    //              soldier_position.x,
-    //              soldier_position.y);
-    if (input_sequence_id <= server_state_->last_processed_input_id.at(soldier_id)) {
-        spdlog::info("*************** LATE PACKET ***************************");
-        return NetworkEventObserverResult::Success;
-    }
-
-    server_state_->last_processed_input_id.at(soldier_id) = input_sequence_id;
-    world_->UpdateRightButtonState(soldier_id, player_control.right);
-    world_->UpdateLeftButtonState(soldier_id, player_control.left);
-    world_->UpdateJumpButtonState(soldier_id, player_control.up);
-    world_->UpdateCrouchButtonState(soldier_id, player_control.down);
-    world_->UpdateProneButtonState(soldier_id, player_control.prone);
-    world_->UpdateChangeButtonState(soldier_id, player_control.change);
-    world_->UpdateThrowGrenadeButtonState(soldier_id, player_control.throw_grenade);
-    world_->UpdateDropButtonState(soldier_id, player_control.drop);
-
-    world_->UpdateMousePosition(soldier_id, { mouse_position.x, mouse_position.y });
-    world_->UpdateFireButtonState(soldier_id, player_control.fire);
-    world_->UpdateJetsButtonState(soldier_id, player_control.jets);
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierState(
@@ -97,28 +72,27 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierState(
   unsigned int active_weapon,
   unsigned int last_processed_input_id)
 {
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnSoldierInfo(
   const ConnectionMetadata& connection_metadata,
   unsigned int soldier_id)
 {
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnPlayerLeave(
   const ConnectionMetadata& connection_metadata,
   unsigned int soldier_id)
 {
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnPingCheck(
   const ConnectionMetadata& connection_metadata)
 {
-    connection_metadata.send_message_to_connection({ NetworkEvent::PingCheck });
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 
 NetworkEventObserverResult ServerNetworkEventObserver::OnProjectileSpawn(
@@ -134,6 +108,6 @@ NetworkEventObserverResult ServerNetworkEventObserver::OnProjectileSpawn(
   float hit_multiply,
   TeamType team)
 {
-    return NetworkEventObserverResult::Success;
+    return NetworkEventObserverResult::Failure;
 }
 } // namespace Soldat

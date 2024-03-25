@@ -275,6 +275,12 @@ NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::ProcessNetworkMe
     return HandleObserverResult(observer_result);
 }
 
+void NetworkEventDispatcher::AddNetworkEventHandler(
+  const std::shared_ptr<INetworkEventHandler>& network_event_handler)
+{
+    network_event_handlers_.push_back(network_event_handler);
+}
+
 NetworkEventDispatcher::TDispatchResult NetworkEventDispatcher::HandleObserverResult(
   NetworkEventObserverResult observer_result)
 {
