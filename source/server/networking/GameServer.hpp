@@ -18,13 +18,15 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include <cstdint>
 
 namespace Soldat
 {
 class GameServer : public IGameServer
 {
 public:
-    GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
+    GameServer(std::uint16_t port,
+               const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
                const std::shared_ptr<IWorld>& world,
                const std::shared_ptr<ServerState>& server_state);
     ~GameServer() override;

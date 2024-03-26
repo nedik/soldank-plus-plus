@@ -13,14 +13,15 @@
 
 namespace Soldat
 {
-GameServer::GameServer(const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
+GameServer::GameServer(std::uint16_t port,
+                       const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
                        const std::shared_ptr<IWorld>& world,
                        const std::shared_ptr<ServerState>& server_state)
     : world_(world)
     , server_state_(server_state)
 {
-
-    NetworkingInterface::Init();
+    // TODO: we shouldn't init NetworkingInterface here because it's global
+    NetworkingInterface::Init(port);
     NetworkingInterface::RegisterObserver(
       [this](SteamNetConnectionStatusChangedCallback_t* p_info) {
           OnSteamNetConnectionStatusChanged(p_info);

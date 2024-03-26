@@ -9,6 +9,7 @@
 
 #include <spdlog/common.h>
 #include <steam/steamnetworkingsockets.h>
+#include <SimpleIni.h>
 
 #include <span>
 #include <cstdlib>
@@ -33,6 +34,21 @@ Application::Application()
 {
     spdlog::set_level(spdlog::level::debug);
 
+    CSimpleIniA ini_config;
+    SI_Error rc = ini_config.LoadFile("soldat.ini");
+    std::string server_ip;
+    std::uint16_t server_port = 0;
+    if (rc < 0) {
+        spdlog::critical("Error: INI File could not be loaded: soldat.ini");
+        exit(1);
+    } else {
+        server_port = ini_config.GetLongValue("NETWORK", "Port");
+        if (server_port == 0) {
+            spdlog::critical("Error: Port can't be 0");
+            exit(1);
+        }
+    }
+
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
         spdlog::error("GameNetworkingSockets_Init failed. {}", std::span(err_msg).data());
@@ -52,8 +68,8 @@ Application::Application()
     };
     server_network_event_dispatcher_ =
       std::make_shared<NetworkEventDispatcher>(network_event_handlers);
-    game_server_ =
-      std::make_shared<GameServer>(server_network_event_dispatcher_, world_, server_state_);
+    game_server_ = std::make_shared<GameServer>(
+      server_port, server_network_event_dispatcher_, world_, server_state_);
     server_network_event_dispatcher_->AddNetworkEventHandler(
       std::make_shared<PingCheckNetworkEventHandler>(game_server_));
 }

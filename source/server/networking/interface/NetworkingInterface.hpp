@@ -7,6 +7,7 @@
 #include <memory>
 #include <concepts>
 #include <type_traits>
+#include <cstdint>
 
 struct SteamNetConnectionStatusChangedCallback_t;
 class ISteamNetworkingSockets;
@@ -18,7 +19,7 @@ namespace Hidden
 ISteamNetworkingSockets* GetInterface();
 }
 
-void Init();
+void Init(std::uint16_t port);
 void PollConnectionStateChanges();
 void RegisterObserver(
   const std::function<void(SteamNetConnectionStatusChangedCallback_t*)>& observer);

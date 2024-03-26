@@ -28,19 +28,18 @@ ISteamNetworkingSockets* GetInterface()
 }
 } // namespace Hidden
 
-void Init()
+void Init(std::uint16_t port)
 {
     interface = SteamNetworkingSockets();
     SteamNetworkingIPAddr server_local_addr{};
     server_local_addr.Clear();
-    // TODO: port is a magic number
-    server_local_addr.m_port = 23073;
+    server_local_addr.m_port = port;
     SteamNetworkingConfigValue_t opt{};
     opt.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged,
                (void*)SteamNetConnectionStatusChangedCallback);
     listen_socket_handle = interface->CreateListenSocketIP(server_local_addr, 1, &opt);
     if (listen_socket_handle == k_HSteamListenSocket_Invalid) {
-        spdlog::error("Failed to listen on port {}", 23073);
+        spdlog::error("Failed to listen on port {}", port);
     }
 }
 
