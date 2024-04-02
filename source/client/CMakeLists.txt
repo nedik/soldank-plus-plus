@@ -1,4 +1,4 @@
-file(GLOB_RECURSE LIB_SOURCES *.cpp)
+file(GLOB_RECURSE LIB_SOURCES *.cpp ${CMAKE_SOURCE_DIR}/build/bindings/imgui/*)
 file(GLOB_RECURSE HEADER_SOURCES *.hpp)
 list(REMOVE_ITEM LIB_SOURCES main.cpp)
 
@@ -12,10 +12,11 @@ else()
   target_compile_options(client_lib PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-target_include_directories(client_lib PUBLIC ${stb_SOURCE_DIR})
 target_include_directories(client_lib PUBLIC ${simpleini_SOURCE_DIR})
 target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/client)
+target_include_directories(client_lib PUBLIC ${CMAKE_SOURCE_DIR}/build/bindings)
 
+target_link_libraries(client_lib PRIVATE stb::stb)
 target_link_libraries(client_lib PUBLIC glfw)
 target_link_libraries(client_lib PUBLIC glad)
 target_link_libraries(client_lib PUBLIC glm::glm)
@@ -26,10 +27,10 @@ target_link_libraries(client_lib PRIVATE ZLIB::ZLIB)
 target_link_libraries(client_lib PRIVATE BZip2::BZip2)
 
 target_link_libraries(client_lib PUBLIC Freetype::Freetype)
-target_link_libraries(client_lib PRIVATE spdlog)
-target_link_libraries(client_lib PRIVATE imgui)
+target_link_libraries(client_lib PRIVATE spdlog::spdlog)
+target_link_libraries(client_lib PRIVATE imgui::imgui)
 target_link_libraries(client_lib PUBLIC shared_lib)
-target_link_libraries(client_lib PRIVATE GameNetworkingSockets::static)
+target_link_libraries(client_lib PRIVATE GameNetworkingSockets::GameNetworkingSockets)
 
 # TODO: uncomment this to stop the app from opening cmd on windows
 # IF (WIN32)
@@ -48,6 +49,7 @@ else()
 endif()
 
 target_link_libraries(client PRIVATE client_lib)
-target_link_libraries(client PRIVATE GameNetworkingSockets::static)
-target_link_libraries(client PRIVATE spdlog)
+target_link_libraries(client PRIVATE GameNetworkingSockets::GameNetworkingSockets)
+target_link_libraries(client PRIVATE spdlog::spdlog)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)
+target_include_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/build/bindings)

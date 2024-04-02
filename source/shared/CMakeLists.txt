@@ -16,4 +16,4 @@ target_include_directories(shared_lib PUBLIC ${simpleini_SOURCE_DIR})
 target_include_directories(shared_lib PUBLIC ${CMAKE_SOURCE_DIR}/source/shared)
 
 target_link_libraries(shared_lib PUBLIC glm::glm)
-target_link_libraries(shared_lib PRIVATE spdlog)
+target_link_libraries(shared_lib PRIVATE spdlog::spdlog)

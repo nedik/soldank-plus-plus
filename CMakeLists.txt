@@ -34,6 +34,11 @@ endif()
 if (DEFINED SHOULD_BUILD_CLIENT)
     CPMAddPackage("gh:glfw/glfw#3.3.8")
     CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
+    if (stb_ADDED)
+        add_library(stb source/client/stb.cpp)
+        target_include_directories(stb PUBLIC ${stb_SOURCE_DIR})
+        add_library(stb::stb ALIAS stb)
+    endif()
     CPMAddPackage(
         NAME freetype
         GITHUB_REPOSITORY freetype/freetype
@@ -59,6 +64,7 @@ if (DEFINED SHOULD_BUILD_CLIENT)
         add_library(imgui STATIC ${imgui_sources})
         target_link_libraries(imgui PRIVATE glfw)
         target_include_directories(imgui SYSTEM PUBLIC $<BUILD_INTERFACE:${imgui_SOURCE_DIR}>)
+        add_library(imgui::imgui ALIAS imgui)
     endif()
 endif()
 
