@@ -76,6 +76,16 @@ CPMAddPackage(
     OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt"
 )
 
+CPMAddPackage(
+    NAME dascript
+    OPTIONS 
+        "DAS_TOOLS_DISABLED ON"
+        "DAS_TESTS_DISABLED ON"
+        "DAS_PROFILE_DISABLED ON"
+        "DAS_TUTORIAL_DISABLED ON"
+    URL https://github.com/GaijinEntertainment/daScript/archive/9ae1c4cd73d7da06084aedb5741bb1da68b63b88.tar.gz
+)
+
 enable_testing()
 
 add_subdirectory(extern)
