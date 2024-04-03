@@ -37,7 +37,7 @@
 #include <thread>
 #include <span>
 
-namespace Soldat::Application
+namespace Soldank::Application
 {
 std::unique_ptr<Window> window;
 std::shared_ptr<IWorld> world;
@@ -295,4 +295,4 @@ void Free()
         GameNetworkingSockets_Kill();
     }
 }
-} // namespace Soldat::Application
+} // namespace Soldank::Application

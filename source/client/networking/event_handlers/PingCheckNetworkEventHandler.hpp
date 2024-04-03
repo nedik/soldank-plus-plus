@@ -5,7 +5,7 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class PingCheckNetworkEventHandler : public NetworkEventHandlerBase<>
 {
@@ -19,6 +19,6 @@ private:
 
     std::shared_ptr<ClientState> client_state_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

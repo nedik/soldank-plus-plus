@@ -1,9 +1,10 @@
 #ifndef __WEAPON_TYPE_HPP__
 #define __WEAPON_TYPE_HPP__
 
-namespace Soldat
+namespace Soldank
 {
-enum class WeaponType {
+enum class WeaponType
+{
     DesertEagles,
     MP5,
     Ak74,
@@ -28,6 +29,6 @@ enum class WeaponType {
     Cluster,
     ThrownKnife,
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

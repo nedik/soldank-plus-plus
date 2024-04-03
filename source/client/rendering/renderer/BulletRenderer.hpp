@@ -12,7 +12,7 @@
 #include <map>
 #include <unordered_map>
 
-namespace Soldat
+namespace Soldank
 {
 class BulletRenderer
 {
@@ -45,6 +45,6 @@ private:
 
     std::unordered_map<Sprites::WeaponSpriteType, BulletSpriteData> weapon_sprite_type_to_gl_data_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

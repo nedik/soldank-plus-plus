@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <cmath>
 
-namespace Soldat
+namespace Soldank
 {
 SoldierRenderer::SoldierRenderer(const Sprites::SpriteManager& sprite_manager)
     : shader_(ShaderSources::DYNAMIC_COLOR_VERTEX_SHADER_SOURCE,
@@ -552,4 +552,4 @@ glm::vec4 SoldierRenderer::GetColorForSoldierPart(const Soldier& soldier,
 
     return { color.x / 255.0F, color.y / 255.0F, color.z / 255.0F, alpha / 255.0F };
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -20,7 +20,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 class GameServer : public IGameServer
 {
@@ -51,6 +51,6 @@ private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerState> server_state_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

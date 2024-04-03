@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class PingCheckNetworkEventHandler : public NetworkEventHandlerBase<>
 {
@@ -21,6 +21,6 @@ private:
 
     std::shared_ptr<IGameServer> game_server_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace Soldat
+namespace Soldank
 {
 class Particle
 {
@@ -46,7 +46,8 @@ private:
     float v_damping_;
 };
 
-struct Constraint {
+struct Constraint
+{
     bool active;
     glm::uvec2 particle_num;
     float rest_length;
@@ -108,6 +109,6 @@ private:
     std::vector<Particle> particles_;
     std::vector<Constraint> constraints_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

@@ -3,7 +3,7 @@
 #include "communication/NetworkPackets.hpp"
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 SoldierInfoNetworkEventHandler::SoldierInfoNetworkEventHandler(
   const std::shared_ptr<IWorld>& world,
@@ -29,4 +29,4 @@ NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageIm
 
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

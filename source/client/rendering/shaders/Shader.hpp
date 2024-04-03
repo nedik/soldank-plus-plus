@@ -11,7 +11,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Soldat
+namespace Soldank
 {
 class Shader
 {
@@ -39,6 +39,6 @@ public:
 private:
     unsigned int id_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

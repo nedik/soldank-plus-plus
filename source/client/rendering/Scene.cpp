@@ -13,7 +13,7 @@
 #include <string>
 #include <algorithm>
 
-namespace Soldat
+namespace Soldank
 {
 Scene::Scene(const std::shared_ptr<State>& game_state)
     : background_renderer_(game_state->map.GetBackgroundTopColor(),
@@ -170,4 +170,4 @@ void Scene::RenderSoldiers(const std::shared_ptr<State>& game_state,
         }
     }
 }
-} // namespace Soldat
+} // namespace Soldank

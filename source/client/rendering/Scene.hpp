@@ -19,7 +19,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class Scene
 {
@@ -48,6 +48,6 @@ private:
     RectangleRenderer rectangle_renderer_;
     BulletRenderer bullet_renderer_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

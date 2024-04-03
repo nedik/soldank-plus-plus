@@ -6,7 +6,7 @@
 
 #include <optional>
 
-namespace Soldat
+namespace Soldank
 {
 class BulletPhysics
 {
@@ -18,6 +18,6 @@ private:
                                                                         const Map& map);
     bool CollidesWithPoly(const PMSPolygon& poly, TeamType team);
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

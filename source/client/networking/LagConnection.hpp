@@ -12,7 +12,7 @@
 #include <list>
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 class LagConnection : public IConnection
 {
@@ -47,6 +47,6 @@ private:
       messages_to_send_;
     std::list<MessageToReceive> messages_to_receive_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

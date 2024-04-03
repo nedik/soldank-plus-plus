@@ -9,7 +9,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 NetworkEventDispatcher::NetworkEventDispatcher(
   const std::vector<std::shared_ptr<INetworkEventHandler>>& network_event_handlers)
@@ -57,4 +57,4 @@ void NetworkEventDispatcher::AddNetworkEventHandler(
 {
     network_event_handlers_.push_back(network_event_handler);
 }
-} // namespace Soldat
+} // namespace Soldank

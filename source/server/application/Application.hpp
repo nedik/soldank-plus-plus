@@ -11,7 +11,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class Application
 {
@@ -37,6 +37,6 @@ private:
     std::shared_ptr<NetworkEventDispatcher> server_network_event_dispatcher_;
     std::shared_ptr<ServerState> server_state_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

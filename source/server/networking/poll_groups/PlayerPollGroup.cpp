@@ -10,7 +10,7 @@
 #include <cassert>
 #include <span>
 
-namespace Soldat
+namespace Soldank
 {
 PlayerPollGroup::PlayerPollGroup(ISteamNetworkingSockets* interface)
     : PollGroupBase(interface)
@@ -92,4 +92,4 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
 
     SendReliableNetworkMessageToAll(network_message, connection.connection_handle);
 }
-} // namespace Soldat
+} // namespace Soldank

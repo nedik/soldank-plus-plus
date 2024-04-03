@@ -8,7 +8,7 @@
 #include <array>
 #include <string>
 
-namespace Soldat
+namespace Soldank
 {
 struct DOSTime
 {
@@ -153,6 +153,6 @@ struct PMSWayPoint
     int connections_count;
     std::array<int, 20> connections;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

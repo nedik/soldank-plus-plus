@@ -9,7 +9,7 @@
 #include <vector>
 #include <span>
 
-namespace Soldat
+namespace Soldank
 {
 class BackgroundRenderer
 {
@@ -33,6 +33,6 @@ private:
 
     unsigned int vbo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

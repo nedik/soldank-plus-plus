@@ -9,7 +9,7 @@
 #include <cassert>
 #include <span>
 
-namespace Soldat
+namespace Soldank
 {
 LagConnection::LagConnection(ISteamNetworkingSockets* interface,
                              HSteamNetConnection connection_handle)
@@ -99,4 +99,4 @@ void LagConnection::SetLag(unsigned int milliseconds)
 {
     lag_to_add_ = std::chrono::duration<unsigned int, std::milli>(milliseconds);
 }
-} // namespace Soldat
+} // namespace Soldank

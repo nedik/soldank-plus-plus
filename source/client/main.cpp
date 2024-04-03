@@ -13,9 +13,9 @@
 int main(int /*argc*/, char* /*argv*/[])
 // #endif
 {
-    Soldat::Application::Init();
-    Soldat::Application::Run();
-    Soldat::Application::Free();
+    Soldank::Application::Init();
+    Soldank::Application::Run();
+    Soldank::Application::Free();
 
     return 0;
 }

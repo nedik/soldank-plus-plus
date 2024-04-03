@@ -8,7 +8,7 @@
 #include <span>
 #include <utility>
 
-namespace Soldat
+namespace Soldank
 {
 NetworkingClient::NetworkingClient(const char* server_ip, std::uint16_t server_port)
 {
@@ -87,4 +87,4 @@ void NetworkingClient::SetLag(unsigned int lag_to_add_milliseconds)
     connection_->SetLag(lag_to_add_milliseconds);
 }
 
-} // namespace Soldat
+} // namespace Soldank

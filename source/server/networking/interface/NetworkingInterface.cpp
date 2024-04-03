@@ -4,7 +4,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Soldat::NetworkingInterface
+namespace Soldank::NetworkingInterface
 {
 namespace
 {
@@ -60,4 +60,4 @@ void Free()
     listen_socket_handle = k_HSteamListenSocket_Invalid;
     observers.clear();
 }
-} // namespace Soldat::NetworkingInterface
+} // namespace Soldank::NetworkingInterface

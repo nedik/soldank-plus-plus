@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace Soldat
+namespace Soldank
 {
 Weapon::Weapon(const WeaponParameters& weapon_parameters)
     : weapon_parameters_(weapon_parameters)
@@ -42,4 +42,4 @@ const WeaponParameters& Weapon::GetWeaponParameters() const
     return weapon_parameters_;
 }
 
-} // namespace Soldat
+} // namespace Soldank

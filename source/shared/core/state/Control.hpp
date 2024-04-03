@@ -1,9 +1,10 @@
 #ifndef __CONTROL_HPP__
 #define __CONTROL_HPP__
 
-namespace Soldat
+namespace Soldank
 {
-struct Control {
+struct Control
+{
     bool left;
     bool right;
     bool up;
@@ -27,6 +28,6 @@ struct Control {
     bool was_throwing_grenade;
     bool was_reloading_weapon;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

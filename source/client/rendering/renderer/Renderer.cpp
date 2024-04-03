@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace Soldat::Renderer
+namespace Soldank::Renderer
 {
 unsigned int CreateVBO(const std::vector<float>& vertices, GLenum usage)
 {
@@ -117,4 +117,4 @@ void DrawElements(GLenum mode,
         glDrawElements(mode, count, type, nullptr);
     }
 }
-} // namespace Soldat::Renderer
+} // namespace Soldank::Renderer

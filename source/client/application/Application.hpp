@@ -3,11 +3,11 @@
 
 #include "window/Window.hpp"
 
-namespace Soldat::Application
+namespace Soldank::Application
 {
 void Init();
 void Run();
 void Free();
-} // namespace Soldat::Application
+} // namespace Soldank::Application
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef __PMS_CONSTANTS_HPP__
 #define __PMS_CONSTANTS_HPP__
 
-namespace Soldat
+namespace Soldank
 {
 const int DESCRIPTION_MAX_LENGTH = 38;
 const int SCENERY_NAME_MAX_LENGTH = 50;
@@ -14,6 +14,6 @@ const unsigned int MAX_POLYGONS_COUNT = 5000;
 const unsigned int POLYGON_TYPES_COUNT = 24;
 
 const int SECTORS_COUNT = 51; // Each map is a 51x51 grid of sectors.
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

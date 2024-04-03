@@ -5,7 +5,7 @@
 
 struct GLFWwindow;
 
-namespace Soldat
+namespace Soldank
 {
 class Keyboard
 {
@@ -20,6 +20,6 @@ private:
     static std::array<bool, 348> keys_;
     static std::array<bool, 348> keys_changed_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

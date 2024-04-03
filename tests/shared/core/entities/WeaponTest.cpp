@@ -5,9 +5,9 @@
 
 TEST(WeaponTests, TestWeaponsLoadedCorrectly)
 {
-    Soldat::WeaponParameters weapon_parameters;
+    Soldank::WeaponParameters weapon_parameters;
     weapon_parameters.ammo = 50;
-    Soldat::Weapon weapon(weapon_parameters);
+    Soldank::Weapon weapon(weapon_parameters);
     ASSERT_EQ(weapon.GetAmmoCount(), 50);
 }
 

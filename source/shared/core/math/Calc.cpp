@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace Soldat::Calc
+namespace Soldank::Calc
 {
 float Distance(const glm::vec2& p1, const glm::vec2& p2)
 {
@@ -49,4 +49,4 @@ float Lerp(float a, float b, float t)
 {
     return std::lerp(a, b, t);
 }
-} // namespace Soldat::Calc
+} // namespace Soldank::Calc

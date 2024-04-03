@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace Soldat
+namespace Soldank
 {
 enum class CursorMode : uint8_t
 {
@@ -51,6 +51,6 @@ private:
     std::string title_;
     GLFWwindow* glfw_window_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

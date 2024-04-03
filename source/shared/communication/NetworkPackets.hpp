@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 #pragma pack(push, 1)
 struct SoldierInputPacket
@@ -80,6 +80,6 @@ struct ProjectileSpawnPacket
     TeamType team;
 };
 #pragma pack(pop)
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

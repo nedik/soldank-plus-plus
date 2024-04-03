@@ -5,7 +5,7 @@
 #include <cassert>
 #include <utility>
 
-namespace Soldat
+namespace Soldank
 {
 PollGroupBase::PollGroupBase(ISteamNetworkingSockets* interface)
     : IPollGroup(interface)
@@ -182,4 +182,4 @@ void PollGroupBase::SetClientNick(HSteamNetConnection h_conn, const std::string&
     // Set the connection name, too, which is useful for debugging
     GetInterface()->SetConnectionName(h_conn, nick.c_str());
 }
-} // namespace Soldat
+} // namespace Soldank

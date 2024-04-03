@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-using namespace Soldat;
+using namespace Soldank;
 
 class NetworkEventHandlerForAssignPlayerIdExample : public NetworkEventHandlerBase<unsigned int>
 {

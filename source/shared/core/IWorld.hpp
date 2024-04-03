@@ -8,7 +8,7 @@
 #include <functional>
 #include <optional>
 
-namespace Soldat
+namespace Soldank
 {
 class IWorld
 {
@@ -57,6 +57,6 @@ public:
     virtual void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) = 0;
     virtual void SetPreProjectileSpawnCallback(TPreProjectileSpawnCallback callback) = 0;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

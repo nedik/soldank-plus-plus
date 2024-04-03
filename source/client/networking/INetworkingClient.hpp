@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class INetworkingClient
 {
@@ -20,6 +20,6 @@ public:
     // TODO: implement it better
     virtual void SetLag(unsigned int lag_to_add_milliseconds) = 0;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

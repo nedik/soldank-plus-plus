@@ -6,7 +6,7 @@
 
 struct GLFWwindow;
 
-namespace Soldat
+namespace Soldank
 {
 class Mouse
 {
@@ -47,5 +47,5 @@ private:
 
     static std::vector<std::function<void(int, int)>> button_observers_;
 };
-} // namespace Soldat
+} // namespace Soldank
 #endif

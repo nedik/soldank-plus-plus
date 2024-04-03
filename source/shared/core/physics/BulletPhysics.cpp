@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <array>
 
-namespace Soldat
+namespace Soldank
 {
 void BulletPhysics::UpdateBullet(Bullet& bullet, const Map& map)
 {
@@ -110,4 +110,4 @@ bool BulletPhysics::CollidesWithPoly(const PMSPolygon& poly, TeamType team)
             return true;
     }
 }
-} // namespace Soldat
+} // namespace Soldank

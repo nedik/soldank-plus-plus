@@ -1,6 +1,6 @@
 #include "Getline.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 // Implementation copied from https://gist.github.com/josephwb/df09e3a71679461fc104
 std::istream& GetlineSafe(std::istream& is, std::string& t)
@@ -37,4 +37,4 @@ std::istream& GetlineSafe(std::istream& is, std::string& t)
         }
     }
 }
-} // namespace Soldat
+} // namespace Soldank

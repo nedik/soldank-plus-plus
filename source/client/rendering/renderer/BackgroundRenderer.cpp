@@ -5,7 +5,7 @@
 
 #include <filesystem>
 
-namespace Soldat
+namespace Soldank
 {
 BackgroundRenderer::BackgroundRenderer(PMSColor background_top_color,
                                        PMSColor background_bottom_color,
@@ -53,4 +53,4 @@ void BackgroundRenderer::Render(glm::mat4 transform)
     shader_.SetMatrix4("transform", transform);
     Renderer::DrawArrays(GL_TRIANGLES, 0, 6);
 }
-} // namespace Soldat
+} // namespace Soldank

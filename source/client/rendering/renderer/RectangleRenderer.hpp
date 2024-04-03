@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace Soldat
+namespace Soldank
 {
 class RectangleRenderer
 {
@@ -29,6 +29,6 @@ private:
 
     unsigned int vbo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

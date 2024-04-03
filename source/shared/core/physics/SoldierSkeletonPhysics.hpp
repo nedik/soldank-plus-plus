@@ -3,7 +3,7 @@
 
 #include "core/entities/Soldier.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 void RepositionSoldierSkeletonParts(Soldier& soldier);
 

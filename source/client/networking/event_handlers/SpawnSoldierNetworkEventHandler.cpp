@@ -2,7 +2,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 SpawnSoldierNetworkEventHandler::SpawnSoldierNetworkEventHandler(
   const std::shared_ptr<IWorld>& world)
@@ -21,4 +21,4 @@ NetworkEventHandlerResult SpawnSoldierNetworkEventHandler::HandleNetworkMessageI
     world_->SpawnSoldier(soldier_id, spawn_position);
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

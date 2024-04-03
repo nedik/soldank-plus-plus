@@ -11,7 +11,7 @@
 #include <numbers>
 #include <cmath>
 
-namespace Soldat
+namespace Soldank
 {
 
 BulletRenderer::BulletRenderer(const Sprites::SpriteManager& sprite_manager)
@@ -131,4 +131,4 @@ void BulletRenderer::Render(glm::mat4 transform, const Bullet& bullet, double fr
     Renderer::BindTexture(bullet_sprite_data.texture_data.opengl_id);
     Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
-} // namespace Soldat
+} // namespace Soldank

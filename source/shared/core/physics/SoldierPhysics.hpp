@@ -15,7 +15,7 @@
 #include <vector>
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class SoldierPhysics
 {
@@ -69,6 +69,6 @@ public:
                                    State& state);
     void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

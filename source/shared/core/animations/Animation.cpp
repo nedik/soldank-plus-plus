@@ -11,7 +11,7 @@
 #include <exception>
 #include <cmath>
 
-namespace Soldat
+namespace Soldank
 {
 const AnimationData& Animations::Get(AnimationType animation_type)
 {
@@ -163,4 +163,4 @@ bool AnimationState::IsAny(const std::vector<AnimationType>& animations) const
     return std::ranges::any_of(
       animations, [this](AnimationType animation_type) { return animation_type == id_; });
 }
-} // namespace Soldat
+} // namespace Soldank

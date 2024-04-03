@@ -11,7 +11,7 @@
 
 #include <vector>
 
-namespace Soldat
+namespace Soldank
 {
 class PolygonsRenderer
 {
@@ -35,6 +35,6 @@ private:
     unsigned int texture_;
     unsigned int vbo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

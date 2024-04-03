@@ -11,7 +11,7 @@
 #include <tuple>
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
@@ -369,4 +369,4 @@ void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_positio
 
     spdlog::error("Wrong soldier_id({}) in UpdateMousePosition", soldier_id);
 }
-} // namespace Soldat
+} // namespace Soldank

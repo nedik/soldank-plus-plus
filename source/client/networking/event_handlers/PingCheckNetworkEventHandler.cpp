@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 PingCheckNetworkEventHandler::PingCheckNetworkEventHandler(
   const std::shared_ptr<ClientState>& client_state)
@@ -26,4 +26,4 @@ NetworkEventHandlerResult PingCheckNetworkEventHandler::HandleNetworkMessageImpl
 
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

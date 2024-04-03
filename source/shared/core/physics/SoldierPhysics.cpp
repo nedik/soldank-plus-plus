@@ -44,7 +44,7 @@ const int SECOND = 60;
 
 const int DEFAULT_IDLETIME = SECOND * 8;
 
-namespace Soldat
+namespace Soldank
 {
 SoldierPhysics::SoldierPhysics() {}
 
@@ -1478,4 +1478,4 @@ void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_em
 
     soldier.is_shooting = true;
 }
-} // namespace Soldat
+} // namespace Soldank

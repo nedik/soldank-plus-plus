@@ -14,7 +14,7 @@
 #include <span>
 #include <cstdlib>
 
-namespace Soldat
+namespace Soldank
 {
 SteamNetworkingMicroseconds Application::log_time_zero_ = 0;
 
@@ -165,4 +165,4 @@ void Application::Run()
     // you can pool the connection to see if any reliable data is pending.
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
-} // namespace Soldat
+} // namespace Soldank

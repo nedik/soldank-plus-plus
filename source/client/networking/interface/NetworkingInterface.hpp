@@ -11,7 +11,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace Soldat::NetworkingInterface
+namespace Soldank::NetworkingInterface
 {
 void Init();
 std::shared_ptr<IConnection> CreateConnection(const char* server_ip, std::uint16_t server_port);
@@ -21,6 +21,6 @@ void PollConnectionStateChanges();
 void RegisterObserver(
   const std::function<void(SteamNetConnectionStatusChangedCallback_t*)>& observer);
 void Free();
-} // namespace Soldat::NetworkingInterface
+} // namespace Soldank::NetworkingInterface
 
 #endif

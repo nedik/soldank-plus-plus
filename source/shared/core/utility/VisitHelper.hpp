@@ -1,7 +1,7 @@
 #ifndef __VISIT_HELPER_HPP__
 #define __VISIT_HELPER_HPP__
 
-namespace Soldat
+namespace Soldank
 {
 // VisitOverload helps pass lambdas to std::visit like this:
 // std::visit(VisitOverload{
@@ -17,6 +17,6 @@ struct VisitOverload : Ts...
 };
 template<class... Ts>
 VisitOverload(Ts...) -> VisitOverload<Ts...>;
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

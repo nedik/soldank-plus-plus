@@ -11,7 +11,7 @@
 #include <optional>
 #include <algorithm>
 
-namespace Soldat::Sprites
+namespace Soldank::Sprites
 {
 SpriteManager::SpriteManager()
 {
@@ -459,51 +459,51 @@ Texture::TextureData SpriteManager::GetBulletTexture(const Bullet& bullet) const
     switch (bullet_style) {
         case BulletType::Bullet: {
             switch (weapon_kind) {
-                case Soldat::WeaponType::DesertEagles:
+                case Soldank::WeaponType::DesertEagles:
                     return all_sprites_.at(WeaponSpriteType::DeaglesBullet);
-                case Soldat::WeaponType::MP5:
+                case Soldank::WeaponType::MP5:
                     return all_sprites_.at(WeaponSpriteType::Mp5Bullet);
-                case Soldat::WeaponType::Ak74:
+                case Soldank::WeaponType::Ak74:
                     return all_sprites_.at(WeaponSpriteType::Ak74Bullet);
-                case Soldat::WeaponType::SteyrAUG:
+                case Soldank::WeaponType::SteyrAUG:
                     return all_sprites_.at(WeaponSpriteType::SteyrBullet);
-                case Soldat::WeaponType::Spas12:
+                case Soldank::WeaponType::Spas12:
                     return all_sprites_.at(WeaponSpriteType::SpasBullet);
-                case Soldat::WeaponType::Ruger77:
+                case Soldank::WeaponType::Ruger77:
                     return all_sprites_.at(WeaponSpriteType::RugerBullet);
-                case Soldat::WeaponType::M79:
+                case Soldank::WeaponType::M79:
                     return all_sprites_.at(WeaponSpriteType::M79Bullet);
-                case Soldat::WeaponType::Barrett:
+                case Soldank::WeaponType::Barrett:
                     return all_sprites_.at(WeaponSpriteType::BarrettBullet);
-                case Soldat::WeaponType::Minimi:
+                case Soldank::WeaponType::Minimi:
                     return all_sprites_.at(WeaponSpriteType::MinimiBullet);
-                case Soldat::WeaponType::Minigun:
+                case Soldank::WeaponType::Minigun:
                     return all_sprites_.at(WeaponSpriteType::MinigunBullet);
-                case Soldat::WeaponType::USSOCOM:
+                case Soldank::WeaponType::USSOCOM:
                     return all_sprites_.at(WeaponSpriteType::ColtBullet);
-                case Soldat::WeaponType::Knife:
+                case Soldank::WeaponType::Knife:
                     return all_sprites_.at(WeaponSpriteType::Knife); // TODO
-                case Soldat::WeaponType::Chainsaw:
+                case Soldank::WeaponType::Chainsaw:
                     return all_sprites_.at(WeaponSpriteType::Chainsaw); // TODO
-                case Soldat::WeaponType::LAW:
+                case Soldank::WeaponType::LAW:
                     return all_sprites_.at(WeaponSpriteType::Law); // TODO
-                case Soldat::WeaponType::FlameBow:
+                case Soldank::WeaponType::FlameBow:
                     return all_sprites_.at(WeaponSpriteType::Arrow); // TODO
-                case Soldat::WeaponType::Bow:
+                case Soldank::WeaponType::Bow:
                     return all_sprites_.at(WeaponSpriteType::Arrow); // TODO
-                case Soldat::WeaponType::Flamer:
+                case Soldank::WeaponType::Flamer:
                     return all_sprites_.at(WeaponSpriteType::Flamer); // TODO
-                case Soldat::WeaponType::M2:
+                case Soldank::WeaponType::M2:
                     return all_sprites_.at(WeaponSpriteType::M2); // TODO
-                case Soldat::WeaponType::NoWeapon:
+                case Soldank::WeaponType::NoWeapon:
                     return all_sprites_.at(WeaponSpriteType::Bullet); // TODO
-                case Soldat::WeaponType::FragGrenade:
+                case Soldank::WeaponType::FragGrenade:
                     return all_sprites_.at(WeaponSpriteType::FragGrenade); // TODO
-                case Soldat::WeaponType::ClusterGrenade:
+                case Soldank::WeaponType::ClusterGrenade:
                     return all_sprites_.at(WeaponSpriteType::ClusterGrenade); // TODO
-                case Soldat::WeaponType::Cluster:
+                case Soldank::WeaponType::Cluster:
                     return all_sprites_.at(WeaponSpriteType::Cluster); // TODO
-                case Soldat::WeaponType::ThrownKnife:
+                case Soldank::WeaponType::ThrownKnife:
                     return all_sprites_.at(WeaponSpriteType::Knife); // TODO
             }
         }
@@ -536,4 +536,4 @@ Texture::TextureData SpriteManager::GetBulletTexture(const Bullet& bullet) const
             return all_sprites_.at(WeaponSpriteType::Bullet);
     }
 }
-} // namespace Soldat::Sprites
+} // namespace Soldank::Sprites

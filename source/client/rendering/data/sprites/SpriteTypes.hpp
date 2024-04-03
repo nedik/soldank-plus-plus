@@ -1,7 +1,7 @@
 #ifndef __SPRITE_TYPES_HPP__
 #define __SPRITE_TYPES_HPP__
 
-namespace Soldat::Sprites
+namespace Soldank::Sprites
 {
 enum class SoldierPartSpriteType : unsigned int
 {
@@ -505,6 +505,6 @@ enum class SoldierSpriteAlpha : unsigned int
     Blood,
     Nades,
 };
-} // namespace Soldat::Sprites
+} // namespace Soldank::Sprites
 
 #endif

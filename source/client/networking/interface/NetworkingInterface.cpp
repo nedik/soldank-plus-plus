@@ -9,7 +9,7 @@
 #include <functional>
 #include <array>
 
-namespace Soldat::NetworkingInterface
+namespace Soldank::NetworkingInterface
 {
 namespace
 {
@@ -82,4 +82,4 @@ void Free()
 {
     observers.clear();
 }
-} // namespace Soldat::NetworkingInterface
+} // namespace Soldank::NetworkingInterface

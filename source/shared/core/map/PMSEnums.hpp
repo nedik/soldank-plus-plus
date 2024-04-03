@@ -1,7 +1,7 @@
 #ifndef __PMS_ENUMS_HPP__
 #define __PMS_ENUMS_HPP__
 
-namespace Soldat
+namespace Soldank
 {
 enum class PMSPolygonType : unsigned char
 {
@@ -84,6 +84,6 @@ enum class PMSWeatherType : unsigned char
     Sandstorm,
     Snow
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

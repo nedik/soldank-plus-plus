@@ -12,7 +12,7 @@
 class ISteamNetworkingSockets;
 struct SteamNetConnectionStatusChangedCallback_t;
 
-namespace Soldat
+namespace Soldank
 {
 class IPollGroup
 {
@@ -56,6 +56,6 @@ protected:
 private:
     ISteamNetworkingSockets* interface_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

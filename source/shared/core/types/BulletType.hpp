@@ -1,9 +1,10 @@
 #ifndef __BULLET_TYPE_HPP__
 #define __BULLET_TYPE_HPP__
 
-namespace Soldat
+namespace Soldank
 {
-enum class BulletType : unsigned int {
+enum class BulletType : unsigned int
+{
     Bullet = 1,
     FragGrenade = 2,
     GaugeBullet = 3,
@@ -19,6 +20,6 @@ enum class BulletType : unsigned int {
     ThrownKnife = 13,
     M2Bullet = 14,
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

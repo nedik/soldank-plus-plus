@@ -10,7 +10,7 @@
 #include <chrono>
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 struct ClientState
 {
@@ -42,6 +42,6 @@ struct ClientState
     std::uint16_t last_ping;
     int network_lag;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

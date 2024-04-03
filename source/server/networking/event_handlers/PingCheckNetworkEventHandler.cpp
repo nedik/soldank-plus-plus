@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 
 PingCheckNetworkEventHandler::PingCheckNetworkEventHandler(
@@ -19,4 +19,4 @@ NetworkEventHandlerResult PingCheckNetworkEventHandler::HandleNetworkMessageImpl
     game_server_->SendNetworkMessage(sender_connection_id, { NetworkEvent::PingCheck });
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -7,7 +7,7 @@
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 struct BulletParams
 {
@@ -38,6 +38,6 @@ struct Bullet
     float hit_multiply_prev;
     unsigned int degrade_count = 0;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

@@ -13,7 +13,7 @@
 #include <span>
 #include <array>
 
-namespace Soldat
+namespace Soldank
 {
 class Map
 {
@@ -101,6 +101,6 @@ private:
 
     void UpdateBoundaries();
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

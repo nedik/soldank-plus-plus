@@ -5,9 +5,9 @@
 #include <fstream>
 #include <cstdlib>
 
-namespace Soldat
+namespace Soldank
 {
 std::istream& GetlineSafe(std::istream& is, std::string& t);
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

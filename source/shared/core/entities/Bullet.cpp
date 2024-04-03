@@ -1,6 +1,6 @@
 #include "Bullet.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 Bullet::Bullet(BulletParams params)
     : style(params.style)
@@ -26,4 +26,4 @@ Bullet::Bullet(BulletParams params)
 {
 }
 
-} // namespace Soldat
+} // namespace Soldank

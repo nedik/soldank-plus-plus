@@ -10,7 +10,7 @@
 #include <cstddef>
 #include <span>
 
-namespace Soldat::Texture
+namespace Soldank::Texture
 {
 TextureData Load(const char* texture_path)
 {
@@ -63,4 +63,4 @@ void Delete(unsigned int texture_id)
 {
     glDeleteTextures(1, &texture_id);
 }
-} // namespace Soldat::Texture
+} // namespace Soldank::Texture

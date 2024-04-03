@@ -11,7 +11,7 @@
 #include <optional>
 #include <variant>
 
-namespace Soldat::Sprites
+namespace Soldank::Sprites
 {
 
 class SoldierPartData
@@ -72,6 +72,6 @@ private:
     int texture_flipped_width_;
     int texture_flipped_height_;
 };
-} // namespace Soldat::Sprites
+} // namespace Soldank::Sprites
 
 #endif

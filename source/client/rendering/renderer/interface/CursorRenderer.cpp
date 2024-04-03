@@ -8,7 +8,7 @@
 
 #include <filesystem>
 
-namespace Soldat
+namespace Soldank
 {
 CursorRenderer::CursorRenderer()
     : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
@@ -58,4 +58,4 @@ void CursorRenderer::Render(const glm::vec2& mouse_position)
     Renderer::BindTexture(texture_);
     Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
-} // namespace Soldat
+} // namespace Soldank

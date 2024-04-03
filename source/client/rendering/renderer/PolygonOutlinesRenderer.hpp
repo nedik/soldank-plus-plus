@@ -11,7 +11,7 @@
 
 #include <vector>
 
-namespace Soldat
+namespace Soldank
 {
 class PolygonOutlinesRenderer
 {
@@ -34,6 +34,6 @@ private:
 
     unsigned int vbo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

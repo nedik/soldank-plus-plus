@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <cmath>
 
-namespace Soldat
+namespace Soldank
 {
 RectangleRenderer::RectangleRenderer()
     : shader_(ShaderSources::NO_TEXTURE_VERTEX_SHADER_SOURCE,
@@ -55,4 +55,4 @@ void RectangleRenderer::Render(glm::mat4 transform, glm::vec2 position)
     shader_.SetMatrix4("transform", transform);
     Renderer::DrawArrays(GL_TRIANGLES, 0, 6);
 }
-} // namespace Soldat
+} // namespace Soldank

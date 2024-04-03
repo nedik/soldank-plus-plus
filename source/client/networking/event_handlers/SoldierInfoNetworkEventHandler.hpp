@@ -8,7 +8,7 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class SoldierInfoNetworkEventHandler : public NetworkEventHandlerBase<unsigned int>
 {
@@ -25,6 +25,6 @@ private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ClientState> client_state_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

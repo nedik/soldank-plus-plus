@@ -10,7 +10,7 @@
 #include <string>
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class EntryPollGroup : public PollGroupBase
 {
@@ -25,6 +25,6 @@ public:
 private:
     std::shared_ptr<IPollGroup> player_poll_group_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

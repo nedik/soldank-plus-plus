@@ -12,7 +12,7 @@
 #include <random>
 #include <optional>
 
-namespace Soldat
+namespace Soldank
 {
 class World : public IWorld
 {
@@ -95,6 +95,6 @@ private:
     std::mt19937 mersenne_twister_engine_;
 };
 
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

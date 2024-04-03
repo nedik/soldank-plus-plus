@@ -9,7 +9,7 @@
 #include <cassert>
 #include <span>
 
-namespace Soldat
+namespace Soldank
 {
 Connection::Connection(ISteamNetworkingSockets* interface, HSteamNetConnection connection_handle)
     : interface_(interface)
@@ -71,4 +71,4 @@ void Connection::SendNetworkMessage(const NetworkMessage& network_message)
                                         k_nSteamNetworkingSend_Unreliable,
                                         nullptr);
 }
-} // namespace Soldat
+} // namespace Soldank

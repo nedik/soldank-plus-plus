@@ -11,7 +11,7 @@
 #include <chrono>
 #include <cassert>
 
-namespace Soldat
+namespace Soldank
 {
 GameServer::GameServer(std::uint16_t port,
                        const std::shared_ptr<NetworkEventDispatcher>& network_event_dispatcher,
@@ -117,4 +117,4 @@ void GameServer::OnSteamNetConnectionStatusChanged(
             break;
     }
 }
-} // namespace Soldat
+} // namespace Soldank

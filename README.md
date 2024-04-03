@@ -1,5 +1,5 @@
-# Soldat++
-C++23 implementation of [Soldat](https://github.com/soldat/soldat)
+# Soldank++
+C++23 implementation of [OpenSoldat](https://github.com/opensoldat/opensoldat)
 
 ## Requirements
 The project is written in C++23 and depends on:

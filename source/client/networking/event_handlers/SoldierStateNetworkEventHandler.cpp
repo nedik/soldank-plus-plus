@@ -6,7 +6,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 SoldierStateNetworkEventHandler::SoldierStateNetworkEventHandler(
   const std::shared_ptr<IWorld>& world,
@@ -178,4 +178,4 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
 
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

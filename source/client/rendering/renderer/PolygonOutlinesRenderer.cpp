@@ -6,7 +6,7 @@
 
 #include <filesystem>
 
-namespace Soldat
+namespace Soldank
 {
 PolygonOutlinesRenderer::PolygonOutlinesRenderer(const std::vector<PMSPolygon>& polygons)
     : shader_(ShaderSources::NO_TEXTURE_VERTEX_SHADER_SOURCE,
@@ -44,4 +44,4 @@ void PolygonOutlinesRenderer::Render(glm::mat4 transform, unsigned int polygon_i
     Renderer::DrawArrays(GL_TRIANGLES, (int)polygon_id * 3, 3);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
-} // namespace Soldat
+} // namespace Soldank

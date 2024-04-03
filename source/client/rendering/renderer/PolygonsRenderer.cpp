@@ -6,7 +6,7 @@
 
 #include <filesystem>
 
-namespace Soldat
+namespace Soldank
 {
 PolygonsRenderer::PolygonsRenderer(const std::vector<PMSPolygon>& polygons,
                                    const std::string& texture_name)
@@ -52,4 +52,4 @@ void PolygonsRenderer::Render(glm::mat4 transform)
     shader_.SetMatrix4("transform", transform);
     Renderer::DrawArrays(GL_TRIANGLES, 0, (int)polygons_count_ * 3);
 }
-} // namespace Soldat
+} // namespace Soldank

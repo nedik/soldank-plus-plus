@@ -5,7 +5,7 @@
 
 #include <steam/isteamnetworkingutils.h>
 
-namespace Soldat
+namespace Soldank
 {
 class IConnection
 {
@@ -22,6 +22,6 @@ public:
 
     virtual void SendNetworkMessage(const NetworkMessage& network_message) = 0;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

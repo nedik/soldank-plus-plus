@@ -2,7 +2,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 AssignPlayerIdNetworkEventHandler::AssignPlayerIdNetworkEventHandler(
   const std::shared_ptr<IWorld>& world,
@@ -21,4 +21,4 @@ NetworkEventHandlerResult AssignPlayerIdNetworkEventHandler::HandleNetworkMessag
     spdlog::info("OnAssignPlayerId: {} {}", assigned_player_id, *client_state_->client_soldier_id);
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

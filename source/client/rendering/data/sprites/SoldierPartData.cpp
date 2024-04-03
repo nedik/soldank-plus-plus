@@ -1,6 +1,6 @@
 #include "SoldierPartData.hpp"
 
-namespace Soldat::Sprites
+namespace Soldank::Sprites
 {
 SoldierPartData::SoldierPartData(const Texture::TextureData& texture_data,
                                  glm::uvec2 point,
@@ -29,4 +29,4 @@ SoldierPartData::SoldierPartData(const Texture::TextureData& texture_data,
         texture_flipped_height_ = flipped_texture_data->height;
     }
 }
-} // namespace Soldat::Sprites
+} // namespace Soldank::Sprites

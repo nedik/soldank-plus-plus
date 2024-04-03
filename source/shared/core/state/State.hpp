@@ -8,7 +8,7 @@
 #include <vector>
 #include <list>
 
-namespace Soldat
+namespace Soldank
 {
 struct State
 {
@@ -21,6 +21,6 @@ struct State
     std::list<Soldier> soldiers;
     std::vector<unsigned int> colliding_polygon_ids;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

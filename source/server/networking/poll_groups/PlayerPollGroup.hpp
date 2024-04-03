@@ -13,7 +13,7 @@
 #include <string>
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class PlayerPollGroup : public PollGroupBase
 {
@@ -33,6 +33,6 @@ private:
     std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
     std::shared_ptr<IWorld> world_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

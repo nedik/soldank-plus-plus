@@ -11,7 +11,7 @@
 #include <cmath>
 #include <utility>
 
-namespace Soldat
+namespace Soldank
 {
 enum class ParseError : unsigned short
 {
@@ -248,6 +248,6 @@ public:
 private:
     std::vector<char> data_;
 };
-}; // namespace Soldat
+}; // namespace Soldank
 
 #endif

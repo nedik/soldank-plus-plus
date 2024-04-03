@@ -12,7 +12,7 @@
 #include <vector>
 #include <optional>
 
-namespace Soldat
+namespace Soldank
 {
 class SoldierRenderer
 {
@@ -73,6 +73,6 @@ private:
     std::vector<unsigned int> ebos_;
     std::vector<Sprites::SoldierPartSpriteType> part_types_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

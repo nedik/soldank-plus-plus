@@ -2,7 +2,7 @@
 
 #include "core/math/Calc.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 void RepositionSoldierSkeletonParts(Soldier& soldier)
 {
@@ -131,4 +131,4 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
         soldier.skeleton->SetPos(19, soldier.skeleton->GetPos(16) - glm::vec2(0.0F, 4.0F) + r_norm);
     }
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-namespace Soldat
+namespace Soldank
 {
 class PollGroupBase : public IPollGroup
 {
@@ -55,6 +55,6 @@ private:
 
     std::unordered_map<HSteamNetConnection, Connection> connections_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

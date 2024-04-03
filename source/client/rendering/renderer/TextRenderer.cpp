@@ -7,7 +7,7 @@
 #include <map>
 #include <array>
 
-namespace Soldat
+namespace Soldank
 {
 TextRenderer::TextRenderer(const std::string& file_path, unsigned int font_height)
     : shader_(ShaderSources::FONT_VERTEX_SHADER_SOURCE, ShaderSources::FONT_FRAGMENT_SHADER_SOURCE)
@@ -128,4 +128,4 @@ void TextRenderer::Render(std::string text, float x, float y, float scale, glm::
                     // amount of 1/64th pixels by 64 to get amount of pixels))
     }
 }
-} // namespace Soldat
+} // namespace Soldank

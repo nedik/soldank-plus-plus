@@ -6,7 +6,7 @@
 #include <array>
 #include <utility>
 
-namespace Soldat
+namespace Soldank
 {
 Map::Map(const std::string& path)
 {
@@ -92,22 +92,22 @@ void Map::LoadMap(const std::string& map_path)
 
         // TODO: zrobić lepiej
         tmp.perpendiculars[0].x =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
             .x;
         tmp.perpendiculars[0].y =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
             .y;
         tmp.perpendiculars[1].x =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
             .x;
         tmp.perpendiculars[1].y =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
             .y;
         tmp.perpendiculars[2].x =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
             .x;
         tmp.perpendiculars[2].y =
-          Soldat::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
+          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
             .y;
 
         file.read((char*)(&tmp.polygon_type), sizeof(PMSPolygonType));
@@ -295,7 +295,7 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
     auto p1 = glm::vec2(px[0], py[0]);
     auto p2 = glm::vec2(px[1], py[1]);
 
-    auto d1 = Soldat::Calc::PointLineDistance(p1, p2, pos);
+    auto d1 = Soldank::Calc::PointLineDistance(p1, p2, pos);
 
     *d = d1;
 
@@ -308,7 +308,7 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
     p2.x = px[2];
     p2.y = py[2];
 
-    auto d2 = Soldat::Calc::PointLineDistance(p1, p2, pos);
+    auto d2 = Soldank::Calc::PointLineDistance(p1, p2, pos);
 
     if (d2 < d1) {
         edge_v1 = 2;
@@ -322,7 +322,7 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
     p2.x = px[0];
     p2.y = py[0];
 
-    auto d3 = Soldat::Calc::PointLineDistance(p1, p2, pos);
+    auto d3 = Soldank::Calc::PointLineDistance(p1, p2, pos);
 
     if ((d3 < d2) && (d3 < d1)) {
         edge_v1 = 3;
@@ -347,4 +347,4 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
 
     return { 0.0F, 0.0F };
 }
-} // namespace Soldat
+} // namespace Soldank

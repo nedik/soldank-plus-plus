@@ -15,7 +15,7 @@
 #include <variant>
 #include <unordered_map>
 
-namespace Soldat::Sprites
+namespace Soldank::Sprites
 {
 class SpriteManager
 {
@@ -67,6 +67,6 @@ private:
 
     std::unordered_map<TSpriteKey, Texture::TextureData> all_sprites_;
 };
-} // namespace Soldat::Sprites
+} // namespace Soldank::Sprites
 
 #endif

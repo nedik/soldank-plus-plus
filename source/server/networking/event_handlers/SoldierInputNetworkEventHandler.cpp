@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 SoldierInputNetworkEventHandler::SoldierInputNetworkEventHandler(
   const std::shared_ptr<IWorld>& world,
@@ -52,4 +52,4 @@ NetworkEventHandlerResult SoldierInputNetworkEventHandler::HandleNetworkMessageI
 
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -11,7 +11,7 @@
 
 #include <vector>
 
-namespace Soldat
+namespace Soldank
 {
 class SceneriesRenderer
 {
@@ -38,6 +38,6 @@ private:
     unsigned int vbo_;
     unsigned int ebo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

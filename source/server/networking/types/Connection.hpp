@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Soldat
+namespace Soldank
 {
 struct Connection
 {
@@ -13,6 +13,6 @@ struct Connection
     std::string nick;
     unsigned int soldier_id;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

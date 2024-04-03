@@ -12,7 +12,7 @@
 #include <vector>
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 struct Soldier
 {
@@ -60,6 +60,6 @@ struct Soldier
     Particle particle;
     bool is_shooting;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

@@ -2,10 +2,10 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Soldat
+namespace Soldank
 {
-std::array<bool, 348> Soldat::Keyboard::keys_ = {};
-std::array<bool, 348> Soldat::Keyboard::keys_changed_ = {};
+std::array<bool, 348> Soldank::Keyboard::keys_ = {};
+std::array<bool, 348> Soldank::Keyboard::keys_changed_ = {};
 
 void Keyboard::KeyCallback(GLFWwindow* /*window*/,
                            const int key,
@@ -44,4 +44,4 @@ bool Keyboard::KeyWentDown(const int key)
 {
     return keys_.at(key) && KeyChanged(key);
 }
-} // namespace Soldat
+} // namespace Soldank

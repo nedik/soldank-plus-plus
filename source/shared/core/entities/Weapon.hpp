@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 class Weapon
 {
@@ -42,6 +42,6 @@ private:
     std::uint16_t clip_in_time_;
     std::uint16_t clip_out_time_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

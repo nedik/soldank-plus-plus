@@ -4,7 +4,7 @@
 
 const float GRAV = 0.06F;
 
-namespace Soldat
+namespace Soldank
 {
 Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
     : id(soldier_id)
@@ -54,4 +54,4 @@ Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
     , is_shooting(false)
 {
 }
-} // namespace Soldat
+} // namespace Soldank

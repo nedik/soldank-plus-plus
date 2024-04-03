@@ -8,7 +8,7 @@
 #include <vector>
 #include <optional>
 
-namespace Soldat::Renderer
+namespace Soldank::Renderer
 {
 unsigned int CreateVBO(const std::vector<float>& vertices, GLenum usage);
 unsigned int CreateEBO(const std::vector<unsigned int>& indices, GLenum usage);
@@ -28,6 +28,6 @@ void DrawElements(GLenum mode,
                   GLsizei count,
                   GLenum type,
                   std::optional<unsigned int> indices_offset);
-} // namespace Soldat::Renderer
+} // namespace Soldank::Renderer
 
 #endif

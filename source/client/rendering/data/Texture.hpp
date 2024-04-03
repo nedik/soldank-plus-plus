@@ -1,7 +1,7 @@
 #ifndef __TEXTURE_HPP__
 #define __TEXTURE_HPP__
 
-namespace Soldat::Texture
+namespace Soldank::Texture
 {
 struct TextureData
 {
@@ -13,6 +13,6 @@ struct TextureData
 TextureData Load(const char* texture_path);
 
 void Delete(unsigned int texture_id);
-} // namespace Soldat::Texture
+} // namespace Soldank::Texture
 
 #endif

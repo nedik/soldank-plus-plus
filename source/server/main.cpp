@@ -41,7 +41,7 @@ int main()
     // shut-down daScript, free all memory
     das::Module::Shutdown();
 
-    Soldat::Application application;
+    Soldank::Application application;
     application.Run();
 
     return 0;

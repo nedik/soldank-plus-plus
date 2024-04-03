@@ -3,7 +3,7 @@
 
 #include "communication/NetworkMessage.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class IGameServer
 {
@@ -15,6 +15,6 @@ public:
                                     const NetworkMessage& network_message) = 0;
     virtual void SendNetworkMessageToAll(const NetworkMessage& network_message) = 0;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

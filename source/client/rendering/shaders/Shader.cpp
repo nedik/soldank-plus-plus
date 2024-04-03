@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace Soldat
+namespace Soldank
 {
 Shader::Shader(const char* vertex_shader_source, const char* fragment_shader_source)
 {
@@ -95,4 +95,4 @@ void Shader::CheckCompileErrors(unsigned int shader, const std::string& type)
         }
     }
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -3,7 +3,7 @@
 
 #include "core/math/Glm.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class Camera
 {
@@ -34,6 +34,6 @@ private:
     glm::vec2 camera_position_;
     float zoom_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

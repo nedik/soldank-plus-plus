@@ -5,12 +5,12 @@
 
 #include <array>
 
-namespace Soldat
+namespace Soldank
 {
 struct ServerState
 {
     std::array<unsigned int, Config::MAX_PLAYERS> last_processed_input_id;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

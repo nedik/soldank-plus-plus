@@ -7,7 +7,7 @@
 
 #include <unordered_map>
 
-namespace Soldat::WeaponParametersFactory
+namespace Soldank::WeaponParametersFactory
 {
 const std::uint16_t SECOND = 60;
 const std::uint16_t BULLET_TIMEOUT = SECOND * 7;
@@ -324,4 +324,4 @@ bool GetClipReload(WeaponType weapon_type)
     }
 }
 
-} // namespace Soldat::WeaponParametersFactory
+} // namespace Soldank::WeaponParametersFactory

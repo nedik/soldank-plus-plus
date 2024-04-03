@@ -16,7 +16,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 class NetworkingClient : public INetworkingClient
 {
@@ -37,6 +37,6 @@ private:
     std::shared_ptr<LagConnection> connection_;
     std::shared_ptr<NetworkEventDispatcher> network_event_dispatcher_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

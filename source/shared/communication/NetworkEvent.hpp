@@ -1,7 +1,7 @@
 #ifndef __NETWORK_EVENTS_HPP__
 #define __NETWORK_EVENTS_HPP__
 
-namespace Soldat
+namespace Soldank
 {
 enum class NetworkEvent : unsigned int
 {

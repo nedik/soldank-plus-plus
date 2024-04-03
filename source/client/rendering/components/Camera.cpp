@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 Camera::Camera()
     : camera_position_({ 0.0, 0.0 })
@@ -50,4 +50,4 @@ float Camera::GetHeight() const
     float canvas_height = HEIGHT;
     return canvas_height - canvas_height * zoom_ * ZOOM_POWER;
 }
-} // namespace Soldat
+} // namespace Soldank

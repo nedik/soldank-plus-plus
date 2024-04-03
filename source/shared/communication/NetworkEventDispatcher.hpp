@@ -18,7 +18,7 @@
 #include <functional>
 #include <vector>
 
-namespace Soldat
+namespace Soldank
 {
 enum class NetworkEventDispatchResult
 {
@@ -120,6 +120,6 @@ public:
 private:
     std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

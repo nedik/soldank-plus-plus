@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Soldat
+namespace Soldank
 {
 bool Mouse::first_mouse_ = true;
 
@@ -108,4 +108,4 @@ void Mouse::SubscribeButtonObserver(const std::function<void(int, int)>& observe
     button_observers_.push_back(observer);
 }
 
-} // namespace Soldat
+} // namespace Soldank

@@ -7,7 +7,7 @@
 #include <string>
 #include <cstdint>
 
-namespace Soldat
+namespace Soldank
 {
 struct WeaponParameters
 {
@@ -33,6 +33,6 @@ struct WeaponParameters
     bool clip_reload;
     std::uint16_t timeout;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

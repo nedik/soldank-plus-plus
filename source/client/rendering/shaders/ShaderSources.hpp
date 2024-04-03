@@ -1,7 +1,7 @@
 #ifndef __SHADER_SOURCES_HPP__
 #define __SHADER_SOURCES_HPP__
 
-namespace Soldat::ShaderSources
+namespace Soldank::ShaderSources
 {
 constexpr const char* const VERTEX_SHADER_SOURCE =
 #include "Standard.vs"
@@ -34,6 +34,6 @@ constexpr const char* const FONT_VERTEX_SHADER_SOURCE =
 constexpr const char* const FONT_FRAGMENT_SHADER_SOURCE =
 #include "Font.fs"
   ;
-} // namespace Soldat::ShaderSources
+} // namespace Soldank::ShaderSources
 
 #endif

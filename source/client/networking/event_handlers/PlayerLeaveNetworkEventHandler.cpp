@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-namespace Soldat
+namespace Soldank
 {
 PlayerLeaveNetworkEventHandler::PlayerLeaveNetworkEventHandler(const std::shared_ptr<IWorld>& world)
     : world_(world)
@@ -26,4 +26,4 @@ NetworkEventHandlerResult PlayerLeaveNetworkEventHandler::HandleNetworkMessageIm
 
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

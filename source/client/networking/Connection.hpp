@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class Connection : public IConnection
 {
@@ -31,6 +31,6 @@ private:
     ISteamNetworkingSockets* interface_;
     HSteamNetConnection connection_handle_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

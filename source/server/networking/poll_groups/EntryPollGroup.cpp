@@ -6,7 +6,7 @@
 #include <span>
 #include <cassert>
 
-namespace Soldat
+namespace Soldank
 {
 EntryPollGroup::EntryPollGroup(ISteamNetworkingSockets* interface)
     : PollGroupBase(interface)
@@ -82,4 +82,4 @@ void EntryPollGroup::RegisterPlayerPollGroup(std::shared_ptr<IPollGroup> poll_gr
     player_poll_group_ = std::move(poll_group);
 }
 
-} // namespace Soldat
+} // namespace Soldank

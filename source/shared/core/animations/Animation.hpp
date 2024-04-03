@@ -6,10 +6,11 @@
 #include <vector>
 #include <string>
 
-namespace Soldat
+namespace Soldank
 {
 // TODO: move to separate files
-enum AnimationType {
+enum AnimationType
+{
     Stand = 0,
     Run,
     RunBack,
@@ -56,7 +57,8 @@ enum AnimationType {
     Own,
 };
 
-struct AnimationFrame {
+struct AnimationFrame
+{
     std::vector<glm::vec2> positions;
 };
 
@@ -111,6 +113,6 @@ private:
     int count_;
     unsigned int frame_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

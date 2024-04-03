@@ -5,7 +5,7 @@
 
 #include "core/math/Glm.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class CursorRenderer
 {
@@ -34,6 +34,6 @@ private:
     unsigned int vbo_;
     unsigned int ebo_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

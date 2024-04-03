@@ -12,7 +12,7 @@
 struct SteamNetConnectionStatusChangedCallback_t;
 class ISteamNetworkingSockets;
 
-namespace Soldat::NetworkingInterface
+namespace Soldank::NetworkingInterface
 {
 namespace Hidden
 {
@@ -30,6 +30,6 @@ std::unique_ptr<TPollGroup> CreatePollGroup()
     return std::make_unique<TPollGroup>(Hidden::GetInterface());
 }
 void Free();
-} // namespace Soldat::NetworkingInterface
+} // namespace Soldank::NetworkingInterface
 
 #endif

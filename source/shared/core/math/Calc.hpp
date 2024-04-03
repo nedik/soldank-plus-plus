@@ -6,7 +6,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace Soldat::Calc
+namespace Soldank::Calc
 {
 float Distance(const glm::vec2& p1, const glm::vec2& p2);
 float Vec2Length(const glm::vec2& v);
@@ -16,6 +16,6 @@ float PointLineDistance(const glm::vec2& p1, const glm::vec2& p2, const glm::vec
 
 glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float t);
 float Lerp(float a, float b, float t);
-} // namespace Soldat::Calc
+} // namespace Soldank::Calc
 
 #endif

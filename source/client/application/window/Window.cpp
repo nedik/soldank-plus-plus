@@ -13,10 +13,10 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Soldat
+namespace Soldank
 {
 Window::Window()
-    : Window("Soldat++", Config::INITIAL_WINDOW_WIDTH, Config::INITIAL_WINDOWS_HEIGHT)
+    : Window("Soldank++", Config::INITIAL_WINDOW_WIDTH, Config::INITIAL_WINDOWS_HEIGHT)
 {
 }
 
@@ -167,4 +167,4 @@ void Window::GLFWErrorCallback(int error, const char* description)
 {
     spdlog::error("Error({}): {}", error, description);
 }
-} // namespace Soldat
+} // namespace Soldank

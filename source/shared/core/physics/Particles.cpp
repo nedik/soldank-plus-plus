@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <fstream>
 
-namespace Soldat
+namespace Soldank
 {
 Particle::Particle(bool _active,
                    glm::vec2 _position,
@@ -207,4 +207,4 @@ std::shared_ptr<ParticleSystem> ParticleSystem::LoadFromFile(const std::string& 
 
     return std::make_shared<ParticleSystem>(particles, constraints);
 }
-} // namespace Soldat
+} // namespace Soldank

@@ -3,7 +3,7 @@
 #include "communication/NetworkPackets.hpp"
 #include "spdlog/spdlog.h"
 
-namespace Soldat
+namespace Soldank
 {
 ProjectileSpawnNetworkEventHandler::ProjectileSpawnNetworkEventHandler(
   const std::shared_ptr<IWorld>& world)
@@ -34,4 +34,4 @@ NetworkEventHandlerResult ProjectileSpawnNetworkEventHandler::HandleNetworkMessa
     state->bullets.emplace_back(bullet_params);
     return NetworkEventHandlerResult::Success;
 }
-} // namespace Soldat
+} // namespace Soldank

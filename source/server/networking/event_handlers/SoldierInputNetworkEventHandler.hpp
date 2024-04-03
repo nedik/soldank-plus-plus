@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace Soldat
+namespace Soldank
 {
 class SoldierInputNetworkEventHandler : public NetworkEventHandlerBase<SoldierInputPacket>
 {
@@ -28,6 +28,6 @@ private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerState> server_state_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

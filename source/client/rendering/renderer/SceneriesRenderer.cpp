@@ -6,7 +6,7 @@
 
 #include <filesystem>
 
-namespace Soldat
+namespace Soldank
 {
 SceneriesRenderer::SceneriesRenderer(const std::vector<PMSSceneryType>& scenery_types,
                                      const std::vector<PMSScenery>& scenery_instances)
@@ -107,4 +107,4 @@ void SceneriesRenderer::Render(glm::mat4 transform,
         Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (i * 6ULL * sizeof(GLuint)));
     }
 }
-} // namespace Soldat
+} // namespace Soldank

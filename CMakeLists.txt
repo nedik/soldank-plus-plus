@@ -6,7 +6,7 @@ if( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake )
 		CACHE STRING "Vcpkg toolchain file")
 endif()
 
-project (Soldat++)
+project (Soldank++)
 
 find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)

@@ -5,7 +5,7 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class SpawnSoldierNetworkEventHandler : public NetworkEventHandlerBase<unsigned int, float, float>
 {
@@ -22,6 +22,6 @@ private:
 
     std::shared_ptr<IWorld> world_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif

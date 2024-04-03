@@ -8,7 +8,7 @@
 #include <optional>
 #include <utility>
 
-using namespace Soldat;
+using namespace Soldank;
 
 TEST(NetworkMessageTests, TestNetworkMessageConstructorOneString)
 {

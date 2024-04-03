@@ -5,7 +5,7 @@
 
 #include "communication/NetworkEventDispatcher.hpp"
 
-namespace Soldat
+namespace Soldank
 {
 class PlayerLeaveNetworkEventHandler : public NetworkEventHandlerBase<unsigned int>
 {
@@ -20,6 +20,6 @@ private:
 
     std::shared_ptr<IWorld> world_;
 };
-} // namespace Soldat
+} // namespace Soldank
 
 #endif
