@@ -5,6 +5,9 @@
 #include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
 #include "networking/event_handlers/SoldierInputNetworkEventHandler.hpp"
 
+#include "scripting/dascript/DaScriptInit.hpp"
+#include "scripting/dascript/DaScriptScriptingEngine.hpp"
+
 #include "spdlog/spdlog.h"
 
 #include <spdlog/common.h>
@@ -33,6 +36,15 @@ Application::Application()
     : world_(std::make_shared<World>())
 {
     spdlog::set_level(spdlog::level::debug);
+
+    bool da_script_initialized = InitDaScriptModule();
+    if (da_script_initialized) {
+        spdlog::info("daScript module initialized");
+
+        scripting_engine_ = std::make_shared<DaScriptScriptingEngine>();
+    } else {
+        spdlog::error("Could not initialize daScript module");
+    }
 
     CSimpleIniA ini_config;
     SI_Error rc = ini_config.LoadFile("soldat.ini");
@@ -76,6 +88,7 @@ Application::Application()
 
 Application::~Application()
 {
+    ShutdownDaScriptModule();
     GameNetworkingSockets_Kill();
 }
 

@@ -7,6 +7,8 @@
 
 #include "networking/GameServer.hpp"
 
+#include "scripting/IScriptingEngine.hpp"
+
 #include <steam/isteamnetworkingutils.h>
 
 #include <memory>
@@ -36,6 +38,7 @@ private:
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<NetworkEventDispatcher> server_network_event_dispatcher_;
     std::shared_ptr<ServerState> server_state_;
+    std::shared_ptr<IScriptingEngine> scripting_engine_;
 };
 } // namespace Soldank
 
