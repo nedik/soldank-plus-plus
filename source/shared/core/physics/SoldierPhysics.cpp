@@ -1449,6 +1449,7 @@ void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_em
         (std::int16_t)weapon.GetWeaponParameters().timeout,
         weapon.GetWeaponParameters().hit_multiply,
         TeamType::None,
+        soldier.id,
     };
 
     switch (weapon.GetWeaponParameters().kind) {

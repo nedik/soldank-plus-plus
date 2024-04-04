@@ -18,6 +18,8 @@ struct BulletParams
     std::int16_t timeout;
     float hit_multiply;
     TeamType team;
+    unsigned int owner_id;
+    float push;
 };
 
 struct Bullet
@@ -28,6 +30,7 @@ struct Bullet
     BulletType style;
     WeaponType weapon;
     TeamType team;
+    unsigned int owner_id;
     Particle particle;
     glm::vec2 initial_position;
     glm::vec2 velocity_prev;
@@ -37,6 +40,7 @@ struct Bullet
     float hit_multiply;
     float hit_multiply_prev;
     unsigned int degrade_count = 0;
+    float push;
 };
 } // namespace Soldank
 

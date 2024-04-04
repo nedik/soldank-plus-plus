@@ -6,6 +6,7 @@ Bullet::Bullet(BulletParams params)
     : style(params.style)
     , weapon(params.weapon)
     , team(params.team)
+    , owner_id(params.owner_id)
     , particle(true,
                params.position,
                params.position,
@@ -23,6 +24,7 @@ Bullet::Bullet(BulletParams params)
     , timeout_real((float)params.timeout)
     , hit_multiply(params.hit_multiply)
     , hit_multiply_prev(params.hit_multiply)
+    , push(params.push)
 {
 }
 

@@ -129,7 +129,7 @@ void World::Update(double /*delta_time*/)
     }
 
     for (auto& bullet : state_->bullets) {
-        bullet_physics_->UpdateBullet(bullet, state_->map);
+        bullet_physics_->UpdateBullet(bullet, state_->map, *state_);
     }
 
     for (const auto& bullet_params : bullet_emitter) {
