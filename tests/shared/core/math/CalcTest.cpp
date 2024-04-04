@@ -110,6 +110,53 @@ TEST(CalcTests, TestLerpOnFloats)
     ASSERT_FLOAT_EQ(expected, actual);
 }
 
+TEST(CalcTests, TestSquareDistance)
+{
+    float expected = 5.0 * 5.0;
+    float actual = Soldank::Calc::SquareDistance({ 0.0, 0.0 }, { 3.0, 4.0 });
+    ASSERT_FLOAT_EQ(expected, actual);
+    expected = 0.0;
+    actual = Soldank::Calc::SquareDistance({ 4.5668F, -2.60855F }, { 4.5668F, -2.60855F });
+    ASSERT_FLOAT_EQ(expected, actual);
+    expected = 6.979953 * 6.979953;
+    actual = Soldank::Calc::SquareDistance({ 4.5668F, -2.60855F }, { 1.05F, -8.6378F });
+    ASSERT_FLOAT_EQ(expected, actual);
+}
+
+TEST(CalcTests, TestVec2Scale)
+{
+    glm::vec2 expected = { 10.0F, 10.0F };
+    glm::vec2 actual = Soldank::Calc::Vec2Scale({ 5.0F, 5.0F }, 2.0F);
+    ASSERT_FLOAT_EQ(expected.x, actual.x);
+    ASSERT_FLOAT_EQ(expected.y, actual.y);
+
+    expected = { 2.5F, 2.5F };
+    actual = Soldank::Calc::Vec2Scale({ 5.0F, 5.0F }, 0.5F);
+    ASSERT_FLOAT_EQ(expected.x, actual.x);
+    ASSERT_FLOAT_EQ(expected.y, actual.y);
+}
+
+TEST(CalcTests, TestLineCircleCollision)
+{
+    std::optional<glm::vec2> actual =
+      Soldank::Calc::LineCircleCollision({ 3.0F, 3.0F }, { 5.0F, 3.0F }, { 5.0F, 5.0F }, 2.0F);
+    ASSERT_TRUE(actual.has_value());
+    glm::vec2 collision_point = *actual;
+    ASSERT_FLOAT_EQ(collision_point.x, 5.0F);
+    ASSERT_FLOAT_EQ(collision_point.y, 3.0F);
+
+    actual =
+      Soldank::Calc::LineCircleCollision({ 3.0F, 3.0F }, { 4.0F, 6.0F }, { 5.0F, 5.0F }, 2.0F);
+    ASSERT_TRUE(actual.has_value());
+    collision_point = *actual;
+    ASSERT_FLOAT_EQ(collision_point.x, 4.0F);
+    ASSERT_FLOAT_EQ(collision_point.y, 6.0F);
+
+    actual =
+      Soldank::Calc::LineCircleCollision({ 3.0F, 4.0F }, { 4.0F, 3.0F }, { 5.0F, 5.0F }, 2.0F);
+    ASSERT_FALSE(actual.has_value());
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
