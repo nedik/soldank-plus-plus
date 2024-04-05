@@ -27,7 +27,7 @@ public:
 
     void SendNetworkMessage(const NetworkMessage& network_message) override;
 
-    void SetLag(unsigned int lag_to_add_milliseconds) override;
+    void SetLag(int lag_to_add_milliseconds) override;
 
 private:
     void OnSteamNetConnectionStatusChanged(

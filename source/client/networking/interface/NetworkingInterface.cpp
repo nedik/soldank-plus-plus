@@ -5,6 +5,7 @@
 
 #include "spdlog/spdlog.h"
 
+#include <steam/isteamnetworkingutils.h>
 #include <vector>
 #include <functional>
 #include <array>

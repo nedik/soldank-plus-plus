@@ -82,9 +82,10 @@ void NetworkingClient::OnSteamNetConnectionStatusChanged(
     }
 }
 
-void NetworkingClient::SetLag(unsigned int lag_to_add_milliseconds)
+void NetworkingClient::SetLag(int lag_to_add_milliseconds)
 {
-    connection_->SetLag(lag_to_add_milliseconds);
+    SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_FakePacketLag_Send,
+                                                      lag_to_add_milliseconds);
 }
 
 } // namespace Soldank

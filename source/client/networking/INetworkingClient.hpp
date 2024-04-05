@@ -17,8 +17,7 @@ public:
 
     virtual void SendNetworkMessage(const NetworkMessage& network_message) = 0;
 
-    // TODO: implement it better
-    virtual void SetLag(unsigned int lag_to_add_milliseconds) = 0;
+    virtual void SetLag(int lag_to_add_milliseconds) = 0;
 };
 } // namespace Soldank
 
