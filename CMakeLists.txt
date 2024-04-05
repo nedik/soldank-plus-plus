@@ -1,15 +1,16 @@
 cmake_minimum_required (VERSION 3.20)
-project (Soldank++)
-
-option(BUILD_SERVER_ENABLED "Build server" ON)
-option(BUILD_CLIENT_ENABLED "Build client" ON)
-option(BUILD_TESTS_ENABLED "Build all available tests" ON)
 
 if( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake )
 	message(STATUS "Found ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake; using it!")
 	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
 		CACHE STRING "Vcpkg toolchain file")
 endif()
+
+project (Soldank++)
+
+option(BUILD_SERVER_ENABLED "Build server" ON)
+option(BUILD_CLIENT_ENABLED "Build client" ON)
+option(BUILD_TESTS_ENABLED "Build all available tests" ON)
 
 find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
