@@ -1,12 +1,15 @@
 cmake_minimum_required (VERSION 3.20)
+project (Soldank++)
+
+option(BUILD_SERVER_ENABLED "Build server" ON)
+option(BUILD_CLIENT_ENABLED "Build client" ON)
+option(BUILD_TESTS_ENABLED "Build all available tests" ON)
 
 if( EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake )
 	message(STATUS "Found ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake; using it!")
 	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
 		CACHE STRING "Vcpkg toolchain file")
 endif()
-
-project (Soldank++)
 
 find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -19,19 +22,11 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS On)
 
-
 CPMAddPackage("gh:brofield/simpleini#v4.20")
 CPMAddPackage("gh:gabime/spdlog#v1.13.0")
 CPMAddPackage("gh:g-truc/glm#0.9.9.8")
 
-if (NOT DEFINED NO_BUILD_SERVER)
-    set(SHOULD_BUILD_SERVER 1)
-endif()
-if (NOT DEFINED NO_BUILD_CLIENT)
-    set(SHOULD_BUILD_CLIENT 1)
-endif()
-
-if (DEFINED SHOULD_BUILD_CLIENT)
+if (BUILD_CLIENT_ENABLED)
     CPMAddPackage("gh:glfw/glfw#3.3.8")
     CPMAddPackage("gh:nothings/stb#master") # TODO: including master is not recommended
     if (stb_ADDED)
@@ -68,14 +63,17 @@ if (DEFINED SHOULD_BUILD_CLIENT)
     endif()
 endif()
 
-CPMAddPackage(
-    NAME googletest
-    GITHUB_REPOSITORY google/googletest
-    GIT_TAG v1.14.0
-    VERSION 1.14.0
-    OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt"
-)
+if (BUILD_TESTS_ENABLED)
+    CPMAddPackage(
+        NAME googletest
+        GITHUB_REPOSITORY google/googletest
+        GIT_TAG v1.14.0
+        VERSION 1.14.0
+        OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt"
+    )
+endif()
 
+if (BUILD_SERVER_ENABLED)
 CPMAddPackage(
     NAME dascript
     OPTIONS 
@@ -85,9 +83,11 @@ CPMAddPackage(
         "DAS_TUTORIAL_DISABLED ON"
     URL https://github.com/GaijinEntertainment/daScript/archive/9ae1c4cd73d7da06084aedb5741bb1da68b63b88.tar.gz
 )
-
-enable_testing()
+endif()
 
 add_subdirectory(extern)
 add_subdirectory(source)
-add_subdirectory(tests)
+if (BUILD_TESTS_ENABLED)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
