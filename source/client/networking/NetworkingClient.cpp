@@ -18,8 +18,7 @@ NetworkingClient::NetworkingClient(const char* server_ip, std::uint16_t server_p
           OnSteamNetConnectionStatusChanged(connection_info);
       });
 
-    connection_ = NetworkingInterface::CreateLagConnection(server_ip, server_port);
-    // connection_ = NetworkingInterface::CreateConnection(server_ip, server_port);
+    connection_ = NetworkingInterface::CreateConnection(server_ip, server_port);
 }
 
 void NetworkingClient::Update(
@@ -85,7 +84,9 @@ void NetworkingClient::OnSteamNetConnectionStatusChanged(
 void NetworkingClient::SetLag(int lag_to_add_milliseconds)
 {
     SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_FakePacketLag_Send,
-                                                      lag_to_add_milliseconds);
+                                                      lag_to_add_milliseconds / 2);
+    SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_FakePacketLag_Recv,
+                                                      lag_to_add_milliseconds / 2);
 }
 
 } // namespace Soldank

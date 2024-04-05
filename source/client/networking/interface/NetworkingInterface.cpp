@@ -1,7 +1,6 @@
 #include "networking/interface/NetworkingInterface.hpp"
 
 #include "networking/Connection.hpp"
-#include "networking/LagConnection.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -47,25 +46,6 @@ std::shared_ptr<IConnection> CreateConnection(const char* server_ip, std::uint16
     }
 
     return std::make_shared<Connection>(interface, connection_handle);
-}
-
-std::shared_ptr<LagConnection> CreateLagConnection(const char* server_ip, std::uint16_t server_port)
-{
-    SteamNetworkingIPAddr server_addr{};
-    server_addr.Clear();
-    server_addr.ParseString(server_ip); // TODO: ip=localhost doesn't work
-    server_addr.m_port = server_port;
-    spdlog::info("Connecting to server");
-
-    SteamNetworkingConfigValue_t opt{};
-    opt.SetPtr(k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged,
-               (void*)SteamNetConnectionStatusChangedCallback);
-    HSteamNetConnection connection_handle = interface->ConnectByIPAddress(server_addr, 1, &opt);
-    if (connection_handle == k_HSteamNetConnection_Invalid) {
-        spdlog::error("Failed to create connection");
-    }
-
-    return std::make_shared<LagConnection>(interface, connection_handle);
 }
 
 void PollConnectionStateChanges()
