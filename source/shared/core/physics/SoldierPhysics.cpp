@@ -46,8 +46,6 @@ const int DEFAULT_IDLETIME = SECOND * 8;
 
 namespace Soldank
 {
-SoldierPhysics::SoldierPhysics() {}
-
 void SoldierPhysics::SwitchWeapon(Soldier& soldier)
 {
     int new_active_weapon = (soldier.active_weapon + 1) % 2;

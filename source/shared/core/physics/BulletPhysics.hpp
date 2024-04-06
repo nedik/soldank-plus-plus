@@ -13,21 +13,21 @@ namespace Soldank
 class BulletPhysics
 {
 public:
-    void UpdateBullet(const PhysicsEvents& physics_events,
-                      Bullet& bullet,
-                      const Map& map,
-                      State& state);
+    static void UpdateBullet(const PhysicsEvents& physics_events,
+                             Bullet& bullet,
+                             const Map& map,
+                             State& state);
 
 private:
-    std::optional<std::pair<glm::vec2, unsigned int>> CheckMapCollision(Bullet& bullet,
-                                                                        const Map& map);
-    bool CollidesWithPoly(const PMSPolygon& poly, TeamType team);
-    std::optional<glm::vec2> CheckSoldierCollision(const PhysicsEvents& physics_events,
-                                                   Bullet& bullet,
-                                                   const Map& map,
-                                                   State& state,
-                                                   float lasthitdist);
-    glm::vec2 GetSoldierCollisionPoint(Soldier& soldier);
+    static std::optional<std::pair<glm::vec2, unsigned int>> CheckMapCollision(Bullet& bullet,
+                                                                               const Map& map);
+    static bool CollidesWithPoly(const PMSPolygon& poly, TeamType team);
+    static std::optional<glm::vec2> CheckSoldierCollision(const PhysicsEvents& physics_events,
+                                                          Bullet& bullet,
+                                                          const Map& map,
+                                                          State& state,
+                                                          float lasthitdist);
+    static glm::vec2 GetSoldierCollisionPoint(Soldier& soldier);
 };
 } // namespace Soldank
 

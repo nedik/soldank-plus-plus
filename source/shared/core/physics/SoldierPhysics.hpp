@@ -20,8 +20,6 @@ namespace Soldank
 class SoldierPhysics
 {
 public:
-    SoldierPhysics();
-
     static const Weapon& GetPrimaryWeapon(Soldier& soldier)
     {
         return soldier.weapons[soldier.active_weapon];
@@ -34,40 +32,42 @@ public:
 
     static const Weapon& GetTertiaryWeapon(Soldier& soldier) { return soldier.weapons[2]; }
 
-    void SwitchWeapon(Soldier& soldier);
-    void UpdateKeys(Soldier& soldier, const Control& control);
-    void LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
-    void BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
-    void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier);
-    void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
-    void Update(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
+    static void SwitchWeapon(Soldier& soldier);
+    static void UpdateKeys(Soldier& soldier, const Control& control);
+    static void LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
+    static void BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
+    static void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier);
+    static void UpdateControl(State& state,
+                              Soldier& soldier,
+                              std::vector<BulletParams>& bullet_emitter);
+    static void Update(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
 
-    bool CheckMapCollision(Soldier& soldier,
-                           const Map& map,
-                           float x,
-                           float y,
-                           int area,
-                           State& state);
-    bool CheckMapVerticesCollision(Soldier& soldier,
-                                   const Map& map,
-                                   float x,
-                                   float y,
-                                   float r,
-                                   bool has_collided,
-                                   State& state);
-    bool CheckRadiusMapCollision(Soldier& soldier,
-                                 const Map& map,
-                                 float x,
-                                 float y,
-                                 bool has_collided,
-                                 State& state);
-    bool CheckSkeletonMapCollision(Soldier& soldier,
-                                   const Map& map,
-                                   unsigned int i,
-                                   float x,
-                                   float y,
-                                   State& state);
-    void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
+    static bool CheckMapCollision(Soldier& soldier,
+                                  const Map& map,
+                                  float x,
+                                  float y,
+                                  int area,
+                                  State& state);
+    static bool CheckMapVerticesCollision(Soldier& soldier,
+                                          const Map& map,
+                                          float x,
+                                          float y,
+                                          float r,
+                                          bool has_collided,
+                                          State& state);
+    static bool CheckRadiusMapCollision(Soldier& soldier,
+                                        const Map& map,
+                                        float x,
+                                        float y,
+                                        bool has_collided,
+                                        State& state);
+    static bool CheckSkeletonMapCollision(Soldier& soldier,
+                                          const Map& map,
+                                          unsigned int i,
+                                          float x,
+                                          float y,
+                                          State& state);
+    static void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
 };
 } // namespace Soldank
 

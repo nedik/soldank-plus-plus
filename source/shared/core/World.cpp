@@ -1,6 +1,8 @@
 #include "World.hpp"
 
 #include "core/state/Control.hpp"
+#include "core/physics/BulletPhysics.hpp"
+#include "core/physics/SoldierPhysics.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -15,8 +17,6 @@ namespace Soldank
 {
 World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
-    , soldier_physics_(std::make_unique<SoldierPhysics>())
-    , bullet_physics_(std::make_unique<BulletPhysics>())
     , physics_events_(std::make_unique<PhysicsEvents>())
     , mersenne_twister_engine_(random_device_())
 {
@@ -128,13 +128,13 @@ void World::Update(double /*delta_time*/)
             }
 
             if (should_update_current_soldier) {
-                soldier_physics_->Update(*state_, soldier, bullet_emitter);
+                SoldierPhysics::Update(*state_, soldier, bullet_emitter);
             }
         }
     }
 
     for (auto& bullet : state_->bullets) {
-        bullet_physics_->UpdateBullet(*physics_events_, bullet, state_->map, *state_);
+        BulletPhysics::UpdateBullet(*physics_events_, bullet, state_->map, *state_);
     }
 
     for (const auto& bullet_params : bullet_emitter) {
@@ -155,7 +155,7 @@ void World::UpdateSoldier(unsigned int soldier_id)
 
     for (auto& soldier : state_->soldiers) {
         if (soldier.active && soldier.id == soldier_id) {
-            soldier_physics_->Update(*state_, soldier, bullet_emitter);
+            SoldierPhysics::Update(*state_, soldier, bullet_emitter);
         }
     }
 }
