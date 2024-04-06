@@ -14,6 +14,11 @@ add_executable(WeaponTest core/entities/WeaponTest.cpp)
 target_link_libraries(WeaponTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(WeaponTest PRIVATE shared_lib)
 
+add_executable(ObservableTest core/utility/ObservableTest.cpp)
+target_link_libraries(ObservableTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+target_link_libraries(ObservableTest PRIVATE shared_lib)
+
 add_test(communication_gtests NetworkEventDispatcherTest NetworkMessageTest)
 add_test(math_gtests CalcTest)
 add_test(entities_gtests WeaponTest)
+add_test(utility_gtests ObservableTest)

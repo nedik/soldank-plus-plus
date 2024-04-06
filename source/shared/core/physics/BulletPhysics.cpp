@@ -1,14 +1,13 @@
-#include "BulletPhysics.hpp"
+#include "core/physics/BulletPhysics.hpp"
 
 #include "core/entities/Bullet.hpp"
 #include "core/map/PMSEnums.hpp"
 #include "core/map/PMSStructs.hpp"
 #include "core/math/Calc.hpp"
-#include "core/physics/BulletPhysics.hpp"
 #include "core/types/BulletType.hpp"
 #include "core/types/TeamType.hpp"
-
 #include "core/types/WeaponType.hpp"
+
 #include "spdlog/spdlog.h"
 
 #include <algorithm>
