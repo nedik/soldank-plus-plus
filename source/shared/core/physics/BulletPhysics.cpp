@@ -7,6 +7,7 @@
 #include "core/types/BulletType.hpp"
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
+#include "core/entities/WeaponParametersFactory.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -15,7 +16,10 @@
 
 namespace Soldank
 {
-void BulletPhysics::UpdateBullet(Bullet& bullet, const Map& map, State& state)
+void BulletPhysics::UpdateBullet(const PhysicsEvents& physics_events,
+                                 Bullet& bullet,
+                                 const Map& map,
+                                 State& state)
 {
     bullet.velocity_prev = bullet.particle.velocity_;
     bullet.particle.Euler();
@@ -56,7 +60,7 @@ void BulletPhysics::UpdateBullet(Bullet& bullet, const Map& map, State& state)
         bullet.active = false;
     }
 
-    auto soldier_collision = CheckSoldierCollision(bullet, map, state, -1.0F);
+    auto soldier_collision = CheckSoldierCollision(physics_events, bullet, map, state, -1.0F);
     if (soldier_collision.has_value()) {
         bullet.active = false;
         spdlog::debug("soldier hit");
@@ -122,7 +126,8 @@ bool BulletPhysics::CollidesWithPoly(const PMSPolygon& poly, TeamType team)
     }
 }
 
-std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(Bullet& bullet,
+std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(const PhysicsEvents& physics_events,
+                                                              Bullet& bullet,
                                                               const Map& map,
                                                               State& state,
                                                               float lasthitdist)
@@ -265,21 +270,31 @@ std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(Bullet& bullet,
                                 auto hitbox_modifier = 1.0F;
                                 // TODO: take hitbox_modifier
                                 if (where <= 4) {
-                                    // auto hitbox_modifier = modifierlegs
-                                    spdlog::debug("HIT LEGS");
+                                    hitbox_modifier =
+                                      WeaponParametersFactory::GetParameters(
+                                        bullet.weapon, false /* TODO realistic or not*/)
+                                        .modifier_legs;
                                 } else if (where <= 11) {
-                                    // auto hitbox_modifier = modifierchest
-                                    spdlog::debug("HIT CHEST");
+                                    hitbox_modifier =
+                                      WeaponParametersFactory::GetParameters(
+                                        bullet.weapon, false /* TODO realistic or not*/)
+                                        .modifier_chest;
                                 } else {
-                                    // auto hitbox_modifier = modifierhead
-                                    spdlog::debug("HIT HEAD");
+                                    hitbox_modifier =
+                                      WeaponParametersFactory::GetParameters(
+                                        bullet.weapon, false /* TODO realistic or not*/)
+                                        .modifier_head;
                                 }
 
                                 auto speed = Calc::Vec2Length(bullet_velocity);
                                 auto was_dead = soldier.dead_meat;
                                 // TODO: hit soldier
-                                // soldier.health -= speed * hit_multiply * hitboxmodifier;
-                                soldier.health -= 10;
+                                auto hit_multiply =
+                                  WeaponParametersFactory::GetParameters(
+                                    bullet.weapon, false /* TODO realistic or not*/)
+                                    .hit_multiply;
+                                auto damage = speed * hit_multiply * hitbox_modifier;
+                                physics_events.soldier_hit_by_bullet.Notify(soldier, damage);
 
                                 // TODO: hit spray
                                 // TODO: drop weapon if hit from close distance

@@ -17,8 +17,13 @@ World::World()
     : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
     , soldier_physics_(std::make_unique<SoldierPhysics>())
     , bullet_physics_(std::make_unique<BulletPhysics>())
+    , physics_events_(std::make_unique<PhysicsEvents>())
     , mersenne_twister_engine_(random_device_())
 {
+    physics_events_->soldier_hit_by_bullet.AddObserver([](Soldier& soldier, float damage) {
+        soldier.health -= damage;
+        spdlog::debug("soldier {} hit by {} damage", soldier.id, damage);
+    });
 }
 
 void World::RunLoop(int fps_limit)
@@ -129,7 +134,7 @@ void World::Update(double /*delta_time*/)
     }
 
     for (auto& bullet : state_->bullets) {
-        bullet_physics_->UpdateBullet(bullet, state_->map, *state_);
+        bullet_physics_->UpdateBullet(*physics_events_, bullet, state_->map, *state_);
     }
 
     for (const auto& bullet_params : bullet_emitter) {

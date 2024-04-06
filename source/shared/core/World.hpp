@@ -6,6 +6,7 @@
 #include "core/physics/SoldierPhysics.hpp"
 #include "core/physics/BulletPhysics.hpp"
 #include "core/entities/Soldier.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 
 #include <functional>
 #include <utility>
@@ -81,6 +82,7 @@ private:
     std::shared_ptr<State> state_;
     std::unique_ptr<SoldierPhysics> soldier_physics_;
     std::unique_ptr<BulletPhysics> bullet_physics_;
+    std::unique_ptr<PhysicsEvents> physics_events_;
 
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;
     TPreGameLoopIterationCallback pre_game_loop_iteration_callback_;
