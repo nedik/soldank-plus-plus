@@ -162,6 +162,7 @@ void Application::Run()
             .timeout = bullet_params.timeout,
             .hit_multiply = bullet_params.hit_multiply,
             .team = bullet_params.team,
+            .owner_id = bullet_params.owner_id,
         };
         game_server_->SendNetworkMessageToAll(
           { NetworkEvent::ProjectileSpawn, projectile_spawn_packet });

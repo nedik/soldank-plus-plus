@@ -78,6 +78,7 @@ struct ProjectileSpawnPacket
     std::int16_t timeout;
     float hit_multiply;
     TeamType team;
+    unsigned int owner_id;
 };
 #pragma pack(pop)
 } // namespace Soldank

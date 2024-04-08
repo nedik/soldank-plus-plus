@@ -132,6 +132,7 @@ std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(const PhysicsEvent
                                                               State& state,
                                                               float lasthitdist)
 {
+    // TODO: can't throw knife (with short hold) because it immediately collides with the owner
     const auto body_parts_priority = std::array{ 12, 11, 10, 6, 5, 4, 3 };
 
     std::optional<glm::vec2> result = std::nullopt;
