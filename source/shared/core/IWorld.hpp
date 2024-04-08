@@ -3,6 +3,7 @@
 
 #include "core/math/Glm.hpp"
 #include "core/state/State.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 
 #include <memory>
 #include <functional>
@@ -30,6 +31,7 @@ public:
     virtual void UpdateSoldier(unsigned int soldier_id) = 0;
     virtual const std::shared_ptr<State>& GetState() const = 0;
     virtual const Soldier& GetSoldier(unsigned int soldier_id) const = 0;
+    virtual const PhysicsEvents& GetPhysicsEvents() const = 0;
 
     virtual const Soldier& CreateSoldier(
       std::optional<unsigned int> force_soldier_id = std::nullopt) = 0;

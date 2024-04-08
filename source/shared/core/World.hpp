@@ -23,6 +23,7 @@ public:
     void UpdateSoldier(unsigned int soldier_id) override;
     const std::shared_ptr<State>& GetState() const override;
     const Soldier& GetSoldier(unsigned int soldier_id) const override;
+    const PhysicsEvents& GetPhysicsEvents() const override;
 
     const Soldier& CreateSoldier(
       std::optional<unsigned int> force_soldier_id = std::nullopt) override;

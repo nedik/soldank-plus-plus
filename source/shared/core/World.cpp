@@ -176,6 +176,11 @@ const Soldier& World::GetSoldier(unsigned int soldier_id) const
     std::unreachable();
 }
 
+const PhysicsEvents& World::GetPhysicsEvents() const
+{
+    return *physics_events_;
+}
+
 const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id)
 {
     unsigned int new_soldier_id = NAN;
