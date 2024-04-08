@@ -8,11 +8,6 @@
 
 namespace Soldank
 {
-Map::Map(const std::string& path)
-{
-    LoadMap(path);
-}
-
 void Map::LoadMap(const std::string& map_path)
 {
     std::ifstream file(map_path, std::ios::in | std::ios::binary);

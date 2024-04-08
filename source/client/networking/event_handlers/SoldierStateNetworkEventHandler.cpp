@@ -53,9 +53,9 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
     if (is_soldier_id_me) {
         client_state_->soldier_position_server_pov = { soldier_position.x, soldier_position.y };
     }
-    const auto& state = world_->GetState();
+    auto& state = world_->GetStateManager()->GetState();
 
-    for (auto& soldier : state->soldiers) {
+    for (auto& soldier : state.soldiers) {
         if (soldier.id == soldier_id) {
             soldier.particle.old_position = soldier_old_position;
             soldier.particle.position = soldier_position;

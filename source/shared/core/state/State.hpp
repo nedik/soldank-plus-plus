@@ -12,11 +12,9 @@ namespace Soldank
 {
 struct State
 {
-    State(const std::string& map_name);
-
     unsigned int game_tick;
     Map map;
-    float gravity;
+    float gravity = 0.06F;
     std::list<Bullet> bullets;
     std::list<Soldier> soldiers;
     std::vector<unsigned int> colliding_polygon_ids;

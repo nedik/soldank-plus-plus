@@ -2,7 +2,7 @@
 #define __WORLD_HPP__
 
 #include "core/IWorld.hpp"
-#include "core/state/State.hpp"
+#include "core/state/StateManager.hpp"
 #include "core/entities/Soldier.hpp"
 #include "core/physics/PhysicsEvents.hpp"
 
@@ -21,7 +21,7 @@ public:
     void RunLoop(int fps_limit) override;
     void Update(double delta_time) override;
     void UpdateSoldier(unsigned int soldier_id) override;
-    const std::shared_ptr<State>& GetState() const override;
+    const std::shared_ptr<StateManager>& GetStateManager() const override;
     const Soldier& GetSoldier(unsigned int soldier_id) const override;
     const PhysicsEvents& GetPhysicsEvents() const override;
 
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    std::shared_ptr<State> state_;
+    std::shared_ptr<StateManager> state_manager_;
     std::unique_ptr<PhysicsEvents> physics_events_;
 
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;

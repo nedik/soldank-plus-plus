@@ -99,10 +99,10 @@ void Application::Run()
     world_->SetShouldStopGameLoopCallback([&]() { return false; });
     world_->SetPreGameLoopIterationCallback([&]() {});
     world_->SetPreWorldUpdateCallback([&]() { game_server_->Update(); });
-    world_->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
-        for (const auto& soldier : state->soldiers) {
+    world_->SetPostWorldUpdateCallback([&](const State& state) {
+        for (const auto& soldier : state.soldiers) {
             SoldierStatePacket update_soldier_state_packet{
-                .game_tick = state->game_tick,
+                .game_tick = state.game_tick,
                 .player_id = soldier.id,
                 .position_x = soldier.particle.position.x,
                 .position_y = soldier.particle.position.y,
@@ -149,7 +149,7 @@ void Application::Run()
         // }
     });
     world_->SetPostGameLoopIterationCallback(
-      [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {});
+      [&](const State& state, double frame_percent, int last_fps) {});
     world_->SetPreProjectileSpawnCallback([&](const BulletParams& bullet_params) {
         ProjectileSpawnPacket projectile_spawn_packet{
             .projectile_id = 0, // TODO: set the correct ID

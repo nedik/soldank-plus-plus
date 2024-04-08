@@ -14,7 +14,7 @@
 #include "rendering/renderer/RectangleRenderer.hpp"
 #include "rendering/renderer/BulletRenderer.hpp"
 
-#include "core/state/State.hpp"
+#include "core/state/StateManager.hpp"
 #include "core/entities/Soldier.hpp"
 
 #include <memory>
@@ -24,14 +24,11 @@ namespace Soldank
 class Scene
 {
 public:
-    Scene(const std::shared_ptr<State>& game_state);
+    Scene(const std::shared_ptr<StateManager>& game_state);
 
-    void Render(const std::shared_ptr<State>& game_state,
-                ClientState& client_state,
-                double frame_percent,
-                int fps);
+    void Render(State& game_state, ClientState& client_state, double frame_percent, int fps);
 
-    void RenderSoldiers(const std::shared_ptr<State>& game_state,
+    void RenderSoldiers(const State& game_state,
                         const ClientState& client_state,
                         double frame_percent);
 

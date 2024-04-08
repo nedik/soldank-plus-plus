@@ -26,12 +26,12 @@ NetworkEventHandlerResult ProjectileSpawnNetworkEventHandler::HandleNetworkMessa
     float hit_multiply = projectile_spawn_packet.hit_multiply;
     TeamType team = projectile_spawn_packet.team;
 
-    const auto& state = world_->GetState();
+    auto& state = world_->GetStateManager()->GetState();
     BulletParams bullet_params{
         style,        weapon, { position_x, position_y }, { velocity_x, velocity_y }, timeout,
         hit_multiply, team
     };
-    state->bullets.emplace_back(bullet_params);
+    state.bullets.emplace_back(bullet_params);
     return NetworkEventHandlerResult::Success;
 }
 } // namespace Soldank

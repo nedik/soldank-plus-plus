@@ -15,10 +15,10 @@ NetworkEventHandlerResult PlayerLeaveNetworkEventHandler::HandleNetworkMessageIm
   unsigned int /*sender_connection_id*/,
   unsigned int soldier_id)
 {
-    const auto& state = world_->GetState();
-    for (auto it = state->soldiers.begin(); it != state->soldiers.end();) {
+    auto& state = world_->GetStateManager()->GetState();
+    for (auto it = state.soldiers.begin(); it != state.soldiers.end();) {
         if (it->id == soldier_id) {
-            it = state->soldiers.erase(it);
+            it = state.soldiers.erase(it);
         } else {
             it++;
         }

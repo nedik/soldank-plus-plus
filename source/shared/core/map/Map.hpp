@@ -18,8 +18,6 @@ namespace Soldank
 class Map
 {
 public:
-    Map(const std::string& path);
-
     void LoadMap(const std::string& map_path);
 
     static bool PointInPoly(glm::vec2 p, PMSPolygon poly);

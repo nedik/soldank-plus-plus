@@ -70,8 +70,8 @@ void PlayerPollGroup::AcceptConnection(
 
 void PlayerPollGroup::OnAssignConnection(Connection& connection)
 {
-    const auto& state = world_->GetState();
-    for (const auto& soldier : state->soldiers) {
+    const auto& state = world_->GetStateManager()->GetState();
+    for (const auto& soldier : state.soldiers) {
         NetworkMessage network_message(NetworkEvent::SoldierInfo, soldier.id);
         SendReliableNetworkMessage(connection.connection_handle, network_message);
     }

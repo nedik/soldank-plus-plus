@@ -128,7 +128,7 @@ void Run()
 {
     window->Create();
 
-    Scene scene(world->GetState());
+    Scene scene(world->GetStateManager());
 
     world->SetShouldStopGameLoopCallback([&]() { return window->ShouldClose(); });
     world->SetPreGameLoopIterationCallback([&]() {
@@ -155,7 +155,7 @@ void Run()
                 }
             }
 
-            if ((world->GetState()->game_tick % 60 == 0) &&
+            if ((world->GetStateManager()->GetState().game_tick % 60 == 0) &&
                 !client_state->last_ping_check_time.has_value()) {
 
                 client_state->last_ping_check_time = current_time;
@@ -175,7 +175,7 @@ void Run()
         if (client_state->client_soldier_id.has_value()) {
             unsigned int client_soldier_id = *client_state->client_soldier_id;
             bool is_soldier_active = false;
-            for (const auto& soldier : world->GetState()->soldiers) {
+            for (const auto& soldier : world->GetStateManager()->GetState().soldiers) {
                 if (soldier.id == client_soldier_id && soldier.active) {
                     is_soldier_active = true;
                 }
@@ -205,7 +205,7 @@ void Run()
             if (is_online) {
                 SoldierInputPacket update_soldier_state_packet{
                     .input_sequence_id = input_sequence_id,
-                    .game_tick = world->GetState()->game_tick,
+                    .game_tick = world->GetStateManager()->GetState().game_tick,
                     .player_id = client_soldier_id,
                     .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
                     .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
@@ -225,7 +225,7 @@ void Run()
             client_state->camera = { 0.0F, 0.0F };
         }
     });
-    world->SetPostWorldUpdateCallback([&](const std::shared_ptr<State>& state) {
+    world->SetPostWorldUpdateCallback([&](const State& state) {
         // spdlog::info("Post World Update Call");
         // for (const auto& soldier : state->soldiers) {
         //     spdlog::info(
@@ -242,16 +242,17 @@ void Run()
         //       soldier.particle.GetForce().y);
         // }
     });
-    world->SetPostGameLoopIterationCallback(
-      [&](const std::shared_ptr<State>& state, double frame_percent, int last_fps) {
-          if (!client_state->objects_interpolation) {
-              frame_percent = 1.0F;
-          }
-          scene.Render(state, *client_state, frame_percent, last_fps);
+    world->SetPostGameLoopIterationCallback([&](const State& state,
+                                                double frame_percent,
+                                                int last_fps) {
+        if (!client_state->objects_interpolation) {
+            frame_percent = 1.0F;
+        }
+        scene.Render(world->GetStateManager()->GetState(), *client_state, frame_percent, last_fps);
 
-          window->SwapBuffers();
-          window->PollInput();
-      });
+        window->SwapBuffers();
+        window->PollInput();
+    });
 
     world->SetPreSoldierUpdateCallback([&](const Soldier& soldier) {
         if (!is_online) {

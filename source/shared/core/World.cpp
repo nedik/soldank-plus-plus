@@ -16,10 +16,11 @@
 namespace Soldank
 {
 World::World()
-    : state_(std::make_shared<State>("maps/ctf_Ash.pms"))
+    : state_manager_(std::make_shared<StateManager>())
     , physics_events_(std::make_unique<PhysicsEvents>())
     , mersenne_twister_engine_(random_device_())
 {
+    state_manager_->GetState().map.LoadMap("maps/ctf_Ash.pms");
     physics_events_->soldier_hit_by_bullet.AddObserver([](Soldier& soldier, float damage) {
         soldier.health -= damage;
         spdlog::debug("soldier {} hit by {} damage", soldier.id, damage);
@@ -93,12 +94,12 @@ void World::RunLoop(int fps_limit)
             spdlog::info("World update");
             Update(delta_time.count());
             if (post_world_update_callback_) {
-                post_world_update_callback_(state_);
+                post_world_update_callback_(state_manager_->GetState());
             }
 
             world_updates++;
             game_tick++;
-            state_->game_tick = game_tick;
+            state_manager_->GetState().game_tick = game_tick;
 
             timecur = std::chrono::system_clock::now();
             timeacc += timecur - timeprv;
@@ -107,20 +108,21 @@ void World::RunLoop(int fps_limit)
         double frame_percent = std::min(1.0, std::max(0.0, timeacc.count() / dt));
 
         if (post_game_loop_iteration_callback_) {
-            post_game_loop_iteration_callback_(state_, frame_percent, last_fps);
+            post_game_loop_iteration_callback_(state_manager_->GetState(), frame_percent, last_fps);
         }
     }
 }
 
 void World::Update(double /*delta_time*/)
 {
-    auto removed_bullets_range =
-      std::ranges::remove_if(state_->bullets, [](const Bullet& bullet) { return !bullet.active; });
-    state_->bullets.erase(removed_bullets_range.begin(), removed_bullets_range.end());
+    auto removed_bullets_range = std::ranges::remove_if(
+      state_manager_->GetState().bullets, [](const Bullet& bullet) { return !bullet.active; });
+    state_manager_->GetState().bullets.erase(removed_bullets_range.begin(),
+                                             removed_bullets_range.end());
 
     std::vector<BulletParams> bullet_emitter;
 
-    for (auto& soldier : state_->soldiers) {
+    for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.active) {
             bool should_update_current_soldier = true;
             if (pre_soldier_update_callback_) {
@@ -128,13 +130,14 @@ void World::Update(double /*delta_time*/)
             }
 
             if (should_update_current_soldier) {
-                SoldierPhysics::Update(*state_, soldier, bullet_emitter);
+                SoldierPhysics::Update(state_manager_->GetState(), soldier, bullet_emitter);
             }
         }
     }
 
-    for (auto& bullet : state_->bullets) {
-        BulletPhysics::UpdateBullet(*physics_events_, bullet, state_->map, *state_);
+    for (auto& bullet : state_manager_->GetState().bullets) {
+        BulletPhysics::UpdateBullet(
+          *physics_events_, bullet, state_manager_->GetState().map, state_manager_->GetState());
     }
 
     for (const auto& bullet_params : bullet_emitter) {
@@ -144,7 +147,7 @@ void World::Update(double /*delta_time*/)
         }
 
         if (should_spawn_projectile) {
-            state_->bullets.emplace_back(bullet_params);
+            state_manager_->GetState().bullets.emplace_back(bullet_params);
         }
     }
 }
@@ -153,21 +156,21 @@ void World::UpdateSoldier(unsigned int soldier_id)
 {
     std::vector<BulletParams> bullet_emitter;
 
-    for (auto& soldier : state_->soldiers) {
+    for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.active && soldier.id == soldier_id) {
-            SoldierPhysics::Update(*state_, soldier, bullet_emitter);
+            SoldierPhysics::Update(state_manager_->GetState(), soldier, bullet_emitter);
         }
     }
 }
 
-const std::shared_ptr<State>& World::GetState() const
+const std::shared_ptr<StateManager>& World::GetStateManager() const
 {
-    return state_;
+    return state_manager_;
 }
 
 const Soldier& World::GetSoldier(unsigned int soldier_id) const
 {
-    for (const auto& soldier : state_->soldiers) {
+    for (const auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.id == soldier_id) {
             return soldier;
         }
@@ -187,7 +190,7 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
 
     if (!force_soldier_id.has_value()) {
         std::vector<unsigned int> current_soldier_ids;
-        for (const auto& soldier : state_->soldiers) {
+        for (const auto& soldier : state_manager_->GetState().soldiers) {
             current_soldier_ids.push_back(soldier.id);
         }
         std::sort(current_soldier_ids.begin(), current_soldier_ids.end());
@@ -203,16 +206,17 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
     }
 
     std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
-      0, state_->map.GetSpawnPoints().size() - 1);
+      0, state_manager_->GetState().map.GetSpawnPoints().size() - 1);
 
     unsigned int random_spawnpoint_id = spawnpoint_id_random_distribution(mersenne_twister_engine_);
 
-    const auto& chosen_spawnpoint = state_->map.GetSpawnPoints().at(random_spawnpoint_id);
+    const auto& chosen_spawnpoint =
+      state_manager_->GetState().map.GetSpawnPoints().at(random_spawnpoint_id);
     glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
 
-    state_->soldiers.emplace_back(new_soldier_id, spawn_position);
+    state_manager_->GetState().soldiers.emplace_back(new_soldier_id, spawn_position);
 
-    return state_->soldiers.back();
+    return state_manager_->GetState().soldiers.back();
 }
 
 glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> spawn_position)
@@ -222,16 +226,17 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
         initial_player_position = *spawn_position;
     } else {
         std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
-          0, state_->map.GetSpawnPoints().size() - 1);
+          0, state_manager_->GetState().map.GetSpawnPoints().size() - 1);
 
         unsigned int random_spawnpoint_id =
           spawnpoint_id_random_distribution(mersenne_twister_engine_);
 
-        const auto& chosen_spawnpoint = state_->map.GetSpawnPoints().at(random_spawnpoint_id);
+        const auto& chosen_spawnpoint =
+          state_manager_->GetState().map.GetSpawnPoints().at(random_spawnpoint_id);
         initial_player_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
     }
 
-    for (auto& soldier : state_->soldiers) {
+    for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.id == soldier_id) {
             soldier.particle.position = initial_player_position;
             soldier.particle.old_position = initial_player_position;
@@ -247,7 +252,7 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
 
 void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.fire = pressed;
             return;
@@ -258,7 +263,7 @@ void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateJetsButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.jets = pressed;
             return;
@@ -269,7 +274,7 @@ void World::UpdateJetsButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateLeftButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.left = pressed;
             return;
@@ -280,7 +285,7 @@ void World::UpdateLeftButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateRightButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.right = pressed;
             return;
@@ -291,7 +296,7 @@ void World::UpdateRightButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateJumpButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.up = pressed;
             return;
@@ -302,7 +307,7 @@ void World::UpdateJumpButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateCrouchButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.down = pressed;
             return;
@@ -313,7 +318,7 @@ void World::UpdateCrouchButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateProneButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.prone = pressed;
             return;
@@ -324,7 +329,7 @@ void World::UpdateProneButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateChangeButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.change = pressed;
             return;
@@ -335,7 +340,7 @@ void World::UpdateChangeButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.throw_grenade = pressed;
             return;
@@ -346,7 +351,7 @@ void World::UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateDropButtonState(unsigned int soldier_id, bool pressed)
 {
-    for (auto& soldier_it : state_->soldiers) {
+    for (auto& soldier_it : state_manager_->GetState().soldiers) {
         if (soldier_it.id == soldier_id) {
             soldier_it.control.drop = pressed;
             return;
@@ -357,7 +362,7 @@ void World::UpdateDropButtonState(unsigned int soldier_id, bool pressed)
 
 void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position)
 {
-    for (auto& soldier : state_->soldiers) {
+    for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.id == soldier_id) {
             soldier.game_width = 640.0;
             soldier.game_height = 480.0;

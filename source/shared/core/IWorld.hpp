@@ -2,7 +2,7 @@
 #define __IWORLD_HPP__
 
 #include "core/math/Glm.hpp"
-#include "core/state/State.hpp"
+#include "core/state/StateManager.hpp"
 #include "core/physics/PhysicsEvents.hpp"
 
 #include <memory>
@@ -17,9 +17,8 @@ protected:
     using TShouldStopGameLoopCallback = std::function<bool()>;
     using TPreGameLoopIterationCallback = std::function<void()>;
     using TPreWorldUpdateCallback = std::function<void()>;
-    using TPostWorldUpdateCallback = std::function<void(const std::shared_ptr<State>& state)>;
-    using TPostGameLoopIterationCallback =
-      std::function<void(const std::shared_ptr<State>&, double, int)>;
+    using TPostWorldUpdateCallback = std::function<void(const State& state)>;
+    using TPostGameLoopIterationCallback = std::function<void(const State&, double, int)>;
 
     using TPreSoldierUpdateCallback = std::function<bool(const Soldier&)>;
     using TPreProjectileSpawnCallback = std::function<bool(const BulletParams&)>;
@@ -29,7 +28,7 @@ public:
     virtual void RunLoop(int fps_limit) = 0;
     virtual void Update(double delta_time) = 0;
     virtual void UpdateSoldier(unsigned int soldier_id) = 0;
-    virtual const std::shared_ptr<State>& GetState() const = 0;
+    virtual const std::shared_ptr<StateManager>& GetStateManager() const = 0;
     virtual const Soldier& GetSoldier(unsigned int soldier_id) const = 0;
     virtual const PhysicsEvents& GetPhysicsEvents() const = 0;
 
