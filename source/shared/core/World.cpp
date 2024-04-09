@@ -135,7 +135,7 @@ void World::Update(double /*delta_time*/)
                 if (soldier.dead_meat) {
                     soldier.ticks_to_respawn--;
                     if (soldier.ticks_to_respawn <= 0) {
-                        RespawnSoldier(soldier);
+                        SpawnSoldier(soldier.id);
                     }
                 }
             }
@@ -249,6 +249,13 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
             soldier.particle.old_position = initial_player_position;
             soldier.active = true;
             soldier.particle.active = true;
+            soldier.health = 150.0;
+            soldier.dead_meat = false;
+            soldier.weapons[0] =
+              WeaponParametersFactory::GetParameters(soldier.weapon_choices[0], false);
+            soldier.weapons[1] =
+              WeaponParametersFactory::GetParameters(soldier.weapon_choices[1], false);
+            soldier.active_weapon = 0;
             return initial_player_position;
         }
     }
@@ -413,13 +420,5 @@ void World::UpdateWeaponChoices(unsigned int soldier_id,
             soldier.weapon_choices[1] = secondary_weapon_type;
         }
     }
-}
-
-void World::RespawnSoldier(Soldier& soldier)
-{
-    soldier.health = 150.0;
-    soldier.dead_meat = false;
-    soldier.weapons[0] = WeaponParametersFactory::GetParameters(soldier.weapon_choices[0], false);
-    soldier.weapons[1] = WeaponParametersFactory::GetParameters(soldier.weapon_choices[1], false);
 }
 } // namespace Soldank
