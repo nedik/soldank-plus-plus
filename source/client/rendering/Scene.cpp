@@ -12,6 +12,7 @@
 
 #include <string>
 #include <algorithm>
+#include <vector>
 
 namespace Soldank
 {
@@ -103,6 +104,47 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
                         ImGui::Text("SOLDIER IS ON GROUND");
                     }
                 }
+            }
+        }
+        ImGui::End();
+    }
+
+    {
+        ImGui::Begin("Weapons");
+
+        ImGui::SeparatorText("Primary weapon");
+        static std::vector<std::pair<std::string, WeaponType>> primary_weapons = {
+            { "Desert Eagles", WeaponType::DesertEagles },
+            { "HK MP5", WeaponType::MP5 },
+            { "Ak-74", WeaponType::Ak74 },
+            { "Steyr AUG", WeaponType::SteyrAUG },
+            { "Spas-12", WeaponType::Spas12 },
+            { "Ruger 77", WeaponType::Ruger77 },
+            { "M79", WeaponType::M79 },
+            { "Barret M82A1", WeaponType::Barrett },
+            { "FN Minimi", WeaponType::Minimi },
+            { "XM214 Minigun", WeaponType::Minigun },
+        };
+        for (const auto& weapon_data : primary_weapons) {
+            if (ImGui::Selectable(weapon_data.first.c_str(),
+                                  client_state.primary_weapon_type_choice == weapon_data.second)) {
+                client_state.primary_weapon_type_choice = weapon_data.second;
+            }
+        }
+
+        ImGui::NewLine();
+        ImGui::SeparatorText("Secondary weapon");
+        static std::vector<std::pair<std::string, WeaponType>> secondary_weapons = {
+            { "USSOCOM", WeaponType::USSOCOM },
+            { "Combat Knife", WeaponType::Knife },
+            { "Chainsaw", WeaponType::Chainsaw },
+            { "M72 LAW", WeaponType::LAW }
+        };
+        for (const auto& weapon_data : secondary_weapons) {
+            if (ImGui::Selectable(weapon_data.first.c_str(),
+                                  client_state.secondary_weapon_type_choice ==
+                                    weapon_data.second)) {
+                client_state.secondary_weapon_type_choice = weapon_data.second;
             }
         }
         ImGui::End();

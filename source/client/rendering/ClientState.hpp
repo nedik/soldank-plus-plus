@@ -42,6 +42,9 @@ struct ClientState
     int network_lag;
 
     PingTimer ping_timer;
+
+    WeaponType primary_weapon_type_choice = WeaponType::DesertEagles;
+    WeaponType secondary_weapon_type_choice = WeaponType::USSOCOM;
 };
 } // namespace Soldank
 
