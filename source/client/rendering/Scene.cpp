@@ -13,6 +13,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <format>
 
 namespace Soldank
 {
@@ -174,6 +175,23 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
                                   { 1.0, 1.0, 1.0 });
         }
     }
+
+    if (client_state.client_soldier_id.has_value()) {
+        for (const auto& soldier : game_state.soldiers) {
+            if (*client_state.client_soldier_id == soldier.id) {
+                if (soldier.dead_meat) {
+                    text_renderer_.Render(
+                      "Respawn timer: " +
+                        std::format("{:.2f}", (float)soldier.ticks_to_respawn / 60.0F),
+                      400.0,
+                      100.0,
+                      1.0,
+                      { 1.0, 1.0, 1.0 });
+                }
+            }
+        }
+    }
+
     if (Config::DEBUG_DRAW) {
         for (const auto& soldier : game_state.soldiers) {
             rectangle_renderer_.Render(
