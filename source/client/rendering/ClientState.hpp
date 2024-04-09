@@ -45,6 +45,8 @@ struct ClientState
 
     WeaponType primary_weapon_type_choice = WeaponType::DesertEagles;
     WeaponType secondary_weapon_type_choice = WeaponType::USSOCOM;
+
+    bool kill_button_just_pressed = false;
 };
 } // namespace Soldank
 

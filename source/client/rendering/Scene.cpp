@@ -84,6 +84,9 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
         ImGui::Text("Bullets in game: %zu", game_state.bullets.size());
         ImGui::Checkbox("Draw server POV client position",
                         &client_state.draw_server_pov_client_pos);
+        if (ImGui::Button("/kill")) {
+            client_state.kill_button_just_pressed = true;
+        }
         if (client_state.client_soldier_id.has_value()) {
             for (const auto& soldier : game_state.soldiers) {
                 if (*client_state.client_soldier_id == soldier.id) {
