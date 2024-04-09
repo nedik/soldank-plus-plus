@@ -131,6 +131,12 @@ void World::Update(double /*delta_time*/)
 
             if (should_update_current_soldier) {
                 SoldierPhysics::Update(state_manager_->GetState(), soldier, bullet_emitter);
+                if (soldier.dead_meat) {
+                    soldier.ticks_to_respawn--;
+                    if (soldier.ticks_to_respawn <= 0) {
+                        RespawnSoldier(soldier);
+                    }
+                }
             }
         }
     }
@@ -256,6 +262,7 @@ void World::KillSoldier(unsigned int soldier_id)
         if (soldier.id == soldier_id) {
             soldier.health = 0;
             soldier.dead_meat = true;
+            soldier.ticks_to_respawn = 180; // 3 seconds
         }
     }
 }
@@ -393,5 +400,11 @@ void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_positio
     }
 
     spdlog::error("Wrong soldier_id({}) in UpdateMousePosition", soldier_id);
+}
+
+void World::RespawnSoldier(Soldier& soldier)
+{
+    soldier.health = 150.0;
+    soldier.dead_meat = false;
 }
 } // namespace Soldank

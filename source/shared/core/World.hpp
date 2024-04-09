@@ -79,6 +79,8 @@ public:
     }
 
 private:
+    void RespawnSoldier(Soldier& soldier);
+
     std::shared_ptr<StateManager> state_manager_;
     std::unique_ptr<PhysicsEvents> physics_events_;
 

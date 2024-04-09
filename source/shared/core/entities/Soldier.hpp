@@ -59,6 +59,8 @@ struct Soldier
     std::uint8_t fired;
     Particle particle;
     bool is_shooting;
+
+    int ticks_to_respawn;
 };
 } // namespace Soldank
 
