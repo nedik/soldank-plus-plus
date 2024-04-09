@@ -78,7 +78,7 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
         ImGui::Checkbox("Objects interpolation", &client_state.objects_interpolation);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
-        ImGui::Text("Ping: %hu", client_state.last_ping);
+        ImGui::Text("Ping: %hu", client_state.ping_timer.GetLastPingMeasure());
         ImGui::SliderInt("Fake lag (milliseconds)", &client_state.network_lag, 0, 500);
         ImGui::Text("Bullets in game: %zu", game_state.bullets.size());
         ImGui::Checkbox("Draw server POV client position",

@@ -143,23 +143,16 @@ void Run()
             networking_client->SetLag(client_state->network_lag);
             networking_client->Update(client_network_event_dispatcher);
 
-            auto current_time = std::chrono::system_clock::now();
-
-            if (client_state->last_ping_check_time.has_value()) {
-                std::chrono::duration<double> diff =
-                  current_time - *client_state->last_ping_check_time;
-
-                if (diff.count() > 9999.0) {
-                    client_state->last_ping_check_time = std::nullopt;
-                    client_state->last_ping = 9999;
+            if ((world->GetStateManager()->GetState().game_tick % 60 == 0)) {
+                if (client_state->ping_timer.IsRunning()) {
+                    client_state->ping_timer.Update();
+                    if (client_state->ping_timer.IsOverThreshold()) {
+                        networking_client->SendNetworkMessage({ NetworkEvent::PingCheck });
+                    }
+                } else {
+                    client_state->ping_timer.Start();
+                    networking_client->SendNetworkMessage({ NetworkEvent::PingCheck });
                 }
-            }
-
-            if ((world->GetStateManager()->GetState().game_tick % 60 == 0) &&
-                !client_state->last_ping_check_time.has_value()) {
-
-                client_state->last_ping_check_time = current_time;
-                networking_client->SendNetworkMessage({ NetworkEvent::PingCheck });
             }
         }
 

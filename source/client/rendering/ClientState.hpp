@@ -4,6 +4,7 @@
 #include "core/math/Glm.hpp"
 
 #include "communication/NetworkPackets.hpp"
+#include "communication/PingTimer.hpp"
 
 #include <optional>
 #include <list>
@@ -38,9 +39,9 @@ struct ClientState
     bool objects_interpolation;
     bool draw_server_pov_client_pos;
 
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> last_ping_check_time;
-    std::uint16_t last_ping;
     int network_lag;
+
+    PingTimer ping_timer;
 };
 } // namespace Soldank
 
