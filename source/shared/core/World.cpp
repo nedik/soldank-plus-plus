@@ -3,6 +3,7 @@
 #include "core/state/Control.hpp"
 #include "core/physics/BulletPhysics.hpp"
 #include "core/physics/SoldierPhysics.hpp"
+#include "core/entities/WeaponParametersFactory.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -402,9 +403,23 @@ void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_positio
     spdlog::error("Wrong soldier_id({}) in UpdateMousePosition", soldier_id);
 }
 
+void World::UpdateWeaponChoices(unsigned int soldier_id,
+                                WeaponType primary_weapon_type,
+                                WeaponType secondary_weapon_type)
+{
+    for (auto& soldier : state_manager_->GetState().soldiers) {
+        if (soldier.id == soldier_id) {
+            soldier.weapon_choices[0] = primary_weapon_type;
+            soldier.weapon_choices[1] = secondary_weapon_type;
+        }
+    }
+}
+
 void World::RespawnSoldier(Soldier& soldier)
 {
     soldier.health = 150.0;
     soldier.dead_meat = false;
+    soldier.weapons[0] = WeaponParametersFactory::GetParameters(soldier.weapon_choices[0], false);
+    soldier.weapons[1] = WeaponParametersFactory::GetParameters(soldier.weapon_choices[1], false);
 }
 } // namespace Soldank

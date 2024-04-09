@@ -49,6 +49,9 @@ public:
     virtual void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed) = 0;
     virtual void UpdateDropButtonState(unsigned int soldier_id, bool pressed) = 0;
     virtual void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) = 0;
+    virtual void UpdateWeaponChoices(unsigned int soldier_id,
+                                     WeaponType primary_weapon_type,
+                                     WeaponType secondary_weapon_type) = 0;
 
     virtual void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) = 0;
     virtual void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback) = 0;

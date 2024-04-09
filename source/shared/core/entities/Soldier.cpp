@@ -1,6 +1,7 @@
 #include "core/entities/Soldier.hpp"
 
 #include "core/entities/WeaponParametersFactory.hpp"
+#include "core/types/WeaponType.hpp"
 
 const float GRAV = 0.06F;
 
@@ -40,6 +41,7 @@ Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
     , weapons{ { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },
                { WeaponParametersFactory::GetParameters(WeaponType::Knife, false) },
                { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) } }
+    , weapon_choices{ WeaponType::DesertEagles, WeaponType::Knife }
     , fired(0)
     , particle(false,
                spawn_position,

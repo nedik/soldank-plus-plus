@@ -42,6 +42,9 @@ public:
     void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed) override;
     void UpdateDropButtonState(unsigned int soldier_id, bool pressed) override;
     void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) override;
+    void UpdateWeaponChoices(unsigned int soldier_id,
+                             WeaponType primary_weapon_type,
+                             WeaponType secondary_weapon_type) override;
 
     void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) override
     {

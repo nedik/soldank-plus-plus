@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <array>
 
 namespace Soldank
 {
@@ -56,6 +57,7 @@ struct Soldier
     Control control;
     unsigned int active_weapon;
     std::vector<Weapon> weapons;
+    std::array<WeaponType, 2> weapon_choices;
     std::uint8_t fired;
     Particle particle;
     bool is_shooting;

@@ -195,6 +195,9 @@ void Run()
                                                  Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
                 }
                 world->UpdateMousePosition(client_soldier_id, mouse_position);
+                world->UpdateWeaponChoices(client_soldier_id,
+                                           client_state->primary_weapon_type_choice,
+                                           client_state->secondary_weapon_type_choice);
                 client_state->camera = world->GetSoldier(client_soldier_id).camera;
             } else {
                 client_state->camera = { 0.0F, 0.0F };
