@@ -36,6 +36,7 @@ public:
       std::optional<unsigned int> force_soldier_id = std::nullopt) = 0;
     virtual glm::vec2 SpawnSoldier(unsigned int soldier_id,
                                    std::optional<glm::vec2> spawn_position = std::nullopt) = 0;
+    virtual void KillSoldier(unsigned int soldier_id) = 0;
 
     virtual void UpdateFireButtonState(unsigned int soldier_id, bool pressed) = 0;
     virtual void UpdateJetsButtonState(unsigned int soldier_id, bool pressed) = 0;

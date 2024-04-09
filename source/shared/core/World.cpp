@@ -250,6 +250,16 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
     std::unreachable();
 }
 
+void World::KillSoldier(unsigned int soldier_id)
+{
+    for (auto& soldier : state_manager_->GetState().soldiers) {
+        if (soldier.id == soldier_id) {
+            soldier.health = 0;
+            soldier.dead_meat = true;
+        }
+    }
+}
+
 void World::UpdateFireButtonState(unsigned int soldier_id, bool pressed)
 {
     for (auto& soldier_it : state_manager_->GetState().soldiers) {
