@@ -62,6 +62,11 @@ void GameServer::SendNetworkMessageToAll(const NetworkMessage& network_message)
     player_poll_group_->SendNetworkMessageToAll(network_message);
 }
 
+unsigned int GameServer::GetSoldierIdFromConnectionId(unsigned int connection_id)
+{
+    return player_poll_group_->GetConnectionSoldierId(connection_id);
+}
+
 void GameServer::OnSteamNetConnectionStatusChanged(
   SteamNetConnectionStatusChangedCallback_t* p_info)
 {

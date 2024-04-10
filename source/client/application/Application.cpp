@@ -13,6 +13,7 @@
 #include "networking/event_handlers/SoldierInfoNetworkEventHandler.hpp"
 #include "networking/event_handlers/SoldierStateNetworkEventHandler.hpp"
 #include "networking/event_handlers/SpawnSoldierNetworkEventHandler.hpp"
+#include "networking/event_handlers/KillSoldierNetworkEventHandler.hpp"
 
 #include "core/World.hpp"
 
@@ -105,7 +106,8 @@ void Init()
             std::make_shared<ProjectileSpawnNetworkEventHandler>(world),
             std::make_shared<SoldierInfoNetworkEventHandler>(world, client_state),
             std::make_shared<SoldierStateNetworkEventHandler>(world, client_state),
-            std::make_shared<SpawnSoldierNetworkEventHandler>(world)
+            std::make_shared<SpawnSoldierNetworkEventHandler>(world),
+            std::make_shared<KillSoldierNetworkEventHandler>(world)
         };
         client_network_event_dispatcher =
           std::make_shared<NetworkEventDispatcher>(network_event_handlers);
@@ -221,6 +223,11 @@ void Run()
                 // spdlog::info("networking_client->SendNetworkMessage");
                 networking_client->SendNetworkMessage(
                   { NetworkEvent::SoldierInput, update_soldier_state_packet });
+
+                if (client_state->kill_button_just_pressed) {
+                    client_state->kill_button_just_pressed = false;
+                    networking_client->SendNetworkMessage({ NetworkEvent::KillCommand });
+                }
             } else {
                 if (client_state->kill_button_just_pressed) {
                     client_state->kill_button_just_pressed = false;

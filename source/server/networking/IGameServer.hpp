@@ -14,6 +14,8 @@ public:
     virtual void SendNetworkMessage(unsigned int connection_id,
                                     const NetworkMessage& network_message) = 0;
     virtual void SendNetworkMessageToAll(const NetworkMessage& network_message) = 0;
+
+    virtual unsigned int GetSoldierIdFromConnectionId(unsigned int connection_id) = 0;
 };
 } // namespace Soldank
 

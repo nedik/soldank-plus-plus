@@ -4,6 +4,7 @@
 #include "communication/NetworkPackets.hpp"
 #include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
 #include "networking/event_handlers/SoldierInputNetworkEventHandler.hpp"
+#include "networking/event_handlers/KillCommandNetworkEventHandler.hpp"
 
 #include "scripting/dascript/DaScriptInit.hpp"
 #include "scripting/dascript/DaScriptScriptingEngine.hpp"
@@ -84,6 +85,8 @@ Application::Application()
       server_port, server_network_event_dispatcher_, world_, server_state_);
     server_network_event_dispatcher_->AddNetworkEventHandler(
       std::make_shared<PingCheckNetworkEventHandler>(game_server_));
+    server_network_event_dispatcher_->AddNetworkEventHandler(
+      std::make_shared<KillCommandNetworkEventHandler>(world_, game_server_));
 }
 
 Application::~Application()

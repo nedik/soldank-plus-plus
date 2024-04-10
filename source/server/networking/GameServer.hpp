@@ -42,6 +42,8 @@ public:
                             const NetworkMessage& network_message) override;
     void SendNetworkMessageToAll(const NetworkMessage& network_message) override;
 
+    unsigned int GetSoldierIdFromConnectionId(unsigned int connection_id) override;
+
 private:
     std::unique_ptr<EntryPollGroup> entry_poll_group_;
     std::shared_ptr<PlayerPollGroup> player_poll_group_;

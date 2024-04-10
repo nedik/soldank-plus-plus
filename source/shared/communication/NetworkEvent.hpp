@@ -13,7 +13,9 @@ enum class NetworkEvent : unsigned int
     SoldierInfo,
     PlayerLeave,
     PingCheck,
-    ProjectileSpawn
+    ProjectileSpawn,
+    KillCommand,
+    KillSoldier
 };
 }
 
