@@ -19,6 +19,7 @@ namespace Soldank
 World::World()
     : state_manager_(std::make_shared<StateManager>())
     , physics_events_(std::make_unique<PhysicsEvents>())
+    , world_events_(std::make_unique<WorldEvents>())
     , mersenne_twister_engine_(random_device_())
 {
     state_manager_->GetState().map.LoadMap("maps/ctf_Ash.pms");
@@ -256,6 +257,7 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
             soldier.weapons[1] =
               WeaponParametersFactory::GetParameters(soldier.weapon_choices[1], false);
             soldier.active_weapon = 0;
+            world_events_->after_soldier_spawns.Notify(soldier);
             return initial_player_position;
         }
     }

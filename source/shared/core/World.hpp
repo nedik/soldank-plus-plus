@@ -5,6 +5,7 @@
 #include "core/state/StateManager.hpp"
 #include "core/entities/Soldier.hpp"
 #include "core/physics/PhysicsEvents.hpp"
+#include "core/WorldEvents.hpp"
 
 #include <functional>
 #include <utility>
@@ -84,6 +85,7 @@ public:
 private:
     std::shared_ptr<StateManager> state_manager_;
     std::unique_ptr<PhysicsEvents> physics_events_;
+    std::unique_ptr<WorldEvents> world_events_;
 
     TShouldStopGameLoopCallback should_stop_game_loop_callback_;
     TPreGameLoopIterationCallback pre_game_loop_iteration_callback_;
