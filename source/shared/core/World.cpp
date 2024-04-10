@@ -23,10 +23,6 @@ World::World()
     , mersenne_twister_engine_(random_device_())
 {
     state_manager_->GetState().map.LoadMap("maps/ctf_Ash.pms");
-    physics_events_->soldier_hit_by_bullet.AddObserver([](Soldier& soldier, float damage) {
-        soldier.health -= damage;
-        spdlog::debug("soldier {} hit by {} damage", soldier.id, damage);
-    });
 }
 
 void World::RunLoop(int fps_limit)
@@ -187,9 +183,14 @@ const Soldier& World::GetSoldier(unsigned int soldier_id) const
     std::unreachable();
 }
 
-const PhysicsEvents& World::GetPhysicsEvents() const
+PhysicsEvents& World::GetPhysicsEvents()
 {
     return *physics_events_;
+}
+
+WorldEvents& World::GetWorldEvents()
+{
+    return *world_events_;
 }
 
 const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id)

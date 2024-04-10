@@ -16,6 +16,7 @@
 #include "networking/event_handlers/KillSoldierNetworkEventHandler.hpp"
 
 #include "core/World.hpp"
+#include "core/CoreEventHandler.hpp"
 
 #include "rendering/Scene.hpp"
 #include "rendering/ClientState.hpp"
@@ -123,6 +124,8 @@ void Init()
                                                        DebugOutput);
 
         networking_client = std::make_unique<NetworkingClient>(server_ip.c_str(), server_port);
+    } else {
+        CoreEventHandler::ObserveAll(world->GetWorldEvents(), world->GetPhysicsEvents());
     }
 }
 

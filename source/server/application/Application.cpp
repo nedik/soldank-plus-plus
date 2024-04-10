@@ -6,6 +6,8 @@
 #include "networking/event_handlers/SoldierInputNetworkEventHandler.hpp"
 #include "networking/event_handlers/KillCommandNetworkEventHandler.hpp"
 
+#include "core/CoreEventHandler.hpp"
+
 #include "scripting/dascript/DaScriptInit.hpp"
 #include "scripting/dascript/DaScriptScriptingEngine.hpp"
 
@@ -37,6 +39,8 @@ Application::Application()
     : world_(std::make_shared<World>())
 {
     spdlog::set_level(spdlog::level::debug);
+
+    CoreEventHandler::ObserveAll(world_->GetWorldEvents(), world_->GetPhysicsEvents());
 
     bool da_script_initialized = InitDaScriptModule();
     if (da_script_initialized) {
