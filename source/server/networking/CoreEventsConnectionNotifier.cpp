@@ -32,6 +32,9 @@ void CoreEventsConnectionNotifier::ObserveAllWorldEvents(IGameServer* game_serve
 void CoreEventsConnectionNotifier::ObserveAllPhysicsEvents(IGameServer* game_server,
                                                            PhysicsEvents& physics_events)
 {
-    physics_events.soldier_hit_by_bullet.AddObserver([](Soldier& soldier, float damage) {});
+    physics_events.soldier_hit_by_bullet.AddObserver([game_server](Soldier& soldier, float damage) {
+        game_server->SendNetworkMessageToAll(
+          NetworkMessage(NetworkEvent::HitSoldier, soldier.id, damage));
+    });
 }
 } // namespace Soldank

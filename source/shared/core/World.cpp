@@ -89,7 +89,6 @@ void World::RunLoop(int fps_limit)
             if (pre_world_update_callback_) {
                 pre_world_update_callback_();
             }
-            spdlog::info("World update");
             Update(delta_time.count());
             if (post_world_update_callback_) {
                 post_world_update_callback_(state_manager_->GetState());
@@ -275,6 +274,15 @@ void World::KillSoldier(unsigned int soldier_id)
             soldier.dead_meat = true;
             soldier.ticks_to_respawn = 180; // 3 seconds
             world_events_->soldier_died.Notify(soldier);
+        }
+    }
+}
+
+void World::HitSoldier(unsigned int soldier_id, float damage)
+{
+    for (auto& soldier : state_manager_->GetState().soldiers) {
+        if (soldier.id == soldier_id) {
+            soldier.health -= damage;
         }
     }
 }

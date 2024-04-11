@@ -14,6 +14,7 @@
 #include "networking/event_handlers/SoldierStateNetworkEventHandler.hpp"
 #include "networking/event_handlers/SpawnSoldierNetworkEventHandler.hpp"
 #include "networking/event_handlers/KillSoldierNetworkEventHandler.hpp"
+#include "networking/event_handlers/HitSoldierNetworkEventHandler.hpp"
 
 #include "core/World.hpp"
 #include "core/CoreEventHandler.hpp"
@@ -108,7 +109,8 @@ void Init()
             std::make_shared<SoldierInfoNetworkEventHandler>(world, client_state),
             std::make_shared<SoldierStateNetworkEventHandler>(world, client_state),
             std::make_shared<SpawnSoldierNetworkEventHandler>(world),
-            std::make_shared<KillSoldierNetworkEventHandler>(world)
+            std::make_shared<KillSoldierNetworkEventHandler>(world),
+            std::make_shared<HitSoldierNetworkEventHandler>(world)
         };
         client_network_event_dispatcher =
           std::make_shared<NetworkEventDispatcher>(network_event_handlers);

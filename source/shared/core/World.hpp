@@ -32,6 +32,7 @@ public:
     glm::vec2 SpawnSoldier(unsigned int soldier_id,
                            std::optional<glm::vec2> spawn_position = std::nullopt) override;
     void KillSoldier(unsigned int soldier_id) override;
+    void HitSoldier(unsigned int soldier_id, float damage) override;
 
     void UpdateFireButtonState(unsigned int soldier_id, bool pressed) override;
     void UpdateJetsButtonState(unsigned int soldier_id, bool pressed) override;
