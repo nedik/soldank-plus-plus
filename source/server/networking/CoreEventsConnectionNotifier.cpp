@@ -1,5 +1,6 @@
 #include <utility>
 
+#include "communication/NetworkMessage.hpp"
 #include "networking/CoreEventsConnectionNotifier.hpp"
 
 #include "spdlog/spdlog.h"
@@ -18,7 +19,10 @@ void CoreEventsConnectionNotifier::ObserveAllWorldEvents(IGameServer* game_serve
                                                          WorldEvents& world_events)
 {
     world_events.after_soldier_spawns.AddObserver([game_server](Soldier& soldier) {
-
+        game_server->SendNetworkMessageToAll(NetworkMessage(NetworkEvent::SpawnSoldier,
+                                                            soldier.id,
+                                                            soldier.particle.position.x,
+                                                            soldier.particle.position.y));
     });
     world_events.soldier_died.AddObserver([game_server](Soldier& soldier) {
         game_server->SendNetworkMessageToAll(NetworkMessage(NetworkEvent::KillSoldier, soldier.id));
