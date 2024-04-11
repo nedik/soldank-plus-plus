@@ -991,7 +991,6 @@ void SoldierPhysics::Update(State& state,
         if ((soldier.dead_meat || soldier.half_dead) && (i < 17) && (i != 7) && (i != 8)) {
             auto xy = soldier.particle.position;
             soldier.on_ground = CheckSkeletonMapCollision(soldier, map, i, xy.x, xy.y, state);
-            spdlog::info("ok");
         }
     }
 

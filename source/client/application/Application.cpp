@@ -145,7 +145,6 @@ void Run()
     });
     unsigned int input_sequence_id = 1;
     world->SetPreWorldUpdateCallback([&]() {
-        // spdlog::info("netowrking_client->Update");
         if (is_online) {
             networking_client->SetLag(client_state->network_lag);
             networking_client->Update(client_network_event_dispatcher);
@@ -225,7 +224,6 @@ void Run()
                 if (client_state->server_reconciliation) {
                     client_state->pending_inputs.push_back(update_soldier_state_packet);
                 }
-                // spdlog::info("networking_client->SendNetworkMessage");
                 networking_client->SendNetworkMessage(
                   { NetworkEvent::SoldierInput, update_soldier_state_packet });
 
@@ -243,23 +241,7 @@ void Run()
             client_state->camera = { 0.0F, 0.0F };
         }
     });
-    world->SetPostWorldUpdateCallback([&](const State& state) {
-        // spdlog::info("Post World Update Call");
-        // for (const auto& soldier : state->soldiers) {
-        //     spdlog::info(
-        //       "{}, Player {} pos: {}, {}; old_pos: {}, {}; velocity: {}, {}; force: {}, {}",
-        //       input_sequence_id - 1,
-        //       soldier.id,
-        //       soldier.particle.position.x,
-        //       soldier.particle.position.y,
-        //       soldier.particle.old_position.x,
-        //       soldier.particle.old_position.y,
-        //       soldier.particle.GetVelocity().x,
-        //       soldier.particle.GetVelocity().y,
-        //       soldier.particle.GetForce().x,
-        //       soldier.particle.GetForce().y);
-        // }
-    });
+    world->SetPostWorldUpdateCallback([&](const State& state) {});
     world->SetPostGameLoopIterationCallback([&](const State& state,
                                                 double frame_percent,
                                                 int last_fps) {

@@ -123,18 +123,6 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                     // CheckSkeletonOutOfBounds;
                 }
             }
-            // spdlog::info(
-            //   "{}, Soldier {} pos: {}, {}; old_pod: {}, {}; velocity: {}, {}; force: {}, {}",
-            //   last_processed_input_id,
-            //   soldier_id,
-            //   soldier_position.x,
-            //   soldier_position.y,
-            //   soldier_old_position.x,
-            //   soldier_old_position.y,
-            //   soldier_velocity.x,
-            //   soldier_velocity.y,
-            //   soldier_force.x,
-            //   soldier_force.y);
         }
     }
 
@@ -160,17 +148,6 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                 // it needed?
                 world_->UpdateJetsButtonState(soldier_id, player_control.jets);
                 world_->UpdateSoldier(soldier_id);
-                // spdlog::info(
-                //   "{}, Soldier {} pos: {}, {}; old_pos: {}, {}; velocity: {}, {}; force: {},
-                //   {}", it->input_sequence_id, soldier_id,
-                //   world_->GetSoldier(soldier_id).particle.position.x,
-                //   world_->GetSoldier(soldier_id).particle.position.y,
-                //   world_->GetSoldier(soldier_id).particle.old_position.x,
-                //   world_->GetSoldier(soldier_id).particle.old_position.y,
-                //   world_->GetSoldier(soldier_id).particle.GetVelocity().x,
-                //   world_->GetSoldier(soldier_id).particle.GetVelocity().y,
-                //   world_->GetSoldier(soldier_id).particle.GetForce().x,
-                //   world_->GetSoldier(soldier_id).particle.GetForce().y);
                 it++;
             }
         }
