@@ -4,15 +4,15 @@
 
 namespace Soldank
 {
-void CoreEventHandler::ObserveAll(WorldEvents& world_events, PhysicsEvents& physics_events)
+void CoreEventHandler::ObserveAll(IWorld* world)
 {
-    ObserveAllWorldEvents(world_events);
-    ObserveAllPhysicsEvents(physics_events);
+    ObserveAllWorldEvents(world);
+    ObserveAllPhysicsEvents(world);
 }
 
-void CoreEventHandler::ObserveAllWorldEvents(WorldEvents& world_events)
+void CoreEventHandler::ObserveAllWorldEvents(IWorld* world)
 {
-    world_events.after_soldier_spawns.AddObserver([](Soldier& soldier) {
+    world->GetWorldEvents().after_soldier_spawns.AddObserver([](Soldier& soldier) {
         spdlog::debug("soldier {} spawned at ({}, {})",
                       soldier.id,
                       soldier.particle.position.x,
@@ -20,11 +20,15 @@ void CoreEventHandler::ObserveAllWorldEvents(WorldEvents& world_events)
     });
 }
 
-void CoreEventHandler::ObserveAllPhysicsEvents(PhysicsEvents& physics_events)
+void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
 {
-    physics_events.soldier_hit_by_bullet.AddObserver([](Soldier& soldier, float damage) {
-        soldier.health -= damage;
-        spdlog::debug("soldier {} hit by {} damage", soldier.id, damage);
-    });
+    world->GetPhysicsEvents().soldier_hit_by_bullet.AddObserver(
+      [world](Soldier& soldier, float damage) {
+          soldier.health -= damage;
+          spdlog::debug("soldier {} hit by {} damage", soldier.id, damage);
+          if (soldier.health <= 0.0F) {
+              world->KillSoldier(soldier.id);
+          }
+      });
 }
 } // namespace Soldank

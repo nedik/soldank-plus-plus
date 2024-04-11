@@ -5,6 +5,7 @@
 #include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
 #include "networking/event_handlers/SoldierInputNetworkEventHandler.hpp"
 #include "networking/event_handlers/KillCommandNetworkEventHandler.hpp"
+#include "networking/CoreEventsConnectionNotifier.hpp"
 
 #include "core/CoreEventHandler.hpp"
 
@@ -39,8 +40,6 @@ Application::Application()
     : world_(std::make_shared<World>())
 {
     spdlog::set_level(spdlog::level::debug);
-
-    CoreEventHandler::ObserveAll(world_->GetWorldEvents(), world_->GetPhysicsEvents());
 
     bool da_script_initialized = InitDaScriptModule();
     if (da_script_initialized) {
@@ -91,6 +90,10 @@ Application::Application()
       std::make_shared<PingCheckNetworkEventHandler>(game_server_));
     server_network_event_dispatcher_->AddNetworkEventHandler(
       std::make_shared<KillCommandNetworkEventHandler>(world_, game_server_));
+
+    CoreEventHandler::ObserveAll(world_.get());
+    CoreEventsConnectionNotifier::ObserveAll(
+      game_server_.get(), world_->GetWorldEvents(), world_->GetPhysicsEvents());
 }
 
 Application::~Application()

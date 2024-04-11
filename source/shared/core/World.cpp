@@ -270,10 +270,11 @@ glm::vec2 World::SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> 
 void World::KillSoldier(unsigned int soldier_id)
 {
     for (auto& soldier : state_manager_->GetState().soldiers) {
-        if (soldier.id == soldier_id) {
+        if (soldier.id == soldier_id && !soldier.dead_meat) {
             soldier.health = 0;
             soldier.dead_meat = true;
             soldier.ticks_to_respawn = 180; // 3 seconds
+            world_events_->soldier_died.Notify(soldier);
         }
     }
 }

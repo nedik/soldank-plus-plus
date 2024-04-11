@@ -3,17 +3,18 @@
 
 #include "core/WorldEvents.hpp"
 #include "core/physics/PhysicsEvents.hpp"
+#include "core/IWorld.hpp"
 
 namespace Soldank
 {
 class CoreEventHandler
 {
 public:
-    static void ObserveAll(WorldEvents& world_events, PhysicsEvents& physics_events);
+    static void ObserveAll(IWorld* world);
 
 private:
-    static void ObserveAllWorldEvents(WorldEvents& world_events);
-    static void ObserveAllPhysicsEvents(PhysicsEvents& physics_events);
+    static void ObserveAllWorldEvents(IWorld* world);
+    static void ObserveAllPhysicsEvents(IWorld* world);
 };
 } // namespace Soldank
 

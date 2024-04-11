@@ -125,7 +125,7 @@ void Init()
 
         networking_client = std::make_unique<NetworkingClient>(server_ip.c_str(), server_port);
     } else {
-        CoreEventHandler::ObserveAll(world->GetWorldEvents(), world->GetPhysicsEvents());
+        CoreEventHandler::ObserveAll(world.get());
     }
 }
 
