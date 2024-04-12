@@ -72,7 +72,9 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
 {
     const auto& state = world_->GetStateManager()->GetState();
     for (const auto& soldier : state.soldiers) {
-        NetworkMessage network_message(NetworkEvent::SoldierInfo, soldier.id);
+        std::string player_nick =
+          GetConnectionSoldierNick(FindConnectionHandleBySoldierId(soldier.id));
+        NetworkMessage network_message(NetworkEvent::SoldierInfo, soldier.id, player_nick);
         SendReliableNetworkMessage(connection.connection_handle, network_message);
     }
 
@@ -82,7 +84,7 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
     SendReliableNetworkMessage(connection.connection_handle, network_message);
 
-    network_message = { NetworkEvent::SoldierInfo, soldier_id };
+    network_message = { NetworkEvent::SoldierInfo, soldier_id, connection.nick };
     SendReliableNetworkMessage(connection.connection_handle, network_message);
 
     SendReliableNetworkMessageToAll(network_message, connection.connection_handle);

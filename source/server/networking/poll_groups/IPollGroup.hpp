@@ -32,6 +32,8 @@ public:
     virtual bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) = 0;
     virtual unsigned int GetConnectionSoldierId(
       HSteamNetConnection steam_net_connection_handle) = 0;
+    virtual std::string GetConnectionSoldierNick(
+      HSteamNetConnection steam_net_connection_handle) = 0;
 
     virtual void SendNetworkMessage(unsigned int connection_id,
                                     const NetworkMessage& network_message) = 0;

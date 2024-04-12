@@ -144,6 +144,12 @@ unsigned int PollGroupBase::GetConnectionSoldierId(HSteamNetConnection steam_net
     return it_client->second.soldier_id;
 }
 
+std::string PollGroupBase::GetConnectionSoldierNick(HSteamNetConnection steam_net_connection_handle)
+{
+    auto it_client = connections_.find(steam_net_connection_handle);
+    return it_client->second.nick;
+}
+
 HSteamNetPollGroup PollGroupBase::GetPollGroupHandle() const
 {
     return poll_group_handle_;
@@ -153,6 +159,18 @@ std::unordered_map<HSteamNetConnection, Connection>::iterator PollGroupBase::Fin
   HSteamNetConnection steam_net_connection_handle)
 {
     return connections_.find(steam_net_connection_handle);
+}
+
+HSteamNetConnection PollGroupBase::FindConnectionHandleBySoldierId(unsigned int soldier_id)
+{
+    for (const auto& connection : connections_) {
+        if (connection.second.soldier_id == soldier_id) {
+            return connection.second.connection_handle;
+        }
+    }
+
+    spdlog::critical("[FindConnectionHandleBySoldierId] Wrong soldier_id");
+    return 0;
 }
 
 void PollGroupBase::EraseConnection(

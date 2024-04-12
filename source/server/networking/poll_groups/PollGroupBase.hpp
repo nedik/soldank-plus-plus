@@ -22,6 +22,7 @@ public:
     bool AssignConnection(const Connection& connection) override;
     bool IsConnectionAssigned(HSteamNetConnection steam_net_connection_handle) override;
     unsigned int GetConnectionSoldierId(HSteamNetConnection steam_net_connection_handle) override;
+    std::string GetConnectionSoldierNick(HSteamNetConnection steam_net_connection_handle) override;
 
     void SendNetworkMessage(HSteamNetConnection connection_id,
                             const NetworkMessage& network_message) override;
@@ -42,6 +43,7 @@ protected:
 
     std::unordered_map<HSteamNetConnection, Connection>::iterator FindConnection(
       HSteamNetConnection steam_net_connection_handle);
+    HSteamNetConnection FindConnectionHandleBySoldierId(unsigned int soldier_id);
     void EraseConnection(
       std::unordered_map<HSteamNetConnection, Connection>::iterator it_connection);
 
