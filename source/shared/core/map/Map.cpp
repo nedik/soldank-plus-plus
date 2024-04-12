@@ -4,6 +4,7 @@
 #include "core/math/Calc.hpp"
 
 #include <array>
+#include <spdlog/spdlog.h>
 #include <utility>
 
 namespace Soldank
@@ -12,7 +13,7 @@ void Map::LoadMap(const std::string& map_path)
 {
     std::ifstream file(map_path, std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        // Logger::Append("Map not found - " + mapPath);
+        spdlog::critical("Map not found {}", map_path);
         return;
     }
 
