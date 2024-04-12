@@ -10,59 +10,61 @@
 #include <unordered_map>
 #include <exception>
 #include <cmath>
+#include <array>
+#include <utility>
 
 namespace Soldank
 {
 const AnimationData& Animations::Get(AnimationType animation_type)
 {
-    static std::unordered_map<AnimationType, AnimationData> animations{
-        { Stand, { Stand, "stoi.poa", 3, true } },
-        { Run, { Run, "biega.poa", 1, true } },
-        { RunBack, { RunBack, "biegatyl.poa", 1, true } },
-        { Jump, { Jump, "skok.poa", 1, false } },
-        { JumpSide, { JumpSide, "skokwbok.poa", 1, false } },
-        { Fall, { Fall, "spada.poa", 1, false } },
-        { Crouch, { Crouch, "kuca.poa", 1, false } },
-        { CrouchRun, { CrouchRun, "kucaidzie.poa", 2, true } },
-        { Reload, { Reload, "laduje.poa", 2, false } },
-        { Throw, { Throw, "rzuca.poa", 1, false } },
-        { Recoil, { Recoil, "odrzut.poa", 1, false } },
-        { SmallRecoil, { SmallRecoil, "odrzut2.poa", 1, false } },
-        { Shotgun, { Shotgun, "shotgun.poa", 1, false } },
-        { ClipOut, { ClipOut, "clipout.poa", 3, false } },
-        { ClipIn, { ClipIn, "clipin.poa", 3, false } },
-        { SlideBack, { SlideBack, "slideback.poa", 2, false } },
-        { Change, { Change, "change.poa", 1, false } },
-        { ThrowWeapon, { ThrowWeapon, "wyrzuca.poa", 1, false } },
-        { WeaponNone, { WeaponNone, "bezbroni.poa", 3, false } },
-        { Punch, { Punch, "bije.poa", 1, false } },
-        { ReloadBow, { ReloadBow, "strzala.poa", 1, false } },
-        { Barret, { Barret, "barret.poa", 9, false } },
-        { Roll, { Roll, "skokdolobrot.poa", 1, false } },
-        { RollBack, { RollBack, "skokdolobrottyl.poa", 1, false } },
-        { CrouchRunBack, { CrouchRunBack, "kucaidzietyl.poa", 2, true } },
-        { Cigar, { Cigar, "cigar.poa", 3, false } },
-        { Match, { Match, "match.poa", 3, false } },
-        { Smoke, { Smoke, "smoke.poa", 4, false } },
-        { Wipe, { Wipe, "wipe.poa", 4, false } },
-        { Groin, { Groin, "krocze.poa", 2, false } },
-        { Piss, { Piss, "szcza.poa", 8, false } },
-        { Mercy, { Mercy, "samo.poa", 3, false } },
-        { Mercy2, { Mercy2, "samo2.poa", 3, false } },
-        { TakeOff, { TakeOff, "takeoff.poa", 2, false } },
-        { Prone, { Prone, "lezy.poa", 1, false } },
-        { Victory, { Victory, "cieszy.poa", 3, false } },
-        { Aim, { Aim, "celuje.poa", 2, false } },
-        { HandsUpAim, { HandsUpAim, "gora.poa", 2, false } },
-        { ProneMove, { ProneMove, "lezyidzie.poa", 2, true } },
-        { GetUp, { GetUp, "wstaje.poa", 1, false } },
-        { AimRecoil, { AimRecoil, "celujeodrzut.poa", 1, false } },
-        { HandsUpRecoil, { HandsUpRecoil, "goraodrzut.poa", 1, false } },
-        { Melee, { Melee, "kolba.poa", 1, false } },
-        { Own, { Own, "rucha.poa", 3, false } },
+    static std::array<AnimationData, 44> animations{
+        AnimationData{ AnimationType::Stand, "stoi.poa", 3, true },
+        AnimationData{ AnimationType::Run, "biega.poa", 1, true },
+        AnimationData{ AnimationType::RunBack, "biegatyl.poa", 1, true },
+        AnimationData{ AnimationType::Jump, "skok.poa", 1, false },
+        AnimationData{ AnimationType::JumpSide, "skokwbok.poa", 1, false },
+        AnimationData{ AnimationType::Fall, "spada.poa", 1, false },
+        AnimationData{ AnimationType::Crouch, "kuca.poa", 1, false },
+        AnimationData{ AnimationType::CrouchRun, "kucaidzie.poa", 2, true },
+        AnimationData{ AnimationType::Reload, "laduje.poa", 2, false },
+        AnimationData{ AnimationType::Throw, "rzuca.poa", 1, false },
+        AnimationData{ AnimationType::Recoil, "odrzut.poa", 1, false },
+        AnimationData{ AnimationType::SmallRecoil, "odrzut2.poa", 1, false },
+        AnimationData{ AnimationType::Shotgun, "shotgun.poa", 1, false },
+        AnimationData{ AnimationType::ClipOut, "clipout.poa", 3, false },
+        AnimationData{ AnimationType::ClipIn, "clipin.poa", 3, false },
+        AnimationData{ AnimationType::SlideBack, "slideback.poa", 2, false },
+        AnimationData{ AnimationType::Change, "change.poa", 1, false },
+        AnimationData{ AnimationType::ThrowWeapon, "wyrzuca.poa", 1, false },
+        AnimationData{ AnimationType::WeaponNone, "bezbroni.poa", 3, false },
+        AnimationData{ AnimationType::Punch, "bije.poa", 1, false },
+        AnimationData{ AnimationType::ReloadBow, "strzala.poa", 1, false },
+        AnimationData{ AnimationType::Barret, "barret.poa", 9, false },
+        AnimationData{ AnimationType::Roll, "skokdolobrot.poa", 1, false },
+        AnimationData{ AnimationType::RollBack, "skokdolobrottyl.poa", 1, false },
+        AnimationData{ AnimationType::CrouchRunBack, "kucaidzietyl.poa", 2, true },
+        AnimationData{ AnimationType::Cigar, "cigar.poa", 3, false },
+        AnimationData{ AnimationType::Match, "match.poa", 3, false },
+        AnimationData{ AnimationType::Smoke, "smoke.poa", 4, false },
+        AnimationData{ AnimationType::Wipe, "wipe.poa", 4, false },
+        AnimationData{ AnimationType::Groin, "krocze.poa", 2, false },
+        AnimationData{ AnimationType::Piss, "szcza.poa", 8, false },
+        AnimationData{ AnimationType::Mercy, "samo.poa", 3, false },
+        AnimationData{ AnimationType::Mercy2, "samo2.poa", 3, false },
+        AnimationData{ AnimationType::TakeOff, "takeoff.poa", 2, false },
+        AnimationData{ AnimationType::Prone, "lezy.poa", 1, false },
+        AnimationData{ AnimationType::Victory, "cieszy.poa", 3, false },
+        AnimationData{ AnimationType::Aim, "celuje.poa", 2, false },
+        AnimationData{ AnimationType::HandsUpAim, "gora.poa", 2, false },
+        AnimationData{ AnimationType::ProneMove, "lezyidzie.poa", 2, true },
+        AnimationData{ AnimationType::GetUp, "wstaje.poa", 1, false },
+        AnimationData{ AnimationType::AimRecoil, "celujeodrzut.poa", 1, false },
+        AnimationData{ AnimationType::HandsUpRecoil, "goraodrzut.poa", 1, false },
+        AnimationData{ AnimationType::Melee, "kolba.poa", 1, false },
+        AnimationData{ AnimationType::Own, "rucha.poa", 3, false }
     };
 
-    return animations.at(animation_type);
+    return animations.at(std::to_underlying(animation_type));
 }
 
 unsigned int Animations::GetFramesCount(AnimationType animation_type)
@@ -72,8 +74,8 @@ unsigned int Animations::GetFramesCount(AnimationType animation_type)
 
 AnimationData::AnimationData(AnimationType id, const std::string& file_name, int speed, bool looped)
     : id_(id)
-    , speed_(speed)
     , looped_(looped)
+    , speed_(speed)
 {
     spdlog::info("AnimationData");
 

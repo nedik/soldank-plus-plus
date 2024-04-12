@@ -9,7 +9,7 @@
 namespace Soldank
 {
 // TODO: move to separate files
-enum AnimationType
+enum class AnimationType
 {
     Stand = 0,
     Run,
