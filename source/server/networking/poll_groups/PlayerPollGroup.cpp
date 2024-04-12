@@ -87,9 +87,6 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
 
     SendReliableNetworkMessageToAll(network_message, connection.connection_handle);
 
-    auto spawn_position = world_->SpawnSoldier(soldier_id);
-    SendReliableNetworkMessage(
-      connection.connection_handle,
-      { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });
+    world_->SpawnSoldier(soldier_id);
 }
 } // namespace Soldank
