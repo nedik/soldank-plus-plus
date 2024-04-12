@@ -103,6 +103,10 @@ struct NetworkMessageData
       typename std::enable_if<N != 1, std::expected<std::tuple<Head, Tail...>, ParseError>>::type
       ParseData(std::span<const char> data)
     {
+        if (data.empty()) {
+            return std::unexpected(ParseError::BufferTooSmall);
+        }
+
         auto head_or_error = ParseDataParameter<Head>(data);
         if (!head_or_error.has_value()) {
             return std::unexpected(head_or_error.error());
@@ -126,6 +130,10 @@ struct NetworkMessageData
     static typename std::enable_if<N == 1, std::expected<std::tuple<Arg>, ParseError>>::type
     ParseData(std::span<const char> data)
     {
+        if (data.empty()) {
+            return std::unexpected(ParseError::BufferTooSmall);
+        }
+
         auto last_parameter_size_or_error = ParseDataParameterSize<Arg>(data);
         if (!last_parameter_size_or_error.has_value()) {
             return std::unexpected(last_parameter_size_or_error.error());
@@ -235,6 +243,10 @@ public:
 
     std::expected<NetworkEvent, ParseError> GetNetworkEvent() const
     {
+        if (data_.empty()) {
+            return std::unexpected(ParseError::BufferTooSmall);
+        }
+
         std::span<const char> data{ data_ };
         auto parsed = NetworkMessageData<1>::template ParseData<NetworkEvent>(
           data.subspan(0, std::min(sizeof(NetworkEvent), data.size())));

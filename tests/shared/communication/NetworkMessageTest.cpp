@@ -140,12 +140,54 @@ TEST(NetworkMessageTests, TestNetworkMessageConstructFromBytes)
     ASSERT_EQ(network_message.GetNetworkEvent(), NetworkEvent::AssignPlayerId);
 }
 
+TEST(NetworkMessageTests, TestNetworkMessageGetNetworkEventEmptyData)
+{
+    std::array<char, 0> expected_bytes{};
+    std::span<char> exp = expected_bytes;
+    NetworkMessage network_message(exp);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), 0);
+    auto network_event = network_message.GetNetworkEvent();
+    ASSERT_FALSE(network_event.has_value());
+    ASSERT_EQ(network_event.error(), ParseError::BufferTooSmall);
+}
+
 template<typename... Args>
 void CheckParseError(std::span<const char> data, ParseError expected_parse_error)
 {
     auto parsed = NetworkMessage::ParseData<Args...>(data);
     ASSERT_FALSE(parsed.has_value());
     ASSERT_EQ(parsed.error(), expected_parse_error);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataLastArgumentDoesNotExist)
+{
+    std::array<char, 8> expected_bytes{ 5, 0, 0, 0, 0, 0, 0, 0 };
+    std::span<char> exp = expected_bytes;
+    NetworkMessage network_message(exp);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), 8);
+    CheckParseError<NetworkEvent, unsigned int, std::string>(data, ParseError::BufferTooSmall);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataLastTwoArgumentsDoNotExist)
+{
+    std::array<char, 4> expected_bytes{ 5, 0, 0, 0 };
+    std::span<char> exp = expected_bytes;
+    NetworkMessage network_message(exp);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), 4);
+    CheckParseError<NetworkEvent, unsigned int, std::string>(data, ParseError::BufferTooSmall);
+}
+
+TEST(NetworkMessageTests, TestNetworkMessageParseDataEmptyData)
+{
+    std::array<char, 0> expected_bytes{};
+    std::span<char> exp = expected_bytes;
+    NetworkMessage network_message(exp);
+    auto data = network_message.GetData();
+    ASSERT_EQ(data.size(), 0);
+    CheckParseError<NetworkEvent, unsigned int, std::string>(data, ParseError::BufferTooSmall);
 }
 
 TEST(NetworkMessageTests, TestNetworkMessageParseDataValidMessageInvalidParse)
