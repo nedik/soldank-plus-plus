@@ -80,16 +80,16 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
     connection.soldier_id = soldier_id;
     spdlog::info("OnAssignPlayerId: {}", soldier_id);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);
-    SendNetworkMessage(connection.connection_handle, network_message);
-
-    auto spawn_position = world_->SpawnSoldier(soldier_id);
-    SendNetworkMessage(
-      connection.connection_handle,
-      { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });
+    SendReliableNetworkMessage(connection.connection_handle, network_message);
 
     network_message = { NetworkEvent::SoldierInfo, soldier_id };
     SendReliableNetworkMessage(connection.connection_handle, network_message);
 
     SendReliableNetworkMessageToAll(network_message, connection.connection_handle);
+
+    auto spawn_position = world_->SpawnSoldier(soldier_id);
+    SendReliableNetworkMessage(
+      connection.connection_handle,
+      { NetworkEvent::SpawnSoldier, soldier_id, spawn_position.x, spawn_position.y });
 }
 } // namespace Soldank

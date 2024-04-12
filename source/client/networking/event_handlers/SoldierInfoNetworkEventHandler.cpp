@@ -24,7 +24,6 @@ NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageIm
 
     if (!is_soldier_id_me) {
         world_->CreateSoldier(soldier_id);
-        world_->SpawnSoldier(soldier_id);
     }
 
     return NetworkEventHandlerResult::Success;
