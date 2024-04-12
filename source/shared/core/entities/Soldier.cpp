@@ -1,6 +1,7 @@
 #include "core/entities/Soldier.hpp"
 
 #include "core/entities/WeaponParametersFactory.hpp"
+#include "core/physics/Particles.hpp"
 #include "core/types/WeaponType.hpp"
 
 const float GRAV = 0.06F;
@@ -33,7 +34,7 @@ Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
     , on_fire(0)
     , collider_distance(255)
     , half_dead(false)
-    , skeleton(ParticleSystem::LoadFromFile("gostek.po", 4.5F, 1.0F, 1.06F * GRAV, 0.0F, 0.9945F))
+    , skeleton(ParticleSystem::Load(ParticleSystemType::Soldier))
     , legs_animation(AnimationType::Stand)
     , body_animation(AnimationType::Stand)
     , control()

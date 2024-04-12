@@ -53,6 +53,11 @@ struct Constraint
     float rest_length;
 };
 
+enum class ParticleSystemType : unsigned int
+{
+    Soldier = 0
+};
+
 class ParticleSystem
 {
 public:
@@ -67,12 +72,7 @@ public:
     void SatisfyConstraintFor(unsigned int constraint_num);
     static void SatisfyConstraint(const Constraint& constraint, std::vector<Particle>& particles);
 
-    static std::shared_ptr<ParticleSystem> LoadFromFile(const std::string& file_name,
-                                                        float scale,
-                                                        float timestep,
-                                                        float gravity,
-                                                        float e_damping,
-                                                        float v_damping);
+    static std::shared_ptr<ParticleSystem> Load(ParticleSystemType particle_system_type);
 
     bool GetActive(unsigned int particle_num) const
     {
@@ -106,6 +106,13 @@ public:
     const std::vector<Constraint>& GetConstraints() const { return constraints_; }
 
 private:
+    static std::shared_ptr<ParticleSystem> LoadFromFile(const std::string& file_name,
+                                                        float scale,
+                                                        float timestep,
+                                                        float gravity,
+                                                        float e_damping,
+                                                        float v_damping);
+
     std::vector<Particle> particles_;
     std::vector<Constraint> constraints_;
 };

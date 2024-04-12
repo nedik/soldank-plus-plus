@@ -1,5 +1,6 @@
 #include "Particles.hpp"
 
+#include "core/physics/Particles.hpp"
 #include "core/utility/Getline.hpp"
 
 #include "spdlog/spdlog.h"
@@ -127,6 +128,20 @@ void ParticleSystem::SatisfyConstraint(const Constraint& constraint,
 
         if (particles[b].GetOneOverMass() > 0.0) {
             particles[b].position -= delta * diff / 2.0F;
+        }
+    }
+}
+
+std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle_system_type)
+{
+    // TODO: const
+    const float grav = 0.06F;
+    switch (particle_system_type) {
+        case ParticleSystemType::Soldier: {
+            // TODO: load it at the application start
+            static auto soldier_particle_system =
+              LoadFromFile("gostek.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F);
+            return std::make_shared<ParticleSystem>(*soldier_particle_system);
         }
     }
 }
