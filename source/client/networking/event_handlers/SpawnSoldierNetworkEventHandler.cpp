@@ -12,7 +12,7 @@ SpawnSoldierNetworkEventHandler::SpawnSoldierNetworkEventHandler(
 
 NetworkEventHandlerResult SpawnSoldierNetworkEventHandler::HandleNetworkMessageImpl(
   unsigned int /*sender_connection_id*/,
-  unsigned int soldier_id,
+  std::uint8_t soldier_id,
   float spawn_position_x,
   float spawn_position_y)
 {

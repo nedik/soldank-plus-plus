@@ -20,17 +20,17 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
   unsigned int /*sender_connection_id*/,
   SoldierStatePacket soldier_state_packet)
 {
-    unsigned int soldier_id = soldier_state_packet.player_id;
+    std::uint8_t soldier_id = soldier_state_packet.player_id;
     glm::vec2 soldier_position = { soldier_state_packet.position_x,
                                    soldier_state_packet.position_y };
     glm::vec2 soldier_old_position = { soldier_state_packet.old_position_x,
                                        soldier_state_packet.old_position_y };
     AnimationType body_animation_type = soldier_state_packet.body_animation_type;
-    unsigned int body_animation_frame = soldier_state_packet.body_animation_frame;
-    int body_animation_speed = soldier_state_packet.body_animation_speed;
+    std::uint32_t body_animation_frame = soldier_state_packet.body_animation_frame;
+    std::int32_t body_animation_speed = soldier_state_packet.body_animation_speed;
     AnimationType legs_animation_type = soldier_state_packet.legs_animation_type;
-    unsigned int legs_animation_frame = soldier_state_packet.legs_animation_frame;
-    int legs_animation_speed = soldier_state_packet.legs_animation_speed;
+    std::uint32_t legs_animation_frame = soldier_state_packet.legs_animation_frame;
+    std::int32_t legs_animation_speed = soldier_state_packet.legs_animation_speed;
     glm::vec2 soldier_velocity = { soldier_state_packet.velocity_x,
                                    soldier_state_packet.velocity_y };
     glm::vec2 soldier_force = { soldier_state_packet.force_x, soldier_state_packet.force_y };
@@ -43,8 +43,8 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
     float mouse_position_y = soldier_state_packet.mouse_position_y;
     bool using_jets = soldier_state_packet.using_jets;
     std::int32_t jets_count = soldier_state_packet.jets_count;
-    unsigned int active_weapon = soldier_state_packet.active_weapon;
-    unsigned int last_processed_input_id = soldier_state_packet.last_processed_input_id;
+    std::uint8_t active_weapon = soldier_state_packet.active_weapon;
+    std::uint32_t last_processed_input_id = soldier_state_packet.last_processed_input_id;
 
     bool is_soldier_id_me = false;
     if (client_state_->client_soldier_id.has_value()) {

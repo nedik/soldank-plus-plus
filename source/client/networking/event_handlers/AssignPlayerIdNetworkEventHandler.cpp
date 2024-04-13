@@ -14,7 +14,7 @@ AssignPlayerIdNetworkEventHandler::AssignPlayerIdNetworkEventHandler(
 
 NetworkEventHandlerResult AssignPlayerIdNetworkEventHandler::HandleNetworkMessageImpl(
   unsigned int /*sender_connection_id*/,
-  unsigned int assigned_player_id)
+  std::uint8_t assigned_player_id)
 {
     const auto& soldier = world_->CreateSoldier(assigned_player_id);
     client_state_->client_soldier_id = soldier.id;

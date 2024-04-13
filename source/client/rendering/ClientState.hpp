@@ -21,7 +21,7 @@ struct ClientState
      * with the server and server didn't create the Soldier
      * for the client
      */
-    std::optional<unsigned int> client_soldier_id;
+    std::optional<std::uint8_t> client_soldier_id;
 
     glm::vec2 camera;
     glm::vec2 camera_prev;

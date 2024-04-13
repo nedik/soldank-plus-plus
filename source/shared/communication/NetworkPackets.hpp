@@ -14,9 +14,9 @@ namespace Soldank
 #pragma pack(push, 1)
 struct SoldierInputPacket
 {
-    unsigned int input_sequence_id;
-    unsigned int game_tick;
-    unsigned int player_id;
+    std::uint32_t input_sequence_id;
+    std::uint32_t game_tick;
+    std::uint8_t player_id;
     float position_x;
     float position_y;
     float mouse_position_x;
@@ -28,18 +28,18 @@ struct SoldierInputPacket
 #pragma pack(push, 1)
 struct SoldierStatePacket
 {
-    unsigned int game_tick;
-    unsigned int player_id;
+    std::uint32_t game_tick;
+    std::uint8_t player_id;
     float position_x;
     float position_y;
     float old_position_x;
     float old_position_y;
     AnimationType body_animation_type;
-    unsigned int body_animation_frame;
-    int body_animation_speed;
+    std::uint32_t body_animation_frame;
+    std::int32_t body_animation_speed;
     AnimationType legs_animation_type;
-    unsigned int legs_animation_frame;
-    int legs_animation_speed;
+    std::uint32_t legs_animation_frame;
+    std::int32_t legs_animation_speed;
     float velocity_x;
     float velocity_y;
     float force_x;
@@ -53,22 +53,22 @@ struct SoldierStatePacket
     float mouse_position_y;
     bool using_jets;
     std::int32_t jets_count;
-    unsigned int active_weapon;
-    unsigned int last_processed_input_id;
+    std::uint8_t active_weapon;
+    std::uint32_t last_processed_input_id;
 };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 struct SoldierInfoPacket
 {
-    unsigned int soldier_id;
+    std::uint8_t soldier_id;
 };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 struct ProjectileSpawnPacket
 {
-    unsigned int projectile_id;
+    std::uint16_t projectile_id;
     BulletType style;
     WeaponType weapon;
     float position_x;
@@ -78,7 +78,7 @@ struct ProjectileSpawnPacket
     std::int16_t timeout;
     float hit_multiply;
     TeamType team;
-    unsigned int owner_id;
+    std::uint8_t owner_id;
 };
 #pragma pack(pop)
 } // namespace Soldank

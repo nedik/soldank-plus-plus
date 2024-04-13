@@ -25,7 +25,7 @@ NetworkEventHandlerResult ProjectileSpawnNetworkEventHandler::HandleNetworkMessa
     std::int16_t timeout = projectile_spawn_packet.timeout;
     float hit_multiply = projectile_spawn_packet.hit_multiply;
     TeamType team = projectile_spawn_packet.team;
-    unsigned int owner_id = projectile_spawn_packet.owner_id;
+    std::uint8_t owner_id = projectile_spawn_packet.owner_id;
 
     auto& state = world_->GetStateManager()->GetState();
     BulletParams bullet_params{ style,

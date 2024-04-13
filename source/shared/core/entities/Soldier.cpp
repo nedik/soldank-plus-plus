@@ -8,7 +8,7 @@ const float GRAV = 0.06F;
 
 namespace Soldank
 {
-Soldier::Soldier(unsigned int soldier_id, glm::vec2 spawn_position)
+Soldier::Soldier(std::uint8_t soldier_id, glm::vec2 spawn_position)
     : id(soldier_id)
     , active(false)
     , dead_meat(false)

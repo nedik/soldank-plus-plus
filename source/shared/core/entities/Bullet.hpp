@@ -7,6 +7,8 @@
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"
 
+#include <cstdint>
+
 namespace Soldank
 {
 struct BulletParams
@@ -18,7 +20,7 @@ struct BulletParams
     std::int16_t timeout;
     float hit_multiply;
     TeamType team;
-    unsigned int owner_id;
+    std::uint8_t owner_id;
     float push;
 };
 
@@ -30,7 +32,7 @@ struct Bullet
     BulletType style;
     WeaponType weapon;
     TeamType team;
-    unsigned int owner_id;
+    std::uint8_t owner_id;
     Particle particle;
     glm::vec2 initial_position;
     glm::vec2 velocity_prev;
@@ -39,7 +41,7 @@ struct Bullet
     float timeout_real;
     float hit_multiply;
     float hit_multiply_prev;
-    unsigned int degrade_count = 0;
+    std::uint32_t degrade_count = 0;
     float push;
 };
 } // namespace Soldank

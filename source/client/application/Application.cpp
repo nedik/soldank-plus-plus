@@ -172,7 +172,7 @@ void Run()
         client_state->mouse.y = mouse_position.y;
 
         if (client_state->client_soldier_id.has_value()) {
-            unsigned int client_soldier_id = *client_state->client_soldier_id;
+            std::uint8_t client_soldier_id = *client_state->client_soldier_id;
             bool is_soldier_active = false;
             bool is_soldier_alive = false;
             for (const auto& soldier : world->GetStateManager()->GetState().soldiers) {

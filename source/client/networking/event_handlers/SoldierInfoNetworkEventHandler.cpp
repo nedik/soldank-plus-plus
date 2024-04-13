@@ -15,7 +15,7 @@ SoldierInfoNetworkEventHandler::SoldierInfoNetworkEventHandler(
 
 NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageImpl(
   unsigned int /*sender_connection_id*/,
-  unsigned int soldier_id,
+  std::uint8_t soldier_id,
   std::string player_nick)
 {
     bool is_soldier_id_me = false;
@@ -26,6 +26,11 @@ NetworkEventHandlerResult SoldierInfoNetworkEventHandler::HandleNetworkMessageIm
     if (!is_soldier_id_me) {
         spdlog::info("({}) {} has joined the server", soldier_id, player_nick);
         world_->CreateSoldier(soldier_id);
+        for (auto& soldier : world_->GetStateManager()->GetState().soldiers) {
+            if (soldier.id == soldier_id) {
+                soldier.active = true;
+            }
+        }
     }
 
     return NetworkEventHandlerResult::Success;

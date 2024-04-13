@@ -14,7 +14,7 @@ HitSoldierNetworkEventHandler::HitSoldierNetworkEventHandler(const std::shared_p
 NetworkEventHandlerResult HitSoldierNetworkEventHandler::HandleNetworkMessageImpl(
   // TODO: remove from client: sender_connection_id
   unsigned int /*sender_connection_id*/,
-  unsigned int soldier_id,
+  std::uint8_t soldier_id,
   float damage)
 {
     world_->HitSoldier(soldier_id, damage);

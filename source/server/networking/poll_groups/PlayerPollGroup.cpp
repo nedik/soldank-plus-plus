@@ -78,7 +78,7 @@ void PlayerPollGroup::OnAssignConnection(Connection& connection)
         SendReliableNetworkMessage(connection.connection_handle, network_message);
     }
 
-    unsigned int soldier_id = world_->CreateSoldier().id;
+    std::uint8_t soldier_id = world_->CreateSoldier().id;
     connection.soldier_id = soldier_id;
     spdlog::info("OnAssignPlayerId: {}", soldier_id);
     NetworkMessage network_message(NetworkEvent::AssignPlayerId, soldier_id);

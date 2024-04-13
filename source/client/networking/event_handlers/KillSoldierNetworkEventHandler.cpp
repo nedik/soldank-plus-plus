@@ -14,7 +14,7 @@ KillSoldierNetworkEventHandler::KillSoldierNetworkEventHandler(const std::shared
 NetworkEventHandlerResult KillSoldierNetworkEventHandler::HandleNetworkMessageImpl(
   // TODO: remove from client: sender_connection_id
   unsigned int /*sender_connection_id*/,
-  unsigned int soldier_id)
+  std::uint8_t soldier_id)
 {
     world_->KillSoldier(soldier_id);
     return NetworkEventHandlerResult::Success;

@@ -17,9 +17,9 @@ namespace Soldank
 {
 struct Soldier
 {
-    Soldier(unsigned int soldier_id, glm::vec2 spawn_position);
+    Soldier(std::uint8_t soldier_id, glm::vec2 spawn_position);
 
-    unsigned int id;
+    std::uint8_t id;
 
     glm::vec2 camera;
     glm::vec2 camera_prev;
@@ -30,7 +30,7 @@ struct Soldier
     bool active;
     bool dead_meat;
     std::uint8_t style;
-    unsigned int num;
+    std::uint32_t num;
     std::uint8_t visible;
     bool on_ground;
     bool on_ground_for_law;
@@ -55,7 +55,7 @@ struct Soldier
     AnimationState legs_animation;
     AnimationState body_animation;
     Control control;
-    unsigned int active_weapon;
+    std::uint8_t active_weapon;
     std::vector<Weapon> weapons;
     std::array<WeaponType, 2> weapon_choices;
     std::uint8_t fired;

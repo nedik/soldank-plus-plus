@@ -10,7 +10,7 @@
 
 namespace Soldank
 {
-class SoldierInfoNetworkEventHandler : public NetworkEventHandlerBase<unsigned int, std::string>
+class SoldierInfoNetworkEventHandler : public NetworkEventHandlerBase<std::uint8_t, std::string>
 {
 public:
     SoldierInfoNetworkEventHandler(const std::shared_ptr<IWorld>& world,
@@ -20,7 +20,7 @@ private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::SoldierInfo; }
 
     NetworkEventHandlerResult HandleNetworkMessageImpl(unsigned int sender_connection_id,
-                                                       unsigned int soldier_id,
+                                                       std::uint8_t soldier_id,
                                                        std::string player_nick) override;
 
     std::shared_ptr<IWorld> world_;
