@@ -12,6 +12,8 @@ option(BUILD_SERVER_ENABLED "Build server" ON)
 option(BUILD_CLIENT_ENABLED "Build client" ON)
 option(BUILD_TESTS_ENABLED "Build all available tests" ON)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
