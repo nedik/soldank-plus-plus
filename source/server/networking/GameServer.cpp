@@ -82,7 +82,7 @@ void GameServer::OnSteamNetConnectionStatusChanged(
             }
             if (player_poll_group_->IsConnectionAssigned(p_info->m_hConn)) {
                 spdlog::info("CLOSING CONNECTION conn: {}", p_info->m_hConn);
-                unsigned int soldier_id =
+                std::uint8_t soldier_id =
                   player_poll_group_->GetConnectionSoldierId(p_info->m_hConn);
                 spdlog::info("CLOSING CONNECTION soldier_id: {}", soldier_id);
                 NetworkMessage network_message(NetworkEvent::PlayerLeave, soldier_id);
