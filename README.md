@@ -1,6 +1,8 @@
 # Soldank++
 C++23 implementation of [OpenSoldat](https://github.com/opensoldat/opensoldat)
 
+[![Discord](https://img.shields.io/discord/1224452056245600417.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge)](https://discord.gg/nR43G7Tr)
+
 ## Requirements
 The project is written in C++23 and depends on:
 - [OpenGL 2.1+](https://www.opengl.org/)
@@ -12,6 +14,7 @@ The project is written in C++23 and depends on:
 - [FreeType](https://freetype.org/)
 - [gtest 1.13.0+](https://github.com/google/googletest)
 - [GameNetworkingSockets](https://github.com/ValveSoftware/GameNetworkingSockets)
+- [daScript 0.4](https://dascript.org/)
 
 ## Building
 Recommended to build using [vcpkg](https://github.com/microsoft/vcpkg) to prepare
