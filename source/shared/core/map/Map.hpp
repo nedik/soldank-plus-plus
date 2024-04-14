@@ -15,6 +15,47 @@
 
 namespace Soldank
 {
+struct MapData
+{
+    std::array<float, 4> boundaries_xy;
+    float polygons_min_x;
+    float polygons_max_x;
+    float polygons_min_y;
+    float polygons_max_y;
+    float width;
+    float height;
+    float center_x;
+    float center_y;
+
+    int version;
+
+    std::string description;
+    std::string texture_name;
+
+    PMSColor background_top_color;
+    PMSColor background_bottom_color;
+
+    int jet_count;
+    unsigned char grenades_count;
+    unsigned char medikits_count;
+    PMSWeatherType weather_type;
+    PMSStepType step_type;
+    int random_id;
+
+    std::vector<PMSPolygon> polygons;
+
+    int sectors_size;
+    int sectors_count;
+
+    std::vector<PMSSector> sectors2;
+    std::vector<std::vector<PMSSector>> sectors_poly;
+    std::vector<PMSScenery> scenery_instances;
+    std::vector<PMSSceneryType> scenery_types;
+    std::vector<PMSCollider> colliders;
+    std::vector<PMSSpawnPoint> spawn_points;
+    std::vector<PMSWayPoint> way_points;
+};
+
 class Map
 {
 public:
@@ -24,31 +65,37 @@ public:
     bool PointInPolyEdges(float x, float y, int i) const;
     glm::vec2 ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) const;
 
-    PMSColor GetBackgroundTopColor() { return background_top_color_; }
+    PMSColor GetBackgroundTopColor() const { return map_data_.background_top_color; }
 
-    PMSColor GetBackgroundBottomColor() { return background_bottom_color_; }
+    PMSColor GetBackgroundBottomColor() const { return map_data_.background_bottom_color; }
 
-    std::span<float, 4> GetBoundaries() { return boundaries_xy_; }
+    std::span<float, 4> GetBoundaries() { return map_data_.boundaries_xy; }
 
-    const std::vector<PMSPolygon>& GetPolygons() const { return polygons_; }
+    const std::vector<PMSPolygon>& GetPolygons() const { return map_data_.polygons; }
 
-    unsigned int GetPolygonsCount() { return polygons_.size(); }
+    unsigned int GetPolygonsCount() const { return map_data_.polygons.size(); }
 
-    const std::vector<PMSScenery>& GetSceneryInstances() const { return scenery_instances_; }
+    const std::vector<PMSScenery>& GetSceneryInstances() const
+    {
+        return map_data_.scenery_instances;
+    }
 
-    const std::vector<PMSSceneryType>& GetSceneryTypes() const { return scenery_types_; }
+    const std::vector<PMSSceneryType>& GetSceneryTypes() const { return map_data_.scenery_types; }
 
-    const std::vector<PMSSpawnPoint>& GetSpawnPoints() const { return spawn_points_; }
+    const std::vector<PMSSpawnPoint>& GetSpawnPoints() const { return map_data_.spawn_points; }
 
-    const std::string& GetTextureName() const { return texture_name_; }
+    const std::string& GetTextureName() const { return map_data_.texture_name; }
 
-    int GetJetCount() const { return jet_count_; }
+    int GetJetCount() const { return map_data_.jet_count; }
 
-    int GetSectorsSize() const { return sectors_size_; }
+    int GetSectorsSize() const { return map_data_.sectors_size; }
 
-    int GetSectorsCount() const { return sectors_count_; }
+    int GetSectorsCount() const { return map_data_.sectors_count; }
 
-    const PMSSector& GetSector(unsigned int x, unsigned int y) const { return sectors_poly_[x][y]; }
+    const PMSSector& GetSector(unsigned int x, unsigned int y) const
+    {
+        return map_data_.sectors_poly[x][y];
+    }
 
     enum MapBoundary
     {
@@ -59,43 +106,7 @@ public:
     };
 
 private:
-    std::array<float, 4> boundaries_xy_;
-    float polygons_min_x_;
-    float polygons_max_x_;
-    float polygons_min_y_;
-    float polygons_max_y_;
-    float width_;
-    float height_;
-    float center_x_;
-    float center_y_;
-
-    int version_;
-
-    std::string description_;
-    std::string texture_name_;
-
-    PMSColor background_top_color_;
-    PMSColor background_bottom_color_;
-
-    int jet_count_;
-    unsigned char grenades_count_;
-    unsigned char medikits_count_;
-    PMSWeatherType weather_type_;
-    PMSStepType step_type_;
-    int random_id_;
-
-    std::vector<PMSPolygon> polygons_;
-
-    int sectors_size_;
-    int sectors_count_;
-
-    std::vector<PMSSector> sectors2_;
-    std::vector<std::vector<PMSSector>> sectors_poly_;
-    std::vector<PMSScenery> scenery_instances_;
-    std::vector<PMSSceneryType> scenery_types_;
-    std::vector<PMSCollider> colliders_;
-    std::vector<PMSSpawnPoint> spawn_points_;
-    std::vector<PMSWayPoint> way_points_;
+    MapData map_data_;
 
     void UpdateBoundaries();
 };

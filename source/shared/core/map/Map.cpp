@@ -21,24 +21,24 @@ void Map::LoadMap(const std::string& map_path)
     int j = 0;
     char filler[64];
 
-    boundaries_xy_[TopBoundary] = -MAP_BOUNDARY;
-    boundaries_xy_[BottomBoundary] = MAP_BOUNDARY;
-    boundaries_xy_[LeftBoundary] = -MAP_BOUNDARY;
-    boundaries_xy_[RightBoundary] = MAP_BOUNDARY;
+    map_data_.boundaries_xy[TopBoundary] = -MAP_BOUNDARY;
+    map_data_.boundaries_xy[BottomBoundary] = MAP_BOUNDARY;
+    map_data_.boundaries_xy[LeftBoundary] = -MAP_BOUNDARY;
+    map_data_.boundaries_xy[RightBoundary] = MAP_BOUNDARY;
 
-    polygons_min_x_ = 0.0F;
-    polygons_max_x_ = 0.0F;
-    polygons_min_y_ = 0.0F;
-    polygons_max_y_ = 0.0F;
+    map_data_.polygons_min_x = 0.0F;
+    map_data_.polygons_max_x = 0.0F;
+    map_data_.polygons_min_y = 0.0F;
+    map_data_.polygons_max_y = 0.0F;
 
-    file.read((char*)(&version_), sizeof(int));
+    file.read((char*)(&map_data_.version), sizeof(int));
 
     unsigned char description_length = 0;
     file.read((char*)(&description_length), sizeof(unsigned char));
     char description[DESCRIPTION_MAX_LENGTH];
     memset(description, 0, sizeof(description));
     file.read((char*)(description), sizeof(char) * description_length);
-    description_ = description;
+    map_data_.description = description;
     file.read((char*)(filler), sizeof(char) * (DESCRIPTION_MAX_LENGTH - description_length));
 
     unsigned char texture_name_length = 0;
@@ -46,39 +46,39 @@ void Map::LoadMap(const std::string& map_path)
     char texture_name[TEXTURE_NAME_MAX_LENGTH];
     memset(texture_name, 0, sizeof(texture_name));
     file.read((char*)(texture_name), sizeof(char) * texture_name_length);
-    texture_name_ = texture_name;
+    map_data_.texture_name = texture_name;
     file.read((char*)(filler), sizeof(char) * (TEXTURE_NAME_MAX_LENGTH - texture_name_length));
 
-    file.read((char*)(&background_top_color_), sizeof(PMSColor));
-    file.read((char*)(&background_bottom_color_), sizeof(PMSColor));
-    file.read((char*)(&jet_count_), sizeof(int));
-    file.read((char*)(&grenades_count_), sizeof(unsigned char));
-    file.read((char*)(&medikits_count_), sizeof(unsigned char));
-    file.read((char*)(&weather_type_), sizeof(PMSWeatherType));
-    file.read((char*)(&step_type_), sizeof(PMSStepType));
-    file.read((char*)(&random_id_), sizeof(int));
+    file.read((char*)(&map_data_.background_top_color), sizeof(PMSColor));
+    file.read((char*)(&map_data_.background_bottom_color), sizeof(PMSColor));
+    file.read((char*)(&map_data_.jet_count), sizeof(int));
+    file.read((char*)(&map_data_.grenades_count), sizeof(unsigned char));
+    file.read((char*)(&map_data_.medikits_count), sizeof(unsigned char));
+    file.read((char*)(&map_data_.weather_type), sizeof(PMSWeatherType));
+    file.read((char*)(&map_data_.step_type), sizeof(PMSStepType));
+    file.read((char*)(&map_data_.random_id), sizeof(int));
 
     int polygons_count = 0;
     file.read((char*)(&polygons_count), sizeof(int));
-    polygons_.clear();
+    map_data_.polygons.clear();
     for (i = 0; i < polygons_count; ++i) {
         PMSPolygon tmp;
 
         for (j = 0; j < 3; ++j) {
             file.read((char*)(&tmp.vertices[j]), sizeof(PMSVertex));
 
-            if (tmp.vertices[j].x < polygons_min_x_) {
-                polygons_min_x_ = tmp.vertices[j].x;
+            if (tmp.vertices[j].x < map_data_.polygons_min_x) {
+                map_data_.polygons_min_x = tmp.vertices[j].x;
             }
-            if (tmp.vertices[j].x > polygons_max_x_) {
-                polygons_max_x_ = tmp.vertices[j].x;
+            if (tmp.vertices[j].x > map_data_.polygons_max_x) {
+                map_data_.polygons_max_x = tmp.vertices[j].x;
             }
 
-            if (tmp.vertices[j].y < polygons_min_y_) {
-                polygons_min_y_ = tmp.vertices[j].y;
+            if (tmp.vertices[j].y < map_data_.polygons_min_y) {
+                map_data_.polygons_min_y = tmp.vertices[j].y;
             }
-            if (tmp.vertices[j].y > polygons_max_y_) {
-                polygons_max_y_ = tmp.vertices[j].y;
+            if (tmp.vertices[j].y > map_data_.polygons_max_y) {
+                map_data_.polygons_max_y = tmp.vertices[j].y;
             }
         }
         for (j = 0; j < 3; ++j) {
@@ -108,13 +108,13 @@ void Map::LoadMap(const std::string& map_path)
 
         file.read((char*)(&tmp.polygon_type), sizeof(PMSPolygonType));
 
-        polygons_.push_back(tmp);
+        map_data_.polygons.push_back(tmp);
     }
 
-    file.read((char*)(&sectors_size_), sizeof(int));
-    file.read((char*)(&sectors_count_), sizeof(int));
+    file.read((char*)(&map_data_.sectors_size), sizeof(int));
+    file.read((char*)(&map_data_.sectors_count), sizeof(int));
 
-    auto n = (2 * sectors_count_ + 1) * (2 * sectors_count_ + 1);
+    auto n = (2 * map_data_.sectors_count + 1) * (2 * map_data_.sectors_count + 1);
 
     for (i = 0; i < n; i++) {
         unsigned short m;
@@ -128,32 +128,32 @@ void Map::LoadMap(const std::string& map_path)
             sector.polygons.push_back(poly_id);
         }
 
-        sectors2_.push_back(sector);
+        map_data_.sectors2.push_back(sector);
     }
 
     auto k = 0;
-    sectors_poly_ = std::vector<std::vector<PMSSector>>(51, std::vector<PMSSector>(51));
+    map_data_.sectors_poly = std::vector<std::vector<PMSSector>>(51, std::vector<PMSSector>(51));
 
-    for (auto& sec_i : sectors_poly_) {
+    for (auto& sec_i : map_data_.sectors_poly) {
         for (auto& sec_ij : sec_i) {
-            sec_ij = sectors2_[k];
+            sec_ij = map_data_.sectors2[k];
             k++;
         }
     }
 
     int scenery_instances_count = 0;
     file.read((char*)(&scenery_instances_count), sizeof(int));
-    scenery_instances_.clear();
+    map_data_.scenery_instances.clear();
     for (i = 0; i < scenery_instances_count; i++) {
         PMSScenery scenery{};
 
         file.read((char*)(&scenery), sizeof(PMSScenery));
-        scenery_instances_.push_back(scenery);
+        map_data_.scenery_instances.push_back(scenery);
     }
 
     int scenery_types_count = 0;
     file.read((char*)(&scenery_types_count), sizeof(int));
-    scenery_types_.clear();
+    map_data_.scenery_types.clear();
     for (i = 0; i < scenery_types_count; i++) {
         PMSSceneryType scenery_type{};
 
@@ -166,27 +166,27 @@ void Map::LoadMap(const std::string& map_path)
                   sizeof(char) * (SCENERY_NAME_MAX_LENGTH - scenery_type.name_length));
         file.read((char*)(&scenery_type.timestamp), sizeof(PMSTimestamp));
 
-        scenery_types_.push_back(scenery_type);
+        map_data_.scenery_types.push_back(scenery_type);
     }
 
     int colliders_count = 0;
     file.read((char*)(&colliders_count), sizeof(int));
-    colliders_.clear();
+    map_data_.colliders.clear();
     for (i = 0; i < colliders_count; i++) {
         PMSCollider collider{};
 
         file.read((char*)(&collider), sizeof(PMSCollider));
-        colliders_.push_back(collider);
+        map_data_.colliders.push_back(collider);
     }
 
     int spawn_points_count = 0;
     file.read((char*)(&spawn_points_count), sizeof(int));
-    spawn_points_.clear();
+    map_data_.spawn_points.clear();
     for (i = 0; i < spawn_points_count; i++) {
         PMSSpawnPoint spawn_point{};
 
         file.read((char*)(&spawn_point), sizeof(PMSSpawnPoint));
-        spawn_points_.push_back(spawn_point);
+        map_data_.spawn_points.push_back(spawn_point);
     }
 
     int way_points_count = 0;
@@ -195,7 +195,7 @@ void Map::LoadMap(const std::string& map_path)
         PMSWayPoint way_point{};
 
         file.read((char*)(&way_point), sizeof(PMSWayPoint));
-        way_points_.push_back(way_point);
+        map_data_.way_points.push_back(way_point);
     }
 
     UpdateBoundaries();
@@ -205,29 +205,29 @@ void Map::LoadMap(const std::string& map_path)
 
 void Map::UpdateBoundaries()
 {
-    width_ = fabs(polygons_max_x_ - polygons_min_x_);
-    height_ = fabs(polygons_max_y_ - polygons_min_y_);
+    map_data_.width = fabs(map_data_.polygons_max_x - map_data_.polygons_min_x);
+    map_data_.height = fabs(map_data_.polygons_max_y - map_data_.polygons_min_y);
 
-    center_x_ = floor((polygons_min_x_ + polygons_max_x_) / 2.0F);
-    center_y_ = floor((polygons_min_y_ + polygons_max_y_) / 2.0F);
+    map_data_.center_x = floor((map_data_.polygons_min_x + map_data_.polygons_max_x) / 2.0F);
+    map_data_.center_y = floor((map_data_.polygons_min_y + map_data_.polygons_max_y) / 2.0F);
 
-    boundaries_xy_[TopBoundary] = polygons_min_y_;
-    boundaries_xy_[BottomBoundary] = polygons_max_y_;
-    boundaries_xy_[LeftBoundary] = polygons_min_x_;
-    boundaries_xy_[RightBoundary] = polygons_max_x_;
+    map_data_.boundaries_xy[TopBoundary] = map_data_.polygons_min_y;
+    map_data_.boundaries_xy[BottomBoundary] = map_data_.polygons_max_y;
+    map_data_.boundaries_xy[LeftBoundary] = map_data_.polygons_min_x;
+    map_data_.boundaries_xy[RightBoundary] = map_data_.polygons_max_x;
 
-    if (height_ > width_) {
-        boundaries_xy_[LeftBoundary] -= (height_ - width_) / 2.0F;
-        boundaries_xy_[RightBoundary] += (height_ - width_) / 2.0F;
+    if (map_data_.height > map_data_.width) {
+        map_data_.boundaries_xy[LeftBoundary] -= (map_data_.height - map_data_.width) / 2.0F;
+        map_data_.boundaries_xy[RightBoundary] += (map_data_.height - map_data_.width) / 2.0F;
     } else {
-        boundaries_xy_[TopBoundary] -= (width_ - height_) / 2.0F;
-        boundaries_xy_[BottomBoundary] += (width_ - height_) / 2.0F;
+        map_data_.boundaries_xy[TopBoundary] -= (map_data_.width - map_data_.height) / 2.0F;
+        map_data_.boundaries_xy[BottomBoundary] += (map_data_.width - map_data_.height) / 2.0F;
     }
 
-    boundaries_xy_[TopBoundary] -= MAP_BOUNDARY;
-    boundaries_xy_[BottomBoundary] += MAP_BOUNDARY;
-    boundaries_xy_[LeftBoundary] -= MAP_BOUNDARY;
-    boundaries_xy_[RightBoundary] += MAP_BOUNDARY;
+    map_data_.boundaries_xy[TopBoundary] -= MAP_BOUNDARY;
+    map_data_.boundaries_xy[BottomBoundary] += MAP_BOUNDARY;
+    map_data_.boundaries_xy[LeftBoundary] -= MAP_BOUNDARY;
+    map_data_.boundaries_xy[RightBoundary] += MAP_BOUNDARY;
 }
 
 bool Map::PointInPoly(glm::vec2 p, PMSPolygon poly)
@@ -254,38 +254,41 @@ bool Map::PointInPoly(glm::vec2 p, PMSPolygon poly)
 
 bool Map::PointInPolyEdges(float x, float y, int i) const
 {
-    auto u_x = x - polygons_[i].vertices[0].x;
-    auto u_y = y - polygons_[i].vertices[0].y;
-    auto d = polygons_[i].perpendiculars[0].x * u_x + polygons_[i].perpendiculars[0].y * u_y;
+    auto u_x = x - map_data_.polygons[i].vertices[0].x;
+    auto u_y = y - map_data_.polygons[i].vertices[0].y;
+    auto d = map_data_.polygons[i].perpendiculars[0].x * u_x +
+             map_data_.polygons[i].perpendiculars[0].y * u_y;
     if (d < 0.0F) {
         return false;
     }
 
-    u_x = x - polygons_[i].vertices[1].x;
-    u_y = y - polygons_[i].vertices[1].y;
-    d = polygons_[i].perpendiculars[1].x * u_x + polygons_[i].perpendiculars[1].y * u_y;
+    u_x = x - map_data_.polygons[i].vertices[1].x;
+    u_y = y - map_data_.polygons[i].vertices[1].y;
+    d = map_data_.polygons[i].perpendiculars[1].x * u_x +
+        map_data_.polygons[i].perpendiculars[1].y * u_y;
     if (d < 0.0F) {
         return false;
     }
 
-    u_x = x - polygons_[i].vertices[2].x;
-    u_y = y - polygons_[i].vertices[2].y;
-    d = polygons_[i].perpendiculars[2].x * u_x + polygons_[i].perpendiculars[2].y * u_y;
+    u_x = x - map_data_.polygons[i].vertices[2].x;
+    u_y = y - map_data_.polygons[i].vertices[2].y;
+    d = map_data_.polygons[i].perpendiculars[2].x * u_x +
+        map_data_.polygons[i].perpendiculars[2].y * u_y;
     return d >= 0.0F;
 }
 
 glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) const
 {
     auto px = std::array{
-        polygons_[j].vertices[0].x,
-        polygons_[j].vertices[1].x,
-        polygons_[j].vertices[2].x,
+        map_data_.polygons[j].vertices[0].x,
+        map_data_.polygons[j].vertices[1].x,
+        map_data_.polygons[j].vertices[2].x,
     };
 
     auto py = std::array{
-        polygons_[j].vertices[0].y,
-        polygons_[j].vertices[1].y,
-        polygons_[j].vertices[2].y,
+        map_data_.polygons[j].vertices[0].y,
+        map_data_.polygons[j].vertices[1].y,
+        map_data_.polygons[j].vertices[2].y,
     };
 
     auto p1 = glm::vec2(px[0], py[0]);
@@ -328,17 +331,20 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
 
     if (edge_v1 == 1 && edge_v2 == 2) {
         *n = 1;
-        return { polygons_[j].perpendiculars[0].x, polygons_[j].perpendiculars[0].y };
+        return { map_data_.polygons[j].perpendiculars[0].x,
+                 map_data_.polygons[j].perpendiculars[0].y };
     }
 
     if (edge_v1 == 2 && edge_v2 == 3) {
         *n = 2;
-        return { polygons_[j].perpendiculars[1].x, polygons_[j].perpendiculars[1].y };
+        return { map_data_.polygons[j].perpendiculars[1].x,
+                 map_data_.polygons[j].perpendiculars[1].y };
     }
 
     if (edge_v1 == 3 && edge_v2 == 1) {
         *n = 3;
-        return { polygons_[j].perpendiculars[2].x, polygons_[j].perpendiculars[2].y };
+        return { map_data_.polygons[j].perpendiculars[2].x,
+                 map_data_.polygons[j].perpendiculars[2].y };
     }
 
     return { 0.0F, 0.0F };
