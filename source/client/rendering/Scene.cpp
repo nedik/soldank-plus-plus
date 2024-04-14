@@ -38,7 +38,7 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
 {
     glm::vec2 new_camera_position =
       Calc::Lerp(client_state.camera_prev, client_state.camera, (float)frame_percent);
-    camera_.Move(new_camera_position.x, -new_camera_position.y);
+    camera_.Move(new_camera_position.x, new_camera_position.y);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -78,6 +78,7 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
         ImGui::Checkbox("Server reconciliation", &client_state.server_reconciliation);
         ImGui::Checkbox("Client side prediction", &client_state.client_side_prediction);
         ImGui::Checkbox("Objects interpolation", &client_state.objects_interpolation);
+        ImGui::Checkbox("Smooth camera", &client_state.smooth_camera);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
         ImGui::Text("Ping: %hu", client_state.ping_timer.GetLastPingMeasure());
