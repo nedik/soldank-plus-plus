@@ -14,12 +14,19 @@
 #include <algorithm>
 #include <array>
 
-namespace Soldank
+namespace Soldank::BulletPhysics
 {
-void BulletPhysics::UpdateBullet(const PhysicsEvents& physics_events,
-                                 Bullet& bullet,
-                                 const Map& map,
-                                 State& state)
+static std::optional<std::pair<glm::vec2, unsigned int>> CheckMapCollision(Bullet& bullet,
+                                                                           const Map& map);
+static bool CollidesWithPoly(const PMSPolygon& poly, TeamType team);
+static std::optional<glm::vec2> CheckSoldierCollision(const PhysicsEvents& physics_events,
+                                                      Bullet& bullet,
+                                                      const Map& map,
+                                                      State& state,
+                                                      float lasthitdist);
+static glm::vec2 GetSoldierCollisionPoint(Soldier& soldier);
+
+void UpdateBullet(const PhysicsEvents& physics_events, Bullet& bullet, const Map& map, State& state)
 {
     bullet.velocity_prev = bullet.particle.velocity_;
     bullet.particle.Euler();
@@ -67,8 +74,8 @@ void BulletPhysics::UpdateBullet(const PhysicsEvents& physics_events,
     }
 }
 
-std::optional<std::pair<glm::vec2, unsigned int>> BulletPhysics::CheckMapCollision(Bullet& bullet,
-                                                                                   const Map& map)
+static std::optional<std::pair<glm::vec2, unsigned int>> CheckMapCollision(Bullet& bullet,
+                                                                           const Map& map)
 {
     auto a = bullet.particle.old_position;
     auto b = bullet.particle.position;
@@ -98,7 +105,7 @@ std::optional<std::pair<glm::vec2, unsigned int>> BulletPhysics::CheckMapCollisi
     return std::nullopt;
 }
 
-bool BulletPhysics::CollidesWithPoly(const PMSPolygon& poly, TeamType team)
+static bool CollidesWithPoly(const PMSPolygon& poly, TeamType team)
 {
     switch (poly.polygon_type) {
         case PMSPolygonType::AlphaBullets:
@@ -126,11 +133,11 @@ bool BulletPhysics::CollidesWithPoly(const PMSPolygon& poly, TeamType team)
     }
 }
 
-std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(const PhysicsEvents& physics_events,
-                                                              Bullet& bullet,
-                                                              const Map& map,
-                                                              State& state,
-                                                              float lasthitdist)
+static std::optional<glm::vec2> CheckSoldierCollision(const PhysicsEvents& physics_events,
+                                                      Bullet& bullet,
+                                                      const Map& map,
+                                                      State& state,
+                                                      float lasthitdist)
 {
     // TODO: can't throw knife (with short hold) because it immediately collides with the owner
     const auto body_parts_priority = std::array{ 12, 11, 10, 6, 5, 4, 3 };
@@ -374,9 +381,9 @@ std::optional<glm::vec2> BulletPhysics::CheckSoldierCollision(const PhysicsEvent
     return result;
 }
 
-glm::vec2 BulletPhysics::GetSoldierCollisionPoint(Soldier& soldier)
+static glm::vec2 GetSoldierCollisionPoint(Soldier& soldier)
 {
     // TODO: check in opensoldat code
     return soldier.particle.position;
 }
-} // namespace Soldank
+} // namespace Soldank::BulletPhysics
