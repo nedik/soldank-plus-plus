@@ -44,9 +44,24 @@ const int SECOND = 60;
 
 const int DEFAULT_IDLETIME = SECOND * 8;
 
-namespace Soldank
+namespace Soldank::SoldierPhysics
 {
-void SoldierPhysics::SwitchWeapon(Soldier& soldier)
+const Weapon& GetPrimaryWeapon(Soldier& soldier)
+{
+    return soldier.weapons[soldier.active_weapon];
+}
+
+const Weapon& GetSecondaryWeapon(Soldier& soldier)
+{
+    return soldier.weapons[(soldier.active_weapon + 1) % 2];
+}
+
+const Weapon& GetTertiaryWeapon(Soldier& soldier)
+{
+    return soldier.weapons[2];
+}
+
+void SwitchWeapon(Soldier& soldier)
 {
     int new_active_weapon = (soldier.active_weapon + 1) % 2;
     soldier.active_weapon = new_active_weapon;
@@ -58,12 +73,12 @@ void SoldierPhysics::SwitchWeapon(Soldier& soldier)
       soldier.weapons[new_active_weapon].GetReloadTimeCount());
 }
 
-void SoldierPhysics::UpdateKeys(Soldier& soldier, const Control& control)
+void UpdateKeys(Soldier& soldier, const Control& control)
 {
     soldier.control = control;
 }
 
-void SoldierPhysics::LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
+void LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
 {
     if (!soldier.legs_animation.IsAny({ AnimationType::Prone, AnimationType::ProneMove }) &&
         soldier.legs_animation.GetType() != id) {
@@ -72,7 +87,7 @@ void SoldierPhysics::LegsApplyAnimation(Soldier& soldier, AnimationType id, unsi
     }
 }
 
-void SoldierPhysics::BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
+void BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
 {
     if (soldier.body_animation.GetType() != id) {
         soldier.body_animation = AnimationState(id);
@@ -80,9 +95,7 @@ void SoldierPhysics::BodyApplyAnimation(Soldier& soldier, AnimationType id, unsi
     }
 }
 
-void SoldierPhysics::HandleSpecialPolytypes(const Map& map,
-                                            PMSPolygonType polytype,
-                                            Soldier& soldier)
+void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier)
 {
     if (polytype == PMSPolygonType::Deadly || polytype == PMSPolygonType::BloodyDeadly ||
         polytype == PMSPolygonType::Explosive) {
@@ -90,9 +103,7 @@ void SoldierPhysics::HandleSpecialPolytypes(const Map& map,
     }
 }
 
-void SoldierPhysics::UpdateControl(State& state,
-                                   Soldier& soldier,
-                                   std::vector<BulletParams>& bullet_emitter)
+void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
 {
     if (!soldier.control.fire) {
         soldier.is_shooting = false;
@@ -974,9 +985,7 @@ void SoldierPhysics::UpdateControl(State& state,
     }
 }
 
-void SoldierPhysics::Update(State& state,
-                            Soldier& soldier,
-                            std::vector<BulletParams>& bullet_emitter)
+void Update(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
 {
     const Map& map = state.map;
     float body_y = 0.0f;
@@ -1099,12 +1108,7 @@ void SoldierPhysics::Update(State& state,
     }
 }
 
-bool SoldierPhysics::CheckMapCollision(Soldier& soldier,
-                                       const Map& map,
-                                       float x,
-                                       float y,
-                                       int area,
-                                       State& state)
+bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int area, State& state)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
     auto rx = ((int)std::round((pos.x / (float)map.GetSectorsSize()))) + 25;
@@ -1227,13 +1231,13 @@ bool SoldierPhysics::CheckMapCollision(Soldier& soldier,
     return false;
 }
 
-bool SoldierPhysics::CheckMapVerticesCollision(Soldier& soldier,
-                                               const Map& map,
-                                               float x,
-                                               float y,
-                                               float r,
-                                               bool has_collided,
-                                               State& state)
+bool CheckMapVerticesCollision(Soldier& soldier,
+                               const Map& map,
+                               float x,
+                               float y,
+                               float r,
+                               bool has_collided,
+                               State& state)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
     auto rx = ((int)std::round(pos.x / (float)map.GetSectorsSize())) + 25;
@@ -1269,12 +1273,12 @@ bool SoldierPhysics::CheckMapVerticesCollision(Soldier& soldier,
     return false;
 }
 
-bool SoldierPhysics::CheckRadiusMapCollision(Soldier& soldier,
-                                             const Map& map,
-                                             float x,
-                                             float y,
-                                             bool has_collided,
-                                             State& state)
+bool CheckRadiusMapCollision(Soldier& soldier,
+                             const Map& map,
+                             float x,
+                             float y,
+                             bool has_collided,
+                             State& state)
 {
     auto s_pos = glm::vec2(x, y - 3.0f);
 
@@ -1358,12 +1362,12 @@ bool SoldierPhysics::CheckRadiusMapCollision(Soldier& soldier,
     return false;
 }
 
-bool SoldierPhysics::CheckSkeletonMapCollision(Soldier& soldier,
-                                               const Map& map,
-                                               unsigned int i,
-                                               float x,
-                                               float y,
-                                               State& state)
+bool CheckSkeletonMapCollision(Soldier& soldier,
+                               const Map& map,
+                               unsigned int i,
+                               float x,
+                               float y,
+                               State& state)
 {
     auto result = false;
     auto pos = glm::vec2(x - 1.0f, y + 4.0f);
@@ -1418,7 +1422,7 @@ bool SoldierPhysics::CheckSkeletonMapCollision(Soldier& soldier,
     return result;
 }
 
-void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
+void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
 {
     auto weapon = GetPrimaryWeapon(soldier);
 
@@ -1476,4 +1480,4 @@ void SoldierPhysics::Fire(Soldier& soldier, std::vector<BulletParams>& bullet_em
 
     soldier.is_shooting = true;
 }
-} // namespace Soldank
+} // namespace Soldank::SoldierPhysics
