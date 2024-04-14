@@ -254,8 +254,19 @@ SpriteManager::SpriteManager()
 
     std::ranges::for_each(
       std::as_const(all_sprite_file_paths), [&](const auto& type_and_file_path) {
-          all_sprites_.insert(
-            { type_and_file_path.first, Texture::Load(type_and_file_path.second.c_str()) });
+          auto texture_data =
+            *Texture::Load(type_and_file_path.second.c_str())
+               .or_else([&type_and_file_path](Texture::LoadError error) {
+                   switch (error) {
+                       case Texture::LoadError::TextureNotFound: {
+                           spdlog::critical("Sprite file not found: {}", type_and_file_path.second);
+                       }
+                   }
+                   return std::expected<Texture::TextureData, Texture::LoadError>(
+                     Texture::TextureData{ .opengl_id = 0, .width = 0, .height = 0 });
+               });
+
+          all_sprites_.insert({ type_and_file_path.first, texture_data });
       });
 
     // clang-format off

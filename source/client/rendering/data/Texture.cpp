@@ -1,5 +1,6 @@
 #include "Texture.hpp"
 
+#include "rendering/data/Texture.hpp"
 #include "spdlog/spdlog.h"
 
 #include <glad/glad.h>
@@ -12,7 +13,7 @@
 
 namespace Soldank::Texture
 {
-TextureData Load(const char* texture_path)
+std::expected<TextureData, LoadError> Load(const char* texture_path)
 {
     unsigned int texture_id = 0;
     int texture_width = 0;
@@ -52,11 +53,11 @@ TextureData Load(const char* texture_path)
                      GL_UNSIGNED_BYTE,
                      pixels.data());
     } else {
-        spdlog::error("Error: Failed to load texture {}", texture_path);
+        return std::unexpected(LoadError::TextureNotFound);
     }
     stbi_image_free(data);
 
-    return { .opengl_id = texture_id, .width = texture_width, .height = texture_height };
+    return TextureData{ .opengl_id = texture_id, .width = texture_width, .height = texture_height };
 }
 
 void Delete(unsigned int texture_id)

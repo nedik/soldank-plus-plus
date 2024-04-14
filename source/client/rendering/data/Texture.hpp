@@ -1,6 +1,8 @@
 #ifndef __TEXTURE_HPP__
 #define __TEXTURE_HPP__
 
+#include <expected>
+
 namespace Soldank::Texture
 {
 struct TextureData
@@ -10,7 +12,12 @@ struct TextureData
     int height;
 };
 
-TextureData Load(const char* texture_path);
+enum class LoadError
+{
+    TextureNotFound = 0
+};
+
+std::expected<TextureData, LoadError> Load(const char* texture_path);
 
 void Delete(unsigned int texture_id);
 } // namespace Soldank::Texture

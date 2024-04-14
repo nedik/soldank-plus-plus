@@ -4,6 +4,8 @@
 #include "rendering/renderer/Renderer.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <filesystem>
 
 namespace Soldank
@@ -12,14 +14,21 @@ SceneriesRenderer::SceneriesRenderer(const std::vector<PMSSceneryType>& scenery_
                                      const std::vector<PMSScenery>& scenery_instances)
     : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
 {
-    for (auto scnery_type : scenery_types) {
+    for (const auto& scnery_type : scenery_types) {
         std::filesystem::path texture_path = "scenery-gfx/";
         texture_path += scnery_type.name;
-        // if (!std::filesystem::exists(texture_path)) {
-        //     texture_path.replace_extension(".png");
-        // }
+        if (!std::filesystem::exists(texture_path)) {
+            texture_path.replace_extension(".png");
+        }
 
-        textures_.push_back(Texture::Load(texture_path.string().c_str()).opengl_id);
+        auto texture_or_error = Texture::Load(texture_path.string().c_str());
+
+        if (texture_or_error.has_value()) {
+            textures_.push_back(texture_or_error.value().opengl_id);
+        } else {
+            spdlog::critical("Texture file not found {}", texture_path.string());
+            textures_.push_back(0);
+        }
     }
 
     std::vector<float> vertices;

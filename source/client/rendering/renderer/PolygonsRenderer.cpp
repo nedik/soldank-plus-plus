@@ -4,6 +4,8 @@
 #include "rendering/renderer/Renderer.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include <filesystem>
 
 namespace Soldank
@@ -18,7 +20,14 @@ PolygonsRenderer::PolygonsRenderer(const std::vector<PMSPolygon>& polygons,
         texture_path.replace_extension(".png");
     }
 
-    texture_ = Texture::Load(texture_path.string().c_str()).opengl_id;
+    auto texture_or_error = Texture::Load(texture_path.string().c_str());
+
+    if (texture_or_error.has_value()) {
+        texture_ = texture_or_error.value().opengl_id;
+    } else {
+        texture_ = 0;
+        spdlog::critical("Texture file not found {}", texture_name);
+    }
 
     std::vector<float> vertices;
 
