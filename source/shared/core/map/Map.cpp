@@ -15,6 +15,7 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
     auto file_data = file_reader.Read(map_path, std::ios::in | std::ios::binary);
     if (!file_data.has_value()) {
         spdlog::critical("Map not found {}", map_path);
+        // TODO: should return an error
         return;
     }
     std::stringstream file{ *file_data };
@@ -134,7 +135,8 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
     }
 
     auto k = 0;
-    map_data_.sectors_poly = std::vector<std::vector<PMSSector>>(51, std::vector<PMSSector>(51));
+    n = 2 * map_data_.sectors_count + 1;
+    map_data_.sectors_poly = std::vector<std::vector<PMSSector>>(n, std::vector<PMSSector>(n));
 
     for (auto& sec_i : map_data_.sectors_poly) {
         for (auto& sec_ij : sec_i) {
