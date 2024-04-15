@@ -1,11 +1,13 @@
 #ifndef __MAP_HPP__
 #define __MAP_HPP__
 
-#include "PMSConstants.hpp"
-#include "PMSEnums.hpp"
-#include "PMSStructs.hpp"
+#include "core/map/PMSConstants.hpp"
+#include "core/map/PMSEnums.hpp"
+#include "core/map/PMSStructs.hpp"
 
 #include "core/math/Glm.hpp"
+#include "core/data/IFileReader.hpp"
+#include "core/data/FileReader.hpp"
 
 #include <vector>
 #include <fstream>
@@ -59,7 +61,7 @@ struct MapData
 class Map
 {
 public:
-    void LoadMap(const std::string& map_path);
+    void LoadMap(const std::string& map_path, const IFileReader& file_reader = FileReader());
 
     static bool PointInPoly(glm::vec2 p, PMSPolygon poly);
     bool PointInPolyEdges(float x, float y, int i) const;

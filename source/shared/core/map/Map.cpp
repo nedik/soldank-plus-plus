@@ -6,16 +6,18 @@
 #include <array>
 #include <spdlog/spdlog.h>
 #include <utility>
+#include <sstream>
 
 namespace Soldank
 {
-void Map::LoadMap(const std::string& map_path)
+void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
 {
-    std::ifstream file(map_path, std::ios::in | std::ios::binary);
-    if (!file.is_open()) {
+    auto file_data = file_reader.Read(map_path, std::ios::in | std::ios::binary);
+    if (!file_data.has_value()) {
         spdlog::critical("Map not found {}", map_path);
         return;
     }
+    std::stringstream file{ *file_data };
 
     int i = 0;
     int j = 0;
@@ -199,8 +201,6 @@ void Map::LoadMap(const std::string& map_path)
     }
 
     UpdateBoundaries();
-
-    file.close();
 }
 
 void Map::UpdateBoundaries()
