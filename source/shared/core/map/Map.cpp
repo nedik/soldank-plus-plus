@@ -65,53 +65,41 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
     file.read((char*)(&polygons_count), sizeof(int));
     map_data_.polygons.clear();
     for (i = 0; i < polygons_count; ++i) {
-        PMSPolygon tmp;
+        PMSPolygon new_polygon;
 
         for (j = 0; j < 3; ++j) {
-            file.read((char*)(&tmp.vertices[j]), sizeof(PMSVertex));
+            file.read((char*)(&new_polygon.vertices.at(j)), sizeof(PMSVertex));
 
-            if (tmp.vertices[j].x < map_data_.polygons_min_x) {
-                map_data_.polygons_min_x = tmp.vertices[j].x;
+            if (new_polygon.vertices.at(j).x < map_data_.polygons_min_x) {
+                map_data_.polygons_min_x = new_polygon.vertices.at(j).x;
             }
-            if (tmp.vertices[j].x > map_data_.polygons_max_x) {
-                map_data_.polygons_max_x = tmp.vertices[j].x;
+            if (new_polygon.vertices.at(j).x > map_data_.polygons_max_x) {
+                map_data_.polygons_max_x = new_polygon.vertices.at(j).x;
             }
 
-            if (tmp.vertices[j].y < map_data_.polygons_min_y) {
-                map_data_.polygons_min_y = tmp.vertices[j].y;
+            if (new_polygon.vertices.at(j).y < map_data_.polygons_min_y) {
+                map_data_.polygons_min_y = new_polygon.vertices.at(j).y;
             }
-            if (tmp.vertices[j].y > map_data_.polygons_max_y) {
-                map_data_.polygons_max_y = tmp.vertices[j].y;
+            if (new_polygon.vertices.at(j).y > map_data_.polygons_max_y) {
+                map_data_.polygons_max_y = new_polygon.vertices.at(j).y;
             }
         }
         for (j = 0; j < 3; ++j) {
-            file.read((char*)(&tmp.perpendiculars[j]), sizeof(PMSVector));
+            file.read((char*)(&new_polygon.perpendiculars.at(j)), sizeof(PMSVector));
         }
-        tmp.bounciness = glm::length(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y));
+        new_polygon.bounciness =
+          glm::length(glm::vec2(new_polygon.perpendiculars[2].x, new_polygon.perpendiculars[2].y));
 
-        // TODO: zrobić lepiej
-        tmp.perpendiculars[0].x =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
-            .x;
-        tmp.perpendiculars[0].y =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[0].x, tmp.perpendiculars[0].y))
-            .y;
-        tmp.perpendiculars[1].x =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
-            .x;
-        tmp.perpendiculars[1].y =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[1].x, tmp.perpendiculars[1].y))
-            .y;
-        tmp.perpendiculars[2].x =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
-            .x;
-        tmp.perpendiculars[2].y =
-          Soldank::Calc::Vec2Normalize(glm::vec2(tmp.perpendiculars[2].x, tmp.perpendiculars[2].y))
-            .y;
+        for (j = 0; j < 3; ++j) {
+            glm::vec2 normalized_perpendiculars = Calc::Vec2Normalize(
+              glm::vec2(new_polygon.perpendiculars.at(j).x, new_polygon.perpendiculars.at(j).y));
+            new_polygon.perpendiculars.at(j).x = normalized_perpendiculars.x;
+            new_polygon.perpendiculars.at(j).y = normalized_perpendiculars.y;
+        }
 
-        file.read((char*)(&tmp.polygon_type), sizeof(PMSPolygonType));
+        file.read((char*)(&new_polygon.polygon_type), sizeof(PMSPolygonType));
 
-        map_data_.polygons.push_back(tmp);
+        map_data_.polygons.push_back(new_polygon);
     }
 
     file.read((char*)(&map_data_.sectors_size), sizeof(int));

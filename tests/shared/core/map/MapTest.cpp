@@ -4,6 +4,8 @@
 #include "core/map/PMSEnums.hpp"
 #include "core/map/PMSStructs.hpp"
 
+#include "core/math/Calc.hpp"
+
 #include "core/data/IFileReader.hpp"
 
 #include <gtest/gtest.h>
@@ -27,8 +29,30 @@ constexpr const Soldank::PMSStepType STEP_TYPE = Soldank::PMSStepType::SoftGroun
 constexpr const int RANDOM_ID = 12345;
 const std::array<Soldank::PMSPolygon, 2> POLYGONS{
     Soldank::PMSPolygon{
-      .vertices = { Soldank::PMSVertex{}, Soldank::PMSVertex{}, Soldank::PMSVertex{} },
-      .perpendiculars = { Soldank::PMSVector{}, Soldank::PMSVector{}, Soldank::PMSVector{} },
+      .vertices = { Soldank::PMSVertex{ .x = 1.0F,
+                                        .y = 1.0F,
+                                        .z = 1.0F,
+                                        .rhw = 0.5F,
+                                        .color = Soldank::PMSColor(3, 5, 7, 200),
+                                        .texture_s = 0.2F,
+                                        .texture_t = 0.3F },
+                    Soldank::PMSVertex{ .x = 5.0F,
+                                        .y = 1.0F,
+                                        .z = 1.0F,
+                                        .rhw = 0.75F,
+                                        .color = Soldank::PMSColor(4, 6, 8, 254),
+                                        .texture_s = 0.3F,
+                                        .texture_t = 0.6F },
+                    Soldank::PMSVertex{ .x = 2.5F,
+                                        .y = 5.0F,
+                                        .z = 1.0F,
+                                        .rhw = 0.25F,
+                                        .color = Soldank::PMSColor(0, 0, 0, 0),
+                                        .texture_s = 0.9F,
+                                        .texture_t = 0.1F } },
+      .perpendiculars = { Soldank::PMSVector{ .x = 1.0F, .y = 0.5F, .z = 0.2F },
+                          Soldank::PMSVector{ .x = -1.0F, .y = -0.5F, .z = -0.2F },
+                          Soldank::PMSVector{ .x = 5.9F, .y = 9.9F, .z = 0.9F } },
       .polygon_type = Soldank::PMSPolygonType::Normal,
       .bounciness = 0.5F },
     Soldank::PMSPolygon{
@@ -158,15 +182,25 @@ void ComparePMSVectors(const Soldank::PMSVector& vector1, const Soldank::PMSVect
     ASSERT_EQ(vector1.z, vector2.z);
 }
 
-void ComparePMSPolygons(const Soldank::PMSPolygon& polygon1, const Soldank::PMSPolygon& polygon2)
+void ComparePMSPolygons(const Soldank::PMSPolygon& actual_polygon,
+                        const Soldank::PMSPolygon& expected_polygon)
 {
     for (unsigned int j = 0; j < 3; j++) {
-        ComparePMSVertices(polygon1.vertices.at(j), polygon2.vertices.at(j));
+        ComparePMSVertices(actual_polygon.vertices.at(j), expected_polygon.vertices.at(j));
     }
     for (unsigned int j = 0; j < 3; j++) {
-        ComparePMSVectors(polygon1.perpendiculars.at(j), polygon2.perpendiculars.at(j));
+        Soldank::PMSVector expected_perpendiculars = expected_polygon.perpendiculars.at(j);
+        expected_perpendiculars.x =
+          Soldank::Calc::Vec2Normalize(glm::vec2(expected_polygon.perpendiculars.at(j).x,
+                                                 expected_polygon.perpendiculars.at(j).y))
+            .x;
+        expected_perpendiculars.y =
+          Soldank::Calc::Vec2Normalize(glm::vec2(expected_polygon.perpendiculars.at(j).x,
+                                                 expected_polygon.perpendiculars.at(j).y))
+            .y;
+        ComparePMSVectors(actual_polygon.perpendiculars.at(j), expected_perpendiculars);
     }
-    ASSERT_EQ(polygon1.polygon_type, polygon2.polygon_type);
+    ASSERT_EQ(actual_polygon.polygon_type, expected_polygon.polygon_type);
 }
 
 void CheckLoadedMap(const Soldank::Map& map)
