@@ -166,20 +166,20 @@ void ComparePMSColors(const Soldank::PMSColor& color1, const Soldank::PMSColor& 
 
 void ComparePMSVertices(const Soldank::PMSVertex& vertex1, const Soldank::PMSVertex& vertex2)
 {
-    ASSERT_EQ(vertex1.x, vertex2.x);
-    ASSERT_EQ(vertex1.y, vertex2.y);
-    ASSERT_EQ(vertex1.z, vertex2.z);
-    ASSERT_EQ(vertex1.rhw, vertex2.rhw);
-    ASSERT_EQ(vertex1.texture_s, vertex2.texture_s);
-    ASSERT_EQ(vertex1.texture_t, vertex2.texture_t);
+    ASSERT_FLOAT_EQ(vertex1.x, vertex2.x);
+    ASSERT_FLOAT_EQ(vertex1.y, vertex2.y);
+    ASSERT_FLOAT_EQ(vertex1.z, vertex2.z);
+    ASSERT_FLOAT_EQ(vertex1.rhw, vertex2.rhw);
+    ASSERT_FLOAT_EQ(vertex1.texture_s, vertex2.texture_s);
+    ASSERT_FLOAT_EQ(vertex1.texture_t, vertex2.texture_t);
     ComparePMSColors(vertex1.color, vertex2.color);
 }
 
 void ComparePMSVectors(const Soldank::PMSVector& vector1, const Soldank::PMSVector& vector2)
 {
-    ASSERT_EQ(vector1.x, vector2.x);
-    ASSERT_EQ(vector1.y, vector2.y);
-    ASSERT_EQ(vector1.z, vector2.z);
+    ASSERT_FLOAT_EQ(vector1.x, vector2.x);
+    ASSERT_FLOAT_EQ(vector1.y, vector2.y);
+    ASSERT_FLOAT_EQ(vector1.z, vector2.z);
 }
 
 void ComparePMSPolygons(const Soldank::PMSPolygon& actual_polygon,
