@@ -67,6 +67,10 @@ public:
     bool PointInPolyEdges(float x, float y, int i) const;
     glm::vec2 ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) const;
 
+    int GetVersion() const { return map_data_.version; }
+
+    std::string GetDescription() const { return map_data_.description; }
+
     PMSColor GetBackgroundTopColor() const { return map_data_.background_top_color; }
 
     PMSColor GetBackgroundBottomColor() const { return map_data_.background_bottom_color; }
@@ -89,6 +93,14 @@ public:
     const std::string& GetTextureName() const { return map_data_.texture_name; }
 
     int GetJetCount() const { return map_data_.jet_count; }
+
+    unsigned char GetGrenadesCount() const { return map_data_.grenades_count; }
+
+    unsigned char GetMedikitsCount() const { return map_data_.medikits_count; }
+
+    PMSWeatherType GetWeatherType() const { return map_data_.weather_type; }
+
+    PMSStepType GetStepType() const { return map_data_.step_type; }
 
     int GetSectorsSize() const { return map_data_.sectors_size; }
 

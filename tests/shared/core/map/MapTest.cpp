@@ -61,6 +61,20 @@ const std::array<Soldank::PMSPolygon, 2> POLYGONS{
       .polygon_type = Soldank::PMSPolygonType::NoCollide,
       .bounciness = 0.8F }
 };
+constexpr const int SECTORS_SIZE = 25;
+constexpr const int SECTORS_COUNT = 1;
+const std::array<std::array<Soldank::PMSSector, 2 * SECTORS_COUNT + 1>, 2 * SECTORS_COUNT + 1>
+  SECTORS{ {
+    { Soldank::PMSSector{ .polygons = { 1 } },
+      Soldank::PMSSector{ .polygons = { 1, 2 } },
+      Soldank::PMSSector{ .polygons = {} } },
+    { Soldank::PMSSector{ .polygons = { 1 } },
+      Soldank::PMSSector{ .polygons = {} },
+      Soldank::PMSSector{ .polygons = { 1 } } },
+    { Soldank::PMSSector{ .polygons = {} },
+      Soldank::PMSSector{ .polygons = { 1 } },
+      Soldank::PMSSector{ .polygons = {} } },
+  } };
 
 class MapReaderExample : public Soldank::IFileReader
 {
@@ -93,8 +107,9 @@ public:
 
         WriteToBuffer(buffer, POLYGONS);
 
-        WriteToBuffer(buffer, (int)0); // sectors_size
-        WriteToBuffer(buffer, (int)0); // sectors_count
+        WriteToBuffer(buffer, SECTORS_SIZE);
+        WriteToBuffer(buffer, SECTORS_COUNT);
+        WriteToBuffer(buffer, SECTORS);
 
         WriteToBuffer(buffer, (int)0); // scenery_instances_count
         WriteToBuffer(buffer, (int)0); // scenery_types_count
@@ -115,6 +130,21 @@ private:
     {
         // NOLINTNEXTLINE: Serializing data
         return reinterpret_cast<const char*>(&t);
+    }
+
+    static void WriteToBuffer(
+      std::stringstream& buffer,
+      const std::array<std::array<Soldank::PMSSector, 2 * SECTORS_COUNT + 1>,
+                       2 * SECTORS_COUNT + 1>& sectors)
+    {
+        for (const auto& sectors_row : sectors) {
+            for (const auto& sector : sectors_row) {
+                buffer.write(Serialize(sector.polygons.size()), sizeof(unsigned short));
+                for (unsigned short poly_id : sector.polygons) {
+                    buffer.write(Serialize(poly_id), sizeof(unsigned short));
+                }
+            }
+        }
     }
 
     static void WriteToBuffer(std::stringstream& buffer,
@@ -205,23 +235,35 @@ void ComparePMSPolygons(const Soldank::PMSPolygon& actual_polygon,
 
 void CheckLoadedMap(const Soldank::Map& map)
 {
-    // TODO: Add missing methods to map and check here
-    // ASSERT_EQ(map.GetVersion(), VERSION);
-    // ASSERT_EQ(map.GetDescription(), DESCRIPTION);
+    ASSERT_EQ(map.GetVersion(), VERSION);
+    ASSERT_EQ(map.GetDescription(), DESCRIPTION);
     ASSERT_EQ(map.GetTextureName(), TEXTURE_NAME);
     ComparePMSColors(map.GetBackgroundTopColor(), BACKGROUND_TOP_COLOR);
     ComparePMSColors(map.GetBackgroundBottomColor(), BACKGROUND_BOTTOM_COLOR);
     ASSERT_EQ(map.GetJetCount(), JET_COUNT);
-    // ASSERT_EQ(map.GetGrenadesCount(), GRENADES_COUNT);
-    // ASSERT_EQ(map.GetMedikitsCount(), MEDIKITS_COUNT);
-    // ASSERT_EQ(map.GetWeatherType(), WEATHER_TYPE);
-    // ASSERT_EQ(map.GetStepType(), STEP_TYPE);
+    ASSERT_EQ(map.GetGrenadesCount(), GRENADES_COUNT);
+    ASSERT_EQ(map.GetMedikitsCount(), MEDIKITS_COUNT);
+    ASSERT_EQ(map.GetWeatherType(), WEATHER_TYPE);
+    ASSERT_EQ(map.GetStepType(), STEP_TYPE);
     ASSERT_EQ(map.GetPolygons().size(), POLYGONS.size());
     ASSERT_EQ(map.GetPolygonsCount(), POLYGONS.size());
     for (unsigned int i = 0; i < map.GetPolygonsCount(); i++) {
         ComparePMSPolygons(map.GetPolygons().at(i), POLYGONS.at(i));
     }
-    // TODO: Add missing map variables
+    ASSERT_EQ(map.GetSectorsSize(), SECTORS_SIZE);
+    ASSERT_EQ(map.GetSectorsCount(), SECTORS_COUNT);
+    for (unsigned int y = 0; y < SECTORS.size(); y++) {
+        const auto& sectors_row = SECTORS.at(y);
+        for (unsigned int x = 0; x < sectors_row.size(); x++) {
+            const auto& actual_polygons = map.GetSector(y, x).polygons;
+            const auto& sector = SECTORS.at(y).at(x);
+            ASSERT_EQ(actual_polygons.size(), sector.polygons.size());
+            for (unsigned short i = 0; i < (unsigned short)sector.polygons.size(); i++) {
+                ASSERT_EQ(actual_polygons[i], sector.polygons[i]);
+            }
+        }
+    }
+    // TODO: Add missing methods to map and check here
 }
 
 TEST(MapTests, TestMapNotFound)
