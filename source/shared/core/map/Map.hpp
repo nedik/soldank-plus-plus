@@ -10,10 +10,11 @@
 #include "core/data/FileReader.hpp"
 
 #include <vector>
-#include <fstream>
+#include <sstream>
 #include <cstring>
 #include <span>
 #include <array>
+#include <memory>
 
 namespace Soldank
 {
@@ -124,6 +125,37 @@ public:
 
 private:
     MapData map_data_;
+
+    template<typename DataType>
+    static void ReadFromBuffer(std::stringstream& buffer, DataType& variable_to_save_data)
+    {
+        buffer.read((char*)&variable_to_save_data, sizeof(DataType));
+    }
+
+    static void ReadStringFromBuffer(std::stringstream& buffer,
+                                     std::string& string_to_save_data,
+                                     unsigned int max_string_size)
+    {
+        unsigned char string_size = 0;
+        ReadFromBuffer(buffer, string_size);
+        // We need an array with dynamic size here
+        // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+        auto bytes = std::make_unique<char[]>(string_size);
+        buffer.read(bytes.get(), string_size);
+        string_to_save_data.assign(bytes.get(), string_size);
+        // We need an array with dynamic size here
+        // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+        auto filler = std::make_unique<char[]>(max_string_size - string_size);
+        buffer.read(filler.get(), max_string_size - string_size);
+    }
+
+    void ReadPolygonsFromBuffer(std::stringstream& buffer);
+    void ReadSectorsFromBuffer(std::stringstream& buffer);
+    void ReadSceneryInstancesFromBuffer(std::stringstream& buffer);
+    void ReadSceneryTypesFromBuffer(std::stringstream& buffer);
+    void ReadCollidersFromBuffer(std::stringstream& buffer);
+    void ReadSpawnPointsFromBuffer(std::stringstream& buffer);
+    void ReadWayPointsFromBuffer(std::stringstream& buffer);
 
     void UpdateBoundaries();
 };

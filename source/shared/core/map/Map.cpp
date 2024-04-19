@@ -1,6 +1,7 @@
 #include "Map.hpp"
 
 #include "core/map/Map.hpp"
+#include "core/map/PMSConstants.hpp"
 #include "core/math/Calc.hpp"
 
 #include <array>
@@ -12,17 +13,14 @@ namespace Soldank
 {
 void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
 {
+    // TODO: Add map validation, whether the map was loaded correctly. Check the sizes of arrays
     auto file_data = file_reader.Read(map_path, std::ios::in | std::ios::binary);
     if (!file_data.has_value()) {
         spdlog::critical("Map not found {}", map_path);
         // TODO: should return an error
         return;
     }
-    std::stringstream file{ *file_data };
-
-    int i = 0;
-    int j = 0;
-    char filler[64];
+    std::stringstream data_buffer{ *file_data };
 
     map_data_.boundaries_xy[TopBoundary] = -MAP_BOUNDARY;
     map_data_.boundaries_xy[BottomBoundary] = MAP_BOUNDARY;
@@ -34,41 +32,42 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
     map_data_.polygons_min_y = 0.0F;
     map_data_.polygons_max_y = 0.0F;
 
-    file.read((char*)(&map_data_.version), sizeof(int));
+    ReadFromBuffer(data_buffer, map_data_.version);
+    ReadStringFromBuffer(data_buffer, map_data_.description, DESCRIPTION_MAX_LENGTH);
+    ReadStringFromBuffer(data_buffer, map_data_.texture_name, TEXTURE_NAME_MAX_LENGTH);
 
-    unsigned char description_length = 0;
-    file.read((char*)(&description_length), sizeof(unsigned char));
-    char description[DESCRIPTION_MAX_LENGTH];
-    memset(description, 0, sizeof(description));
-    file.read((char*)(description), sizeof(char) * description_length);
-    map_data_.description = description;
-    file.read((char*)(filler), sizeof(char) * (DESCRIPTION_MAX_LENGTH - description_length));
+    ReadFromBuffer(data_buffer, map_data_.background_top_color);
+    ReadFromBuffer(data_buffer, map_data_.background_bottom_color);
+    ReadFromBuffer(data_buffer, map_data_.jet_count);
+    ReadFromBuffer(data_buffer, map_data_.grenades_count);
+    ReadFromBuffer(data_buffer, map_data_.medikits_count);
+    ReadFromBuffer(data_buffer, map_data_.weather_type);
+    ReadFromBuffer(data_buffer, map_data_.step_type);
+    ReadFromBuffer(data_buffer, map_data_.random_id);
 
-    unsigned char texture_name_length = 0;
-    file.read((char*)(&texture_name_length), sizeof(unsigned char));
-    char texture_name[TEXTURE_NAME_MAX_LENGTH];
-    memset(texture_name, 0, sizeof(texture_name));
-    file.read((char*)(texture_name), sizeof(char) * texture_name_length);
-    map_data_.texture_name = texture_name;
-    file.read((char*)(filler), sizeof(char) * (TEXTURE_NAME_MAX_LENGTH - texture_name_length));
+    ReadPolygonsFromBuffer(data_buffer);
+    ReadSectorsFromBuffer(data_buffer);
 
-    file.read((char*)(&map_data_.background_top_color), sizeof(PMSColor));
-    file.read((char*)(&map_data_.background_bottom_color), sizeof(PMSColor));
-    file.read((char*)(&map_data_.jet_count), sizeof(int));
-    file.read((char*)(&map_data_.grenades_count), sizeof(unsigned char));
-    file.read((char*)(&map_data_.medikits_count), sizeof(unsigned char));
-    file.read((char*)(&map_data_.weather_type), sizeof(PMSWeatherType));
-    file.read((char*)(&map_data_.step_type), sizeof(PMSStepType));
-    file.read((char*)(&map_data_.random_id), sizeof(int));
+    ReadSceneryInstancesFromBuffer(data_buffer);
+    ReadSceneryTypesFromBuffer(data_buffer);
 
+    ReadCollidersFromBuffer(data_buffer);
+    ReadSpawnPointsFromBuffer(data_buffer);
+    ReadWayPointsFromBuffer(data_buffer);
+
+    UpdateBoundaries();
+}
+
+void Map::ReadPolygonsFromBuffer(std::stringstream& buffer)
+{
     int polygons_count = 0;
-    file.read((char*)(&polygons_count), sizeof(int));
+    ReadFromBuffer(buffer, polygons_count);
     map_data_.polygons.clear();
-    for (i = 0; i < polygons_count; ++i) {
+    for (int i = 0; i < polygons_count; i++) {
         PMSPolygon new_polygon;
 
-        for (j = 0; j < 3; ++j) {
-            file.read((char*)(&new_polygon.vertices.at(j)), sizeof(PMSVertex));
+        for (unsigned int j = 0; j < 3; j++) {
+            ReadFromBuffer(buffer, new_polygon.vertices.at(j));
 
             if (new_polygon.vertices.at(j).x < map_data_.polygons_min_x) {
                 map_data_.polygons_min_x = new_polygon.vertices.at(j).x;
@@ -84,103 +83,96 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
                 map_data_.polygons_max_y = new_polygon.vertices.at(j).y;
             }
         }
-        for (j = 0; j < 3; ++j) {
-            file.read((char*)(&new_polygon.perpendiculars.at(j)), sizeof(PMSVector));
+        for (unsigned int j = 0; j < 3; j++) {
+            ReadFromBuffer(buffer, new_polygon.perpendiculars.at(j));
         }
         new_polygon.bounciness =
           glm::length(glm::vec2(new_polygon.perpendiculars[2].x, new_polygon.perpendiculars[2].y));
 
-        for (j = 0; j < 3; ++j) {
+        for (unsigned int j = 0; j < 3; j++) {
             glm::vec2 normalized_perpendiculars = Calc::Vec2Normalize(
               glm::vec2(new_polygon.perpendiculars.at(j).x, new_polygon.perpendiculars.at(j).y));
             new_polygon.perpendiculars.at(j).x = normalized_perpendiculars.x;
             new_polygon.perpendiculars.at(j).y = normalized_perpendiculars.y;
         }
 
-        file.read((char*)(&new_polygon.polygon_type), sizeof(PMSPolygonType));
+        ReadFromBuffer(buffer, new_polygon.polygon_type);
 
         map_data_.polygons.push_back(new_polygon);
     }
+}
 
-    file.read((char*)(&map_data_.sectors_size), sizeof(int));
-    file.read((char*)(&map_data_.sectors_count), sizeof(int));
+void Map::ReadSectorsFromBuffer(std::stringstream& buffer)
+{
 
-    auto n = (2 * map_data_.sectors_count + 1) * (2 * map_data_.sectors_count + 1);
+    ReadFromBuffer(buffer, map_data_.sectors_size);
+    ReadFromBuffer(buffer, map_data_.sectors_count);
 
-    n = 2 * map_data_.sectors_count + 1;
+    int n = 2 * map_data_.sectors_count + 1;
     map_data_.sectors_poly = std::vector<std::vector<PMSSector>>(n, std::vector<PMSSector>(n));
 
     for (auto& sec_i : map_data_.sectors_poly) {
         for (auto& sec_ij : sec_i) {
-            unsigned short m = 0;
-            file.read((char*)(&m), sizeof(unsigned short));
+            unsigned short sector_polygons_count = 0;
+            ReadFromBuffer(buffer, sector_polygons_count);
 
-            for (int j = 0; j < m; j++) {
-                unsigned short poly_id = 0;
-                file.read((char*)(&poly_id), sizeof(unsigned short));
-                sec_ij.polygons.push_back(poly_id);
+            for (int j = 0; j < sector_polygons_count; j++) {
+                sec_ij.polygons.push_back(0);
+                ReadFromBuffer(buffer, sec_ij.polygons.back());
             }
         }
     }
+}
 
+void Map::ReadSceneryInstancesFromBuffer(std::stringstream& buffer)
+{
     int scenery_instances_count = 0;
-    file.read((char*)(&scenery_instances_count), sizeof(int));
+    ReadFromBuffer(buffer, scenery_instances_count);
     map_data_.scenery_instances.clear();
-    for (i = 0; i < scenery_instances_count; i++) {
-        PMSScenery scenery{};
-
-        file.read((char*)(&scenery), sizeof(PMSScenery));
-        map_data_.scenery_instances.push_back(scenery);
+    for (int i = 0; i < scenery_instances_count; i++) {
+        map_data_.scenery_instances.push_back({});
+        ReadFromBuffer(buffer, map_data_.scenery_instances.back());
     }
-
+}
+void Map::ReadSceneryTypesFromBuffer(std::stringstream& buffer)
+{
     int scenery_types_count = 0;
-    file.read((char*)(&scenery_types_count), sizeof(int));
+    ReadFromBuffer(buffer, scenery_types_count);
     map_data_.scenery_types.clear();
-    for (i = 0; i < scenery_types_count; i++) {
-        PMSSceneryType scenery_type{};
-
-        char scenery_type_name[SCENERY_NAME_MAX_LENGTH];
-        memset(scenery_type_name, 0, sizeof(scenery_type_name));
-        file.read((char*)(&scenery_type.name_length), sizeof(unsigned char));
-        file.read((char*)(scenery_type_name), sizeof(char) * scenery_type.name_length);
-        scenery_type.name = scenery_type_name;
-        file.read((char*)(filler),
-                  sizeof(char) * (SCENERY_NAME_MAX_LENGTH - scenery_type.name_length));
-        file.read((char*)(&scenery_type.timestamp), sizeof(PMSTimestamp));
-
-        map_data_.scenery_types.push_back(scenery_type);
+    for (int i = 0; i < scenery_types_count; i++) {
+        map_data_.scenery_types.push_back({});
+        ReadStringFromBuffer(buffer, map_data_.scenery_types.back().name, SCENERY_NAME_MAX_LENGTH);
+        ReadFromBuffer(buffer, map_data_.scenery_types.back().timestamp);
     }
-
+}
+void Map::ReadCollidersFromBuffer(std::stringstream& buffer)
+{
     int colliders_count = 0;
-    file.read((char*)(&colliders_count), sizeof(int));
+    ReadFromBuffer(buffer, colliders_count);
     map_data_.colliders.clear();
-    for (i = 0; i < colliders_count; i++) {
-        PMSCollider collider{};
-
-        file.read((char*)(&collider), sizeof(PMSCollider));
-        map_data_.colliders.push_back(collider);
+    for (int i = 0; i < colliders_count; i++) {
+        map_data_.colliders.push_back({});
+        ReadFromBuffer(buffer, map_data_.colliders.back());
     }
-
+}
+void Map::ReadSpawnPointsFromBuffer(std::stringstream& buffer)
+{
     int spawn_points_count = 0;
-    file.read((char*)(&spawn_points_count), sizeof(int));
+    ReadFromBuffer(buffer, spawn_points_count);
     map_data_.spawn_points.clear();
-    for (i = 0; i < spawn_points_count; i++) {
-        PMSSpawnPoint spawn_point{};
-
-        file.read((char*)(&spawn_point), sizeof(PMSSpawnPoint));
-        map_data_.spawn_points.push_back(spawn_point);
+    for (int i = 0; i < spawn_points_count; i++) {
+        map_data_.spawn_points.push_back({});
+        ReadFromBuffer(buffer, map_data_.spawn_points.back());
     }
-
+}
+void Map::ReadWayPointsFromBuffer(std::stringstream& buffer)
+{
     int way_points_count = 0;
-    file.read((char*)(&way_points_count), sizeof(way_points_count));
-    for (i = 0; i < way_points_count; i++) {
-        PMSWayPoint way_point{};
-
-        file.read((char*)(&way_point), sizeof(PMSWayPoint));
-        map_data_.way_points.push_back(way_point);
+    ReadFromBuffer(buffer, way_points_count);
+    for (int i = 0; i < way_points_count; i++) {
+        map_data_.way_points.push_back({});
+        ReadFromBuffer(buffer, map_data_.way_points.back());
     }
-
-    UpdateBoundaries();
 }
 
 void Map::UpdateBoundaries()

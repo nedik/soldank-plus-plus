@@ -123,7 +123,6 @@ struct PMSTimestamp
 
 struct PMSSceneryType
 {
-    unsigned char name_length;
     std::string name;
     PMSTimestamp timestamp;
 };

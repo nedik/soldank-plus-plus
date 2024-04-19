@@ -92,7 +92,7 @@ const std::array<Soldank::PMSScenery, SCENERY_INSTANCES_COUNT> SCENERY_INSTANCES
 };
 constexpr const int SCENERY_TYPES_COUNT = 1;
 const std::array<Soldank::PMSSceneryType, SCENERY_TYPES_COUNT> SCENERY_TYPES{
-    Soldank::PMSSceneryType{ .name_length = 16, .name = "test_scenery.png", .timestamp = {} }
+    Soldank::PMSSceneryType{ .name = "test_scenery.png", .timestamp = {} }
 };
 constexpr const int COLLIDERS_COUNT = 1;
 const std::array<Soldank::PMSCollider, COLLIDERS_COUNT> COLLIDERS{
@@ -326,7 +326,6 @@ void CompareSceneryInstances(const Soldank::PMSScenery& actual_scenery,
 void CompareSceneryTypes(const Soldank::PMSSceneryType& actual_scenery_type,
                          const Soldank::PMSSceneryType& expected_scenery_type)
 {
-    ASSERT_EQ(actual_scenery_type.name_length, expected_scenery_type.name_length);
     ASSERT_EQ(actual_scenery_type.name, expected_scenery_type.name);
     ASSERT_EQ(actual_scenery_type.timestamp.date.day, expected_scenery_type.timestamp.date.day);
     ASSERT_EQ(actual_scenery_type.timestamp.date.month, expected_scenery_type.timestamp.date.month);
