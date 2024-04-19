@@ -1,7 +1,7 @@
 # Soldank++
 **Homepage:** http://soldankpp.com/
 
-C++23 implementation of [OpenSoldat](https://github.com/opensoldat/opensoldat)
+C++23 implementation of [OpenSoldat](https://github.com/opensoldat/opensoldat) game engine.
 
 [![Discord](https://img.shields.io/discord/1224452056245600417.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge)](https://discord.gg/nR43G7Tr)
 

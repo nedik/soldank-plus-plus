@@ -90,6 +90,10 @@ public:
 
     const std::vector<PMSSpawnPoint>& GetSpawnPoints() const { return map_data_.spawn_points; }
 
+    const std::vector<PMSCollider>& GetColliders() const { return map_data_.colliders; }
+
+    const std::vector<PMSWayPoint>& GetWayPoints() const { return map_data_.way_points; }
+
     const std::string& GetTextureName() const { return map_data_.texture_name; }
 
     int GetJetCount() const { return map_data_.jet_count; }

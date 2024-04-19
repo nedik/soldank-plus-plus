@@ -75,6 +75,52 @@ const std::array<std::array<Soldank::PMSSector, 2 * SECTORS_COUNT + 1>, 2 * SECT
       Soldank::PMSSector{ .polygons = { 1 } },
       Soldank::PMSSector{ .polygons = {} } },
   } };
+constexpr const int SCENERY_INSTANCES_COUNT = 1;
+const std::array<Soldank::PMSScenery, SCENERY_INSTANCES_COUNT> SCENERY_INSTANCES{
+    Soldank::PMSScenery{ .active = true,
+                         .style = 2,
+                         .width = 3,
+                         .height = 4,
+                         .x = 5.0F,
+                         .y = 6.0F,
+                         .rotation = 7.0F,
+                         .scale_x = 8.0F,
+                         .scale_y = 9.0F,
+                         .alpha = 10,
+                         .color = Soldank::PMSColor(11, 12, 13, 14),
+                         .level = 15 }
+};
+constexpr const int SCENERY_TYPES_COUNT = 1;
+const std::array<Soldank::PMSSceneryType, SCENERY_TYPES_COUNT> SCENERY_TYPES{
+    Soldank::PMSSceneryType{ .name_length = 16, .name = "test_scenery.png", .timestamp = {} }
+};
+constexpr const int COLLIDERS_COUNT = 1;
+const std::array<Soldank::PMSCollider, COLLIDERS_COUNT> COLLIDERS{
+    Soldank::PMSCollider{ .active = 1, .x = 15, .y = 30, .radius = 5.0F }
+};
+constexpr const int SPAWN_POINTS_COUNT = 1;
+const std::array<Soldank::PMSSpawnPoint, SPAWN_POINTS_COUNT> SPAWN_POINTS{ Soldank::PMSSpawnPoint{
+  .active = 1,
+  .x = 5,
+  .y = 10,
+  .type = Soldank::PMSSpawnPointType::BravoFlag } };
+constexpr const int WAY_POINTS_COUNT = 1;
+const std::array<Soldank::PMSWayPoint, WAY_POINTS_COUNT> WAY_POINTS{ Soldank::PMSWayPoint{
+  .active = true,
+  .id = 1,
+  .x = 4,
+  .y = 6,
+  .left = true,
+  .right = true,
+  .up = true,
+  .down = true,
+  .jet = true,
+  .path = 2,
+  .special_action = Soldank::PMSSpecialAction::Wait10Seconds,
+  .c2 = 3,
+  .c3 = 6,
+  .connections_count = 2,
+  .connections = { 1, 2 } } };
 
 class MapReaderExample : public Soldank::IFileReader
 {
@@ -111,11 +157,32 @@ public:
         WriteToBuffer(buffer, SECTORS_COUNT);
         WriteToBuffer(buffer, SECTORS);
 
-        WriteToBuffer(buffer, (int)0); // scenery_instances_count
-        WriteToBuffer(buffer, (int)0); // scenery_types_count
-        WriteToBuffer(buffer, (int)0); // colliders_count
-        WriteToBuffer(buffer, (int)0); // spawn_points_count
-        WriteToBuffer(buffer, (int)0); // way_points_count
+        WriteToBuffer(buffer, (int)SCENERY_INSTANCES_COUNT);
+        for (const auto& scenery : SCENERY_INSTANCES) {
+            WriteToBuffer(buffer, scenery);
+        }
+
+        WriteToBuffer(buffer, SCENERY_TYPES_COUNT);
+        for (const auto& scenery_type : SCENERY_TYPES) {
+            WriteToBuffer(buffer, (unsigned char)scenery_type.name.length());
+            WriteToBuffer(buffer, scenery_type.name);
+            AddFillerToBuffer(buffer,
+                              Soldank::SCENERY_NAME_MAX_LENGTH - scenery_type.name.length());
+            WriteToBuffer(buffer, scenery_type.timestamp);
+        }
+
+        WriteToBuffer(buffer, COLLIDERS_COUNT);
+        for (const auto& collider : COLLIDERS) {
+            WriteToBuffer(buffer, collider);
+        }
+        WriteToBuffer(buffer, SPAWN_POINTS_COUNT);
+        for (const auto& spawn_point : SPAWN_POINTS) {
+            WriteToBuffer(buffer, spawn_point);
+        }
+        WriteToBuffer(buffer, WAY_POINTS_COUNT);
+        for (const auto& way_point : WAY_POINTS) {
+            WriteToBuffer(buffer, way_point);
+        }
 
         if (buffer.bad()) {
             return std::unexpected(Soldank::FileReaderError::BufferError);
@@ -166,6 +233,12 @@ private:
     }
 
     static void WriteToBuffer(std::stringstream& buffer, std::string_view variable_to_write)
+    {
+        buffer.write(variable_to_write.data(),
+                     (std::streamsize)sizeof(char) * (std::streamsize)variable_to_write.size());
+    }
+
+    static void WriteToBuffer(std::stringstream& buffer, const std::string& variable_to_write)
     {
         buffer.write(variable_to_write.data(),
                      (std::streamsize)sizeof(char) * (std::streamsize)variable_to_write.size());
@@ -233,6 +306,78 @@ void ComparePMSPolygons(const Soldank::PMSPolygon& actual_polygon,
     ASSERT_EQ(actual_polygon.polygon_type, expected_polygon.polygon_type);
 }
 
+void CompareSceneryInstances(const Soldank::PMSScenery& actual_scenery,
+                             const Soldank::PMSScenery& expected_scenery)
+{
+    ASSERT_EQ(actual_scenery.active, expected_scenery.active);
+    ASSERT_EQ(actual_scenery.style, expected_scenery.style);
+    ASSERT_EQ(actual_scenery.width, expected_scenery.width);
+    ASSERT_EQ(actual_scenery.height, expected_scenery.height);
+    ASSERT_FLOAT_EQ(actual_scenery.x, expected_scenery.x);
+    ASSERT_FLOAT_EQ(actual_scenery.y, expected_scenery.y);
+    ASSERT_EQ(actual_scenery.rotation, expected_scenery.rotation);
+    ASSERT_EQ(actual_scenery.scale_x, expected_scenery.scale_x);
+    ASSERT_EQ(actual_scenery.scale_y, expected_scenery.scale_y);
+    ASSERT_EQ(actual_scenery.alpha, expected_scenery.alpha);
+    ComparePMSColors(actual_scenery.color, expected_scenery.color);
+    ASSERT_EQ(actual_scenery.level, expected_scenery.level);
+}
+
+void CompareSceneryTypes(const Soldank::PMSSceneryType& actual_scenery_type,
+                         const Soldank::PMSSceneryType& expected_scenery_type)
+{
+    ASSERT_EQ(actual_scenery_type.name_length, expected_scenery_type.name_length);
+    ASSERT_EQ(actual_scenery_type.name, expected_scenery_type.name);
+    ASSERT_EQ(actual_scenery_type.timestamp.date.day, expected_scenery_type.timestamp.date.day);
+    ASSERT_EQ(actual_scenery_type.timestamp.date.month, expected_scenery_type.timestamp.date.month);
+    ASSERT_EQ(actual_scenery_type.timestamp.date.year, expected_scenery_type.timestamp.date.year);
+    ASSERT_EQ(actual_scenery_type.timestamp.time.hour, expected_scenery_type.timestamp.time.hour);
+    ASSERT_EQ(actual_scenery_type.timestamp.time.minute,
+              expected_scenery_type.timestamp.time.minute);
+    ASSERT_EQ(actual_scenery_type.timestamp.time.second,
+              expected_scenery_type.timestamp.time.second);
+}
+
+void CompareColliders(const Soldank::PMSCollider& actual_collider,
+                      const Soldank::PMSCollider& expected_collider)
+{
+    ASSERT_EQ(actual_collider.active, expected_collider.active);
+    ASSERT_FLOAT_EQ(actual_collider.x, expected_collider.x);
+    ASSERT_FLOAT_EQ(actual_collider.y, expected_collider.y);
+    ASSERT_FLOAT_EQ(actual_collider.radius, expected_collider.radius);
+}
+
+void CompareSpawnPoints(const Soldank::PMSSpawnPoint& actual_spawn_point,
+                        const Soldank::PMSSpawnPoint& expected_spawn_point)
+{
+    ASSERT_EQ(actual_spawn_point.active, expected_spawn_point.active);
+    ASSERT_EQ(actual_spawn_point.x, expected_spawn_point.x);
+    ASSERT_EQ(actual_spawn_point.y, expected_spawn_point.y);
+    ASSERT_EQ(actual_spawn_point.type, expected_spawn_point.type);
+}
+
+void CompareWayPoints(const Soldank::PMSWayPoint& actual_way_point,
+                      const Soldank::PMSWayPoint& expected_way_point)
+{
+    ASSERT_EQ(actual_way_point.active, expected_way_point.active);
+    ASSERT_EQ(actual_way_point.id, expected_way_point.id);
+    ASSERT_EQ(actual_way_point.x, expected_way_point.x);
+    ASSERT_EQ(actual_way_point.y, expected_way_point.y);
+    ASSERT_EQ(actual_way_point.left, expected_way_point.left);
+    ASSERT_EQ(actual_way_point.right, expected_way_point.right);
+    ASSERT_EQ(actual_way_point.up, expected_way_point.up);
+    ASSERT_EQ(actual_way_point.down, expected_way_point.down);
+    ASSERT_EQ(actual_way_point.jet, expected_way_point.jet);
+    ASSERT_EQ(actual_way_point.path, expected_way_point.path);
+    ASSERT_EQ(actual_way_point.special_action, expected_way_point.special_action);
+    ASSERT_EQ(actual_way_point.c2, expected_way_point.c2);
+    ASSERT_EQ(actual_way_point.c3, expected_way_point.c3);
+    ASSERT_EQ(actual_way_point.connections_count, expected_way_point.connections_count);
+    for (unsigned i = 0; i < actual_way_point.connections_count; i++) {
+        ASSERT_EQ(actual_way_point.connections.at(i), expected_way_point.connections.at(i));
+    }
+}
+
 void CheckLoadedMap(const Soldank::Map& map)
 {
     ASSERT_EQ(map.GetVersion(), VERSION);
@@ -263,7 +408,26 @@ void CheckLoadedMap(const Soldank::Map& map)
             }
         }
     }
-    // TODO: Add missing methods to map and check here
+    ASSERT_EQ(map.GetSceneryInstances().size(), SCENERY_INSTANCES_COUNT);
+    for (unsigned int i = 0; i < map.GetSceneryInstances().size(); i++) {
+        CompareSceneryInstances(map.GetSceneryInstances().at(i), SCENERY_INSTANCES.at(i));
+    }
+    ASSERT_EQ(map.GetSceneryTypes().size(), SCENERY_TYPES_COUNT);
+    for (unsigned int i = 0; i < map.GetSceneryTypes().size(); i++) {
+        CompareSceneryTypes(map.GetSceneryTypes().at(i), SCENERY_TYPES.at(i));
+    }
+    ASSERT_EQ(map.GetColliders().size(), COLLIDERS_COUNT);
+    for (unsigned int i = 0; i < map.GetColliders().size(); i++) {
+        CompareColliders(map.GetColliders().at(i), COLLIDERS.at(i));
+    }
+    ASSERT_EQ(map.GetSpawnPoints().size(), SPAWN_POINTS_COUNT);
+    for (unsigned int i = 0; i < map.GetSpawnPoints().size(); i++) {
+        CompareSpawnPoints(map.GetSpawnPoints().at(i), SPAWN_POINTS.at(i));
+    }
+    ASSERT_EQ(map.GetWayPoints().size(), WAY_POINTS_COUNT);
+    for (unsigned int i = 0; i < map.GetWayPoints().size(); i++) {
+        CompareWayPoints(map.GetWayPoints().at(i), WAY_POINTS.at(i));
+    }
 }
 
 TEST(MapTests, TestMapNotFound)
