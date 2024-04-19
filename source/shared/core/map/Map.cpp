@@ -107,29 +107,19 @@ void Map::LoadMap(const std::string& map_path, const IFileReader& file_reader)
 
     auto n = (2 * map_data_.sectors_count + 1) * (2 * map_data_.sectors_count + 1);
 
-    for (i = 0; i < n; i++) {
-        unsigned short m = 0;
-        file.read((char*)(&m), sizeof(unsigned short));
-
-        PMSSector sector;
-
-        for (int j = 0; j < m; j++) {
-            unsigned short poly_id = 0;
-            file.read((char*)(&poly_id), sizeof(unsigned short));
-            sector.polygons.push_back(poly_id);
-        }
-
-        map_data_.sectors2.push_back(sector);
-    }
-
-    auto k = 0;
     n = 2 * map_data_.sectors_count + 1;
     map_data_.sectors_poly = std::vector<std::vector<PMSSector>>(n, std::vector<PMSSector>(n));
 
     for (auto& sec_i : map_data_.sectors_poly) {
         for (auto& sec_ij : sec_i) {
-            sec_ij = map_data_.sectors2[k];
-            k++;
+            unsigned short m = 0;
+            file.read((char*)(&m), sizeof(unsigned short));
+
+            for (int j = 0; j < m; j++) {
+                unsigned short poly_id = 0;
+                file.read((char*)(&poly_id), sizeof(unsigned short));
+                sec_ij.polygons.push_back(poly_id);
+            }
         }
     }
 

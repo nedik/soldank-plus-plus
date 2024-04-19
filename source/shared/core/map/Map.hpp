@@ -49,7 +49,6 @@ struct MapData
     int sectors_size;
     int sectors_count;
 
-    std::vector<PMSSector> sectors2;
     std::vector<std::vector<PMSSector>> sectors_poly;
     std::vector<PMSScenery> scenery_instances;
     std::vector<PMSSceneryType> scenery_types;
