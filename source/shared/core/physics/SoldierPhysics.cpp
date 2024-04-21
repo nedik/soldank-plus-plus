@@ -1,5 +1,7 @@
 #include "SoldierPhysics.hpp"
 
+#include "core/animations/Animation.hpp"
+#include "core/physics/SoldierPhysics.hpp"
 #include "core/physics/SoldierSkeletonPhysics.hpp"
 
 #include "core/math/Calc.hpp"
@@ -154,18 +156,18 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
     }
 
     auto conflicting_keys_pressed = [](const Control& c) {
-        return ((int)c.grenade + (int)c.change + (int)c.throw_grenade + (int)c.reload) > 1;
+        return ((int)c.throw_grenade + (int)c.change + (int)c.drop + (int)c.reload) > 1;
     };
 
     // Handle simultaneous key presses that would conflict
     if (conflicting_keys_pressed(soldier.control)) {
         // At least two buttons pressed, so deactivate any previous one
         if (soldier.control.was_throwing_grenade) {
-            soldier.control.grenade = false;
+            soldier.control.throw_grenade = false;
         } else if (soldier.control.was_changing_weapon) {
             soldier.control.change = false;
         } else if (soldier.control.was_throwing_weapon) {
-            soldier.control.throw_grenade = false;
+            soldier.control.drop = false;
         } else if (soldier.control.was_reloading_weapon) {
             soldier.control.reload = false;
         }
@@ -177,16 +179,16 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                 soldier.control.reload = false;
             } else if (soldier.control.change) {
                 soldier.control.change = false;
+            } else if (soldier.control.drop) {
+                soldier.control.drop = false;
             } else if (soldier.control.throw_grenade) {
                 soldier.control.throw_grenade = false;
-            } else if (soldier.control.grenade) {
-                soldier.control.grenade = false;
             }
         }
     } else {
-        soldier.control.was_throwing_grenade = soldier.control.grenade;
+        soldier.control.was_throwing_grenade = soldier.control.throw_grenade;
         soldier.control.was_changing_weapon = soldier.control.change;
-        soldier.control.was_throwing_weapon = soldier.control.throw_grenade;
+        soldier.control.was_throwing_weapon = soldier.control.drop;
         soldier.control.was_reloading_weapon = soldier.control.reload;
     }
 
@@ -265,6 +267,8 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
             }
         }
     }
+
+    ControlThrowGrenade(soldier);
 
     // change weapon animation
     if ((soldier.body_animation.GetType() != AnimationType::Roll) &&
@@ -504,7 +508,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
             (soldier.body_animation.GetType() == AnimationType::Wipe) ||
             (soldier.body_animation.GetType() == AnimationType::Groin)) {
             if (cleft || cright || soldier.control.up || soldier.control.down ||
-                soldier.control.fire || soldier.control.jets || soldier.control.grenade ||
+                soldier.control.fire || soldier.control.jets || soldier.control.drop ||
                 soldier.control.change || soldier.control.change // TODO: 2x control.change
                 || soldier.control.throw_grenade || soldier.control.reload ||
                 soldier.control.prone) {
@@ -914,7 +918,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
             BodyApplyAnimation(soldier, AnimationType::Stand, 1);
         }
 
-        if ((!soldier.control.grenade &&
+        if ((!soldier.control.throw_grenade &&
              (soldier.body_animation.GetType() != AnimationType::Recoil) &&
              (soldier.body_animation.GetType() != AnimationType::SmallRecoil) &&
              (soldier.body_animation.GetType() != AnimationType::AimRecoil) &&
@@ -1479,5 +1483,38 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
     };
 
     soldier.is_shooting = true;
+}
+
+void ControlThrowGrenade(Soldier& soldier)
+{
+    if (!soldier.control.throw_grenade) {
+        soldier.grenade_can_throw = true;
+    }
+
+    if (soldier.grenade_can_throw && soldier.control.throw_grenade &&
+        soldier.body_animation.GetType() != AnimationType::Roll &&
+        soldier.body_animation.GetType() != AnimationType::RollBack) {
+
+        BodyApplyAnimation(soldier, AnimationType::Throw, 1);
+    }
+
+    if (soldier.body_animation.GetType() == AnimationType::Throw &&
+        (!soldier.control.throw_grenade || (soldier.body_animation.GetFrame() == 36))) {
+
+        // Grenade throw
+        if (soldier.body_animation.GetFrame() > 14 && soldier.body_animation.GetFrame() < 37 &&
+            GetTertiaryWeapon(soldier).GetAmmoCount() > 0 /*&& CeaseFireCounter < 0*/) {
+
+            // TODO: implement spawning grenade as a projectile
+        }
+
+        if (soldier.control.throw_grenade) {
+            soldier.grenade_can_throw = false;
+        }
+
+        if (GetPrimaryWeapon(soldier).GetAmmoCount() == 0) {
+            // TODO: implement stopping reloading of the weapon while throwing grenade
+        }
+    }
 }
 } // namespace Soldank::SoldierPhysics

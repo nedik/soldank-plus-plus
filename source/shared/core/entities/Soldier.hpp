@@ -63,6 +63,8 @@ struct Soldier
     bool is_shooting;
 
     int ticks_to_respawn;
+
+    bool grenade_can_throw;
 };
 } // namespace Soldank
 

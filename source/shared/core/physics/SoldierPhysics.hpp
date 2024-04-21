@@ -50,6 +50,7 @@ bool CheckSkeletonMapCollision(Soldier& soldier,
                                float y,
                                State& state);
 void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
+void ControlThrowGrenade(Soldier& soldier);
 } // namespace Soldank::SoldierPhysics
 
 #endif

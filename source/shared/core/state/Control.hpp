@@ -11,7 +11,6 @@ struct Control
     bool down;
     bool fire;
     bool jets;
-    bool grenade;
     bool change;
     bool throw_grenade;
     bool drop;
