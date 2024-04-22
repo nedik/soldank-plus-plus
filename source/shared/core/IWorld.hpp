@@ -41,16 +41,6 @@ public:
     virtual void KillSoldier(unsigned int soldier_id) = 0;
     virtual void HitSoldier(unsigned int soldier_id, float damage) = 0;
 
-    virtual void UpdateFireButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateJetsButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateLeftButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateRightButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateJumpButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateCrouchButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateProneButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateChangeButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed) = 0;
-    virtual void UpdateDropButtonState(unsigned int soldier_id, bool pressed) = 0;
     virtual void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) = 0;
     virtual void UpdateWeaponChoices(unsigned int soldier_id,
                                      WeaponType primary_weapon_type,

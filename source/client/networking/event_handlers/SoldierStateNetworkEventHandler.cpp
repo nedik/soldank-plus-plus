@@ -133,20 +133,32 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                 it = client_state_->pending_inputs.erase(it);
             } else {
                 const auto& player_control = it->control;
-                world_->UpdateRightButtonState(soldier_id, player_control.right);
-                world_->UpdateLeftButtonState(soldier_id, player_control.left);
-                world_->UpdateJumpButtonState(soldier_id, player_control.up);
-                world_->UpdateCrouchButtonState(soldier_id, player_control.down);
-                world_->UpdateProneButtonState(soldier_id, player_control.prone);
-                world_->UpdateChangeButtonState(soldier_id, player_control.change);
-                world_->UpdateThrowGrenadeButtonState(soldier_id, player_control.throw_grenade);
-                world_->UpdateDropButtonState(soldier_id, player_control.drop);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::MoveLeft, player_control.left);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::MoveRight, player_control.right);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::Jump, player_control.up);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::Crouch, player_control.down);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::ChangeWeapon, player_control.change);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::ThrowGrenade, player_control.throw_grenade);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::DropWeapon, player_control.drop);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::Prone, player_control.prone);
 
                 world_->UpdateMousePosition(soldier_id,
                                             { it->mouse_position_x, it->mouse_position_y });
-                world_->UpdateFireButtonState(soldier_id, player_control.fire); // TODO: is
-                // it needed?
-                world_->UpdateJetsButtonState(soldier_id, player_control.jets);
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::UseJets, player_control.jets);
+
+                // TODO: is it needed?
+                world_->GetStateManager()->ChangeSoldierControlActionState(
+                  soldier_id, ControlActionType::Fire, player_control.fire);
+
                 world_->UpdateSoldier(soldier_id);
                 it++;
             }

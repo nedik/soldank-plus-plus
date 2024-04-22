@@ -19,6 +19,7 @@ NetworkEventHandlerResult SoldierInputNetworkEventHandler::HandleNetworkMessageI
   SoldierInputPacket soldier_input_packet)
 {
     unsigned int input_sequence_id = soldier_input_packet.input_sequence_id;
+    // TODO: Get soldier id from the connection, remove it from the packet
     unsigned int soldier_id = soldier_input_packet.player_id;
     glm::vec2 soldier_position = { soldier_input_packet.position_x,
                                    soldier_input_packet.position_y };
@@ -37,18 +38,29 @@ NetworkEventHandlerResult SoldierInputNetworkEventHandler::HandleNetworkMessageI
     }
 
     server_state_->last_processed_input_id.at(soldier_id) = input_sequence_id;
-    world_->UpdateRightButtonState(soldier_id, player_control.right);
-    world_->UpdateLeftButtonState(soldier_id, player_control.left);
-    world_->UpdateJumpButtonState(soldier_id, player_control.up);
-    world_->UpdateCrouchButtonState(soldier_id, player_control.down);
-    world_->UpdateProneButtonState(soldier_id, player_control.prone);
-    world_->UpdateChangeButtonState(soldier_id, player_control.change);
-    world_->UpdateThrowGrenadeButtonState(soldier_id, player_control.throw_grenade);
-    world_->UpdateDropButtonState(soldier_id, player_control.drop);
+
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::MoveLeft, player_control.left);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::MoveRight, player_control.right);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::Jump, player_control.up);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::Crouch, player_control.down);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::ChangeWeapon, player_control.change);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::ThrowGrenade, player_control.throw_grenade);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::DropWeapon, player_control.drop);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::Prone, player_control.prone);
 
     world_->UpdateMousePosition(soldier_id, { mouse_position.x, mouse_position.y });
-    world_->UpdateFireButtonState(soldier_id, player_control.fire);
-    world_->UpdateJetsButtonState(soldier_id, player_control.jets);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::UseJets, player_control.jets);
+    world_->GetStateManager()->ChangeSoldierControlActionState(
+      soldier_id, ControlActionType::Fire, player_control.fire);
 
     return NetworkEventHandlerResult::Success;
 }

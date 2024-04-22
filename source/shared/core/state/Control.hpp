@@ -3,6 +3,22 @@
 
 namespace Soldank
 {
+enum class ControlActionType
+{
+    MoveLeft = 0,
+    MoveRight,
+    Jump,
+    Crouch,
+    Fire,
+    UseJets,
+    ChangeWeapon,
+    ThrowGrenade,
+    DropWeapon,
+    Reload,
+    Prone,
+    ThrowFlag
+};
+
 struct Control
 {
     bool left;

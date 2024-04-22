@@ -34,16 +34,6 @@ public:
     void KillSoldier(unsigned int soldier_id) override;
     void HitSoldier(unsigned int soldier_id, float damage) override;
 
-    void UpdateFireButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateJetsButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateLeftButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateRightButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateJumpButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateCrouchButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateProneButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateChangeButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateThrowGrenadeButtonState(unsigned int soldier_id, bool pressed) override;
-    void UpdateDropButtonState(unsigned int soldier_id, bool pressed) override;
     void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) override;
     void UpdateWeaponChoices(unsigned int soldier_id,
                              WeaponType primary_weapon_type,

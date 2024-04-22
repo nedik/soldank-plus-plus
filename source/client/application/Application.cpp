@@ -5,6 +5,7 @@
 #include "application/input/Mouse.hpp"
 
 #include "communication/NetworkPackets.hpp"
+#include "core/state/Control.hpp"
 #include "networking/NetworkingClient.hpp"
 #include "networking/event_handlers/AssignPlayerIdNetworkEventHandler.hpp"
 #include "networking/event_handlers/PingCheckNetworkEventHandler.hpp"
@@ -184,21 +185,35 @@ void Run()
 
             if (is_soldier_active) {
                 if (is_soldier_alive) {
-                    world->UpdateLeftButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_A));
-                    world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
-                    world->UpdateJumpButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_W));
-                    world->UpdateRightButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_D));
-                    world->UpdateCrouchButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_S));
-                    world->UpdateChangeButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_Q));
-                    world->UpdateThrowGrenadeButtonState(client_soldier_id,
-                                                         Keyboard::Key(GLFW_KEY_E));
-                    world->UpdateDropButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_F));
-                    world->UpdateProneButtonState(client_soldier_id, Keyboard::Key(GLFW_KEY_X));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::MoveLeft, Keyboard::Key(GLFW_KEY_A));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::MoveRight, Keyboard::Key(GLFW_KEY_D));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::Jump, Keyboard::Key(GLFW_KEY_W));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::Crouch, Keyboard::Key(GLFW_KEY_S));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id,
+                      ControlActionType::ChangeWeapon,
+                      Keyboard::Key(GLFW_KEY_Q));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id,
+                      ControlActionType::ThrowGrenade,
+                      Keyboard::Key(GLFW_KEY_E));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::DropWeapon, Keyboard::Key(GLFW_KEY_F));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id, ControlActionType::Prone, Keyboard::Key(GLFW_KEY_X));
 
-                    world->UpdateJetsButtonState(client_soldier_id,
-                                                 Mouse::Button(GLFW_MOUSE_BUTTON_RIGHT));
-                    world->UpdateFireButtonState(client_soldier_id,
-                                                 Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id,
+                      ControlActionType::UseJets,
+                      Mouse::Button(GLFW_MOUSE_BUTTON_RIGHT));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id,
+                      ControlActionType::Fire,
+                      Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
                 }
                 world->UpdateMousePosition(client_soldier_id, mouse_position);
                 world->UpdateWeaponChoices(client_soldier_id,
