@@ -8,19 +8,20 @@ namespace Soldank
 {
 SoldierInputNetworkEventHandler::SoldierInputNetworkEventHandler(
   const std::shared_ptr<IWorld>& world,
-  const std::shared_ptr<ServerState>& server_state)
+  const std::shared_ptr<ServerState>& server_state,
+  const std::shared_ptr<IGameServer>& game_server)
     : world_(world)
     , server_state_(server_state)
+    , game_server_(game_server)
 {
 }
 
 NetworkEventHandlerResult SoldierInputNetworkEventHandler::HandleNetworkMessageImpl(
-  unsigned int /*sender_connection_id*/,
+  unsigned int sender_connection_id,
   SoldierInputPacket soldier_input_packet)
 {
     unsigned int input_sequence_id = soldier_input_packet.input_sequence_id;
-    // TODO: Get soldier id from the connection, remove it from the packet
-    unsigned int soldier_id = soldier_input_packet.player_id;
+    unsigned int soldier_id = game_server_->GetSoldierIdFromConnectionId(sender_connection_id);
     glm::vec2 soldier_position = { soldier_input_packet.position_x,
                                    soldier_input_packet.position_y };
     glm::vec2 mouse_position = { soldier_input_packet.mouse_position_x,

@@ -1,6 +1,8 @@
 #ifndef __SOLDIER_INPUT_NETWORK_EVENT_HANDLER_HPP__
 #define __SOLDIER_INPUT_NETWORK_EVENT_HANDLER_HPP__
 
+#include "networking/IGameServer.hpp"
+
 #include "communication/NetworkEventDispatcher.hpp"
 #include "communication/NetworkPackets.hpp"
 
@@ -16,7 +18,8 @@ class SoldierInputNetworkEventHandler : public NetworkEventHandlerBase<SoldierIn
 {
 public:
     SoldierInputNetworkEventHandler(const std::shared_ptr<IWorld>& world,
-                                    const std::shared_ptr<ServerState>& server_state);
+                                    const std::shared_ptr<ServerState>& server_state,
+                                    const std::shared_ptr<IGameServer>& game_server);
 
 private:
     NetworkEvent GetTargetNetworkEvent() const override { return NetworkEvent::SoldierInput; }
@@ -27,6 +30,7 @@ private:
 
     std::shared_ptr<IWorld> world_;
     std::shared_ptr<ServerState> server_state_;
+    std::shared_ptr<IGameServer> game_server_;
 };
 } // namespace Soldank
 

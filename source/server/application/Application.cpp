@@ -79,9 +79,7 @@ Application::Application()
     for (unsigned int& last_processed_input_id : server_state_->last_processed_input_id) {
         last_processed_input_id = 0;
     }
-    std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{
-        std::make_shared<SoldierInputNetworkEventHandler>(world_, server_state_)
-    };
+    std::vector<std::shared_ptr<INetworkEventHandler>> network_event_handlers{};
     server_network_event_dispatcher_ =
       std::make_shared<NetworkEventDispatcher>(network_event_handlers);
     game_server_ = std::make_shared<GameServer>(
@@ -90,6 +88,8 @@ Application::Application()
       std::make_shared<PingCheckNetworkEventHandler>(game_server_));
     server_network_event_dispatcher_->AddNetworkEventHandler(
       std::make_shared<KillCommandNetworkEventHandler>(world_, game_server_));
+    server_network_event_dispatcher_->AddNetworkEventHandler(
+      std::make_shared<SoldierInputNetworkEventHandler>(world_, server_state_, game_server_));
 
     CoreEventHandler::ObserveAll(world_.get());
     CoreEventsConnectionNotifier::ObserveAll(
