@@ -16,7 +16,6 @@ struct SoldierInputPacket
 {
     std::uint32_t input_sequence_id;
     std::uint32_t game_tick;
-    std::uint8_t player_id;
     float position_x;
     float position_y;
     float mouse_position_x;

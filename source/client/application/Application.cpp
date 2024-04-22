@@ -249,7 +249,6 @@ void Run()
                 SoldierInputPacket update_soldier_state_packet{
                     .input_sequence_id = input_sequence_id,
                     .game_tick = world->GetStateManager()->GetState().game_tick,
-                    .player_id = client_soldier_id,
                     .position_x = world->GetSoldier(client_soldier_id).particle.position.x,
                     .position_y = world->GetSoldier(client_soldier_id).particle.position.y,
                     .mouse_position_x = mouse_position.x,
