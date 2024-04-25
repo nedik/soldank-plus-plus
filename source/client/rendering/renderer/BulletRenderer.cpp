@@ -22,6 +22,17 @@ BulletRenderer::BulletRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::Knife2, { 0.5, 0.5 });
     LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::Bullet, { 0.5, 0.5 });
     LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::DeaglesBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::Mp5Bullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::Ak74Bullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::SteyrBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::SpasBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::M79Bullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::RugerBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::BarrettBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::MinimiBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::MinigunBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::ColtBullet, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, Sprites::WeaponSpriteType::Missile, { 0.5, 0.5 });
 }
 
 void BulletRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager,
@@ -57,7 +68,7 @@ void BulletRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager
 void BulletRenderer::Render(glm::mat4 transform, const Bullet& bullet, double frame_percent)
 {
     if (!bullet.active) {
-        frame_percent = 1.0F;
+        return;
     }
 
     auto pos =
@@ -86,6 +97,22 @@ void BulletRenderer::Render(glm::mat4 transform, const Bullet& bullet, double fr
             }
             break;
         }
+        case BulletType::M79Grenade: {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::M79Bullet);
+
+            scale = { 1.0F, 1.0F };
+            alpha = 252.0F;
+            rot = Calc::Vec2Angle(-bullet.particle.velocity_);
+            break;
+        }
+        case BulletType::LAWMissile: {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::Missile);
+            scale = { 1.0F, 1.0F };
+            rot = Calc::Vec2Angle(-bullet.particle.velocity_);
+            break;
+        }
         default: {
             auto hit =
               Calc::Lerp(bullet.hit_multiply_prev, bullet.hit_multiply, (float)frame_percent);
@@ -102,12 +129,47 @@ void BulletRenderer::Render(glm::mat4 transform, const Bullet& bullet, double fr
             alpha = std::max(50.0F, std::min(230.0F, 255.0F * hit * (scale.x * scale.x) / 4.63F));
 
             rot = Calc::Vec2Angle(-bullet.particle.velocity_);
+            break;
         }
     }
 
-    if (bullet.style == BulletType::Bullet && bullet.weapon == WeaponType::DesertEagles) {
-        bullet_sprite_data =
-          weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::DeaglesBullet);
+    if (bullet.style == BulletType::Bullet) {
+        if (bullet.weapon == WeaponType::DesertEagles) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::DeaglesBullet);
+        }
+        if (bullet.weapon == WeaponType::MP5) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::Mp5Bullet);
+        }
+        if (bullet.weapon == WeaponType::Ak74) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::Ak74Bullet);
+        }
+        if (bullet.weapon == WeaponType::SteyrAUG) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::SteyrBullet);
+        }
+        if (bullet.weapon == WeaponType::Ruger77) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::RugerBullet);
+        }
+        if (bullet.weapon == WeaponType::Barrett) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::BarrettBullet);
+        }
+        if (bullet.weapon == WeaponType::Minimi) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::MinimiBullet);
+        }
+        if (bullet.weapon == WeaponType::Minigun) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::MinigunBullet);
+        }
+        if (bullet.weapon == WeaponType::USSOCOM) {
+            bullet_sprite_data =
+              weapon_sprite_type_to_gl_data_.at(Sprites::WeaponSpriteType::ColtBullet);
+        }
     }
 
     shader_.Use();
