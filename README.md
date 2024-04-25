@@ -31,7 +31,6 @@ In project root directory run:
 ```
 > git clone https://github.com/microsoft/vcpkg
 > .\vcpkg\bootstrap-vcpkg.bat
-> .\vcpkg\vcpkg install --triplet=x64-windows
 ```
 
 Make sure you have CMake installed. The project uses [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to download required packages.

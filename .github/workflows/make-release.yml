@@ -9,7 +9,7 @@ env:
   CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
-  build:
+  build-release:
     runs-on: windows-latest
 
     steps:
@@ -19,7 +19,6 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat
-          .\vcpkg\vcpkg install --triplet=x64-windows
 
       - name: configure
         run: cmake -Bbuild
