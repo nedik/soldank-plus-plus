@@ -1475,8 +1475,19 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
         case WeaponType::NoWeapon:
         case WeaponType::Knife:
         case WeaponType::Chainsaw:
-        case WeaponType::LAW:
             break;
+        case WeaponType::LAW: {
+            if ((soldier.on_ground || soldier.on_ground_permanent || soldier.on_ground_for_law) &&
+                (((soldier.legs_animation.GetType() == AnimationType::Crouch &&
+                   soldier.legs_animation.GetFrame() > 13) ||
+                  soldier.legs_animation.GetType() == AnimationType::CrouchRun ||
+                  soldier.legs_animation.GetType() == AnimationType::CrouchRunBack) ||
+                 (soldier.legs_animation.GetType() == AnimationType::Prone &&
+                  soldier.legs_animation.GetFrame() > 23))) {
+                bullet_emitter.push_back(params);
+            }
+            break;
+        }
         default: {
             bullet_emitter.push_back(params);
         }
