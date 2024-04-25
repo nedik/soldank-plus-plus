@@ -1,0 +1,49 @@
+name: Make Release
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg
+          .\vcpkg\bootstrap-vcpkg.bat
+          .\vcpkg\vcpkg install --triplet=x64-windows
+
+      - name: configure
+        run: cmake -Bbuild
+
+      - name: build
+        run: cmake --build build --config Release -j4
+
+      - name: test
+        run: ctest --build-config Release --test-dir build
+        
+      - name: release
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        run: |
+          Compress-Archive -Path build/bin/Release -Destination release-latest-win32-x64.zip
+          if (git show-ref --tags release-latest) {
+            gh release delete release-latest --yes
+            git tag --delete release-latest
+            git push --delete origin release-latest
+          }
+          
+          gh release create release-latest `
+            release-latest-win32-x64.zip `
+            --target main `
+            --title "Soldank++ latest build" `
+            --notes "Soldank++ latest build"
+          
