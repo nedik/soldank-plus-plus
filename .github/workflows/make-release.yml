@@ -34,10 +34,9 @@ jobs:
           GH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         run: |
           Compress-Archive -Path build/bin/Release -Destination release-latest-win32-x64.zip
-          if (git show-ref --tags release-latest) {
-            gh release delete release-latest --yes
-            git tag --delete release-latest
-            git push --delete origin release-latest
+          if (gh release list | Select-String -Pattern release-latest) {
+            echo "Delete release-latest"
+            gh release delete release-latest --yes --cleanup-tag
           }
           
           gh release create release-latest `

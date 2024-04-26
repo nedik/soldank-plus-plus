@@ -72,7 +72,7 @@ void Init()
     std::string server_ip;
     int server_port = 0;
     if (rc < 0) {
-        spdlog::warn("Error: INI File could not be loaded: debug_config.ini");
+        spdlog::warn("INI File could not be loaded: debug_config.ini");
         is_online = false;
     } else {
         is_online = ini_config.GetBoolValue("Network", "Online");
