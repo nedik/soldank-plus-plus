@@ -1,6 +1,7 @@
 #include "SoldierPhysics.hpp"
 
-#include "core/animations/Animation.hpp"
+#include "core/animations/AnimationData.hpp"
+#include "core/animations/AnimationState.hpp"
 #include "core/physics/SoldierPhysics.hpp"
 #include "core/physics/SoldierSkeletonPhysics.hpp"
 
@@ -80,19 +81,25 @@ void UpdateKeys(Soldier& soldier, const Control& control)
     soldier.control = control;
 }
 
-void LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
+void LegsApplyAnimation(Soldier& soldier,
+                        const AnimationDataManager& animation_data_manager,
+                        AnimationType id,
+                        unsigned int frame)
 {
     if (!soldier.legs_animation.IsAny({ AnimationType::Prone, AnimationType::ProneMove }) &&
         soldier.legs_animation.GetType() != id) {
-        soldier.legs_animation = AnimationState(id);
+        soldier.legs_animation = AnimationState(animation_data_manager.Get(id));
         soldier.legs_animation.SetFrame(frame);
     }
 }
 
-void BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame)
+void BodyApplyAnimation(Soldier& soldier,
+                        const AnimationDataManager& animation_data_manager,
+                        AnimationType id,
+                        unsigned int frame)
 {
     if (soldier.body_animation.GetType() != id) {
-        soldier.body_animation = AnimationState(id);
+        soldier.body_animation = AnimationState(animation_data_manager.Get(id));
         soldier.body_animation.SetFrame(frame);
     }
 }
@@ -105,7 +112,10 @@ void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& so
     }
 }
 
-void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
+void UpdateControl(State& state,
+                   Soldier& soldier,
+                   const AnimationDataManager& animation_data_manager,
+                   std::vector<BulletParams>& bullet_emitter)
 {
     if (!soldier.control.fire) {
         soldier.is_shooting = false;
@@ -208,8 +218,8 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
           (((soldier.direction == -1) && cright) || ((soldier.direction == 1) && cleft) ||
            player_pressed_left_right)) ||
          ((soldier.legs_animation.GetType() == AnimationType::RollBack) && soldier.control.up))) {
-        BodyApplyAnimation(soldier, AnimationType::RollBack, 1);
-        LegsApplyAnimation(soldier, AnimationType::RollBack, 1);
+        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
+        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
     } else if (soldier.control.jets && (soldier.jets_count > 0)) {
         if (soldier.on_ground) {
             // particle.force.y = -2.5 * (state.gravity > 0.05 ? JETSPEED :
@@ -241,7 +251,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         if ((soldier.legs_animation.GetType() != AnimationType::GetUp) &&
             (soldier.body_animation.GetType() != AnimationType::Roll) &&
             (soldier.body_animation.GetType() != AnimationType::RollBack)) {
-            LegsApplyAnimation(soldier, AnimationType::Fall, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
         }
         soldier.jets_count -= 1;
     }
@@ -260,7 +270,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
             {
                 if (GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::NoWeapon ||
                     GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Knife) {
-                    BodyApplyAnimation(soldier, AnimationType::Punch, 1);
+                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Punch, 1);
                 } else {
                     Fire(soldier, bullet_emitter);
                 }
@@ -268,13 +278,13 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         }
     }
 
-    ControlThrowGrenade(soldier);
+    ControlThrowGrenade(soldier, animation_data_manager);
 
     // change weapon animation
     if ((soldier.body_animation.GetType() != AnimationType::Roll) &&
         (soldier.body_animation.GetType() != AnimationType::RollBack)) {
         if (soldier.control.change) {
-            BodyApplyAnimation(soldier, AnimationType::Change, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Change, 1);
         }
     }
 
@@ -286,9 +296,9 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         } else if (soldier.body_animation.GetFrame() == 25) {
             SwitchWeapon(soldier);
         } else if ((soldier.body_animation.GetFrame() ==
-                    Animations::Get(AnimationType::Change).GetFrames().size()) &&
+                    animation_data_manager.Get(AnimationType::Change)->GetFrames().size()) &&
                    (GetPrimaryWeapon(soldier).GetAmmoCount() == 0)) {
-            BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
         }
     }
 
@@ -304,7 +314,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
              WeaponType::FlameBow,
              WeaponType::NoWeapon,
            })) {
-        BodyApplyAnimation(soldier, AnimationType::ThrowWeapon, 1);
+        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::ThrowWeapon, 1);
 
         if (GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Knife) {
             soldier.body_animation.SetSpeed(2);
@@ -339,7 +349,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         bullet_emitter.push_back(params);
 
         soldier.control.drop = false;
-        BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
     }
 
     // Punch!
@@ -360,7 +370,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
 
     if (soldier.body_animation.GetType() == AnimationType::Melee &&
         soldier.body_animation.GetFrame() > 20) {
-        BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
     }
 
     // Prone
@@ -368,11 +378,11 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         if ((soldier.legs_animation.GetType() != AnimationType::GetUp) &&
             (soldier.legs_animation.GetType() != AnimationType::Prone) &&
             (soldier.legs_animation.GetType() != AnimationType::ProneMove)) {
-            LegsApplyAnimation(soldier, AnimationType::Prone, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 1);
             if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
                 (soldier.body_animation.GetType() != AnimationType::Change) &&
                 (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                BodyApplyAnimation(soldier, AnimationType::Prone, 1);
+                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 1);
             }
             soldier.old_direction = soldier.direction;
             soldier.control.prone = false;
@@ -386,14 +396,15 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                  (soldier.legs_animation.GetFrame() > 23)) ||
                 (soldier.legs_animation.GetType() == AnimationType::ProneMove)) {
                 if (soldier.legs_animation.GetType() != AnimationType::GetUp) {
-                    soldier.legs_animation = { AnimationType::GetUp };
+                    soldier.legs_animation =
+                      AnimationState(animation_data_manager.Get(AnimationType::GetUp));
                     soldier.legs_animation.SetFrame(9);
                     soldier.control.prone = false;
                 }
                 if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
                     (soldier.body_animation.GetType() != AnimationType::Change) &&
                     (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                    BodyApplyAnimation(soldier, AnimationType::GetUp, 9);
+                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::GetUp, 9);
                 }
             }
         }
@@ -407,27 +418,27 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         soldier.control.up && (cright || cleft)) {
         // Set sidejump frame 1 to 4 depending on which unprone frame we're in
         auto id = soldier.legs_animation.GetFrame() - (23 - (4 - 1));
-        LegsApplyAnimation(soldier, AnimationType::JumpSide, id);
+        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::JumpSide, id);
         unprone = true;
     } else if ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
                (soldier.legs_animation.GetFrame() > 23 - (4 - 1)) && soldier.on_ground &&
                soldier.control.up && !(cright || cleft)) {
         // Set jump frame 6 to 9 depending on which unprone frame we're in
         auto id = soldier.legs_animation.GetFrame() - (23 - (9 - 1));
-        LegsApplyAnimation(soldier, AnimationType::Jump, id);
+        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Jump, id);
         unprone = true;
     } else if ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
                (soldier.legs_animation.GetFrame() > 23)) {
         if (cright || cleft) {
             if ((soldier.direction == 1) ^ cleft) {
-                LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
             } else {
-                LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RunBack, 1);
             }
         } else if (!soldier.on_ground && soldier.control.up) {
-            LegsApplyAnimation(soldier, AnimationType::Run, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
         } else {
-            LegsApplyAnimation(soldier, AnimationType::Stand, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
         }
         unprone = true;
     }
@@ -438,7 +449,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
         if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
             (soldier.body_animation.GetType() != AnimationType::Change) &&
             (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-            BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
         }
     }
 
@@ -457,7 +468,7 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
 
         if (soldier.idle_random == 0) {
             if (soldier.idle_time == 0) {
-                BodyApplyAnimation(soldier, AnimationType::Smoke, 1);
+                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Smoke, 1);
                 soldier.idle_time = DEFAULT_IDLETIME;
             }
 
@@ -512,9 +523,10 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                 soldier.control.change || soldier.control.change // TODO: 2x control.change
                 || soldier.control.throw_grenade || soldier.control.reload ||
                 soldier.control.prone) {
-                soldier.body_animation.SetFrame(Animations::Get(soldier.body_animation.GetType())
-                                                  .GetFrames()
-                                                  .size()); // TODO: Check this if correct
+                soldier.body_animation.SetFrame(
+                  animation_data_manager.Get(soldier.body_animation.GetType())
+                    ->GetFrames()
+                    .size()); // TODO: Check this if correct
             }
         }
 
@@ -579,19 +591,25 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                         }
 
                         if (soldier.direction == 1) {
-                            BodyApplyAnimation(soldier, AnimationType::Roll, 1);
-                            soldier.legs_animation = { AnimationType::Roll };
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::Roll, 1);
+                            soldier.legs_animation =
+                              AnimationState(animation_data_manager.Get(AnimationType::Roll));
                             soldier.legs_animation.SetFrame(1);
                         } else {
-                            BodyApplyAnimation(soldier, AnimationType::RollBack, 1);
-                            soldier.legs_animation = { AnimationType::RollBack };
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::RollBack, 1);
+                            soldier.legs_animation =
+                              AnimationState(animation_data_manager.Get(AnimationType::RollBack));
                             soldier.legs_animation.SetFrame(1);
                         }
                     } else {
                         if (soldier.direction == 1) {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRun, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
                         } else {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRunBack, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
                         }
                     }
 
@@ -624,19 +642,25 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                         }
 
                         if (soldier.direction == 1) {
-                            BodyApplyAnimation(soldier, AnimationType::RollBack, 1);
-                            soldier.legs_animation = { AnimationType::RollBack };
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::RollBack, 1);
+                            soldier.legs_animation =
+                              AnimationState(animation_data_manager.Get(AnimationType::RollBack));
                             soldier.legs_animation.SetFrame(1);
                         } else {
-                            BodyApplyAnimation(soldier, AnimationType::Roll, 1);
-                            soldier.legs_animation = { AnimationType::Roll };
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::Roll, 1);
+                            soldier.legs_animation =
+                              AnimationState(animation_data_manager.Get(AnimationType::Roll));
                             soldier.legs_animation.SetFrame(1);
                         }
                     } else {
                         if (soldier.direction == 1) {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRunBack, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
                         } else {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRun, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
                         }
                     }
 
@@ -669,7 +693,8 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                                 soldier.particle.SetForce(particle_force);
                             }
 
-                            LegsApplyAnimation(soldier, AnimationType::ProneMove, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::ProneMove, 1);
 
                             if ((soldier.body_animation.GetType() != AnimationType::ClipIn) &&
                                 (soldier.body_animation.GetType() != AnimationType::ClipOut) &&
@@ -678,15 +703,18 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                                 (soldier.body_animation.GetType() != AnimationType::Change) &&
                                 (soldier.body_animation.GetType() != AnimationType::Throw) &&
                                 (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                                BodyApplyAnimation(soldier, AnimationType::ProneMove, 1);
+                                BodyApplyAnimation(
+                                  soldier, animation_data_manager, AnimationType::ProneMove, 1);
                             }
 
                             if (soldier.legs_animation.GetType() != AnimationType::ProneMove) {
-                                soldier.legs_animation = AnimationState(AnimationType::ProneMove);
+                                soldier.legs_animation = AnimationState(
+                                  animation_data_manager.Get(AnimationType::ProneMove));
                             }
                         } else {
                             if (soldier.legs_animation.GetType() != AnimationType::Prone) {
-                                soldier.legs_animation = AnimationState(AnimationType::Prone);
+                                soldier.legs_animation =
+                                  AnimationState(animation_data_manager.Get(AnimationType::Prone));
                             }
                             soldier.legs_animation.SetFrame(26);
                         }
@@ -700,24 +728,27 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                         (soldier.legs_animation.GetType() == AnimationType::Crouch) ||
                         (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
                         (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        LegsApplyAnimation(soldier, AnimationType::JumpSide, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
                     }
 
                     if (soldier.legs_animation.GetFrame() ==
                         soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     }
                 } else if ((soldier.legs_animation.GetType() == AnimationType::Roll) ||
                            (soldier.legs_animation.GetType() == AnimationType::RollBack)) {
                     if (soldier.direction == 1) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::RunBack, 1);
                     }
                 }
                 if (soldier.legs_animation.GetType() == AnimationType::Jump) {
                     if (soldier.legs_animation.GetFrame() < 10) {
-                        LegsApplyAnimation(soldier, AnimationType::JumpSide, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
                     }
                 }
 
@@ -738,25 +769,28 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                         (soldier.legs_animation.GetType() == AnimationType::Crouch) ||
                         (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
                         (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        LegsApplyAnimation(soldier, AnimationType::JumpSide, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
                     }
 
                     if (soldier.legs_animation.GetFrame() ==
                         soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     }
                 } else if ((soldier.legs_animation.GetType() == AnimationType::Roll) ||
                            (soldier.legs_animation.GetType() == AnimationType::RollBack)) {
                     if (soldier.direction == -1) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::RunBack, 1);
                     }
                 }
 
                 if (soldier.legs_animation.GetType() == AnimationType::Jump) {
                     if (soldier.legs_animation.GetFrame() < 10) {
-                        LegsApplyAnimation(soldier, AnimationType::JumpSide, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
                     }
                 }
 
@@ -772,11 +806,12 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
             } else if (soldier.control.up) {
                 if (soldier.on_ground) {
                     if (soldier.legs_animation.GetType() != AnimationType::Jump) {
-                        LegsApplyAnimation(soldier, AnimationType::Jump, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Jump, 1);
                     }
                     if (soldier.legs_animation.GetFrame() ==
                         soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, AnimationType::Stand, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::Stand, 1);
                     }
                 }
                 if (soldier.legs_animation.GetType() == AnimationType::Jump) {
@@ -788,21 +823,22 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                     }
                     if (soldier.legs_animation.GetFrame() ==
                         soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, AnimationType::Fall, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
                     }
                 }
             } else if (soldier.control.down) {
                 if (soldier.on_ground) {
-                    LegsApplyAnimation(soldier, AnimationType::Crouch, 1);
+                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Crouch, 1);
                 }
             } else if (cright) {
                 if (true) {
                     // TODO
                     // if para = 0
                     if (soldier.direction == 1) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::RunBack, 1);
                     }
                 }
 
@@ -820,9 +856,10 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                 if (true) {
                     // if para = 0
                     if (soldier.direction == -1) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::RunBack, 1);
                     }
                 }
 
@@ -836,9 +873,9 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                 soldier.particle.SetForce(particle_force);
             } else {
                 if (soldier.on_ground) {
-                    LegsApplyAnimation(soldier, AnimationType::Stand, 1);
+                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
                 } else {
-                    LegsApplyAnimation(soldier, AnimationType::Fall, 1);
+                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
                 }
             }
         }
@@ -846,19 +883,19 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
 
         if ((soldier.legs_animation.GetType() == AnimationType::Roll) &&
             (soldier.body_animation.GetType() != AnimationType::Roll)) {
-            BodyApplyAnimation(soldier, AnimationType::Roll, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Roll, 1);
         }
         if ((soldier.body_animation.GetType() == AnimationType::Roll) &&
             (soldier.legs_animation.GetType() != AnimationType::Roll)) {
-            LegsApplyAnimation(soldier, AnimationType::Roll, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Roll, 1);
         }
         if ((soldier.legs_animation.GetType() == AnimationType::RollBack) &&
             (soldier.body_animation.GetType() != AnimationType::RollBack)) {
-            BodyApplyAnimation(soldier, AnimationType::RollBack, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
         }
         if ((soldier.body_animation.GetType() == AnimationType::RollBack) &&
             (soldier.legs_animation.GetType() != AnimationType::RollBack)) {
-            LegsApplyAnimation(soldier, AnimationType::RollBack, 1);
+            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
         }
 
         if ((soldier.body_animation.GetType() == AnimationType::Roll) ||
@@ -881,12 +918,15 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                 if (soldier.control.down) {
                     if (cleft || cright) {
                         if (soldier.body_animation.GetType() == AnimationType::Roll) {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRun, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
                         } else {
-                            LegsApplyAnimation(soldier, AnimationType::CrouchRunBack, 1);
+                            LegsApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
                         }
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::Crouch, 15);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::Crouch, 15);
                     }
                 }
                 // Was probably a backflip
@@ -896,26 +936,29 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
                     // Run back or forward depending on facing direction and direction key
                     // pressed
                     if ((soldier.direction == 1) ^ (cleft)) {
-                        LegsApplyAnimation(soldier, AnimationType::Run, 1);
+                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::RunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::RunBack, 1);
                     }
                 } else {
-                    LegsApplyAnimation(soldier, AnimationType::Fall, 1);
+                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
                 }
                 // Was probably a roll (that ended mid-air)
             } else if (soldier.control.down) {
                 if (cleft || cright) {
                     if (soldier.body_animation.GetType() == AnimationType::Roll) {
-                        LegsApplyAnimation(soldier, AnimationType::CrouchRun, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::CrouchRun, 1);
                     } else {
-                        LegsApplyAnimation(soldier, AnimationType::CrouchRunBack, 1);
+                        LegsApplyAnimation(
+                          soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
                     }
                 } else {
-                    LegsApplyAnimation(soldier, AnimationType::Crouch, 15);
+                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Crouch, 15);
                 }
             }
-            BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
         }
 
         if ((!soldier.control.throw_grenade &&
@@ -952,26 +995,30 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
              (soldier.body_animation.GetType() != AnimationType::Prone))) {
             if (soldier.stance != STANCE_PRONE) {
                 if (soldier.stance == STANCE_STAND) {
-                    BodyApplyAnimation(soldier, AnimationType::Stand, 1);
+                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
                 }
 
                 if (soldier.stance == STANCE_CROUCH) {
                     if (soldier.collider_distance < 255) {
                         if (soldier.body_animation.GetType() == AnimationType::HandsUpRecoil) {
-                            BodyApplyAnimation(soldier, AnimationType::HandsUpAim, 11);
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::HandsUpAim, 11);
                         } else {
-                            BodyApplyAnimation(soldier, AnimationType::HandsUpAim, 1);
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::HandsUpAim, 1);
                         }
                     } else {
                         if (soldier.body_animation.GetType() == AnimationType::AimRecoil) {
-                            BodyApplyAnimation(soldier, AnimationType::Aim, 6);
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::Aim, 6);
                         } else {
-                            BodyApplyAnimation(soldier, AnimationType::Aim, 1);
+                            BodyApplyAnimation(
+                              soldier, animation_data_manager, AnimationType::Aim, 1);
                         }
                     }
                 }
             } else {
-                BodyApplyAnimation(soldier, AnimationType::Prone, 26);
+                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 26);
             }
         }
 
@@ -989,14 +1036,17 @@ void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bu
     }
 }
 
-void Update(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
+void Update(State& state,
+            Soldier& soldier,
+            const AnimationDataManager& animation_data_manager,
+            std::vector<BulletParams>& bullet_emitter)
 {
     const Map& map = state.map;
     float body_y = 0.0f;
     float arm_s;
 
     soldier.particle.Euler();
-    UpdateControl(state, soldier, bullet_emitter);
+    UpdateControl(state, soldier, animation_data_manager, bullet_emitter);
 
     RepositionSoldierSkeletonParts(soldier);
 
@@ -1496,7 +1546,7 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
     soldier.is_shooting = true;
 }
 
-void ControlThrowGrenade(Soldier& soldier)
+void ControlThrowGrenade(Soldier& soldier, const AnimationDataManager& animation_data_manager)
 {
     if (!soldier.control.throw_grenade) {
         soldier.grenade_can_throw = true;
@@ -1506,7 +1556,7 @@ void ControlThrowGrenade(Soldier& soldier)
         soldier.body_animation.GetType() != AnimationType::Roll &&
         soldier.body_animation.GetType() != AnimationType::RollBack) {
 
-        BodyApplyAnimation(soldier, AnimationType::Throw, 1);
+        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Throw, 1);
     }
 
     if (soldier.body_animation.GetType() == AnimationType::Throw &&

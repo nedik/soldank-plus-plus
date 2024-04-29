@@ -102,8 +102,7 @@ public:
                            const IFileReader& file_reader = FileReader());
     void LoadAllAnimationDatas(const IFileReader& file_reader = FileReader());
 
-    std::shared_ptr<const AnimationData> Get(AnimationType animation_type);
-    unsigned int GetFramesCount(AnimationType animation_type);
+    std::shared_ptr<const AnimationData> Get(AnimationType animation_type) const;
 
 private:
     std::vector<std::shared_ptr<const AnimationData>> animation_datas_;

@@ -6,6 +6,7 @@
 #include "core/entities/Soldier.hpp"
 #include "core/physics/PhysicsEvents.hpp"
 #include "core/WorldEvents.hpp"
+#include "core/animations/AnimationData.hpp"
 
 #include <functional>
 #include <utility>
@@ -26,6 +27,8 @@ public:
     const Soldier& GetSoldier(unsigned int soldier_id) const override;
     PhysicsEvents& GetPhysicsEvents() override;
     WorldEvents& GetWorldEvents() override;
+    std::shared_ptr<const AnimationData> GetAnimationData(
+      AnimationType animation_type) const override;
 
     const Soldier& CreateSoldier(
       std::optional<unsigned int> force_soldier_id = std::nullopt) override;
@@ -90,6 +93,8 @@ private:
 
     std::random_device random_device_;
     std::mt19937 mersenne_twister_engine_;
+
+    AnimationDataManager animation_data_manager_;
 };
 
 } // namespace Soldank

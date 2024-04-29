@@ -160,7 +160,7 @@ void AnimationDataManager::LoadAllAnimationDatas(const IFileReader& file_reader)
     // clang-format on
 }
 
-std::shared_ptr<const AnimationData> AnimationDataManager::Get(AnimationType animation_type)
+std::shared_ptr<const AnimationData> AnimationDataManager::Get(AnimationType animation_type) const
 {
     for (const auto& animation_data : animation_datas_) {
         if (animation_data->GetAnimationType() == animation_type) {
@@ -170,11 +170,5 @@ std::shared_ptr<const AnimationData> AnimationDataManager::Get(AnimationType ani
 
     // TODO: error handling
     std::unreachable();
-}
-
-unsigned int AnimationDataManager::GetFramesCount(AnimationType animation_type)
-{
-    auto animation_data = Get(animation_type);
-    return animation_data->GetFrames().size();
 }
 } // namespace Soldank

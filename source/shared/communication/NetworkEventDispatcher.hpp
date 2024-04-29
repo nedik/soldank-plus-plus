@@ -6,7 +6,7 @@
 
 #include "core/math/Glm.hpp"
 #include "core/state/Control.hpp"
-#include "core/animations/Animation.hpp"
+#include "core/animations/AnimationData.hpp"
 #include "core/types/BulletType.hpp"
 #include "core/types/TeamType.hpp"
 #include "core/types/WeaponType.hpp"

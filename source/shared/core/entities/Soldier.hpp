@@ -1,7 +1,8 @@
 #ifndef __SOLDIER_HPP__
 #define __SOLDIER_HPP__
 
-#include "core/animations/Animation.hpp"
+#include "core/animations/AnimationData.hpp"
+#include "core/animations/AnimationState.hpp"
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
 #include "core/entities/Weapon.hpp"
@@ -17,7 +18,9 @@ namespace Soldank
 {
 struct Soldier
 {
-    Soldier(std::uint8_t soldier_id, glm::vec2 spawn_position);
+    Soldier(std::uint8_t soldier_id,
+            glm::vec2 spawn_position,
+            const AnimationDataManager& animation_data_manager);
 
     std::uint8_t id;
 

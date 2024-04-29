@@ -59,11 +59,11 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
         if (soldier.id == soldier_id) {
             soldier.particle.old_position = soldier_old_position;
             soldier.particle.position = soldier_position;
-            soldier.body_animation = AnimationState(body_animation_type);
+            soldier.body_animation = world_->GetAnimationData(body_animation_type);
             soldier.body_animation.SetFrame(body_animation_frame);
             soldier.body_animation.SetSpeed(body_animation_speed);
 
-            soldier.legs_animation = AnimationState(legs_animation_type);
+            soldier.legs_animation = world_->GetAnimationData(legs_animation_type);
             soldier.legs_animation.SetFrame(legs_animation_frame);
             soldier.legs_animation.SetSpeed(legs_animation_speed);
 

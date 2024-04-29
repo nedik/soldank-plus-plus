@@ -23,6 +23,7 @@ World::World()
     , mersenne_twister_engine_(random_device_())
 {
     state_manager_->GetState().map.LoadMap("maps/ctf_Ash.pms");
+    animation_data_manager_.LoadAllAnimationDatas();
 }
 
 void World::RunLoop(int fps_limit)
@@ -127,7 +128,8 @@ void World::Update(double /*delta_time*/)
             }
 
             if (should_update_current_soldier) {
-                SoldierPhysics::Update(state_manager_->GetState(), soldier, bullet_emitter);
+                SoldierPhysics::Update(
+                  state_manager_->GetState(), soldier, animation_data_manager_, bullet_emitter);
                 if (soldier.dead_meat) {
                     soldier.ticks_to_respawn--;
                     if (soldier.ticks_to_respawn <= 0) {
@@ -161,7 +163,8 @@ void World::UpdateSoldier(unsigned int soldier_id)
 
     for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.active && soldier.id == soldier_id) {
-            SoldierPhysics::Update(state_manager_->GetState(), soldier, bullet_emitter);
+            SoldierPhysics::Update(
+              state_manager_->GetState(), soldier, animation_data_manager_, bullet_emitter);
         }
     }
 }
@@ -190,6 +193,11 @@ PhysicsEvents& World::GetPhysicsEvents()
 WorldEvents& World::GetWorldEvents()
 {
     return *world_events_;
+}
+
+std::shared_ptr<const AnimationData> World::GetAnimationData(AnimationType animation_type) const
+{
+    return animation_data_manager_.Get(animation_type);
 }
 
 const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id)
@@ -222,7 +230,8 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
       state_manager_->GetState().map.GetSpawnPoints().at(random_spawnpoint_id);
     glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
 
-    state_manager_->GetState().soldiers.emplace_back(new_soldier_id, spawn_position);
+    state_manager_->GetState().soldiers.emplace_back(
+      new_soldier_id, spawn_position, animation_data_manager_);
 
     return state_manager_->GetState().soldiers.back();
 }

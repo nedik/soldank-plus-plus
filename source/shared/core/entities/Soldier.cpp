@@ -8,7 +8,9 @@ const float GRAV = 0.06F;
 
 namespace Soldank
 {
-Soldier::Soldier(std::uint8_t soldier_id, glm::vec2 spawn_position)
+Soldier::Soldier(std::uint8_t soldier_id,
+                 glm::vec2 spawn_position,
+                 const AnimationDataManager& animation_data_manager)
     : id(soldier_id)
     , active(false)
     , dead_meat(false)
@@ -35,8 +37,8 @@ Soldier::Soldier(std::uint8_t soldier_id, glm::vec2 spawn_position)
     , collider_distance(255)
     , half_dead(false)
     , skeleton(ParticleSystem::Load(ParticleSystemType::Soldier))
-    , legs_animation(AnimationType::Stand)
-    , body_animation(AnimationType::Stand)
+    , legs_animation(animation_data_manager.Get(AnimationType::Stand))
+    , body_animation(animation_data_manager.Get(AnimationType::Stand))
     , control()
     , active_weapon(0)
     , weapons{ { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },

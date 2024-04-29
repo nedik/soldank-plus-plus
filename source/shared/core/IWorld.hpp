@@ -1,6 +1,7 @@
 #ifndef __IWORLD_HPP__
 #define __IWORLD_HPP__
 
+#include "core/animations/AnimationData.hpp"
 #include "core/math/Glm.hpp"
 #include "core/state/StateManager.hpp"
 #include "core/physics/PhysicsEvents.hpp"
@@ -33,6 +34,8 @@ public:
     virtual const Soldier& GetSoldier(unsigned int soldier_id) const = 0;
     virtual PhysicsEvents& GetPhysicsEvents() = 0;
     virtual WorldEvents& GetWorldEvents() = 0;
+    virtual std::shared_ptr<const AnimationData> GetAnimationData(
+      AnimationType animation_type) const = 0;
 
     virtual const Soldier& CreateSoldier(
       std::optional<unsigned int> force_soldier_id = std::nullopt) = 0;

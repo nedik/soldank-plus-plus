@@ -1,7 +1,7 @@
 #ifndef __SOLDIER_PHYSICS_HPP__
 #define __SOLDIER_PHYSICS_HPP__
 
-#include "core/animations/Animation.hpp"
+#include "core/animations/AnimationData.hpp"
 #include "core/math/Glm.hpp"
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
@@ -23,11 +23,23 @@ const Weapon& GetTertiaryWeapon(Soldier& soldier);
 
 void SwitchWeapon(Soldier& soldier);
 void UpdateKeys(Soldier& soldier, const Control& control);
-void LegsApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
-void BodyApplyAnimation(Soldier& soldier, AnimationType id, unsigned int frame);
+void LegsApplyAnimation(Soldier& soldier,
+                        const AnimationDataManager& animation_data_manager,
+                        AnimationType id,
+                        unsigned int frame);
+void BodyApplyAnimation(Soldier& soldier,
+                        const AnimationDataManager& animation_data_manager,
+                        AnimationType id,
+                        unsigned int frame);
 void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier);
-void UpdateControl(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
-void Update(State& state, Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
+void UpdateControl(State& state,
+                   Soldier& soldier,
+                   const AnimationDataManager& animation_data_manager,
+                   std::vector<BulletParams>& bullet_emitter);
+void Update(State& state,
+            Soldier& soldier,
+            const AnimationDataManager& animation_data_manager,
+            std::vector<BulletParams>& bullet_emitter);
 
 bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int area, State& state);
 bool CheckMapVerticesCollision(Soldier& soldier,
@@ -50,7 +62,7 @@ bool CheckSkeletonMapCollision(Soldier& soldier,
                                float y,
                                State& state);
 void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
-void ControlThrowGrenade(Soldier& soldier);
+void ControlThrowGrenade(Soldier& soldier, const AnimationDataManager& animation_data_manager);
 } // namespace Soldank::SoldierPhysics
 
 #endif
