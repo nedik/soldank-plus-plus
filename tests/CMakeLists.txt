@@ -1,1 +1,2 @@
+add_subdirectory(testing_frameworks/shared_lib_testing)
 add_subdirectory(shared)

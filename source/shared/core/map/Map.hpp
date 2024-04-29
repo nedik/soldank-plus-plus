@@ -9,6 +9,7 @@
 #include "core/data/IFileReader.hpp"
 #include "core/data/FileReader.hpp"
 
+#include <utility>
 #include <vector>
 #include <sstream>
 #include <cstring>
@@ -61,6 +62,10 @@ struct MapData
 class Map
 {
 public:
+    Map() = default;
+    Map(MapData map_data)
+        : map_data_(std::move(map_data)){};
+
     void LoadMap(const std::string& map_path, const IFileReader& file_reader = FileReader());
 
     static bool PointInPoly(glm::vec2 p, PMSPolygon poly);
