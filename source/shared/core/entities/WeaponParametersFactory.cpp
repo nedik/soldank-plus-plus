@@ -125,8 +125,9 @@ WeaponParameters LoadFromINI(const CSimpleIniA& ini_config, WeaponType weapon_ty
 
 WeaponParameters LoadFromINIFile(const std::string& ini_file_path,
                                  WeaponType weapon_type,
-                                 const FileReader& file_reader)
+                                 const IFileReader& file_reader)
 {
+    spdlog::debug("ini_file_path: {}", ini_file_path);
     auto file_data = file_reader.Read(ini_file_path);
     if (!file_data.has_value()) {
         spdlog::critical("Animation file not found {}", ini_file_path);
@@ -144,7 +145,7 @@ WeaponParameters LoadFromINIFile(const std::string& ini_file_path,
 
 const WeaponParameters& GetParameters(WeaponType weapon_type,
                                       bool realistic,
-                                      const FileReader& file_reader)
+                                      const IFileReader& file_reader)
 {
     // clang-format off
     static std::unordered_map<WeaponType, const WeaponParameters> weapon_parameters_map{

@@ -27,6 +27,11 @@ add_executable(CalcTest core/math/CalcTest.cpp)
 target_link_libraries(CalcTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(CalcTest PRIVATE shared_lib)
 
+add_executable(MovementTest core/physics/MovementTest.cpp)
+target_link_libraries(MovementTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+target_link_libraries(MovementTest PRIVATE shared_lib)
+target_link_libraries(MovementTest PRIVATE shared_lib_testing_framework)
+
 add_executable(ObservableTest core/utility/ObservableTest.cpp)
 target_link_libraries(ObservableTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(ObservableTest PRIVATE shared_lib)
@@ -38,4 +43,33 @@ add_test(WeaponTest WeaponTest)
 add_test(MapBuilderTest MapBuilderTest)
 add_test(MapTest MapTest)
 add_test(CalcTest CalcTest)
+add_test(MovementTest MovementTest)
 add_test(ObservableTest ObservableTest)
+
+file(GLOB_RECURSE ANIMATION_FILE_PATHS ${soldatbase_SOURCE_DIR}/shared/anims/*.poa)
+foreach(ANIMATION_FILE_PATH ${ANIMATION_FILE_PATHS})
+    cmake_path(GET ANIMATION_FILE_PATH FILENAME ANIMATION_FILE)
+    add_custom_command(TARGET MovementTest POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ANIMATION_FILE_PATH}"
+            "$<TARGET_FILE_DIR:MovementTest>/anims/${ANIMATION_FILE}") 
+endforeach()
+
+file(GLOB_RECURSE OBJECT_FILE_PATHS ${soldatbase_SOURCE_DIR}/shared/objects/*.po)
+foreach(OBJECT_FILE_PATH ${OBJECT_FILE_PATHS})
+    cmake_path(GET OBJECT_FILE_PATH FILENAME OBJECT_FILE)
+    add_custom_command(TARGET MovementTest POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${OBJECT_FILE_PATH}"
+            "$<TARGET_FILE_DIR:MovementTest>/objects/${OBJECT_FILE}") 
+endforeach()
+
+add_custom_command(TARGET MovementTest POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${soldatbase_SOURCE_DIR}/shared/weapons.ini"
+        "$<TARGET_FILE_DIR:MovementTest>/weapons.ini") 
+
+add_custom_command(TARGET MovementTest POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${soldatbase_SOURCE_DIR}/shared/weapons_realistic.ini"
+        "$<TARGET_FILE_DIR:MovementTest>/weapons_realistic.ini") 
