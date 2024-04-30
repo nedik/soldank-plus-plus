@@ -132,7 +132,8 @@ void ParticleSystem::SatisfyConstraint(const Constraint& constraint,
     }
 }
 
-std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle_system_type)
+std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle_system_type,
+                                                     const IFileReader& file_reader)
 {
     // TODO: const
     const float grav = 0.06F;
@@ -140,7 +141,7 @@ std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle
         case ParticleSystemType::Soldier: {
             // TODO: load it at the application start
             static auto soldier_particle_system =
-              LoadFromFile("gostek.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F);
+              LoadFromFile("gostek.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
             return std::make_shared<ParticleSystem>(*soldier_particle_system);
         }
     }
@@ -151,36 +152,34 @@ std::shared_ptr<ParticleSystem> ParticleSystem::LoadFromFile(const std::string& 
                                                              float timestep,
                                                              float gravity,
                                                              float e_damping,
-                                                             float v_damping)
+                                                             float v_damping,
+                                                             const IFileReader& file_reader)
 {
     std::vector<Particle> particles;
     std::vector<Constraint> constraints;
 
     std::filesystem::path file_path = "objects/";
     file_path += file_name;
-
-    std::ifstream file_data;
-    file_data.open(file_path, std::ios::in);
-    if (!file_data.is_open()) {
-        std::string message = "Could not open file: ";
-        message += file_path.string();
-        spdlog::info(message);
+    auto file_data = file_reader.Read(file_path.string());
+    if (!file_data.has_value()) {
+        std::string message = "Could not open file: " + file_path.string();
         throw std::runtime_error(message.c_str());
     }
+    std::stringstream data_buffer{ *file_data };
 
-    auto read_float = [](std::ifstream& ifs) {
+    auto read_float = [](std::stringstream& buffer) {
         std::string line;
-        GetlineSafe(ifs, line);
+        GetlineSafe(buffer, line);
         return std::stof(line);
     };
 
     std::string line;
-    GetlineSafe(file_data, line);
+    GetlineSafe(data_buffer, line);
 
     while (line != "CONSTRAINTS") {
-        float x = read_float(file_data);
-        read_float(file_data);
-        float z = read_float(file_data);
+        float x = read_float(data_buffer);
+        read_float(data_buffer);
+        float z = read_float(data_buffer);
         glm::vec2 p = glm::vec2(-x * scale / 1.2, -z * scale);
 
         particles.emplace_back(true,
@@ -194,26 +193,25 @@ std::shared_ptr<ParticleSystem> ParticleSystem::LoadFromFile(const std::string& 
                                e_damping,
                                v_damping);
 
-        GetlineSafe(file_data, line);
+        GetlineSafe(data_buffer, line);
     }
 
-    while (!file_data.eof()) {
-        GetlineSafe(file_data, line);
+    while (!data_buffer.eof()) {
+        GetlineSafe(data_buffer, line);
 
-        if (file_data.eof() || line.empty() || line == "ENDFILE") {
+        if (data_buffer.eof() || line.empty() || line == "ENDFILE") {
             break;
         }
         line.erase(0, 1); // first character is always P
         unsigned int pa_num = std::stoul(line);
 
-        GetlineSafe(file_data, line);
+        GetlineSafe(data_buffer, line);
         line.erase(0, 1); // first character is always P
         unsigned int pb_num = std::stoul(line);
 
         auto delta = particles[pa_num - 1].position - particles[pb_num - 1].position;
         constraints.push_back({ true, glm::uvec2(pa_num, pb_num), glm::length(delta) });
     }
-    file_data.close();
 
     spdlog::info("Particle {}, loaded {} particles and {} constraints",
                  file_path.string(),

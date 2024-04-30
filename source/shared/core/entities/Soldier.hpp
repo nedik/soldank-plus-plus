@@ -20,7 +20,8 @@ struct Soldier
 {
     Soldier(std::uint8_t soldier_id,
             glm::vec2 spawn_position,
-            const AnimationDataManager& animation_data_manager);
+            const AnimationDataManager& animation_data_manager,
+            std::shared_ptr<ParticleSystem> skeleton);
 
     std::uint8_t id;
 

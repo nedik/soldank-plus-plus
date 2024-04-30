@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "core/entities/Soldier.hpp"
 
 #include "core/entities/WeaponParametersFactory.hpp"
@@ -10,7 +12,8 @@ namespace Soldank
 {
 Soldier::Soldier(std::uint8_t soldier_id,
                  glm::vec2 spawn_position,
-                 const AnimationDataManager& animation_data_manager)
+                 const AnimationDataManager& animation_data_manager,
+                 std::shared_ptr<ParticleSystem> skeleton)
     : id(soldier_id)
     , active(false)
     , dead_meat(false)
@@ -36,7 +39,7 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , on_fire(0)
     , collider_distance(255)
     , half_dead(false)
-    , skeleton(ParticleSystem::Load(ParticleSystemType::Soldier))
+    , skeleton(std::move(skeleton))
     , legs_animation(animation_data_manager.Get(AnimationType::Stand))
     , body_animation(animation_data_manager.Get(AnimationType::Stand))
     , control()

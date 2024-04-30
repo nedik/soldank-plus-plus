@@ -1,5 +1,6 @@
 #include "World.hpp"
 
+#include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
 #include "core/physics/BulletPhysics.hpp"
 #include "core/physics/SoldierPhysics.hpp"
@@ -231,7 +232,10 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
     glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
 
     state_manager_->GetState().soldiers.emplace_back(
-      new_soldier_id, spawn_position, animation_data_manager_);
+      new_soldier_id,
+      spawn_position,
+      animation_data_manager_,
+      ParticleSystem::Load(ParticleSystemType::Soldier));
 
     return state_manager_->GetState().soldiers.back();
 }
