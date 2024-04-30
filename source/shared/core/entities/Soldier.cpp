@@ -13,7 +13,8 @@ namespace Soldank
 Soldier::Soldier(std::uint8_t soldier_id,
                  glm::vec2 spawn_position,
                  const AnimationDataManager& animation_data_manager,
-                 std::shared_ptr<ParticleSystem> skeleton)
+                 std::shared_ptr<ParticleSystem> skeleton,
+                 const std::vector<Weapon>& initial_weapons)
     : id(soldier_id)
     , active(false)
     , dead_meat(false)
@@ -44,9 +45,7 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , body_animation(animation_data_manager.Get(AnimationType::Stand))
     , control()
     , active_weapon(0)
-    , weapons{ { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },
-               { WeaponParametersFactory::GetParameters(WeaponType::Knife, false) },
-               { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) } }
+    , weapons{ initial_weapons }
     , weapon_choices{ WeaponType::DesertEagles, WeaponType::Knife }
     , fired(0)
     , particle(false,

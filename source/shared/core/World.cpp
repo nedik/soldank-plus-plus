@@ -231,11 +231,17 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
       state_manager_->GetState().map.GetSpawnPoints().at(random_spawnpoint_id);
     glm::vec2 spawn_position = { chosen_spawnpoint.x, chosen_spawnpoint.y };
 
+    std::vector<Weapon> weapons{
+        { WeaponParametersFactory::GetParameters(WeaponType::DesertEagles, false) },
+        { WeaponParametersFactory::GetParameters(WeaponType::Knife, false) },
+        { WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false) }
+    };
     state_manager_->GetState().soldiers.emplace_back(
       new_soldier_id,
       spawn_position,
       animation_data_manager_,
-      ParticleSystem::Load(ParticleSystemType::Soldier));
+      ParticleSystem::Load(ParticleSystemType::Soldier),
+      weapons);
 
     return state_manager_->GetState().soldiers.back();
 }
