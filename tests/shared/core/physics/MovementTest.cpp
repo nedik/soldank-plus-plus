@@ -9,12 +9,17 @@
 #include "core/entities/Soldier.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 #include "core/state/StateManager.hpp"
+#include "core/data/IFileReader.hpp"
 
 #include <gtest/gtest.h>
 
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <filesystem>
+#include <fstream>
+
+std::filesystem::path test_file_path;
 
 enum class SoldierAnimationPart
 {
@@ -30,6 +35,31 @@ struct SoldierExpectedAnimationState
     int expected_speed;
 };
 
+class FileReaderForTestsWorkingDirectory : public Soldank::IFileReader
+{
+public:
+    std::expected<std::string, Soldank::FileReaderError> Read(
+      const std::string& file_path,
+      std::ios_base::openmode mode = std::ios_base::in) const override
+    {
+        std::filesystem::path absolute_file_path = test_file_path;
+        absolute_file_path.append(file_path);
+        std::ifstream file_to_read(absolute_file_path, mode);
+        if (!file_to_read.is_open()) {
+            return std::unexpected(Soldank::FileReaderError::FileNotFound);
+        }
+
+        std::stringstream buffer;
+        buffer << file_to_read.rdbuf();
+
+        if (buffer.bad()) {
+            return std::unexpected(Soldank::FileReaderError::BufferError);
+        }
+
+        return buffer.str();
+    }
+};
+
 class Simulation
 {
 public:
@@ -42,19 +72,21 @@ public:
               { 0.0F, 0.0F }, { 100.0F, 0.0F }, { 50.0F, 50.0F }, Soldank::PMSPolygonType::Normal)
             ->Build();
         state.map = *map;
-        animation_data_manager_.LoadAllAnimationDatas();
+        animation_data_manager_.LoadAllAnimationDatas(FileReaderForTestsWorkingDirectory());
         std::vector<Soldank::Weapon> weapons{
-            { Soldank::WeaponParametersFactory::GetParameters(Soldank::WeaponType::DesertEagles,
-                                                              false) },
-            { Soldank::WeaponParametersFactory::GetParameters(Soldank::WeaponType::Knife, false) },
-            { Soldank::WeaponParametersFactory::GetParameters(Soldank::WeaponType::FragGrenade,
-                                                              false) }
+            { Soldank::WeaponParametersFactory::GetParameters(
+              Soldank::WeaponType::DesertEagles, false, FileReaderForTestsWorkingDirectory()) },
+            { Soldank::WeaponParametersFactory::GetParameters(
+              Soldank::WeaponType::Knife, false, FileReaderForTestsWorkingDirectory()) },
+            { Soldank::WeaponParametersFactory::GetParameters(
+              Soldank::WeaponType::FragGrenade, false, FileReaderForTestsWorkingDirectory()) }
         };
         state.soldiers.emplace_back(
           0,
           glm::vec2{ 0.0F, -29.0F },
           animation_data_manager_,
-          Soldank::ParticleSystem::Load(Soldank::ParticleSystemType::Soldier),
+          Soldank::ParticleSystem::Load(Soldank::ParticleSystemType::Soldier,
+                                        FileReaderForTestsWorkingDirectory()),
           weapons);
     }
 
@@ -163,5 +195,8 @@ TEST(MovementTest, TestRunBackRight)
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+    assert(argc == 1);
+    test_file_path = argv[0];
+    test_file_path = test_file_path.remove_filename();
     return RUN_ALL_TESTS();
 }
