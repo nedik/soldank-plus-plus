@@ -6,6 +6,109 @@
 
 namespace Soldank::DebugUI
 {
+struct AnimationRecording
+{
+    unsigned int game_tick;
+    AnimationType animation_type;
+    unsigned int frame;
+    int speed;
+    bool soldier_looking_left;
+};
+
+std::string AnimationTypeToString(AnimationType animation_type)
+{
+    switch (animation_type) {
+        case AnimationType::Stand:
+            return "Stand";
+        case AnimationType::Run:
+            return "Run";
+        case AnimationType::RunBack:
+            return "RunBack";
+        case AnimationType::Jump:
+            return "Jump";
+        case AnimationType::JumpSide:
+            return "JumpSide";
+        case AnimationType::Fall:
+            return "Fall";
+        case AnimationType::Crouch:
+            return "Crouch";
+        case AnimationType::CrouchRun:
+            return "CrouchRun";
+        case AnimationType::Reload:
+            return "Reload";
+        case AnimationType::Throw:
+            return "Throw";
+        case AnimationType::Recoil:
+            return "Recoil";
+        case AnimationType::SmallRecoil:
+            return "SmallRecoil";
+        case AnimationType::Shotgun:
+            return "Shotgun";
+        case AnimationType::ClipOut:
+            return "ClipOut";
+        case AnimationType::ClipIn:
+            return "ClipIn";
+        case AnimationType::SlideBack:
+            return "SlideBack";
+        case AnimationType::Change:
+            return "Change";
+        case AnimationType::ThrowWeapon:
+            return "ThrowWeapon";
+        case AnimationType::WeaponNone:
+            return "WeaponNone";
+        case AnimationType::Punch:
+            return "Punch";
+        case AnimationType::ReloadBow:
+            return "ReloadBow";
+        case AnimationType::Barret:
+            return "Barret";
+        case AnimationType::Roll:
+            return "Roll";
+        case AnimationType::RollBack:
+            return "RollBack";
+        case AnimationType::CrouchRunBack:
+            return "CrouchRunBack";
+        case AnimationType::Cigar:
+            return "Cigar";
+        case AnimationType::Match:
+            return "Match";
+        case AnimationType::Smoke:
+            return "Smoke";
+        case AnimationType::Wipe:
+            return "Wipe";
+        case AnimationType::Groin:
+            return "Groin";
+        case AnimationType::Piss:
+            return "Piss";
+        case AnimationType::Mercy:
+            return "Mercy";
+        case AnimationType::Mercy2:
+            return "Mercy2";
+        case AnimationType::TakeOff:
+            return "TakeOff";
+        case AnimationType::Prone:
+            return "Prone";
+        case AnimationType::Victory:
+            return "Victory";
+        case AnimationType::Aim:
+            return "Aim";
+        case AnimationType::HandsUpAim:
+            return "HandsUpAim";
+        case AnimationType::ProneMove:
+            return "ProneMove";
+        case AnimationType::GetUp:
+            return "GetUp";
+        case AnimationType::AimRecoil:
+            return "AimRecoil";
+        case AnimationType::HandsUpRecoil:
+            return "HandsUpRecoil";
+        case AnimationType::Melee:
+            return "Melee";
+        case AnimationType::Own:
+            return "Own";
+    }
+}
+
 void Render(State& game_state, ClientState& client_state, double /*frame_percent*/, int fps)
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -95,6 +198,62 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                 client_state.secondary_weapon_type_choice = weapon_data.second;
             }
         }
+        ImGui::End();
+    }
+
+    {
+        // This is only temporary to create movement simulation tests
+        ImGui::Begin("Animation Logs");
+
+        static bool recording_started = false;
+        static std::vector<AnimationRecording> recorded_animations;
+        if (ImGui::Button(recording_started ? "Stop Recording" : "Start Recording")) {
+            if (!recording_started) {
+                recorded_animations.clear();
+
+                if (client_state.client_soldier_id.has_value()) {
+                    for (const auto& soldier : game_state.soldiers) {
+                        if (*client_state.client_soldier_id == soldier.id) {
+                            recorded_animations.push_back(
+                              { .game_tick = game_state.game_tick,
+                                .animation_type = soldier.legs_animation.GetType(),
+                                .frame = soldier.legs_animation.GetFrame(),
+                                .soldier_looking_left = soldier.direction == -1 });
+                        }
+                    }
+                }
+            }
+            recording_started = !recording_started;
+        }
+
+        if (recording_started) {
+            if (client_state.client_soldier_id.has_value()) {
+                for (const auto& soldier : game_state.soldiers) {
+                    if (*client_state.client_soldier_id == soldier.id) {
+                        if (recorded_animations.back().animation_type !=
+                            soldier.legs_animation.GetType()) {
+                            recorded_animations.push_back(
+                              { .game_tick = game_state.game_tick,
+                                .animation_type = soldier.legs_animation.GetType(),
+                                .frame = soldier.legs_animation.GetFrame(),
+                                .soldier_looking_left = soldier.direction == -1 });
+                        }
+                    }
+                }
+            }
+        }
+
+        ImGui::Separator();
+
+        for (const auto& animation_recording : recorded_animations) {
+            ImGui::Text("%6d - %15s %2d %d %s",
+                        animation_recording.game_tick,
+                        AnimationTypeToString(animation_recording.animation_type).c_str(),
+                        animation_recording.frame,
+                        animation_recording.speed,
+                        animation_recording.soldier_looking_left ? "<" : ">");
+        }
+
         ImGui::End();
     }
 
