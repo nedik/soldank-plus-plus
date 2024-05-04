@@ -8,6 +8,7 @@ namespace Soldank::DebugUI
 {
 struct AnimationRecording
 {
+    bool is_legs;
     unsigned int game_tick;
     AnimationType animation_type;
     unsigned int frame;
@@ -207,18 +208,31 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
 
         static bool recording_started = false;
         static std::vector<AnimationRecording> recorded_animations;
+        static AnimationRecording last_added_body_animation;
+        static AnimationRecording last_added_legs_animation;
+        static unsigned int game_tick_when_started_recording;
         if (ImGui::Button(recording_started ? "Stop Recording" : "Start Recording")) {
             if (!recording_started) {
                 recorded_animations.clear();
+                game_tick_when_started_recording = game_state.game_tick;
 
                 if (client_state.client_soldier_id.has_value()) {
                     for (const auto& soldier : game_state.soldiers) {
                         if (*client_state.client_soldier_id == soldier.id) {
                             recorded_animations.push_back(
-                              { .game_tick = game_state.game_tick,
+                              { .is_legs = false,
+                                .game_tick = game_state.game_tick,
+                                .animation_type = soldier.body_animation.GetType(),
+                                .frame = soldier.body_animation.GetFrame(),
+                                .soldier_looking_left = soldier.direction == -1 });
+                            last_added_body_animation = recorded_animations.back();
+                            recorded_animations.push_back(
+                              { .is_legs = true,
+                                .game_tick = game_state.game_tick,
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
                                 .soldier_looking_left = soldier.direction == -1 });
+                            last_added_legs_animation = recorded_animations.back();
                         }
                     }
                 }
@@ -230,13 +244,25 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
             if (client_state.client_soldier_id.has_value()) {
                 for (const auto& soldier : game_state.soldiers) {
                     if (*client_state.client_soldier_id == soldier.id) {
-                        if (recorded_animations.back().animation_type !=
+                        if (last_added_legs_animation.animation_type !=
                             soldier.legs_animation.GetType()) {
                             recorded_animations.push_back(
-                              { .game_tick = game_state.game_tick,
+                              { .is_legs = true,
+                                .game_tick = game_state.game_tick,
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
                                 .soldier_looking_left = soldier.direction == -1 });
+                            last_added_legs_animation = recorded_animations.back();
+                        }
+                        if (last_added_body_animation.animation_type !=
+                            soldier.body_animation.GetType()) {
+                            recorded_animations.push_back(
+                              { .is_legs = false,
+                                .game_tick = game_state.game_tick,
+                                .animation_type = soldier.body_animation.GetType(),
+                                .frame = soldier.body_animation.GetFrame(),
+                                .soldier_looking_left = soldier.direction == -1 });
+                            last_added_body_animation = recorded_animations.back();
                         }
                     }
                 }
@@ -246,8 +272,9 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
         ImGui::Separator();
 
         for (const auto& animation_recording : recorded_animations) {
-            ImGui::Text("%6d - %15s %2d %d %s",
-                        animation_recording.game_tick,
+            ImGui::Text("%6d - %s %15s %2d %d %s",
+                        animation_recording.game_tick - game_tick_when_started_recording,
+                        animation_recording.is_legs ? "legs" : "body",
                         AnimationTypeToString(animation_recording.animation_type).c_str(),
                         animation_recording.frame,
                         animation_recording.speed,
