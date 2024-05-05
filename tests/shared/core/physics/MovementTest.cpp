@@ -90,11 +90,25 @@ public:
           weapons);
     }
 
-    void RunRight()
+    void HoldRight()
     {
         Soldank::State& state = state_manager_.GetState();
         auto& current_soldier = *state.soldiers.begin();
         current_soldier.control.right = true;
+    }
+
+    void HoldLeft()
+    {
+        Soldank::State& state = state_manager_.GetState();
+        auto& current_soldier = *state.soldiers.begin();
+        current_soldier.control.left = true;
+    }
+
+    void HoldJump()
+    {
+        Soldank::State& state = state_manager_.GetState();
+        auto& current_soldier = *state.soldiers.begin();
+        current_soldier.control.up = true;
     }
 
     void AddSoldierExpectedAnimationState(
@@ -182,12 +196,55 @@ TEST(MovementTest, TestRunBackRight)
 {
     Simulation simulation;
     simulation.RunUntilSoldierOnGround();
-    simulation.RunRight();
+    simulation.HoldRight();
     simulation.AddSoldierExpectedAnimationState(
       1,
       { .part = SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RunBack,
         .expected_frame = 3,
+        .expected_speed = 1 });
+    simulation.RunFor(10);
+}
+
+TEST(MovementTest, TestFallAndJumpSideLeft)
+{
+    Simulation simulation;
+    simulation.RunUntilSoldierOnGround();
+    simulation.HoldLeft();
+    simulation.HoldJump();
+    simulation.AddSoldierExpectedAnimationState(
+      0,
+      { .part = SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::Run,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      3,
+      { .part = SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.RunFor(10);
+}
+
+TEST(MovementTest, TestJumpSideLeft)
+{
+    Simulation simulation;
+    simulation.RunUntilSoldierOnGround();
+    simulation.RunFor(10);
+    simulation.HoldLeft();
+    simulation.HoldJump();
+    simulation.AddSoldierExpectedAnimationState(
+      0,
+      { .part = SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      4,
+      { .part = SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
+        .expected_frame = 6,
         .expected_speed = 1 });
     simulation.RunFor(10);
 }
