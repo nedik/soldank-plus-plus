@@ -44,7 +44,6 @@ public:
     virtual void KillSoldier(unsigned int soldier_id) = 0;
     virtual void HitSoldier(unsigned int soldier_id, float damage) = 0;
 
-    virtual void UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position) = 0;
     virtual void UpdateWeaponChoices(unsigned int soldier_id,
                                      WeaponType primary_weapon_type,
                                      WeaponType secondary_weapon_type) = 0;

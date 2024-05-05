@@ -34,6 +34,9 @@ public:
 
     void HoldJump();
 
+    void LookLeft();
+    void LookRight();
+
     void AddSoldierExpectedAnimationState(
       unsigned int tick,
       const SoldierExpectedAnimationState& soldier_expected_animation_state);

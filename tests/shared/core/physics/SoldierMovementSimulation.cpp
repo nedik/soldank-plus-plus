@@ -49,6 +49,42 @@ void SoldierMovementSimulation::HoldJump()
     current_soldier.control.up = true;
 }
 
+void SoldierMovementSimulation::LookLeft()
+{
+    // TODO: State Manager should set that
+    Soldank::State& state = state_manager_.GetState();
+    auto& current_soldier = *state.soldiers.begin();
+    current_soldier.game_width = 640.0;
+    current_soldier.game_height = 480.0;
+
+    current_soldier.mouse.x = 0.0F;
+    current_soldier.mouse.y = 0.0F;
+
+    current_soldier.camera.x = current_soldier.particle.position.x +
+                               (float)(current_soldier.mouse.x - (current_soldier.game_width / 2));
+    current_soldier.camera.y =
+      current_soldier.particle.position.y -
+      (float)((480.0F - current_soldier.mouse.y) - (current_soldier.game_height / 2));
+}
+
+void SoldierMovementSimulation::LookRight()
+{
+    // TODO: State Manager should set that
+    Soldank::State& state = state_manager_.GetState();
+    auto& current_soldier = *state.soldiers.begin();
+    current_soldier.game_width = 640.0;
+    current_soldier.game_height = 480.0;
+
+    current_soldier.mouse.x = 640.0F;
+    current_soldier.mouse.y = 0.0F;
+
+    current_soldier.camera.x = current_soldier.particle.position.x +
+                               (float)(current_soldier.mouse.x - (current_soldier.game_width / 2));
+    current_soldier.camera.y =
+      current_soldier.particle.position.y -
+      (float)((480.0F - current_soldier.mouse.y) - (current_soldier.game_height / 2));
+}
+
 void SoldierMovementSimulation::AddSoldierExpectedAnimationState(
   unsigned int tick,
   const SoldierExpectedAnimationState& soldier_expected_animation_state)

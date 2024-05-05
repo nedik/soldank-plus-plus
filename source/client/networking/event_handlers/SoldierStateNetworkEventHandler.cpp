@@ -150,8 +150,8 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                 world_->GetStateManager()->ChangeSoldierControlActionState(
                   soldier_id, ControlActionType::Prone, player_control.prone);
 
-                world_->UpdateMousePosition(soldier_id,
-                                            { it->mouse_position_x, it->mouse_position_y });
+                world_->GetStateManager()->ChangeSoldierMousePosition(
+                  soldier_id, { it->mouse_position_x, it->mouse_position_y });
                 world_->GetStateManager()->ChangeSoldierControlActionState(
                   soldier_id, ControlActionType::UseJets, player_control.jets);
 

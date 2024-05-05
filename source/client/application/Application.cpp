@@ -215,7 +215,8 @@ void Run()
                       ControlActionType::Fire,
                       Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
                 }
-                world->UpdateMousePosition(client_soldier_id, mouse_position);
+                world->GetStateManager()->ChangeSoldierMousePosition(client_soldier_id,
+                                                                     mouse_position);
                 world->UpdateWeaponChoices(client_soldier_id,
                                            client_state->primary_weapon_type_choice,
                                            client_state->secondary_weapon_type_choice);

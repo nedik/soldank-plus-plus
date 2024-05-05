@@ -306,31 +306,6 @@ void World::HitSoldier(unsigned int soldier_id, float damage)
     }
 }
 
-void World::UpdateMousePosition(unsigned int soldier_id, glm::vec2 mouse_position)
-{
-    for (auto& soldier : state_manager_->GetState().soldiers) {
-        if (soldier.id == soldier_id) {
-            soldier.game_width = 640.0;
-            soldier.game_height = 480.0;
-            soldier.camera_prev = soldier.camera;
-
-            soldier.mouse.x = mouse_position.x;
-            soldier.mouse.y =
-              480.0F - mouse_position.y; // TODO: soldier.control.mouse_aim_y expects
-                                         // top to be 0 and bottom to be game_height
-
-            soldier.camera.x =
-              soldier.particle.position.x + (float)(soldier.mouse.x - (soldier.game_width / 2));
-            soldier.camera.y = soldier.particle.position.y -
-                               (float)((480.0F - soldier.mouse.y) - (soldier.game_height / 2));
-
-            return;
-        }
-    }
-
-    spdlog::error("Wrong soldier_id({}) in UpdateMousePosition", soldier_id);
-}
-
 void World::UpdateWeaponChoices(unsigned int soldier_id,
                                 WeaponType primary_weapon_type,
                                 WeaponType secondary_weapon_type)
