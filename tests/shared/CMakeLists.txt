@@ -27,7 +27,7 @@ add_executable(CalcTest core/math/CalcTest.cpp)
 target_link_libraries(CalcTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(CalcTest PRIVATE shared_lib)
 
-add_executable(MovementTest core/physics/MovementTest.cpp)
+add_executable(MovementTest core/physics/MovementTest.cpp core/physics/SoldierMovementSimulation.cpp)
 target_link_libraries(MovementTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(MovementTest PRIVATE shared_lib)
 target_link_libraries(MovementTest PRIVATE shared_lib_testing_framework)
