@@ -52,9 +52,9 @@ TEST(MovementTest, TestRunBackRight)
 {
     SoldankTesting::SoldierMovementSimulation simulation{ FileReaderForTestsWorkingDirectory() };
     simulation.RunUntilSoldierOnGround();
+    simulation.LookLeft();
     simulation.RunFor(10);
     simulation.HoldRight();
-    simulation.LookLeft();
     simulation.AddSoldierExpectedAnimationState(
       1,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
@@ -68,14 +68,14 @@ TEST(MovementTest, TestRunBackLeft)
 {
     SoldankTesting::SoldierMovementSimulation simulation{ FileReaderForTestsWorkingDirectory() };
     simulation.RunUntilSoldierOnGround();
+    simulation.LookRight();
     simulation.RunFor(10);
     simulation.HoldLeft();
-    simulation.LookRight();
     simulation.AddSoldierExpectedAnimationState(
       1,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RunBack,
-        .expected_frame = 2, // TODO: is it a bug? it's not symmetrical
+        .expected_frame = 3,
         .expected_speed = 1 });
     simulation.RunFor(10);
 }

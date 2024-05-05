@@ -56,9 +56,13 @@ private:
       const Soldank::Soldier& soldier,
       const SoldierExpectedAnimationState& expected_animation_state);
 
+    void TurnSoldierLeft();
+    void TurnSoldierRight();
+
     Soldank::StateManager state_manager_;
     Soldank::AnimationDataManager animation_data_manager_;
 
     std::unordered_map<unsigned int, SoldierExpectedAnimationStates> animations_to_check_at_tick_;
+    bool is_soldier_looking_left_ = false;
 };
 } // namespace SoldankTesting

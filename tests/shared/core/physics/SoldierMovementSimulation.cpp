@@ -51,12 +51,14 @@ void SoldierMovementSimulation::HoldJump()
 
 void SoldierMovementSimulation::LookLeft()
 {
-    state_manager_.ChangeSoldierMousePosition(0, { 0.0F, 0.0F });
+    is_soldier_looking_left_ = true;
+    TurnSoldierLeft();
 }
 
 void SoldierMovementSimulation::LookRight()
 {
-    state_manager_.ChangeSoldierMousePosition(0, { 640.0F, 0.0F });
+    is_soldier_looking_left_ = false;
+    TurnSoldierRight();
 }
 
 void SoldierMovementSimulation::AddSoldierExpectedAnimationState(
@@ -86,6 +88,12 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
     Soldank::State& state = state_manager_.GetState();
     auto& current_soldier = *state.soldiers.begin();
     for (unsigned int current_tick = 0; current_tick < ticks_to_run; current_tick++) {
+        if (is_soldier_looking_left_) {
+            TurnSoldierLeft();
+        } else {
+            TurnSoldierRight();
+        }
+
         std::vector<Soldank::BulletParams> bullet_emitter;
         Soldank::SoldierPhysics::Update(
           state, current_soldier, animation_data_manager_, bullet_emitter);
@@ -125,5 +133,15 @@ void SoldierMovementSimulation::CheckSoldierAnimationState(
             break;
         }
     }
+}
+
+void SoldierMovementSimulation::TurnSoldierLeft()
+{
+    state_manager_.ChangeSoldierMousePosition(0, { 0.0F, 0.0F });
+}
+
+void SoldierMovementSimulation::TurnSoldierRight()
+{
+    state_manager_.ChangeSoldierMousePosition(0, { 640.0F, 0.0F });
 }
 } // namespace SoldankTesting
