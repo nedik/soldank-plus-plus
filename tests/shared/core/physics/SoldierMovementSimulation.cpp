@@ -1,4 +1,5 @@
 #include "SoldierMovementSimulation.hpp"
+#include "core/state/Control.hpp"
 
 namespace SoldankTesting
 {
@@ -30,23 +31,35 @@ SoldierMovementSimulation::SoldierMovementSimulation(const Soldank::IFileReader&
 
 void SoldierMovementSimulation::HoldRight()
 {
-    Soldank::State& state = state_manager_.GetState();
-    auto& current_soldier = *state.soldiers.begin();
-    current_soldier.control.right = true;
+    state_manager_.ChangeSoldierControlActionState(0, Soldank::ControlActionType::MoveRight, true);
 }
 
 void SoldierMovementSimulation::HoldLeft()
 {
-    Soldank::State& state = state_manager_.GetState();
-    auto& current_soldier = *state.soldiers.begin();
-    current_soldier.control.left = true;
+    state_manager_.ChangeSoldierControlActionState(0, Soldank::ControlActionType::MoveLeft, true);
 }
 
 void SoldierMovementSimulation::HoldJump()
 {
-    Soldank::State& state = state_manager_.GetState();
-    auto& current_soldier = *state.soldiers.begin();
-    current_soldier.control.up = true;
+    state_manager_.ChangeSoldierControlActionState(0, Soldank::ControlActionType::Jump, true);
+}
+
+void SoldierMovementSimulation::HoldRightAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::MoveRight, .new_state = true });
+}
+
+void SoldierMovementSimulation::HoldLeftAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::MoveLeft, .new_state = true });
+}
+
+void SoldierMovementSimulation::HoldJumpAt(unsigned int tick)
+{
+    AddControlToChangeAt(tick,
+                         { .control_type = Soldank::ControlActionType::Jump, .new_state = true });
 }
 
 void SoldierMovementSimulation::LookLeft()
@@ -59,6 +72,36 @@ void SoldierMovementSimulation::LookRight()
 {
     is_soldier_looking_left_ = false;
     TurnSoldierRight();
+}
+
+void SoldierMovementSimulation::HoldJetsAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::UseJets, .new_state = true });
+}
+
+void SoldierMovementSimulation::ReleaseRightAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::MoveRight, .new_state = false });
+}
+
+void SoldierMovementSimulation::ReleaseLeftAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::MoveLeft, .new_state = false });
+}
+
+void SoldierMovementSimulation::ReleaseJumpAt(unsigned int tick)
+{
+    AddControlToChangeAt(tick,
+                         { .control_type = Soldank::ControlActionType::Jump, .new_state = false });
+}
+
+void SoldierMovementSimulation::ReleaseJetsAt(unsigned int tick)
+{
+    AddControlToChangeAt(
+      tick, { .control_type = Soldank::ControlActionType::UseJets, .new_state = false });
 }
 
 void SoldierMovementSimulation::AddSoldierExpectedAnimationState(
@@ -88,6 +131,13 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
     Soldank::State& state = state_manager_.GetState();
     auto& current_soldier = *state.soldiers.begin();
     for (unsigned int current_tick = 0; current_tick < ticks_to_run; current_tick++) {
+        if (controls_to_change_at_tick_.contains(current_tick)) {
+            const auto& controls_to_change = controls_to_change_at_tick_.at(current_tick);
+            for (const auto& control_to_change : controls_to_change) {
+                state_manager_.ChangeSoldierControlActionState(
+                  0, control_to_change.control_type, control_to_change.new_state);
+            }
+        }
         if (is_soldier_looking_left_) {
             TurnSoldierLeft();
         } else {
@@ -97,6 +147,7 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
         std::vector<Soldank::BulletParams> bullet_emitter;
         Soldank::SoldierPhysics::Update(
           state, current_soldier, animation_data_manager_, bullet_emitter);
+
         if (animations_to_check_at_tick_.contains(current_tick)) {
             CheckSoldierAnimationStates(current_soldier,
                                         animations_to_check_at_tick_.at(current_tick));
@@ -133,6 +184,16 @@ void SoldierMovementSimulation::CheckSoldierAnimationState(
             break;
         }
     }
+}
+
+void SoldierMovementSimulation::AddControlToChangeAt(unsigned int tick,
+                                                     const ControlToChange& control_to_change)
+{
+    if (!controls_to_change_at_tick_.contains(tick)) {
+        controls_to_change_at_tick_[tick] = {};
+    }
+
+    controls_to_change_at_tick_.at(tick).push_back(control_to_change);
 }
 
 void SoldierMovementSimulation::TurnSoldierLeft()

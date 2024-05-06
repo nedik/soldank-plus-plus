@@ -224,6 +224,7 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .game_tick = game_state.game_tick,
                                 .animation_type = soldier.body_animation.GetType(),
                                 .frame = soldier.body_animation.GetFrame(),
+                                .speed = soldier.body_animation.GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_body_animation = recorded_animations.back();
                             recorded_animations.push_back(
@@ -231,6 +232,7 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .game_tick = game_state.game_tick,
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
+                                .speed = soldier.legs_animation.GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_legs_animation = recorded_animations.back();
                         }
@@ -251,6 +253,7 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .game_tick = game_state.game_tick,
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
+                                .speed = soldier.legs_animation.GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_legs_animation = recorded_animations.back();
                         }
@@ -261,6 +264,7 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .game_tick = game_state.game_tick,
                                 .animation_type = soldier.body_animation.GetType(),
                                 .frame = soldier.body_animation.GetFrame(),
+                                .speed = soldier.body_animation.GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_body_animation = recorded_animations.back();
                         }

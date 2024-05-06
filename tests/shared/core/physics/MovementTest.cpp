@@ -123,6 +123,57 @@ TEST(MovementTest, TestJumpSideLeft)
     simulation.RunFor(10);
 }
 
+TEST(MovementTest, TestLateBackflipLeftLookingRight)
+{
+    SoldankTesting::SoldierMovementSimulation simulation{ FileReaderForTestsWorkingDirectory() };
+    simulation.RunUntilSoldierOnGround();
+    simulation.LookRight();
+    simulation.RunFor(10);
+    simulation.HoldLeft();
+    simulation.HoldJumpAt(1);
+    simulation.HoldJetsAt(32);
+    simulation.ReleaseLeftAt(35);
+    simulation.ReleaseJetsAt(35);
+    simulation.ReleaseJumpAt(35);
+    simulation.AddSoldierExpectedAnimationState(
+      0,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::RunBack,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      1,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      32,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::RollBack,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      32,
+      { .part = SoldankTesting::SoldierAnimationPart::Body,
+        .expected_animation_type = Soldank::AnimationType::RollBack,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      63,
+      { .part = SoldankTesting::SoldierAnimationPart::Body,
+        .expected_animation_type = Soldank::AnimationType::Stand,
+        .expected_frame = 1,
+        .expected_speed = 1 });
+    simulation.AddSoldierExpectedAnimationState(
+      64,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::Fall,
+        .expected_frame = 2,
+        .expected_speed = 1 });
+    simulation.RunFor(10);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
