@@ -1,5 +1,8 @@
 #include "SoldierMovementSimulation.hpp"
 #include "core/state/Control.hpp"
+#include <gtest/gtest.h>
+
+#include <cmath>
 
 namespace SoldankTesting
 {
@@ -130,12 +133,13 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
 {
     Soldank::State& state = state_manager_.GetState();
     auto& current_soldier = *state.soldiers.begin();
+    glm::vec2 soldier_position_origin = current_soldier.particle.position;
     for (unsigned int current_tick = 0; current_tick < ticks_to_run; current_tick++) {
         if (controls_to_change_at_tick_.contains(current_tick)) {
             const auto& controls_to_change = controls_to_change_at_tick_.at(current_tick);
             for (const auto& control_to_change : controls_to_change) {
                 state_manager_.ChangeSoldierControlActionState(
-                  0, control_to_change.control_type, control_to_change.new_state);
+                  current_soldier.id, control_to_change.control_type, control_to_change.new_state);
             }
         }
         if (is_soldier_looking_left_) {
@@ -150,23 +154,26 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
 
         if (animations_to_check_at_tick_.contains(current_tick)) {
             CheckSoldierAnimationStates(current_soldier,
-                                        animations_to_check_at_tick_.at(current_tick));
+                                        animations_to_check_at_tick_.at(current_tick),
+                                        soldier_position_origin);
         }
     }
 }
 
 void SoldierMovementSimulation::CheckSoldierAnimationStates(
   const Soldank::Soldier& soldier,
-  const SoldierExpectedAnimationStates& expected_animation_states)
+  const SoldierExpectedAnimationStates& expected_animation_states,
+  const glm::vec2& soldier_position_origin)
 {
     for (const auto& expected_animation_state : expected_animation_states) {
-        CheckSoldierAnimationState(soldier, expected_animation_state);
+        CheckSoldierAnimationState(soldier, expected_animation_state, soldier_position_origin);
     }
 }
 
 void SoldierMovementSimulation::CheckSoldierAnimationState(
   const Soldank::Soldier& soldier,
-  const SoldierExpectedAnimationState& expected_animation_state)
+  const SoldierExpectedAnimationState& expected_animation_state,
+  const glm::vec2& soldier_position_origin)
 {
     switch (expected_animation_state.part) {
         case SoldierAnimationPart::Legs: {
@@ -184,6 +191,22 @@ void SoldierMovementSimulation::CheckSoldierAnimationState(
             break;
         }
     }
+
+    float soldier_position_diff_from_origin_x =
+      soldier.particle.position.x - soldier_position_origin.x;
+    float soldier_position_diff_from_origin_y =
+      soldier.particle.position.y - soldier_position_origin.y;
+    float expected_position_diff_from_origin_x =
+      expected_animation_state.expected_position_diff_from_origin.x;
+    float expected_position_diff_from_origin_y =
+      expected_animation_state.expected_position_diff_from_origin.y;
+
+    // I think there are some issues with inaccuracy of float so we are rounding so much...
+    // TODO: Look if we can fix it somehow and make it more accurate...
+    EXPECT_LE(std::abs(soldier_position_diff_from_origin_x - expected_position_diff_from_origin_x),
+              1.5);
+    EXPECT_LE(std::abs(soldier_position_diff_from_origin_y - expected_position_diff_from_origin_y),
+              1.5);
 }
 
 void SoldierMovementSimulation::AddControlToChangeAt(unsigned int tick,

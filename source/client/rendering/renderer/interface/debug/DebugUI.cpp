@@ -15,6 +15,7 @@ struct AnimationRecording
     unsigned int frame;
     int speed;
     bool soldier_looking_left;
+    glm::vec2 soldier_position;
 };
 
 struct ActionRecording
@@ -349,7 +350,8 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .animation_type = soldier.body_animation.GetType(),
                                 .frame = soldier.body_animation.GetFrame(),
                                 .speed = soldier.body_animation.GetSpeed(),
-                                .soldier_looking_left = soldier.direction == -1 });
+                                .soldier_looking_left = soldier.direction == -1,
+                                .soldier_position = soldier.particle.position });
                             last_added_body_animation = recorded_animations.back();
                             recorded_animations.push_back(
                               { .is_legs = true,
@@ -357,7 +359,8 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
                                 .speed = soldier.legs_animation.GetSpeed(),
-                                .soldier_looking_left = soldier.direction == -1 });
+                                .soldier_looking_left = soldier.direction == -1,
+                                .soldier_position = soldier.particle.position });
                             last_added_legs_animation = recorded_animations.back();
 
                             last_control = soldier.control;
@@ -383,7 +386,8 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .animation_type = soldier.legs_animation.GetType(),
                                 .frame = soldier.legs_animation.GetFrame(),
                                 .speed = soldier.legs_animation.GetSpeed(),
-                                .soldier_looking_left = soldier.direction == -1 });
+                                .soldier_looking_left = soldier.direction == -1,
+                                .soldier_position = soldier.particle.position });
                             last_added_legs_animation = recorded_animations.back();
                         }
                         if (last_added_body_animation.animation_type !=
@@ -394,7 +398,8 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .animation_type = soldier.body_animation.GetType(),
                                 .frame = soldier.body_animation.GetFrame(),
                                 .speed = soldier.body_animation.GetSpeed(),
-                                .soldier_looking_left = soldier.direction == -1 });
+                                .soldier_looking_left = soldier.direction == -1,
+                                .soldier_position = soldier.particle.position });
                             last_added_body_animation = recorded_animations.back();
                         }
 
@@ -408,13 +413,18 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
         ImGui::Separator();
 
         for (const auto& animation_recording : recorded_animations) {
-            ImGui::Text("%6d - %s %15s %2d %d %s",
+            ImGui::Text("%6d - %s %15s %2d %d %s %.4f %.4f",
                         animation_recording.game_tick - game_tick_when_started_recording,
                         animation_recording.is_legs ? "legs" : "body",
                         AnimationTypeToString(animation_recording.animation_type).c_str(),
                         animation_recording.frame,
                         animation_recording.speed,
-                        animation_recording.soldier_looking_left ? "<" : ">");
+                        animation_recording.soldier_looking_left ? "<" : ">",
+                        // Difference between the start point and current record
+                        animation_recording.soldier_position.x -
+                          recorded_animations.at(0).soldier_position.x,
+                        animation_recording.soldier_position.y -
+                          recorded_animations.at(0).soldier_position.y);
         }
 
         ImGui::End();

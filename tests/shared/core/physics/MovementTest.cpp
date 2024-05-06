@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
+#include <span>
 
 std::filesystem::path test_file_path;
 
@@ -60,7 +61,8 @@ TEST(MovementTest, TestRunBackRight)
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RunBack,
         .expected_frame = 3,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.118F, -0.0795F } });
     simulation.RunFor(10);
 }
 
@@ -76,7 +78,8 @@ TEST(MovementTest, TestRunBackLeft)
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RunBack,
         .expected_frame = 3,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -0.118F, -0.0795F } });
     simulation.RunFor(10);
 }
 
@@ -91,13 +94,15 @@ TEST(MovementTest, TestFallAndJumpSideLeft)
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::Run,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.0F, 0.0F } });
     simulation.AddSoldierExpectedAnimationState(
       3,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::JumpSide,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.0F, 0.0802F } });
     simulation.RunFor(10);
 }
 
@@ -113,13 +118,15 @@ TEST(MovementTest, TestJumpSideLeft)
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::JumpSide,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.0F, 0.0F } });
     simulation.AddSoldierExpectedAnimationState(
       4,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::JumpSide,
         .expected_frame = 6,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -0.3F, -0.1882 } });
     simulation.RunFor(10);
 }
 
@@ -140,45 +147,110 @@ TEST(MovementTest, TestLateBackflipLeftLookingRight)
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RunBack,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.0F, 0.0F } });
     simulation.AddSoldierExpectedAnimationState(
       1,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::JumpSide,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -0.118F, -0.0796F } });
     simulation.AddSoldierExpectedAnimationState(
       32,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::RollBack,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -49.6132F, -17.4393F } });
     simulation.AddSoldierExpectedAnimationState(
       32,
       { .part = SoldankTesting::SoldierAnimationPart::Body,
         .expected_animation_type = Soldank::AnimationType::RollBack,
         .expected_frame = 2,
-        .expected_speed = 1 });
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -49.6132F, -17.4393F } });
     simulation.AddSoldierExpectedAnimationState(
       63,
       { .part = SoldankTesting::SoldierAnimationPart::Body,
         .expected_animation_type = Soldank::AnimationType::Stand,
         .expected_frame = 1,
-        .expected_speed = 1 });
+        .expected_speed = 3,
+        .expected_position_diff_from_origin = { -104.5802F, -11.6236F } });
     simulation.AddSoldierExpectedAnimationState(
       64,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::Fall,
         .expected_frame = 2,
-        .expected_speed = 1 });
-    simulation.RunFor(10);
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -106.9678F, -10.5901F } });
+    simulation.RunFor(70);
+}
+
+TEST(MovementTest, TestCannonballLeftLookingRight)
+{
+    SoldankTesting::SoldierMovementSimulation simulation{ FileReaderForTestsWorkingDirectory() };
+    simulation.RunUntilSoldierOnGround();
+    simulation.LookRight();
+    simulation.RunFor(6);
+    simulation.HoldLeft();
+    simulation.HoldJumpAt(1);
+    simulation.ReleaseJumpAt(14);
+    simulation.HoldJetsAt(12);
+    simulation.ReleaseLeftAt(14);
+    simulation.ReleaseJetsAt(19);
+
+    simulation.AddSoldierExpectedAnimationState(
+      0,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::RunBack,
+        .expected_frame = 2,
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { 0.0F, 0.0F } });
+    simulation.AddSoldierExpectedAnimationState(
+      1,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
+        .expected_frame = 2,
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -0.1181F, -0.0397F } });
+    simulation.AddSoldierExpectedAnimationState(
+      12,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::RollBack,
+        .expected_frame = 2,
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -11.4988F, -6.4523F } });
+    simulation.AddSoldierExpectedAnimationState(
+      12,
+      { .part = SoldankTesting::SoldierAnimationPart::Body,
+        .expected_animation_type = Soldank::AnimationType::RollBack,
+        .expected_frame = 2,
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -11.4988F, -6.4523F } });
+    simulation.AddSoldierExpectedAnimationState(
+      43,
+      { .part = SoldankTesting::SoldierAnimationPart::Body,
+        .expected_animation_type = Soldank::AnimationType::Stand,
+        .expected_frame = 1,
+        .expected_speed = 3,
+        .expected_position_diff_from_origin = { -82.6433F, -23.2963F } });
+    simulation.AddSoldierExpectedAnimationState(
+      44,
+      { .part = SoldankTesting::SoldierAnimationPart::Legs,
+        .expected_animation_type = Soldank::AnimationType::Fall,
+        .expected_frame = 2,
+        .expected_speed = 1,
+        .expected_position_diff_from_origin = { -85.4888F, -22.8577F } });
+    simulation.RunFor(70);
 }
 
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    assert(argc == 1);
-    test_file_path = argv[0];
+    assert(argc >= 1);
+    auto arguments = std::span(argv, argc);
+    test_file_path = arguments[0];
     test_file_path = test_file_path.remove_filename();
     return RUN_ALL_TESTS();
 }

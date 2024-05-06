@@ -22,6 +22,7 @@ struct SoldierExpectedAnimationState
     Soldank::AnimationType expected_animation_type;
     unsigned int expected_frame;
     int expected_speed;
+    glm::vec2 expected_position_diff_from_origin;
 };
 
 struct ControlToChange
@@ -64,11 +65,13 @@ private:
 
     static void CheckSoldierAnimationStates(
       const Soldank::Soldier& soldier,
-      const SoldierExpectedAnimationStates& expected_animation_states);
+      const SoldierExpectedAnimationStates& expected_animation_states,
+      const glm::vec2& soldier_position_origin);
 
     static void CheckSoldierAnimationState(
       const Soldank::Soldier& soldier,
-      const SoldierExpectedAnimationState& expected_animation_state);
+      const SoldierExpectedAnimationState& expected_animation_state,
+      const glm::vec2& soldier_position_origin);
 
     void AddControlToChangeAt(unsigned int tick, const ControlToChange& control_to_change);
 
