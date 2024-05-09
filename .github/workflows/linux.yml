@@ -1,0 +1,43 @@
+name: Linux Debug Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  linux-debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg
+          ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install cmake g++-13 xorg-dev libglu1-mesa-dev
+          
+      - name: Set g++-13 as default
+        run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 --slave /usr/bin/g++ g++ /usr/bin/g++-13
+
+      - name: Configure
+        run: cmake -Bbuild
+
+      - name: Build
+        run: cmake --build build --config Debug -j4
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --build-config Debug
