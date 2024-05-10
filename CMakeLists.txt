@@ -18,6 +18,7 @@ find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
 find_package(PNG REQUIRED)
+find_package(Protobuf REQUIRED)
 
 include(cmake/CPM.cmake)
 
