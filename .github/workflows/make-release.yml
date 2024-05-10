@@ -9,38 +9,98 @@ env:
   CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
-  build-release:
+  linux-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg
+          ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install cmake g++-13 xorg-dev libglu1-mesa-dev
+          
+      - name: Set g++-13 as default
+        run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 --slave /usr/bin/g++ g++ /usr/bin/g++-13
+
+      - name: Configure
+        run: cmake -Bbuild
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Run tests
+        run: ctest --build-config Release --test-dir build
+
+      - name: Prepare Artifact
+        run: |
+          mkdir Soldank++
+          cp build/bin/Release/* Soldank++
+          tar -czvf Soldank++-latest-linux-x64.tar.gz Soldank++
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-release
+          path: Soldank++-latest-linux-x64.tar.gz
+
+  windows-release:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat
 
-      - name: configure
+      - name: Configure
         run: cmake -Bbuild
 
-      - name: build
+      - name: Build
         run: cmake --build build --config Release -j4
 
-      - name: test
+      - name: Run tests
         run: ctest --build-config Release --test-dir build
+
+      - name: Prepare Artifact
+        run: |
+          mkdir Soldank++
+          cp build/bin/Release/* Soldank++
+          Compress-Archive -Path Soldank++ -Destination Soldank++-latest-win32-x64.zip
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: Soldank++-latest-win32-x64.zip
         
-      - name: release
+  upload-release:
+    runs-on: windows-latest
+    needs: [linux-release, windows-release]
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Upload release
         env:
           GH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         run: |
-          Compress-Archive -Path build/bin/Release -Destination release-latest-win32-x64.zip
           if (gh release list | Select-String -Pattern release-latest) {
             echo "Delete release-latest"
             gh release delete release-latest --yes --cleanup-tag
           }
           
           gh release create release-latest `
-            release-latest-win32-x64.zip `
+          windows-release/Soldank++-latest-win32-x64.zip `
+          linux-release/Soldank++-latest-linux-x64.tar.gz `
             --target main `
             --title "Soldank++ latest build" `
             --notes "Soldank++ latest build"
