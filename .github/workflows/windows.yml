@@ -1,4 +1,4 @@
-name: Windows
+name: Windows Debug Test
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
   CTEST_OUTPUT_ON_FAILURE: 1
 
 jobs:
-  build:
+  windows-debug:
     runs-on: windows-latest
 
     steps:
@@ -23,13 +23,13 @@ jobs:
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat
 
-      - name: configure
+      - name: Configure
         run: cmake -Bbuild
 
-      - name: build
+      - name: Build
         run: cmake --build build --config Debug -j4
 
-      - name: test
+      - name: Run tests
         run: |
           cd build
           ctest --build-config Debug
