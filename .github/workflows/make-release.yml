@@ -37,10 +37,15 @@ jobs:
       - name: Run tests
         run: ctest --build-config Release --test-dir build
 
+      - name: Install
+        run: |
+          cmake --build build --target install --config Release
+          cp vcpkg/packages/gamenetworkingsockets_x64-linux/lib/libGameNetworkingSockets.so bin/Release/
+
       - name: Prepare Artifact
         run: |
           mkdir Soldank++
-          cp build/bin/Release/* Soldank++
+          cp bin/Release/* Soldank++
           tar -czvf Soldank++-latest-linux-x64.tar.gz Soldank++
       
       - uses: actions/upload-artifact@v4
