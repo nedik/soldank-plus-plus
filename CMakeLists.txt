@@ -12,7 +12,7 @@ option(BUILD_SERVER_ENABLED "Build server" ON)
 option(BUILD_CLIENT_ENABLED "Build client" ON)
 option(BUILD_TESTS_ENABLED "Build all available tests" ON)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN'")
 
 find_package(GameNetworkingSockets CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -47,7 +47,10 @@ if (BUILD_CLIENT_ENABLED)
         GITHUB_REPOSITORY freetype/freetype
         GIT_TAG VER-2-13-2
         VERSION 2.13.2
-        OPTIONS "FT_DISABLE_HARFBUZZ 1"
+        OPTIONS
+            "FT_DISABLE_HARFBUZZ 1"
+            "FT_DISABLE_BROTLI 1"
+            "SKIP_INSTALL_ALL 1"
     )
     if (freetype_ADDED)
         add_library(Freetype::Freetype ALIAS freetype)
@@ -90,6 +93,7 @@ CPMAddPackage(
         "DAS_PROFILE_DISABLED ON"
         "DAS_TUTORIAL_DISABLED ON"
     URL https://github.com/GaijinEntertainment/daScript/archive/9ae1c4cd73d7da06084aedb5741bb1da68b63b88.tar.gz
+    EXCLUDE_FROM_ALL ON
 )
 endif()
 

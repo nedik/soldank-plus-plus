@@ -3,6 +3,8 @@ build_linux/
 build-linux/
 linux-build/
 
+bin/
+
 .vscode/
 .cache/
 

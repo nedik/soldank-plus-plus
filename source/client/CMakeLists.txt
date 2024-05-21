@@ -53,3 +53,4 @@ target_link_libraries(client PRIVATE GameNetworkingSockets::GameNetworkingSocket
 target_link_libraries(client PRIVATE spdlog::spdlog)
 target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/source/client)
 target_include_directories(client PUBLIC ${CMAKE_SOURCE_DIR}/build/bindings)
+install(TARGETS client DESTINATION ${CMAKE_SOURCE_DIR}/bin/$<CONFIG>)
