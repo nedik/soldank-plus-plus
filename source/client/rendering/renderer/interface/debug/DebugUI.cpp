@@ -1,5 +1,6 @@
 #include "rendering/renderer/interface/debug/DebugUI.hpp"
 
+#include "core/state/Control.hpp"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -14,6 +15,13 @@ struct AnimationRecording
     unsigned int frame;
     int speed;
     bool soldier_looking_left;
+};
+
+struct ActionRecording
+{
+    bool state;
+    ControlActionType action_type;
+    unsigned int game_tick;
 };
 
 std::string AnimationTypeToString(AnimationType animation_type)
@@ -107,6 +115,119 @@ std::string AnimationTypeToString(AnimationType animation_type)
             return "Melee";
         case AnimationType::Own:
             return "Own";
+    }
+}
+
+std::string ControlActionTypeToString(ControlActionType action_type)
+{
+    switch (action_type) {
+        case ControlActionType::ChangeWeapon:
+            return "ChangeWeapon";
+        case ControlActionType::MoveLeft:
+            return "MoveLeft";
+        case ControlActionType::MoveRight:
+            return "MoveRight";
+        case ControlActionType::Jump:
+            return "Jump";
+        case ControlActionType::Crouch:
+            return "Crouch";
+        case ControlActionType::Fire:
+            return "Fire";
+        case ControlActionType::UseJets:
+            return "UseJets";
+        case ControlActionType::ThrowGrenade:
+            return "ThrowGrenade";
+        case ControlActionType::DropWeapon:
+            return "DropWeapon";
+        case ControlActionType::Reload:
+            return "Reload";
+        case ControlActionType::Prone:
+            return "Prone";
+        case ControlActionType::ThrowFlag:
+            return "ThrowFlag";
+    }
+}
+
+bool GetControlActionTypeState(const Control& soldier_control,
+                               ControlActionType control_action_type)
+{
+    switch (control_action_type) {
+        case ControlActionType::MoveLeft:
+            return soldier_control.left;
+        case ControlActionType::MoveRight:
+            return soldier_control.right;
+        case ControlActionType::Jump:
+            return soldier_control.up;
+        case ControlActionType::Crouch:
+            return soldier_control.down;
+        case ControlActionType::Fire:
+            return soldier_control.fire;
+        case ControlActionType::UseJets:
+            return soldier_control.jets;
+        case ControlActionType::ChangeWeapon:
+            return soldier_control.change;
+        case ControlActionType::ThrowGrenade:
+            return soldier_control.throw_grenade;
+        case ControlActionType::DropWeapon:
+            return soldier_control.drop;
+        case ControlActionType::Reload:
+            return soldier_control.reload;
+        case ControlActionType::Prone:
+            return soldier_control.prone;
+        case ControlActionType::ThrowFlag:
+            return soldier_control.flag_throw;
+    }
+}
+
+void AddControlActionTypeIfChanged(const Control& last_control,
+                                   const Control& current_control,
+                                   ControlActionType control_action_type,
+                                   std::vector<ActionRecording>& recorded_actions,
+                                   unsigned int game_tick)
+{
+    bool last_field_state = GetControlActionTypeState(last_control, control_action_type);
+    bool current_field_state = GetControlActionTypeState(current_control, control_action_type);
+    if (last_field_state != current_field_state) {
+        recorded_actions.push_back({ .state = current_field_state,
+                                     .action_type = control_action_type,
+                                     .game_tick = game_tick });
+    }
+}
+
+void AddControlActionTypesIfChanged(const Control& last_control,
+                                    const Control& current_control,
+                                    std::vector<ActionRecording>& recorded_actions,
+                                    unsigned int game_tick)
+{
+    auto all_control_action_types =
+      std::array{ ControlActionType::MoveLeft,     ControlActionType::MoveRight,
+                  ControlActionType::Jump,         ControlActionType::Crouch,
+                  ControlActionType::Fire,         ControlActionType::UseJets,
+                  ControlActionType::ChangeWeapon, ControlActionType::ThrowGrenade,
+                  ControlActionType::DropWeapon,   ControlActionType::Reload,
+                  ControlActionType::Prone,        ControlActionType::ThrowFlag };
+    for (auto control_action_type : all_control_action_types) {
+        AddControlActionTypeIfChanged(
+          last_control, current_control, control_action_type, recorded_actions, game_tick);
+    }
+}
+
+void AddControlActionTypes(const Control& soldier_control,
+                           std::vector<ActionRecording>& recorded_actions,
+                           unsigned int game_tick)
+{
+    auto all_control_action_types =
+      std::array{ ControlActionType::MoveLeft,     ControlActionType::MoveRight,
+                  ControlActionType::Jump,         ControlActionType::Crouch,
+                  ControlActionType::Fire,         ControlActionType::UseJets,
+                  ControlActionType::ChangeWeapon, ControlActionType::ThrowGrenade,
+                  ControlActionType::DropWeapon,   ControlActionType::Reload,
+                  ControlActionType::Prone,        ControlActionType::ThrowFlag };
+    for (auto control_action_type : all_control_action_types) {
+        recorded_actions.push_back(
+          { .state = GetControlActionTypeState(soldier_control, control_action_type),
+            .action_type = control_action_type,
+            .game_tick = game_tick });
     }
 }
 
@@ -211,9 +332,12 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
         static AnimationRecording last_added_body_animation;
         static AnimationRecording last_added_legs_animation;
         static unsigned int game_tick_when_started_recording;
+        static Control last_control;
+        static std::vector<ActionRecording> recorded_actions;
         if (ImGui::Button(recording_started ? "Stop Recording" : "Start Recording")) {
             if (!recording_started) {
                 recorded_animations.clear();
+                recorded_actions.clear();
                 game_tick_when_started_recording = game_state.game_tick;
 
                 if (client_state.client_soldier_id.has_value()) {
@@ -235,6 +359,11 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .speed = soldier.legs_animation.GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_legs_animation = recorded_animations.back();
+
+                            last_control = soldier.control;
+
+                            AddControlActionTypes(
+                              soldier.control, recorded_actions, game_state.game_tick);
                         }
                     }
                 }
@@ -268,6 +397,9 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                                 .soldier_looking_left = soldier.direction == -1 });
                             last_added_body_animation = recorded_animations.back();
                         }
+
+                        AddControlActionTypesIfChanged(
+                          last_control, soldier.control, recorded_actions, game_state.game_tick);
                     }
                 }
             }
@@ -286,6 +418,27 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
         }
 
         ImGui::End();
+
+        ImGui::Begin("Actions Log");
+
+        for (const auto& action : recorded_actions) {
+            ImGui::Text("%6d - %10s %s",
+                        action.game_tick - game_tick_when_started_recording,
+                        ControlActionTypeToString(action.action_type).c_str(),
+                        action.state ? "true" : "false");
+        }
+
+        ImGui::End();
+
+        if (recording_started) {
+            if (client_state.client_soldier_id.has_value()) {
+                for (const auto& soldier : game_state.soldiers) {
+                    if (*client_state.client_soldier_id == soldier.id) {
+                        last_control = soldier.control;
+                    }
+                }
+            }
+        }
     }
 
     ImGui::Render();
