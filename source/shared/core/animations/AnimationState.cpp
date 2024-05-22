@@ -1,5 +1,7 @@
 #include "core/animations/AnimationState.hpp"
 
+#include "core/entities/Soldier.hpp"
+
 #include <utility>
 #include <algorithm>
 
@@ -46,5 +48,14 @@ bool AnimationState::IsAny(const std::vector<AnimationType>& animations) const
     return std::ranges::any_of(animations, [this](AnimationType animation_type) {
         return animation_type == animation_data_->GetAnimationType();
     });
+}
+
+void AnimationState::HandleInput(Soldier& soldier){
+    // TODO: Delete this after migration is finished
+};
+
+void AnimationState::Update(Soldier& soldier)
+{
+    // TODO: Delete this after migration is finished
 }
 } // namespace Soldank

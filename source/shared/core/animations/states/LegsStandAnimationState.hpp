@@ -3,10 +3,23 @@
 
 #include "core/animations/AnimationState.hpp"
 
+#include "core/animations/AnimationData.hpp"
+
 namespace Soldank
 {
-class LegsStandAnimationState : public Soldank::AnimationState
+struct Soldier;
+
+class LegsStandAnimationState final : public Soldank::AnimationState
 {
+public:
+    LegsStandAnimationState(const AnimationDataManager& animation_data_manager);
+    ~LegsStandAnimationState() override = default;
+
+    void HandleInput(Soldier& soldier) final;
+    void Update(Soldier& soldier) final;
+
+private:
+    const AnimationDataManager& animation_data_manager_;
 };
 } // namespace Soldank
 
