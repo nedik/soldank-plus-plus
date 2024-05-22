@@ -1,10 +1,12 @@
-#include <utility>
 
 #include "core/entities/Soldier.hpp"
 
 #include "core/entities/WeaponParametersFactory.hpp"
 #include "core/physics/Particles.hpp"
 #include "core/types/WeaponType.hpp"
+#include "core/animations/states/LegsStandAnimationState.hpp"
+
+#include <utility>
 
 const float GRAV = 0.06F;
 
@@ -42,6 +44,8 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , half_dead(false)
     , skeleton(std::move(skeleton))
     , legs_animation(animation_data_manager.Get(AnimationType::Stand))
+    , legs_animation_state_machine(
+        std::make_unique<LegsStandAnimationState>(animation_data_manager))
     , body_animation(animation_data_manager.Get(AnimationType::Stand))
     , control()
     , active_weapon(0)

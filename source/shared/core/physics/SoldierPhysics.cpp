@@ -117,24 +117,8 @@ void UpdateControl(State& state,
                    const AnimationDataManager& animation_data_manager,
                    std::vector<BulletParams>& bullet_emitter)
 {
-    if (!soldier.control.fire) {
-        soldier.is_shooting = false;
-    }
 
     bool player_pressed_left_right = false;
-
-    if (soldier.legs_animation.GetSpeed() < 1) {
-        soldier.legs_animation.SetSpeed(1);
-    }
-
-    if (soldier.body_animation.GetSpeed() < 1) {
-        soldier.body_animation.SetSpeed(1);
-    }
-
-    soldier.control.mouse_aim_x =
-      (soldier.mouse.x - (float)soldier.game_width / 2.0 + soldier.camera.x);
-    soldier.control.mouse_aim_y =
-      (soldier.mouse.y - (float)soldier.game_height / 2.0 + soldier.camera.y);
 
     auto cleft = soldier.control.left;
     auto cright = soldier.control.right;
@@ -165,53 +149,10 @@ void UpdateControl(State& state,
         soldier.control.was_jumping = soldier.control.up;
     }
 
-    auto conflicting_keys_pressed = [](const Control& c) {
-        return ((int)c.throw_grenade + (int)c.change + (int)c.drop + (int)c.reload) > 1;
-    };
-
-    // Handle simultaneous key presses that would conflict
-    if (conflicting_keys_pressed(soldier.control)) {
-        // At least two buttons pressed, so deactivate any previous one
-        if (soldier.control.was_throwing_grenade) {
-            soldier.control.throw_grenade = false;
-        } else if (soldier.control.was_changing_weapon) {
-            soldier.control.change = false;
-        } else if (soldier.control.was_throwing_weapon) {
-            soldier.control.drop = false;
-        } else if (soldier.control.was_reloading_weapon) {
-            soldier.control.reload = false;
-        }
-
-        // If simultaneously pressing two or more new buttons, then deactivate them
-        // in order of least preference
-        while (conflicting_keys_pressed(soldier.control)) {
-            if (soldier.control.reload) {
-                soldier.control.reload = false;
-            } else if (soldier.control.change) {
-                soldier.control.change = false;
-            } else if (soldier.control.drop) {
-                soldier.control.drop = false;
-            } else if (soldier.control.throw_grenade) {
-                soldier.control.throw_grenade = false;
-            }
-        }
-    } else {
-        soldier.control.was_throwing_grenade = soldier.control.throw_grenade;
-        soldier.control.was_changing_weapon = soldier.control.change;
-        soldier.control.was_throwing_weapon = soldier.control.drop;
-        soldier.control.was_reloading_weapon = soldier.control.reload;
-    }
-
     if (soldier.dead_meat) {
         // TODO: co to free controls?
         // control.free_controls();
     }
-
-    // self.fired = 0;
-    soldier.control.mouse_aim_x =
-      (int)((float)soldier.control.mouse_aim_x + soldier.particle.GetVelocity().x);
-    soldier.control.mouse_aim_y =
-      (int)((float)soldier.control.mouse_aim_y + soldier.particle.GetVelocity().y);
 
     if (soldier.control.jets &&
         (((soldier.legs_animation.GetType() == AnimationType::JumpSide) &&
@@ -1046,7 +987,71 @@ void Update(State& state,
     float arm_s;
 
     soldier.particle.Euler();
-    UpdateControl(state, soldier, animation_data_manager, bullet_emitter);
+
+    if (!soldier.control.fire) {
+        soldier.is_shooting = false;
+    }
+
+    if (soldier.legs_animation.GetSpeed() < 1) {
+        soldier.legs_animation.SetSpeed(1);
+    }
+
+    if (soldier.body_animation.GetSpeed() < 1) {
+        soldier.body_animation.SetSpeed(1);
+    }
+
+    soldier.control.mouse_aim_x =
+      (soldier.mouse.x - (float)soldier.game_width / 2.0 + soldier.camera.x);
+    soldier.control.mouse_aim_y =
+      (soldier.mouse.y - (float)soldier.game_height / 2.0 + soldier.camera.y);
+
+    auto conflicting_keys_pressed = [](const Control& c) {
+        return ((int)c.throw_grenade + (int)c.change + (int)c.drop + (int)c.reload) > 1;
+    };
+
+    // Handle simultaneous key presses that would conflict
+    if (conflicting_keys_pressed(soldier.control)) {
+        // At least two buttons pressed, so deactivate any previous one
+        if (soldier.control.was_throwing_grenade) {
+            soldier.control.throw_grenade = false;
+        } else if (soldier.control.was_changing_weapon) {
+            soldier.control.change = false;
+        } else if (soldier.control.was_throwing_weapon) {
+            soldier.control.drop = false;
+        } else if (soldier.control.was_reloading_weapon) {
+            soldier.control.reload = false;
+        }
+
+        // If simultaneously pressing two or more new buttons, then deactivate them
+        // in order of least preference
+        while (conflicting_keys_pressed(soldier.control)) {
+            if (soldier.control.reload) {
+                soldier.control.reload = false;
+            } else if (soldier.control.change) {
+                soldier.control.change = false;
+            } else if (soldier.control.drop) {
+                soldier.control.drop = false;
+            } else if (soldier.control.throw_grenade) {
+                soldier.control.throw_grenade = false;
+            }
+        }
+    } else {
+        soldier.control.was_throwing_grenade = soldier.control.throw_grenade;
+        soldier.control.was_changing_weapon = soldier.control.change;
+        soldier.control.was_throwing_weapon = soldier.control.drop;
+        soldier.control.was_reloading_weapon = soldier.control.reload;
+    }
+
+    // self.fired = 0;
+    soldier.control.mouse_aim_x =
+      (int)((float)soldier.control.mouse_aim_x + soldier.particle.GetVelocity().x);
+    soldier.control.mouse_aim_y =
+      (int)((float)soldier.control.mouse_aim_y + soldier.particle.GetVelocity().y);
+
+    // UpdateControl(state, soldier, animation_data_manager, bullet_emitter);
+    soldier.legs_animation_state_machine->HandleInput(soldier);
+    soldier.legs_animation_state_machine->Update(soldier);
+    soldier.legs_animation = *soldier.legs_animation_state_machine;
 
     RepositionSoldierSkeletonParts(soldier);
 
@@ -1060,6 +1065,7 @@ void Update(State& state,
     if (!soldier.dead_meat) {
         soldier.body_animation.DoAnimation();
         soldier.legs_animation.DoAnimation();
+        soldier.legs_animation_state_machine->DoAnimation();
 
         soldier.on_ground = false;
 

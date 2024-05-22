@@ -10,10 +10,14 @@
 
 namespace Soldank
 {
+struct Soldier;
+
 class AnimationState
 {
 public:
     AnimationState(std::shared_ptr<const AnimationData> animation_data);
+    AnimationState(const AnimationState& other) = default;
+    virtual ~AnimationState() = default;
 
     void DoAnimation();
     const glm::vec2& GetPosition(unsigned int index) const;
@@ -29,7 +33,10 @@ public:
     void SetFrame(unsigned int new_frame) { frame_ = new_frame; }
     void SetNextFrame() { frame_++; }
 
-private:
+    virtual void HandleInput(Soldier& soldier);
+    virtual void Update(Soldier& soldier);
+
+protected:
     std::shared_ptr<const AnimationData> animation_data_;
 
     int speed_;
