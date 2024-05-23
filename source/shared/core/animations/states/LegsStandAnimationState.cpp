@@ -3,6 +3,7 @@
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
+#include "core/animations/states/LegsJumpAnimationState.hpp"
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
@@ -18,6 +19,10 @@ LegsStandAnimationState::LegsStandAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> LegsStandAnimationState::HandleInput(
   Soldier& soldier)
 {
+    if (soldier.control.up) {
+        return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
+    }
+
     if (soldier.control.left) {
         if (soldier.direction == 1) {
             return std::make_shared<LegsRunBackAnimationState>(
