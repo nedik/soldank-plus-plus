@@ -1,8 +1,10 @@
 #include "core/animations/states/LegsRunAnimationState.hpp"
 
-#include "core/entities/Soldier.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
+#include "core/animations/states/LegsFallAnimationState.hpp"
+
+#include "core/entities/Soldier.hpp"
 
 #include "core/physics/Constants.hpp"
 
@@ -21,7 +23,11 @@ LegsRunAnimationState::LegsRunAnimationState(const AnimationDataManager& animati
 std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInput(Soldier& soldier)
 {
     if (!soldier.control.left && !soldier.control.right) {
-        return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
+        if (soldier.on_ground) {
+            return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
+        }
+
+        return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
 
     if (!was_holding_left_ || !soldier.control.right) {
