@@ -50,7 +50,7 @@ bool AnimationState::IsAny(const std::vector<AnimationType>& animations) const
     });
 }
 
-void AnimationState::HandleInput(Soldier& soldier){
+std::optional<std::shared_ptr<AnimationState>> AnimationState::HandleInput(Soldier& soldier){
     // TODO: Delete this after migration is finished
 };
 

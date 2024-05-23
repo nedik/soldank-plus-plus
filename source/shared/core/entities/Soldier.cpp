@@ -45,7 +45,7 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , skeleton(std::move(skeleton))
     , legs_animation(animation_data_manager.Get(AnimationType::Stand))
     , legs_animation_state_machine(
-        std::make_unique<LegsStandAnimationState>(animation_data_manager))
+        std::make_shared<LegsStandAnimationState>(animation_data_manager))
     , body_animation(animation_data_manager.Get(AnimationType::Stand))
     , control()
     , active_weapon(0)
