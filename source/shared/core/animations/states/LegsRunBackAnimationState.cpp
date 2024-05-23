@@ -4,6 +4,7 @@
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsJumpSideAnimationState.hpp"
+#include "core/animations/states/LegsJumpAnimationState.hpp"
 
 #include "core/physics/Constants.hpp"
 #include "core/entities/Soldier.hpp"
@@ -26,7 +27,16 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunBackAnimationState::Handle
 {
     if (!soldier.control.left && !soldier.control.right) {
         if (soldier.on_ground) {
+            if (soldier.control.up) {
+                return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
+            }
             return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.control.up) {
+            was_holding_right_ = soldier.control.right;
+            was_holding_left_ = soldier.control.left;
+            return std::nullopt;
         }
 
         return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
@@ -58,7 +68,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunBackAnimationState::Handle
 void LegsRunBackAnimationState::Update(Soldier& soldier)
 {
     soldier.stance = 1;
-    if (soldier.direction == 1) {
+    if (soldier.control.left && !soldier.control.up && soldier.direction == 1) {
         glm::vec2 particle_force = soldier.particle.GetForce();
         if (soldier.on_ground) {
             particle_force.x = -PhysicsConstants::RUNSPEED;
@@ -67,7 +77,7 @@ void LegsRunBackAnimationState::Update(Soldier& soldier)
             particle_force.x = -PhysicsConstants::FLYSPEED;
         }
         soldier.particle.SetForce(particle_force);
-    } else {
+    } else if (soldier.control.right && !soldier.control.up && soldier.direction == -1) {
         if (soldier.on_ground) {
             glm::vec2 particle_force = soldier.particle.GetForce();
             particle_force.x = PhysicsConstants::RUNSPEED;
