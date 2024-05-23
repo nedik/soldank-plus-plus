@@ -996,6 +996,10 @@ void Update(State& state,
         soldier.legs_animation.SetSpeed(1);
     }
 
+    if (soldier.legs_animation_state_machine->GetSpeed() < 1) {
+        soldier.legs_animation_state_machine->SetSpeed(1);
+    }
+
     if (soldier.body_animation.GetSpeed() < 1) {
         soldier.body_animation.SetSpeed(1);
     }
