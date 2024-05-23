@@ -2,6 +2,7 @@
 
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
+#include "core/animations/states/LegsFallAnimationState.hpp"
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
@@ -35,6 +36,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsStandAnimationState::HandleIn
 
         return std::make_shared<LegsRunAnimationState>(
           animation_data_manager_, soldier.control.left, soldier.control.right);
+    }
+
+    if (!soldier.on_ground) {
+        return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
     return std::nullopt;
 }
