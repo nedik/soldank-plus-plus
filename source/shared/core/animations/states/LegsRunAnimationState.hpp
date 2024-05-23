@@ -17,7 +17,7 @@ public:
                           bool was_holding_right);
     ~LegsRunAnimationState() override = default;
 
-    void HandleInput(Soldier& soldier) final;
+    std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) final;
     void Update(Soldier& soldier) final;
 
 private:

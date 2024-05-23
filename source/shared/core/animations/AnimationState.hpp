@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <optional>
 
 namespace Soldank
 {
@@ -33,7 +34,7 @@ public:
     void SetFrame(unsigned int new_frame) { frame_ = new_frame; }
     void SetNextFrame() { frame_++; }
 
-    virtual void HandleInput(Soldier& soldier);
+    virtual std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier);
     virtual void Update(Soldier& soldier);
 
 protected:

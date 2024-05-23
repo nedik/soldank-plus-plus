@@ -14,29 +14,29 @@ LegsStandAnimationState::LegsStandAnimationState(const AnimationDataManager& ani
 {
 }
 
-void LegsStandAnimationState::HandleInput(Soldier& soldier)
+std::optional<std::shared_ptr<AnimationState>> LegsStandAnimationState::HandleInput(
+  Soldier& soldier)
 {
     if (soldier.control.left) {
         if (soldier.direction == 1) {
-            soldier.legs_animation_state_machine = std::make_unique<LegsRunBackAnimationState>(
+            return std::make_shared<LegsRunBackAnimationState>(
               animation_data_manager_, soldier.control.left, soldier.control.right);
-            return;
         }
 
-        soldier.legs_animation_state_machine = std::make_unique<LegsRunAnimationState>(
+        return std::make_shared<LegsRunAnimationState>(
           animation_data_manager_, soldier.control.left, soldier.control.right);
-        return;
     }
 
     if (soldier.control.right) {
         if (soldier.direction == -1) {
-            soldier.legs_animation_state_machine = std::make_unique<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
-        } else {
-            soldier.legs_animation_state_machine = std::make_unique<LegsRunAnimationState>(
+            return std::make_shared<LegsRunBackAnimationState>(
               animation_data_manager_, soldier.control.left, soldier.control.right);
         }
+
+        return std::make_shared<LegsRunAnimationState>(
+          animation_data_manager_, soldier.control.left, soldier.control.right);
     }
+    return std::nullopt;
 }
 
 void LegsStandAnimationState::Update(Soldier& soldier)

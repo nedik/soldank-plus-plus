@@ -1049,7 +1049,11 @@ void Update(State& state,
       (int)((float)soldier.control.mouse_aim_y + soldier.particle.GetVelocity().y);
 
     // UpdateControl(state, soldier, animation_data_manager, bullet_emitter);
-    soldier.legs_animation_state_machine->HandleInput(soldier);
+    auto maybe_new_legs_animation_state_machine =
+      soldier.legs_animation_state_machine->HandleInput(soldier);
+    if (maybe_new_legs_animation_state_machine.has_value()) {
+        soldier.legs_animation_state_machine = *maybe_new_legs_animation_state_machine;
+    }
     soldier.legs_animation_state_machine->Update(soldier);
     soldier.legs_animation = *soldier.legs_animation_state_machine;
 

@@ -58,7 +58,7 @@ struct Soldier
     bool half_dead;
     std::shared_ptr<ParticleSystem> skeleton;
     AnimationState legs_animation;
-    std::unique_ptr<AnimationState> legs_animation_state_machine;
+    std::shared_ptr<AnimationState> legs_animation_state_machine;
     AnimationState body_animation;
     Control control;
     std::uint8_t active_weapon;
