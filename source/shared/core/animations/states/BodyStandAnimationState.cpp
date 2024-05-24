@@ -1,5 +1,7 @@
 #include "core/animations/states/BodyStandAnimationState.hpp"
 
+#include "core/animations/states/BodyAimAnimationState.hpp"
+
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/animations/AnimationData.hpp"
@@ -17,6 +19,10 @@ BodyStandAnimationState::BodyStandAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleInput(
   Soldier& soldier)
 {
+    if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
+        return std::make_shared<BodyAimAnimationState>(animation_data_manager_);
+    }
+
     return std::nullopt;
 }
 
