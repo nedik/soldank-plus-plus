@@ -6,6 +6,7 @@
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
+#include "core/animations/states/LegsProneAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -24,6 +25,10 @@ LegsCrouchAnimationState::LegsCrouchAnimationState(
 std::optional<std::shared_ptr<AnimationState>> LegsCrouchAnimationState::HandleInput(
   Soldier& soldier)
 {
+    if (soldier.control.prone) {
+        return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
+    }
+
     if (!soldier.control.down) {
         auto maybe_running_animation_state =
           CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);

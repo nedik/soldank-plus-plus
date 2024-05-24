@@ -5,6 +5,7 @@
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsJumpSideAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
+#include "core/animations/states/LegsProneAnimationState.hpp"
 
 #include "core/entities/Soldier.hpp"
 
@@ -24,6 +25,10 @@ LegsRunAnimationState::LegsRunAnimationState(const AnimationDataManager& animati
 
 std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInput(Soldier& soldier)
 {
+    if (soldier.control.prone) {
+        return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
+    }
+
     if (!soldier.control.left && !soldier.control.right) {
         if (soldier.on_ground) {
             if (soldier.control.up) {

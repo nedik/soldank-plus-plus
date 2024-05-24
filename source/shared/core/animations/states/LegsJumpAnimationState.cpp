@@ -1,10 +1,11 @@
 #include "core/animations/states/LegsJumpAnimationState.hpp"
 
-#include "core/entities/Soldier.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
+#include "core/animations/states/LegsProneAnimationState.hpp"
 
 #include "core/physics/Constants.hpp"
+#include "core/entities/Soldier.hpp"
 
 namespace Soldank
 {
@@ -16,6 +17,10 @@ LegsJumpAnimationState::LegsJumpAnimationState(const AnimationDataManager& anima
 
 std::optional<std::shared_ptr<AnimationState>> LegsJumpAnimationState::HandleInput(Soldier& soldier)
 {
+    if (soldier.control.prone) {
+        return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
+    }
+
     if (!soldier.control.up) {
         if (soldier.on_ground) {
             return std::make_shared<LegsStandAnimationState>(animation_data_manager_);

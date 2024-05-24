@@ -1,11 +1,12 @@
 #include "core/animations/states/LegsFallAnimationState.hpp"
 
-#include "core/entities/Soldier.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
+#include "core/animations/states/LegsProneAnimationState.hpp"
 
 #include "core/physics/Constants.hpp"
+#include "core/entities/Soldier.hpp"
 
 namespace Soldank
 {
@@ -17,6 +18,10 @@ LegsFallAnimationState::LegsFallAnimationState(const AnimationDataManager& anima
 
 std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInput(Soldier& soldier)
 {
+    if (soldier.control.prone) {
+        return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
+    }
+
     if (soldier.control.right) {
         if (soldier.direction == -1) {
             soldier.legs_animation_state_machine = std::make_shared<LegsRunBackAnimationState>(
