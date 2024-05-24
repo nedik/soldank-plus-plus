@@ -5,6 +5,7 @@
 #include "core/physics/Particles.hpp"
 #include "core/types/WeaponType.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
+#include "core/animations/states/BodyStandAnimationState.hpp"
 
 #include <utility>
 
@@ -47,6 +48,8 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , legs_animation_state_machine(
         std::make_shared<LegsStandAnimationState>(animation_data_manager))
     , body_animation(animation_data_manager.Get(AnimationType::Stand))
+    , body_animation_state_machine(
+        std::make_shared<BodyStandAnimationState>(animation_data_manager))
     , control()
     , active_weapon(0)
     , weapons{ initial_weapons }
