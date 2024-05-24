@@ -1,10 +1,13 @@
 #include "core/animations/states/LegsStandAnimationState.hpp"
 
+#include "core/animations/states/LegsCrouchAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
 #include "core/animations/states/LegsJumpSideAnimationState.hpp"
+
+#include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
@@ -20,36 +23,27 @@ LegsStandAnimationState::LegsStandAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> LegsStandAnimationState::HandleInput(
   Soldier& soldier)
 {
-    if (soldier.control.up) {
+    if (soldier.control.up && soldier.on_ground) {
         if (soldier.control.left || soldier.control.right) {
             return std::make_shared<LegsJumpSideAnimationState>(animation_data_manager_);
         }
         return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.control.left) {
-        if (soldier.direction == 1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
-        }
-
-        return std::make_shared<LegsRunAnimationState>(
-          animation_data_manager_, soldier.control.left, soldier.control.right);
-    }
-
-    if (soldier.control.right) {
-        if (soldier.direction == -1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
-        }
-
-        return std::make_shared<LegsRunAnimationState>(
-          animation_data_manager_, soldier.control.left, soldier.control.right);
+    auto maybe_running_animation_state =
+      CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);
+    if (maybe_running_animation_state.has_value()) {
+        return *maybe_running_animation_state;
     }
 
     if (!soldier.on_ground) {
         return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
+
+    if (soldier.control.down) {
+        return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
+    }
+
     return std::nullopt;
 }
 
