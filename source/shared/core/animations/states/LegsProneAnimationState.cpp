@@ -1,11 +1,6 @@
 #include "core/animations/states/LegsProneAnimationState.hpp"
 
-#include "core/animations/states/LegsCrouchRunAnimationState.hpp"
-#include "core/animations/states/LegsStandAnimationState.hpp"
-#include "core/animations/states/LegsFallAnimationState.hpp"
-#include "core/animations/states/LegsRunBackAnimationState.hpp"
-#include "core/animations/states/LegsRunAnimationState.hpp"
-#include "core/animations/states/LegsJumpAnimationState.hpp"
+#include "core/animations/states/LegsGetUpAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -23,6 +18,19 @@ LegsProneAnimationState::LegsProneAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> LegsProneAnimationState::HandleInput(
   Soldier& soldier)
 {
+    // Set old direction when entering state
+    if (GetFrame() == 2) {
+        soldier.old_direction = soldier.direction;
+    }
+
+    if (GetFrame() == GetFramesCount()) {
+        if (soldier.control.prone || soldier.direction != soldier.old_direction) {
+            auto new_state = std::make_shared<LegsGetUpAnimationState>(animation_data_manager_);
+            new_state->SetFrame(9);
+            return new_state;
+        }
+    }
+
     return std::nullopt;
 }
 

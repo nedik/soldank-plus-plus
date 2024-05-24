@@ -18,6 +18,8 @@ LegsFallAnimationState::LegsFallAnimationState(const AnimationDataManager& anima
 
 std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInput(Soldier& soldier)
 {
+    // TODO: Transition from fall to jump when control.up and on_ground
+
     if (soldier.control.prone) {
         return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
     }
