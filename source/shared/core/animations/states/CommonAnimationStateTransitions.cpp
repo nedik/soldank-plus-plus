@@ -1,6 +1,7 @@
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/animations/states/LegsCrouchRunAnimationState.hpp"
+#include "core/animations/states/LegsCrouchRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 
@@ -43,12 +44,16 @@ std::optional<std::shared_ptr<AnimationState>> TryTransitionToCrouchRunning(
         if (soldier.direction == 1) {
             return std::make_shared<LegsCrouchRunAnimationState>(animation_data_manager);
         }
+
+        return std::make_shared<LegsCrouchRunBackAnimationState>(animation_data_manager);
     }
 
     if (soldier.control.left) {
         if (soldier.direction == -1) {
             return std::make_shared<LegsCrouchRunAnimationState>(animation_data_manager);
         }
+
+        return std::make_shared<LegsCrouchRunBackAnimationState>(animation_data_manager);
     }
 
     return std::nullopt;
