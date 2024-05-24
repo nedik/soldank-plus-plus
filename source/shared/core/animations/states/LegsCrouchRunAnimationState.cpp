@@ -1,6 +1,6 @@
-#include "core/animations/states/LegsCrouchAnimationState.hpp"
-
 #include "core/animations/states/LegsCrouchRunAnimationState.hpp"
+
+#include "core/animations/states/LegsCrouchAnimationState.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
@@ -14,14 +14,14 @@
 
 namespace Soldank
 {
-LegsCrouchAnimationState::LegsCrouchAnimationState(
+LegsCrouchRunAnimationState::LegsCrouchRunAnimationState(
   const AnimationDataManager& animation_data_manager)
-    : AnimationState(animation_data_manager.Get(AnimationType::Crouch))
+    : AnimationState(animation_data_manager.Get(AnimationType::CrouchRun))
     , animation_data_manager_(animation_data_manager)
 {
 }
 
-std::optional<std::shared_ptr<AnimationState>> LegsCrouchAnimationState::HandleInput(
+std::optional<std::shared_ptr<AnimationState>> LegsCrouchRunAnimationState::HandleInput(
   Soldier& soldier)
 {
     if (!soldier.control.down) {
@@ -38,22 +38,29 @@ std::optional<std::shared_ptr<AnimationState>> LegsCrouchAnimationState::HandleI
         return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.control.up && soldier.on_ground) {
-        return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
-    }
-
-    auto maybe_crouch_running_animation_state =
-      CommonAnimationStateTransitions::TryTransitionToCrouchRunning(soldier,
-                                                                    animation_data_manager_);
-    if (maybe_crouch_running_animation_state.has_value()) {
-        return *maybe_crouch_running_animation_state;
+    if (!soldier.control.left && !soldier.control.right) {
+        return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
     }
 
     return std::nullopt;
 }
 
-void LegsCrouchAnimationState::Update(Soldier& soldier)
+void LegsCrouchRunAnimationState::Update(Soldier& soldier)
 {
     soldier.stance = PhysicsConstants::STANCE_CROUCH;
+    if (soldier.legs_animation.GetSpeed() > 2) {
+        soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
+        soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
+    }
+
+    if (soldier.on_ground) {
+        if (soldier.control.right && soldier.direction == 1) {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            soldier.particle.SetForce({ PhysicsConstants::CROUCHRUNSPEED, particle_force.y });
+        } else if (soldier.control.left && soldier.direction == -1) {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            soldier.particle.SetForce({ -PhysicsConstants::CROUCHRUNSPEED, particle_force.y });
+        }
+    }
 }
 } // namespace Soldank
