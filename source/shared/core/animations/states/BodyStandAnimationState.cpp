@@ -1,6 +1,7 @@
 #include "core/animations/states/BodyStandAnimationState.hpp"
 
 #include "core/animations/states/BodyAimAnimationState.hpp"
+#include "core/animations/states/BodyProneAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -21,6 +22,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleIn
 {
     if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
         return std::make_shared<BodyAimAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.stance == PhysicsConstants::STANCE_PRONE) {
+        return std::make_shared<BodyProneAnimationState>(animation_data_manager_);
     }
 
     return std::nullopt;

@@ -1,6 +1,7 @@
 #include "core/animations/states/BodyAimAnimationState.hpp"
 
 #include "core/animations/states/BodyStandAnimationState.hpp"
+#include "core/animations/states/BodyProneAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -20,6 +21,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyAimAnimationState::HandleInpu
 {
     if (soldier.stance == PhysicsConstants::STANCE_STAND) {
         return std::make_shared<BodyStandAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.stance == PhysicsConstants::STANCE_PRONE) {
+        return std::make_shared<BodyProneAnimationState>(animation_data_manager_);
     }
 
     return std::nullopt;
