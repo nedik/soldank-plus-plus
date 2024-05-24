@@ -60,6 +60,7 @@ struct Soldier
     AnimationState legs_animation;
     std::shared_ptr<AnimationState> legs_animation_state_machine;
     AnimationState body_animation;
+    std::shared_ptr<AnimationState> body_animation_state_machine;
     Control control;
     std::uint8_t active_weapon;
     std::vector<Weapon> weapons;
