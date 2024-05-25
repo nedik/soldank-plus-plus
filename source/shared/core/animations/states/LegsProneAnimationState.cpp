@@ -1,6 +1,7 @@
 #include "core/animations/states/LegsProneAnimationState.hpp"
 
 #include "core/animations/states/LegsGetUpAnimationState.hpp"
+#include "core/animations/states/LegsProneMoveAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -21,6 +22,12 @@ std::optional<std::shared_ptr<AnimationState>> LegsProneAnimationState::HandleIn
     // Set old direction when entering state
     if (GetFrame() == 2) {
         soldier.old_direction = soldier.direction;
+    }
+
+    if (GetFrame() > 25 && soldier.on_ground) {
+        if (soldier.control.left || soldier.control.right) {
+            return std::make_shared<LegsProneMoveAnimationState>(animation_data_manager_);
+        }
     }
 
     if (GetFrame() == GetFramesCount()) {
