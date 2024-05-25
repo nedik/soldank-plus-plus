@@ -4,6 +4,8 @@
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsProneAnimationState.hpp"
 
+#include "core/animations/states/CommonAnimationStateTransitions.hpp"
+
 #include "core/physics/Constants.hpp"
 #include "core/entities/Soldier.hpp"
 
@@ -38,6 +40,15 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpAnimationState::HandleInp
             }
 
             return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.on_ground) {
+            auto maybe_running_animation_state =
+              CommonAnimationStateTransitions::TryTransitionToRunning(soldier,
+                                                                      animation_data_manager_);
+            if (maybe_running_animation_state.has_value()) {
+                return *maybe_running_animation_state;
+            }
         }
     }
     return std::nullopt;
