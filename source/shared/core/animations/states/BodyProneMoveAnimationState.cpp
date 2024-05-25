@@ -2,6 +2,7 @@
 
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
+#include "core/animations/states/BodyRollAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -25,6 +26,16 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneMoveAnimationState::Hand
         auto new_state = std::make_shared<BodyProneAnimationState>(animation_data_manager_);
         new_state->SetFrame(26);
         return new_state;
+    }
+
+    if (soldier.on_ground) {
+        if (soldier.control.down && soldier.control.left && soldier.direction == -1) {
+            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.control.down && soldier.control.right && soldier.direction == 1) {
+            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+        }
     }
 
     if (soldier.control.prone || soldier.direction != soldier.old_direction) {

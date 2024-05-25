@@ -24,6 +24,14 @@ std::optional<std::shared_ptr<AnimationState>> LegsProneAnimationState::HandleIn
         soldier.old_direction = soldier.direction;
     }
 
+    if (GetFrame() >= 24 && soldier.on_ground) {
+        auto maybe_rolling_animation_state =
+          CommonAnimationStateTransitions::TryTransitionToRolling(soldier, animation_data_manager_);
+        if (maybe_rolling_animation_state.has_value()) {
+            return *maybe_rolling_animation_state;
+        }
+    }
+
     if (GetFrame() > 25 && soldier.on_ground) {
         if (soldier.control.left || soldier.control.right) {
             return std::make_shared<LegsProneMoveAnimationState>(animation_data_manager_);

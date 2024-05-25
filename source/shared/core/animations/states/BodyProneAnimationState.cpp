@@ -2,6 +2,7 @@
 
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 #include "core/animations/states/BodyProneMoveAnimationState.hpp"
+#include "core/animations/states/BodyRollAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -24,6 +25,16 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
         auto new_state = std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
         new_state->SetFrame(9);
         return new_state;
+    }
+
+    if (GetFrame() >= 23 && soldier.on_ground) {
+        if (soldier.control.down && soldier.control.left && soldier.direction == -1) {
+            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.control.down && soldier.control.right && soldier.direction == 1) {
+            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+        }
     }
 
     if (soldier.legs_animation.GetFrame() > 25 && soldier.on_ground) {

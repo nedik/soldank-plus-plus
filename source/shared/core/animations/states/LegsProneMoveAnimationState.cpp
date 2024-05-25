@@ -26,6 +26,14 @@ std::optional<std::shared_ptr<AnimationState>> LegsProneMoveAnimationState::Hand
         return new_state;
     }
 
+    if (soldier.on_ground) {
+        auto maybe_rolling_animation_state =
+          CommonAnimationStateTransitions::TryTransitionToRolling(soldier, animation_data_manager_);
+        if (maybe_rolling_animation_state.has_value()) {
+            return *maybe_rolling_animation_state;
+        }
+    }
+
     if (soldier.control.prone || soldier.direction != soldier.old_direction) {
         auto new_state = std::make_shared<LegsGetUpAnimationState>(animation_data_manager_);
         new_state->SetFrame(9);

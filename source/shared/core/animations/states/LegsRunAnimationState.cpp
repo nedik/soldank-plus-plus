@@ -1,11 +1,14 @@
 #include "core/animations/states/LegsRunAnimationState.hpp"
 
+#include "core/animations/states/LegsRollAnimationState.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsJumpSideAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
 #include "core/animations/states/LegsProneAnimationState.hpp"
+
+#include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/entities/Soldier.hpp"
 
@@ -61,6 +64,14 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInpu
         if (soldier.control.right && soldier.direction == -1) {
             return std::make_shared<LegsRunBackAnimationState>(
               animation_data_manager_, soldier.control.left, soldier.control.right);
+        }
+    }
+
+    if (soldier.on_ground) {
+        auto maybe_rolling_animation_state =
+          CommonAnimationStateTransitions::TryTransitionToRolling(soldier, animation_data_manager_);
+        if (maybe_rolling_animation_state.has_value()) {
+            return *maybe_rolling_animation_state;
         }
     }
 
