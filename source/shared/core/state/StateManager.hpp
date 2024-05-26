@@ -16,8 +16,8 @@ public:
     void ChangeSoldierControlActionState(std::uint8_t soldier_id,
                                          ControlActionType control_action_type,
                                          bool new_state);
-
     void ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2 new_mouse_position);
+    void SwitchSoldierWeapon(std::uint8_t soldier_id);
 
 private:
     Soldier& GetSoldierRef(std::uint8_t soldier_id);

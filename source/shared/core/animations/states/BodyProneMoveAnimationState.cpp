@@ -79,6 +79,4 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneMoveAnimationState::Hand
 
     return std::nullopt;
 }
-
-void BodyProneMoveAnimationState::Update(Soldier& soldier) {}
 } // namespace Soldank

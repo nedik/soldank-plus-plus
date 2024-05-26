@@ -12,6 +12,7 @@
 namespace Soldank
 {
 struct Soldier;
+struct PhysicsEvents;
 
 class AnimationState
 {
@@ -36,7 +37,7 @@ public:
 
     virtual void Enter(Soldier& soldier);
     virtual std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier);
-    virtual void Update(Soldier& soldier);
+    virtual void Update(Soldier& soldier, const PhysicsEvents& physics_events);
 
 protected:
     std::shared_ptr<const AnimationData> animation_data_;

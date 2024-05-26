@@ -4,6 +4,7 @@
 #include "core/animations/AnimationData.hpp"
 #include "core/math/Glm.hpp"
 #include "core/physics/Particles.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 #include "core/state/Control.hpp"
 #include "core/state/State.hpp"
 #include "core/entities/Weapon.hpp"
@@ -38,6 +39,7 @@ void UpdateControl(State& state,
                    std::vector<BulletParams>& bullet_emitter);
 void Update(State& state,
             Soldier& soldier,
+            const PhysicsEvents& physics_events,
             const AnimationDataManager& animation_data_manager,
             std::vector<BulletParams>& bullet_emitter);
 

@@ -10,6 +10,7 @@
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 #include "core/physics/Constants.hpp"
 
 namespace Soldank
@@ -59,10 +60,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyChangeAnimationState::HandleI
     return std::nullopt;
 }
 
-void BodyChangeAnimationState::Update(Soldier& soldier)
+void BodyChangeAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     if (GetFrame() == 25) {
-        // SwitchWeapon(soldier);
+        physics_events.soldier_switches_weapon.Notify(soldier);
     }
 }
 } // namespace Soldank

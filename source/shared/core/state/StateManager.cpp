@@ -60,6 +60,19 @@ void StateManager::ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2
       soldier.particle.position.y - (float)((480.0F - soldier.mouse.y) - (soldier.game_height / 2));
 }
 
+void StateManager::SwitchSoldierWeapon(std::uint8_t soldier_id)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    int new_active_weapon = (soldier.active_weapon + 1) % 2;
+    soldier.active_weapon = new_active_weapon;
+    // weapons[new_active_weapon].start_up_time_count =
+    //   weapons[new_active_weapon].GetWeaponParameters().start_up_time;
+    soldier.weapons[new_active_weapon].ResetStartUpTimeCount();
+    // weapons[new_active_weapon].reload_time_prev = weapons[new_active_weapon].reload_time_count;
+    soldier.weapons[new_active_weapon].SetReloadTimePrev(
+      soldier.weapons[new_active_weapon].GetReloadTimeCount());
+}
+
 Soldier& StateManager::GetSoldierRef(std::uint8_t soldier_id)
 {
     for (auto& soldier : state_.soldiers) {

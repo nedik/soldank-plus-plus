@@ -57,7 +57,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsCrouchAnimationState::HandleI
     return std::nullopt;
 }
 
-void LegsCrouchAnimationState::Update(Soldier& soldier)
+void LegsCrouchAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     soldier.stance = PhysicsConstants::STANCE_CROUCH;
 }

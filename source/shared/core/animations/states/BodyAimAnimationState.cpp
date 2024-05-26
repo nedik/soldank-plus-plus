@@ -55,6 +55,4 @@ std::optional<std::shared_ptr<AnimationState>> BodyAimAnimationState::HandleInpu
 
     return std::nullopt;
 }
-
-void BodyAimAnimationState::Update(Soldier& soldier) {}
 } // namespace Soldank

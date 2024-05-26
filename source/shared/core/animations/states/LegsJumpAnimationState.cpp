@@ -54,9 +54,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpAnimationState::HandleInp
     return std::nullopt;
 }
 
-void LegsJumpAnimationState::Update(Soldier& soldier)
+void LegsJumpAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
+
     if ((GetFrame() > 8) && (GetFrame() < 15)) {
         glm::vec particle_force = soldier.particle.GetForce();
         particle_force.y = -PhysicsConstants::JUMPSPEED;

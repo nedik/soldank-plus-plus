@@ -9,6 +9,7 @@ namespace Soldank
 struct PhysicsEvents
 {
     Observable<Soldier&, float /* damage */> soldier_hit_by_bullet;
+    Observable<Soldier&> soldier_switches_weapon;
 };
 } // namespace Soldank
 

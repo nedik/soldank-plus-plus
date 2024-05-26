@@ -59,7 +59,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInp
     return std::nullopt;
 }
 
-void LegsFallAnimationState::Update(Soldier& soldier)
+void LegsFallAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
 }

@@ -129,8 +129,11 @@ void World::Update(double /*delta_time*/)
             }
 
             if (should_update_current_soldier) {
-                SoldierPhysics::Update(
-                  state_manager_->GetState(), soldier, animation_data_manager_, bullet_emitter);
+                SoldierPhysics::Update(state_manager_->GetState(),
+                                       soldier,
+                                       *physics_events_,
+                                       animation_data_manager_,
+                                       bullet_emitter);
                 if (soldier.dead_meat) {
                     soldier.ticks_to_respawn--;
                     if (soldier.ticks_to_respawn <= 0) {
@@ -164,8 +167,11 @@ void World::UpdateSoldier(unsigned int soldier_id)
 
     for (auto& soldier : state_manager_->GetState().soldiers) {
         if (soldier.active && soldier.id == soldier_id) {
-            SoldierPhysics::Update(
-              state_manager_->GetState(), soldier, animation_data_manager_, bullet_emitter);
+            SoldierPhysics::Update(state_manager_->GetState(),
+                                   soldier,
+                                   *physics_events_,
+                                   animation_data_manager_,
+                                   bullet_emitter);
         }
     }
 }

@@ -59,7 +59,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsCrouchRunBackAnimationState::
     return std::nullopt;
 }
 
-void LegsCrouchRunBackAnimationState::Update(Soldier& soldier)
+void LegsCrouchRunBackAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     soldier.stance = PhysicsConstants::STANCE_CROUCH;
 

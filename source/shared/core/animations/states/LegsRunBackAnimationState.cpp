@@ -80,9 +80,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunBackAnimationState::Handle
     return std::nullopt;
 }
 
-void LegsRunBackAnimationState::Update(Soldier& soldier)
+void LegsRunBackAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
-    soldier.stance = 1;
+    soldier.stance = PhysicsConstants::STANCE_STAND;
+
     if (soldier.control.left && !soldier.control.up && soldier.direction == 1) {
         glm::vec2 particle_force = soldier.particle.GetForce();
         if (soldier.on_ground) {
