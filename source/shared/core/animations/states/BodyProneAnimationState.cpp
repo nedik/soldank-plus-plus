@@ -1,5 +1,6 @@
 #include "core/animations/states/BodyProneAnimationState.hpp"
 
+#include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 #include "core/animations/states/BodyProneMoveAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
@@ -22,11 +23,6 @@ BodyProneAnimationState::BodyProneAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleInput(
   Soldier& soldier)
 {
-    if (soldier.stance == PhysicsConstants::STANCE_STAND) {
-        auto new_state = std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
-        new_state->SetFrame(9);
-        return new_state;
-    }
 
     if (GetFrame() >= 23 && soldier.on_ground) {
         if (soldier.control.down && soldier.control.left && soldier.direction == -1) {
@@ -44,6 +40,16 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
         if (soldier.control.down && soldier.control.right && soldier.direction == -1) {
             return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
         }
+    }
+
+    if (soldier.control.change) {
+        return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.stance == PhysicsConstants::STANCE_STAND) {
+        auto new_state = std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
+        new_state->SetFrame(9);
+        return new_state;
     }
 
     if (soldier.legs_animation.GetFrame() > 25 && soldier.on_ground) {

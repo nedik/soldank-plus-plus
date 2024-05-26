@@ -1,6 +1,7 @@
 #include "core/animations/states/BodyStandAnimationState.hpp"
 
 #include "core/animations/states/BodyAimAnimationState.hpp"
+#include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
 #include "core/animations/states/BodyRollBackAnimationState.hpp"
@@ -28,6 +29,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleIn
 
     if (soldier.legs_animation_state_machine->GetType() == AnimationType::RollBack) {
         return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.control.change) {
+        return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
     }
 
     if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
