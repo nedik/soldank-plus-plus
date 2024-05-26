@@ -33,6 +33,17 @@ std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleIn
         return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
     }
 
+    // Prone cancelling
+    if (soldier.control.throw_grenade) {
+        soldier.grenade_can_throw = true;
+        auto maybe_throw_grenade_animation_state =
+          CommonAnimationStateTransitions::TryTransitionToThrowingGrenade(soldier,
+                                                                          animation_data_manager_);
+        if (maybe_throw_grenade_animation_state.has_value()) {
+            return *maybe_throw_grenade_animation_state;
+        }
+    }
+
     if (GetFrame() == GetFramesCount()) {
         if (soldier.stance == PhysicsConstants::STANCE_STAND) {
             return std::make_shared<BodyStandAnimationState>(animation_data_manager_);
