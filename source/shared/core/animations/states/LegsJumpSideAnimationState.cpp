@@ -32,7 +32,8 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
 
     if (soldier.control.jets) {
         if (soldier.control.up || soldier.control.down) {
-            if (soldier.control.left || soldier.control.right) {
+            if ((soldier.control.left && soldier.direction == 1) ||
+                (soldier.control.right && soldier.direction == -1)) {
                 return std::make_shared<LegsRollBackAnimationState>(animation_data_manager_);
             }
         }
