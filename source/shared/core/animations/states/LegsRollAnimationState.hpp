@@ -15,6 +15,7 @@ public:
     LegsRollAnimationState(const AnimationDataManager& animation_data_manager);
     ~LegsRollAnimationState() override = default;
 
+    void Enter(Soldier& soldier) final;
     std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) final;
     void Update(Soldier& soldier) final;
 
