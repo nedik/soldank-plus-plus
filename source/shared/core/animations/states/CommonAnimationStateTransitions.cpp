@@ -2,6 +2,7 @@
 
 #include "core/animations/states/LegsCrouchRunAnimationState.hpp"
 #include "core/animations/states/LegsCrouchRunBackAnimationState.hpp"
+#include "core/animations/states/LegsRollBackAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsRollAnimationState.hpp"
@@ -70,6 +71,14 @@ std::optional<std::shared_ptr<AnimationState>> TryTransitionToRolling(
 
     if (soldier.control.down && soldier.control.right && soldier.direction == 1) {
         return std::make_shared<LegsRollAnimationState>(animation_data_manager);
+    }
+
+    if (soldier.control.down && soldier.control.left && soldier.direction == 1) {
+        return std::make_shared<LegsRollBackAnimationState>(animation_data_manager);
+    }
+
+    if (soldier.control.down && soldier.control.right && soldier.direction == -1) {
+        return std::make_shared<LegsRollBackAnimationState>(animation_data_manager);
     }
 
     return std::nullopt;
