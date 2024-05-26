@@ -2,6 +2,7 @@
 
 #include "core/animations/states/BodyAimAnimationState.hpp"
 #include "core/animations/states/BodyChangeAnimationState.hpp"
+#include "core/animations/states/BodyGetUpAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
 #include "core/animations/states/BodyRollBackAnimationState.hpp"
@@ -37,6 +38,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowAnimationState::HandleIn
 
     if (soldier.legs_animation_state_machine->GetType() == AnimationType::RollBack) {
         return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+    }
+
+    // Prone cancelling
+    if (soldier.legs_animation_state_machine->GetType() == AnimationType::GetUp) {
+        auto new_state = std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
+        new_state->SetFrame(9);
+        return new_state;
     }
 
     if (soldier.control.change) {
