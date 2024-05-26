@@ -4,6 +4,7 @@
 #include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyStandAnimationState.hpp"
 #include "core/animations/states/BodyAimAnimationState.hpp"
+#include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -25,6 +26,11 @@ std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleIn
 {
     if (soldier.control.change) {
         return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.control.drop &&
+        soldier.weapons[0].GetWeaponParameters().kind != WeaponType::NoWeapon) {
+        return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
     }
 
     if (GetFrame() == GetFramesCount()) {

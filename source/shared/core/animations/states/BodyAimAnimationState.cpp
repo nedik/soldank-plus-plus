@@ -1,7 +1,9 @@
 #include "core/animations/states/BodyAimAnimationState.hpp"
 
+#include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyStandAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
+#include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
 
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
@@ -19,6 +21,15 @@ BodyAimAnimationState::BodyAimAnimationState(const AnimationDataManager& animati
 
 std::optional<std::shared_ptr<AnimationState>> BodyAimAnimationState::HandleInput(Soldier& soldier)
 {
+    if (soldier.control.change) {
+        return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
+    }
+
+    if (soldier.control.drop &&
+        soldier.weapons[0].GetWeaponParameters().kind != WeaponType::NoWeapon) {
+        return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
+    }
+
     if (soldier.stance == PhysicsConstants::STANCE_STAND) {
         return std::make_shared<BodyStandAnimationState>(animation_data_manager_);
     }
