@@ -1,5 +1,6 @@
 #include "core/animations/states/LegsFallAnimationState.hpp"
 
+#include "core/animations/states/LegsCrouchRunAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
@@ -46,6 +47,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInp
     if (soldier.on_ground) {
         if (soldier.control.up) {
             return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.control.down) {
+            return std::make_shared<LegsCrouchRunAnimationState>(animation_data_manager_);
         }
 
         return std::make_shared<LegsStandAnimationState>(animation_data_manager_);

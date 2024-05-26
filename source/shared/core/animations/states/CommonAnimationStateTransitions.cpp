@@ -1,5 +1,6 @@
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
+#include "core/animations/states/BodyThrowAnimationState.hpp"
 #include "core/animations/states/LegsCrouchRunAnimationState.hpp"
 #include "core/animations/states/LegsCrouchRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRollBackAnimationState.hpp"
@@ -8,6 +9,7 @@
 #include "core/animations/states/LegsRollAnimationState.hpp"
 
 #include "core/entities/Soldier.hpp"
+#include <optional>
 
 namespace Soldank::CommonAnimationStateTransitions
 {
@@ -79,6 +81,21 @@ std::optional<std::shared_ptr<AnimationState>> TryTransitionToRolling(
 
     if (soldier.control.down && soldier.control.right && soldier.direction == -1) {
         return std::make_shared<LegsRollBackAnimationState>(animation_data_manager);
+    }
+
+    return std::nullopt;
+}
+
+std::optional<std::shared_ptr<AnimationState>> TryTransitionToThrowingGrenade(
+  Soldier& soldier,
+  const AnimationDataManager& animation_data_manager)
+{
+    if (!soldier.control.throw_grenade) {
+        soldier.grenade_can_throw = true;
+    }
+
+    if (soldier.grenade_can_throw && soldier.control.throw_grenade) {
+        return std::make_shared<BodyThrowAnimationState>(animation_data_manager);
     }
 
     return std::nullopt;
