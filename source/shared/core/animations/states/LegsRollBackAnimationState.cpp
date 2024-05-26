@@ -46,6 +46,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsRollBackAnimationState::Handl
             return *maybe_crouch_run_animation_state;
         }
 
+        if (soldier.control.down) {
+            return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
+        }
+
         auto maybe_running_animation_state =
           CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);
         if (maybe_running_animation_state.has_value()) {
@@ -87,6 +91,20 @@ void LegsRollBackAnimationState::Update(Soldier& soldier)
         glm::vec2 particle_force = soldier.particle.GetForce();
         soldier.particle.SetForce(
           { -(float)soldier.direction * 2.0F * PhysicsConstants::FLYSPEED, particle_force.y });
+    }
+
+    if ((soldier.legs_animation.GetFrame() > 1) && (soldier.legs_animation.GetFrame() < 8)) {
+        // so apparently in soldat there's no difference between a RollBack and a backflip
+        // if you press W during a Rollback in those frames then it pushes you up and therefore
+        // it turns into a backflip. That's how also cannonballs works, if we release W fast enough,
+        // it will turn into a RollBack
+        if (soldier.control.up) {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            particle_force.y -= PhysicsConstants::JUMPDIRSPEED * 1.5F;
+            particle_force.x *= 0.5;
+            soldier.particle.SetForce(particle_force);
+            soldier.particle.velocity_.x *= 0.8;
+        }
     }
 }
 } // namespace Soldank
