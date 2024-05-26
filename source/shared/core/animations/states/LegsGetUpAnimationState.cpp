@@ -22,8 +22,7 @@ LegsGetUpAnimationState::LegsGetUpAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleInput(
   Soldier& soldier)
 {
-    // Check for control.throw_grenade is for prone cancelling in this whole method
-    if (soldier.control.throw_grenade || GetFrame() == GetFramesCount()) {
+    if (ShouldCancelAnimation(soldier) || GetFrame() == GetFramesCount()) {
         if (soldier.on_ground) {
             return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
         }
@@ -33,7 +32,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleIn
 
     // Immediately switch from unprone to jump/sidejump, because the end of the
     // unprone animation can be seen as the "wind up" for the jump
-    if (soldier.control.throw_grenade || (GetFrame() > 20 && soldier.on_ground)) {
+    if (ShouldCancelAnimation(soldier) || (GetFrame() > 20 && soldier.on_ground)) {
         if (soldier.control.up) {
             if (soldier.control.left || soldier.control.right) {
                 // Set sidejump frame 1 to 4 depending on which unprone frame we're in
@@ -50,7 +49,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleIn
             new_state->SetFrame(id);
             return new_state;
         }
-    } else if (soldier.control.throw_grenade || GetFrame() > 23) {
+    } else if (ShouldCancelAnimation(soldier) || GetFrame() > 23) {
         auto maybe_running_animation_state =
           CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);
         if (maybe_running_animation_state.has_value()) {
@@ -68,5 +67,21 @@ std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleIn
 void LegsGetUpAnimationState::Update(Soldier& soldier)
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
+}
+
+bool LegsGetUpAnimationState::ShouldCancelAnimation(const Soldier& soldier)
+{
+    if (soldier.control.throw_grenade) {
+        return true;
+    }
+
+    if (soldier.control.fire &&
+        (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::NoWeapon ||
+         soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife)) {
+        return true;
+    }
+
+    return false;
 }
 } // namespace Soldank

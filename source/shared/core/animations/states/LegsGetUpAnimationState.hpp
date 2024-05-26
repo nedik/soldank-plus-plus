@@ -19,6 +19,13 @@ public:
     void Update(Soldier& soldier) final;
 
 private:
+    /*
+    This method is used for the so called "prone cancelling".
+    It's a trick in Soldank++ to skip GetUp animation.
+    The main benefit is not to break momentum when running around
+    */
+    static bool ShouldCancelAnimation(const Soldier& soldier);
+
     const AnimationDataManager& animation_data_manager_;
 };
 } // namespace Soldank
