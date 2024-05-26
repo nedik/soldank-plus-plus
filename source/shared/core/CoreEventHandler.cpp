@@ -1,6 +1,7 @@
 #include "core/CoreEventHandler.hpp"
 
 #include "spdlog/spdlog.h"
+#include <utility>
 
 namespace Soldank
 {
@@ -30,5 +31,14 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
               world->KillSoldier(soldier.id);
           }
       });
+    world->GetPhysicsEvents().soldier_switches_weapon.AddObserver([world](Soldier& soldier) {
+        spdlog::debug(
+          "soldier {} switched weapon from {} to {}",
+          soldier.id,
+          std::to_underlying(soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind),
+          std::to_underlying(
+            soldier.weapons[(soldier.active_weapon + 1) % 2].GetWeaponParameters().kind));
+        world->GetStateManager()->SwitchSoldierWeapon(soldier.id);
+    });
 }
 } // namespace Soldank

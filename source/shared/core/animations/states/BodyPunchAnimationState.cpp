@@ -68,5 +68,5 @@ std::optional<std::shared_ptr<AnimationState>> BodyPunchAnimationState::HandleIn
     return std::nullopt;
 }
 
-void BodyPunchAnimationState::Update(Soldier& soldier) {}
+void BodyPunchAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events) {}
 } // namespace Soldank

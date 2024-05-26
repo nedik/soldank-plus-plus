@@ -58,5 +58,5 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::Ha
     return std::nullopt;
 }
 
-void BodyThrowWeaponAnimationState::Update(Soldier& soldier) {}
+void BodyThrowWeaponAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events) {}
 } // namespace Soldank

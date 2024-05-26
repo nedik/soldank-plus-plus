@@ -1,4 +1,5 @@
 #include "SoldierMovementSimulation.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 #include "core/state/Control.hpp"
 #include <gtest/gtest.h>
 
@@ -124,8 +125,9 @@ void SoldierMovementSimulation::RunUntilSoldierOnGround()
     auto& current_soldier = *state.soldiers.begin();
     while (!current_soldier.on_ground) {
         std::vector<Soldank::BulletParams> bullet_emitter;
+        Soldank::PhysicsEvents physics_events;
         Soldank::SoldierPhysics::Update(
-          state, current_soldier, animation_data_manager_, bullet_emitter);
+          state, current_soldier, physics_events, animation_data_manager_, bullet_emitter);
     }
 }
 
@@ -149,8 +151,9 @@ void SoldierMovementSimulation::RunFor(unsigned int ticks_to_run)
         }
 
         std::vector<Soldank::BulletParams> bullet_emitter;
+        Soldank::PhysicsEvents physics_events;
         Soldank::SoldierPhysics::Update(
-          state, current_soldier, animation_data_manager_, bullet_emitter);
+          state, current_soldier, physics_events, animation_data_manager_, bullet_emitter);
 
         if (animations_to_check_at_tick_.contains(current_tick)) {
             CheckSoldierAnimationStates(current_soldier,

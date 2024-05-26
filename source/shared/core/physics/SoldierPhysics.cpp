@@ -979,6 +979,7 @@ void UpdateControl(State& state,
 
 void Update(State& state,
             Soldier& soldier,
+            const PhysicsEvents& physics_events,
             const AnimationDataManager& animation_data_manager,
             std::vector<BulletParams>& bullet_emitter)
 {
@@ -1066,8 +1067,8 @@ void Update(State& state,
         soldier.body_animation_state_machine->Enter(soldier);
     }
 
-    soldier.legs_animation_state_machine->Update(soldier);
-    soldier.body_animation_state_machine->Update(soldier);
+    soldier.legs_animation_state_machine->Update(soldier, physics_events);
+    soldier.body_animation_state_machine->Update(soldier, physics_events);
     soldier.legs_animation = *soldier.legs_animation_state_machine;
     soldier.body_animation = *soldier.body_animation_state_machine;
 

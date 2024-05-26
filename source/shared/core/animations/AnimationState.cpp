@@ -56,7 +56,7 @@ std::optional<std::shared_ptr<AnimationState>> AnimationState::HandleInput(Soldi
     // TODO: Delete this after migration is finished
 };
 
-void AnimationState::Update(Soldier& soldier)
+void AnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     // TODO: Delete this after migration is finished
 }

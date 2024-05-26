@@ -12,6 +12,7 @@
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
+#include "core/physics/Constants.hpp"
 
 namespace Soldank
 {
@@ -52,8 +53,8 @@ std::optional<std::shared_ptr<AnimationState>> LegsStandAnimationState::HandleIn
     return std::nullopt;
 }
 
-void LegsStandAnimationState::Update(Soldier& soldier)
+void LegsStandAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
-    soldier.stance = 1;
+    soldier.stance = PhysicsConstants::STANCE_STAND;
 }
 } // namespace Soldank

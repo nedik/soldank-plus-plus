@@ -42,6 +42,4 @@ std::optional<std::shared_ptr<AnimationState>> BodyRollBackAnimationState::Handl
 
     return std::nullopt;
 }
-
-void BodyRollBackAnimationState::Update(Soldier& soldier) {}
 } // namespace Soldank

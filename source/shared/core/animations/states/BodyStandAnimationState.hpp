@@ -16,7 +16,6 @@ public:
     ~BodyStandAnimationState() override = default;
 
     std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) final;
-    void Update(Soldier& soldier) final;
 
 private:
     const AnimationDataManager& animation_data_manager_;

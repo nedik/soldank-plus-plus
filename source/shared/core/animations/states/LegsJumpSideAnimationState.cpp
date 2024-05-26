@@ -117,5 +117,8 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
     return std::nullopt;
 }
 
-void LegsJumpSideAnimationState::Update(Soldier& soldier) {}
+void LegsJumpSideAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
+{
+    soldier.stance = PhysicsConstants::STANCE_STAND;
+}
 } // namespace Soldank

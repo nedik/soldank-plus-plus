@@ -74,7 +74,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsRollBackAnimationState::Handl
     return std::nullopt;
 }
 
-void LegsRollBackAnimationState::Update(Soldier& soldier)
+void LegsRollBackAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
 

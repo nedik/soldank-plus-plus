@@ -68,6 +68,4 @@ std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleIn
 
     return std::nullopt;
 }
-
-void BodyGetUpAnimationState::Update(Soldier& soldier) {}
 } // namespace Soldank
