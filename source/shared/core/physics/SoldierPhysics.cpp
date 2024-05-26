@@ -1057,11 +1057,13 @@ void Update(State& state,
       soldier.legs_animation_state_machine->HandleInput(soldier);
     if (maybe_new_legs_animation_state_machine.has_value()) {
         soldier.legs_animation_state_machine = *maybe_new_legs_animation_state_machine;
+        soldier.legs_animation_state_machine->Enter(soldier);
     }
     auto maybe_new_body_animation_state_machine =
       soldier.body_animation_state_machine->HandleInput(soldier);
     if (maybe_new_body_animation_state_machine.has_value()) {
         soldier.body_animation_state_machine = *maybe_new_body_animation_state_machine;
+        soldier.body_animation_state_machine->Enter(soldier);
     }
 
     soldier.legs_animation_state_machine->Update(soldier);

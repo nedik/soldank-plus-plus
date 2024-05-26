@@ -20,6 +20,15 @@ LegsRollAnimationState::LegsRollAnimationState(const AnimationDataManager& anima
 {
 }
 
+void LegsRollAnimationState::Enter(Soldier& soldier)
+{
+    if (soldier.on_ground) {
+        glm::vec2 particle_force = soldier.particle.GetForce();
+        soldier.particle.SetForce(
+          { (float)soldier.direction * 2.0F * PhysicsConstants::CROUCHRUNSPEED, particle_force.y });
+    }
+}
+
 std::optional<std::shared_ptr<AnimationState>> LegsRollAnimationState::HandleInput(Soldier& soldier)
 {
     if (soldier.control.prone) {
