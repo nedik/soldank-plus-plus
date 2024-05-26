@@ -2,6 +2,7 @@
 
 #include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
+#include "core/animations/states/BodyPunchAnimationState.hpp"
 #include "core/animations/states/BodyStandAnimationState.hpp"
 #include "core/animations/states/BodyAimAnimationState.hpp"
 #include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
@@ -42,6 +43,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleIn
         if (maybe_throw_grenade_animation_state.has_value()) {
             return *maybe_throw_grenade_animation_state;
         }
+    }
+
+    if (soldier.control.fire &&
+        (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::NoWeapon ||
+         soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife)) {
+        return std::make_shared<BodyPunchAnimationState>(animation_data_manager_);
     }
 
     if (GetFrame() == GetFramesCount()) {

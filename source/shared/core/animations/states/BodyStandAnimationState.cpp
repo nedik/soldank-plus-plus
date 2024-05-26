@@ -3,6 +3,7 @@
 #include "core/animations/states/BodyAimAnimationState.hpp"
 #include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
+#include "core/animations/states/BodyPunchAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
 #include "core/animations/states/BodyRollBackAnimationState.hpp"
 #include "core/animations/states/BodyThrowAnimationState.hpp"
@@ -39,7 +40,7 @@ std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleIn
     }
 
     if (soldier.control.drop &&
-        soldier.weapons[0].GetWeaponParameters().kind != WeaponType::NoWeapon) {
+        soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind != WeaponType::NoWeapon) {
         return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
     }
 
@@ -48,6 +49,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleIn
                                                                       animation_data_manager_);
     if (maybe_throw_grenade_animation_state.has_value()) {
         return *maybe_throw_grenade_animation_state;
+    }
+
+    if (soldier.control.fire &&
+        (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::NoWeapon ||
+         soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife)) {
+        return std::make_shared<BodyPunchAnimationState>(animation_data_manager_);
     }
 
     if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {

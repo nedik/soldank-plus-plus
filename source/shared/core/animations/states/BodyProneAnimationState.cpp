@@ -3,6 +3,7 @@
 #include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 #include "core/animations/states/BodyProneMoveAnimationState.hpp"
+#include "core/animations/states/BodyPunchAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
 #include "core/animations/states/BodyRollBackAnimationState.hpp"
 #include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
@@ -69,6 +70,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
         if (soldier.control.left || soldier.control.right) {
             return std::make_shared<BodyProneMoveAnimationState>(animation_data_manager_);
         }
+    }
+
+    if (soldier.control.fire &&
+        (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::NoWeapon ||
+         soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife)) {
+        return std::make_shared<BodyPunchAnimationState>(animation_data_manager_);
     }
 
     return std::nullopt;
