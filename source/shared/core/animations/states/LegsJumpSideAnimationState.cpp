@@ -1,11 +1,15 @@
 #include "core/animations/states/LegsJumpSideAnimationState.hpp"
 
+#include "core/animations/states/LegsCrouchAnimationState.hpp"
+#include "core/animations/states/LegsRollBackAnimationState.hpp"
 #include "core/animations/states/LegsStandAnimationState.hpp"
 #include "core/animations/states/LegsFallAnimationState.hpp"
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsJumpAnimationState.hpp"
 #include "core/animations/states/LegsProneAnimationState.hpp"
+
+#include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/entities/Soldier.hpp"
 #include "core/physics/Constants.hpp"
@@ -26,14 +30,23 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
         return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
     }
 
-    if (!soldier.control.up && !soldier.control.left && !soldier.control.right) {
+    if (soldier.control.jets) {
+        if (soldier.control.up || soldier.control.down) {
+            if (soldier.control.left || soldier.control.right) {
+                return std::make_shared<LegsRollBackAnimationState>(animation_data_manager_);
+            }
+        }
+    }
+
+    if (!soldier.control.up && !soldier.control.down && !soldier.control.left &&
+        !soldier.control.right) {
         if (soldier.on_ground) {
             return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
         }
         return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
 
-    if (!soldier.control.up) {
+    if (!soldier.control.up && !soldier.control.down) {
         if (soldier.control.left) {
             if (soldier.direction == 1) {
                 return std::make_shared<LegsRunBackAnimationState>(
@@ -53,7 +66,9 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
             return std::make_shared<LegsRunAnimationState>(
               animation_data_manager_, soldier.control.left, soldier.control.right);
         }
-    } else if (soldier.on_ground) {
+    }
+
+    if (soldier.control.up && soldier.on_ground) {
         if (!soldier.control.left && !soldier.control.right) {
             return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
         }
@@ -63,6 +78,19 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
             if (GetFrame() == GetFramesCount()) {
                 return std::make_shared<LegsJumpSideAnimationState>(animation_data_manager_);
             }
+        }
+    }
+
+    if (soldier.control.down && soldier.on_ground) {
+        if (!soldier.control.left && !soldier.control.right) {
+            return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
+        }
+
+        auto maybe_crouch_running_animation_state =
+          CommonAnimationStateTransitions::TryTransitionToCrouchRunning(soldier,
+                                                                        animation_data_manager_);
+        if (maybe_crouch_running_animation_state.has_value()) {
+            return *maybe_crouch_running_animation_state;
         }
     }
 

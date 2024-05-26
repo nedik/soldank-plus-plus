@@ -1,5 +1,6 @@
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 
+#include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyStandAnimationState.hpp"
 #include "core/animations/states/BodyAimAnimationState.hpp"
 
@@ -8,6 +9,7 @@
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
 #include "core/physics/Constants.hpp"
+#include <memory>
 
 namespace Soldank
 {
@@ -27,6 +29,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleIn
 
         if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
             return std::make_shared<BodyAimAnimationState>(animation_data_manager_);
+        }
+
+        if (soldier.stance == PhysicsConstants::STANCE_PRONE) {
+            return std::make_shared<BodyProneAnimationState>(animation_data_manager_);
         }
     }
 
