@@ -1,5 +1,6 @@
 #include "core/animations/states/BodyGetUpAnimationState.hpp"
 
+#include "core/animations/states/BodyChangeAnimationState.hpp"
 #include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyStandAnimationState.hpp"
 #include "core/animations/states/BodyAimAnimationState.hpp"
@@ -22,6 +23,10 @@ BodyGetUpAnimationState::BodyGetUpAnimationState(const AnimationDataManager& ani
 std::optional<std::shared_ptr<AnimationState>> BodyGetUpAnimationState::HandleInput(
   Soldier& soldier)
 {
+    if (soldier.control.change) {
+        return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
+    }
+
     if (GetFrame() == GetFramesCount()) {
         if (soldier.stance == PhysicsConstants::STANCE_STAND) {
             return std::make_shared<BodyStandAnimationState>(animation_data_manager_);
