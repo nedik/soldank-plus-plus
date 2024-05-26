@@ -22,6 +22,10 @@ std::optional<std::shared_ptr<AnimationState>> TryTransitionToCrouchRunning(
 std::optional<std::shared_ptr<AnimationState>> TryTransitionToRolling(
   const Soldier& soldier,
   const AnimationDataManager& animation_data_manager);
+
+std::optional<std::shared_ptr<AnimationState>> TryTransitionToThrowingGrenade(
+  Soldier& soldier,
+  const AnimationDataManager& animation_data_manager);
 } // namespace Soldank::CommonAnimationStateTransitions
 
 #endif

@@ -58,6 +58,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneMoveAnimationState::Hand
         return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
     }
 
+    auto maybe_throw_grenade_animation_state =
+      CommonAnimationStateTransitions::TryTransitionToThrowingGrenade(soldier,
+                                                                      animation_data_manager_);
+    if (maybe_throw_grenade_animation_state.has_value()) {
+        return *maybe_throw_grenade_animation_state;
+    }
+
     if (!soldier.control.left && !soldier.control.right) {
         auto new_state = std::make_shared<BodyProneAnimationState>(animation_data_manager_);
         new_state->SetFrame(26);

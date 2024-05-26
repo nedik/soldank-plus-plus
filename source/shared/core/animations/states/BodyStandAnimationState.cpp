@@ -5,8 +5,9 @@
 #include "core/animations/states/BodyProneAnimationState.hpp"
 #include "core/animations/states/BodyRollAnimationState.hpp"
 #include "core/animations/states/BodyRollBackAnimationState.hpp"
-
+#include "core/animations/states/BodyThrowAnimationState.hpp"
 #include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
+
 #include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/animations/AnimationData.hpp"
@@ -40,6 +41,13 @@ std::optional<std::shared_ptr<AnimationState>> BodyStandAnimationState::HandleIn
     if (soldier.control.drop &&
         soldier.weapons[0].GetWeaponParameters().kind != WeaponType::NoWeapon) {
         return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
+    }
+
+    auto maybe_throw_grenade_animation_state =
+      CommonAnimationStateTransitions::TryTransitionToThrowingGrenade(soldier,
+                                                                      animation_data_manager_);
+    if (maybe_throw_grenade_animation_state.has_value()) {
+        return *maybe_throw_grenade_animation_state;
     }
 
     if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
