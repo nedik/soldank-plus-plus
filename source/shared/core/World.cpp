@@ -149,7 +149,7 @@ void World::Update(double /*delta_time*/)
           *physics_events_, bullet, state_manager_->GetState().map, state_manager_->GetState());
     }
 
-    for (const auto& bullet_params : bullet_emitter) {
+    for (const auto& bullet_params : state_manager_->GetBulletEmitter()) {
         bool should_spawn_projectile = false;
         if (pre_projectile_spawn_callback_) {
             should_spawn_projectile = pre_projectile_spawn_callback_(bullet_params);
@@ -159,6 +159,7 @@ void World::Update(double /*delta_time*/)
             state_manager_->GetState().bullets.emplace_back(bullet_params);
         }
     }
+    state_manager_->ClearBulletEmitter();
 }
 
 void World::UpdateSoldier(unsigned int soldier_id)
