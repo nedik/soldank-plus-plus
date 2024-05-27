@@ -15,8 +15,9 @@ public:
     BodyThrowWeaponAnimationState(const AnimationDataManager& animation_data_manager);
     ~BodyThrowWeaponAnimationState() override = default;
 
+    void Enter(Soldier& soldier) final;
     std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) final;
-    void Update(Soldier& soldier, const PhysicsEvents& physics_events) final;
+    void Exit(Soldier& soldier, const PhysicsEvents& physics_events) final;
 
 private:
     const AnimationDataManager& animation_data_manager_;

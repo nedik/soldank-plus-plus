@@ -73,6 +73,21 @@ void StateManager::SwitchSoldierWeapon(std::uint8_t soldier_id)
       soldier.weapons[new_active_weapon].GetReloadTimeCount());
 }
 
+void StateManager::CreateProjectile(const BulletParams& bullet_params)
+{
+    bullet_emitter_.push_back(bullet_params);
+}
+
+const std::vector<BulletParams>& StateManager::GetBulletEmitter() const
+{
+    return bullet_emitter_;
+}
+
+void StateManager::ClearBulletEmitter()
+{
+    bullet_emitter_.clear();
+}
+
 Soldier& StateManager::GetSoldierRef(std::uint8_t soldier_id)
 {
     for (auto& soldier : state_.soldiers) {

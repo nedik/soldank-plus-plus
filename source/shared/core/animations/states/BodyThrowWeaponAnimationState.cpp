@@ -11,7 +11,9 @@
 
 #include "core/animations/AnimationData.hpp"
 #include "core/entities/Soldier.hpp"
+#include "core/physics/PhysicsEvents.hpp"
 #include "core/physics/Constants.hpp"
+
 #include <memory>
 
 namespace Soldank
@@ -21,6 +23,13 @@ BodyThrowWeaponAnimationState::BodyThrowWeaponAnimationState(
     : AnimationState(animation_data_manager.Get(AnimationType::ThrowWeapon))
     , animation_data_manager_(animation_data_manager)
 {
+}
+
+void BodyThrowWeaponAnimationState::Enter(Soldier& soldier)
+{
+    if (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife) {
+        SetSpeed(2);
+    }
 }
 
 std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::HandleInput(
@@ -38,7 +47,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::Ha
         return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
     }
 
-    if (GetFrame() == GetFramesCount()) {
+    if ((soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife &&
+         (!soldier.control.drop || soldier.body_animation.GetFrame() == 16)) ||
+        GetFrame() == GetFramesCount()) {
+
         if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {
             return std::make_shared<BodyAimAnimationState>(animation_data_manager_);
         }
@@ -58,5 +70,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::Ha
     return std::nullopt;
 }
 
-void BodyThrowWeaponAnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events) {}
+void BodyThrowWeaponAnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events)
+{
+    if (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife) {
+        physics_events.soldier_throws_knife.Notify(soldier);
+    }
+}
 } // namespace Soldank

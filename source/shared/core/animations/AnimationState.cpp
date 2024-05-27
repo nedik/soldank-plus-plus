@@ -60,4 +60,6 @@ void AnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_event
 {
     // TODO: Delete this after migration is finished
 }
+
+void AnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events) {}
 } // namespace Soldank

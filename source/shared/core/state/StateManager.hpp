@@ -19,10 +19,15 @@ public:
     void ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2 new_mouse_position);
     void SwitchSoldierWeapon(std::uint8_t soldier_id);
 
+    void CreateProjectile(const BulletParams& bullet_params);
+    const std::vector<BulletParams>& GetBulletEmitter() const;
+    void ClearBulletEmitter();
+
 private:
     Soldier& GetSoldierRef(std::uint8_t soldier_id);
 
     State state_;
+    std::vector<BulletParams> bullet_emitter_;
 };
 } // namespace Soldank
 
