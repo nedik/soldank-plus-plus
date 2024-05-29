@@ -42,4 +42,10 @@ std::optional<std::shared_ptr<AnimationState>> BodyRollBackAnimationState::Handl
 
     return std::nullopt;
 }
+
+bool BodyRollBackAnimationState::IsSoldierShootingPossible(const Soldier& soldier) const
+{
+    return soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::Chainsaw;
+}
 } // namespace Soldank

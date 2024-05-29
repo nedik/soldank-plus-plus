@@ -2,7 +2,10 @@
 
 #include "core/math/Calc.hpp"
 
+#include "core/entities/Bullet.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
+
+#include "core/physics/SoldierPhysics.hpp"
 
 #include "spdlog/spdlog.h"
 #include <utility>
@@ -69,6 +72,13 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
             0.0F // TODO: Add push
         };
         world->GetStateManager()->CreateProjectile(params);
+    });
+    world->GetPhysicsEvents().soldier_fires_primary_weapon.AddObserver([world](Soldier& soldier) {
+        std::vector<BulletParams> bullet_emitter;
+        SoldierPhysics::Fire(soldier, bullet_emitter);
+        for (auto& bullet_params : bullet_emitter) {
+            world->GetStateManager()->CreateProjectile(bullet_params);
+        }
     });
 }
 } // namespace Soldank

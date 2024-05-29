@@ -20,6 +20,8 @@ public:
     void Exit(Soldier& soldier, const PhysicsEvents& physics_events) final;
 
 private:
+    bool IsSoldierShootingPossible(const Soldier& /*soldier*/) const final { return true; }
+
     const AnimationDataManager& animation_data_manager_;
 };
 } // namespace Soldank

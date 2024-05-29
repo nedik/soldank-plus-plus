@@ -11,6 +11,7 @@ struct PhysicsEvents
     Observable<Soldier&, float /* damage */> soldier_hit_by_bullet;
     Observable<Soldier&> soldier_switches_weapon;
     Observable<const Soldier&> soldier_throws_knife;
+    Observable<Soldier&> soldier_fires_primary_weapon;
 };
 } // namespace Soldank
 

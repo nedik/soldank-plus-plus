@@ -18,6 +18,8 @@ public:
     std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) final;
 
 private:
+    bool IsSoldierShootingPossible(const Soldier& soldier) const final;
+
     const AnimationDataManager& animation_data_manager_;
 };
 } // namespace Soldank
