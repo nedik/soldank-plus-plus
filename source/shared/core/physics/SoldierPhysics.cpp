@@ -1061,6 +1061,7 @@ void Update(State& state,
         soldier.legs_animation_state_machine = *maybe_new_legs_animation_state_machine;
         soldier.legs_animation_state_machine->Enter(soldier);
     }
+    soldier.body_animation_state_machine->TryToShoot(soldier, physics_events);
     auto maybe_new_body_animation_state_machine =
       soldier.body_animation_state_machine->HandleInput(soldier);
     if (maybe_new_body_animation_state_machine.has_value()) {

@@ -2,6 +2,8 @@
 
 #include "core/entities/Soldier.hpp"
 
+#include "core/physics/PhysicsEvents.hpp"
+
 #include <utility>
 #include <algorithm>
 
@@ -50,6 +52,21 @@ bool AnimationState::IsAny(const std::vector<AnimationType>& animations) const
     });
 }
 
+void AnimationState::TryToShoot(Soldier& soldier, const PhysicsEvents& physics_events) const
+{
+    if (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::NoWeapon ||
+        soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife) {
+
+        // We don't spawn projectiles for punching or stabbing... These have to be handled by the
+        // animation
+        return;
+    }
+
+    if (soldier.control.fire && IsSoldierShootingPossible(soldier)) {
+        physics_events.soldier_fires_primary_weapon.Notify(soldier);
+    }
+}
+
 void AnimationState::Enter(Soldier& soldier) {}
 
 std::optional<std::shared_ptr<AnimationState>> AnimationState::HandleInput(Soldier& soldier){
@@ -62,4 +79,11 @@ void AnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_event
 }
 
 void AnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events) {}
+
+bool AnimationState::IsSoldierShootingPossible(const Soldier& soldier) const
+{
+    // By default we return false. Child classes should determine whether the player is able to
+    // shoot or not in the current state
+    return false;
+}
 } // namespace Soldank

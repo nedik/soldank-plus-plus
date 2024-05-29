@@ -66,4 +66,10 @@ void BodyChangeAnimationState::Update(Soldier& soldier, const PhysicsEvents& phy
         physics_events.soldier_switches_weapon.Notify(soldier);
     }
 }
+
+bool BodyChangeAnimationState::IsSoldierShootingPossible(const Soldier& soldier) const
+{
+    return soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+           WeaponType::Chainsaw;
+}
 } // namespace Soldank
