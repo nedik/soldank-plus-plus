@@ -32,23 +32,23 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
             body_y = 9.0F;
             break;
         case stance_prone: {
-            if (soldier.body_animation.GetType() == AnimationType::Prone) {
-                if (soldier.body_animation.GetFrame() > 9) {
+            if (soldier.body_animation->GetType() == AnimationType::Prone) {
+                if (soldier.body_animation->GetFrame() > 9) {
                     body_y = -2.0F;
                 } else {
-                    body_y = 14.0F - (float)soldier.body_animation.GetFrame();
+                    body_y = 14.0F - (float)soldier.body_animation->GetFrame();
                 }
             } else {
                 body_y = 9.0F;
             }
 
-            if (soldier.body_animation.GetType() == AnimationType::ProneMove) {
+            if (soldier.body_animation->GetType() == AnimationType::ProneMove) {
                 body_y = 0.0F;
             }
         }
     }
-    if (soldier.body_animation.GetType() == AnimationType::GetUp) {
-        if (soldier.body_animation.GetFrame() > 18) {
+    if (soldier.body_animation->GetType() == AnimationType::GetUp) {
+        if (soldier.body_animation->GetFrame() > 18) {
             body_y = 8.0F;
         } else {
             body_y = 4.0F;
@@ -67,13 +67,13 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
             soldier.skeleton->SetOldPos(i, soldier.skeleton->GetPos(i));
 
             if (!soldier.half_dead && ((i >= 1 && i <= 6) || (i == 17) || (i == 18))) {
-                glm::vec2 anim_pos = soldier.legs_animation.GetPosition(i);
+                glm::vec2 anim_pos = soldier.legs_animation->GetPosition(i);
                 pos.x = soldier.particle.position.x + anim_pos.x * (float)soldier.direction;
                 pos.y = soldier.particle.position.y + anim_pos.y;
             }
 
             if (((i >= 7) && (i <= 16)) || (i == 19) || (i == 20)) {
-                auto anim_pos = soldier.body_animation.GetPosition(i);
+                auto anim_pos = soldier.body_animation->GetPosition(i);
                 pos.x = soldier.particle.position.x + anim_pos.x * (float)soldier.direction;
                 pos.y = soldier.particle.position.y + anim_pos.y;
 
@@ -110,23 +110,23 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
         AnimationType::Melee,
     };
 
-    if (soldier.body_animation.GetType() == AnimationType::Throw) {
+    if (soldier.body_animation->GetType() == AnimationType::Throw) {
         arm_s = -5.00F;
     } else {
         arm_s = -7.00F;
     }
 
-    if (!soldier.body_animation.IsAny(not_aiming_anims)) {
+    if (!soldier.body_animation->IsAny(not_aiming_anims)) {
         auto r_norm = arm_s * Calc::Vec2Normalize(soldier.skeleton->GetPos(15) - aim);
         soldier.skeleton->SetPos(15, soldier.skeleton->GetPos(16) + r_norm);
     }
-    if (soldier.body_animation.GetType() == AnimationType::Throw) {
+    if (soldier.body_animation->GetType() == AnimationType::Throw) {
         arm_s = -6.00F;
     } else {
         arm_s = -8.00F;
     }
 
-    if (!soldier.body_animation.IsAny(not_aiming_anims)) {
+    if (!soldier.body_animation->IsAny(not_aiming_anims)) {
         auto r_norm = arm_s * Calc::Vec2Normalize(soldier.skeleton->GetPos(19) - aim);
         soldier.skeleton->SetPos(19, soldier.skeleton->GetPos(16) - glm::vec2(0.0F, 4.0F) + r_norm);
     }

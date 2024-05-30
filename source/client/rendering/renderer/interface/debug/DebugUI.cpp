@@ -347,18 +347,18 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                             recorded_animations.push_back(
                               { .is_legs = false,
                                 .game_tick = game_state.game_tick,
-                                .animation_type = soldier.body_animation.GetType(),
-                                .frame = soldier.body_animation.GetFrame(),
-                                .speed = soldier.body_animation.GetSpeed(),
+                                .animation_type = soldier.body_animation->GetType(),
+                                .frame = soldier.body_animation->GetFrame(),
+                                .speed = soldier.body_animation->GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1,
                                 .soldier_position = soldier.particle.position });
                             last_added_body_animation = recorded_animations.back();
                             recorded_animations.push_back(
                               { .is_legs = true,
                                 .game_tick = game_state.game_tick,
-                                .animation_type = soldier.legs_animation.GetType(),
-                                .frame = soldier.legs_animation.GetFrame(),
-                                .speed = soldier.legs_animation.GetSpeed(),
+                                .animation_type = soldier.legs_animation->GetType(),
+                                .frame = soldier.legs_animation->GetFrame(),
+                                .speed = soldier.legs_animation->GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1,
                                 .soldier_position = soldier.particle.position });
                             last_added_legs_animation = recorded_animations.back();
@@ -379,25 +379,25 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
                 for (const auto& soldier : game_state.soldiers) {
                     if (*client_state.client_soldier_id == soldier.id) {
                         if (last_added_legs_animation.animation_type !=
-                            soldier.legs_animation.GetType()) {
+                            soldier.legs_animation->GetType()) {
                             recorded_animations.push_back(
                               { .is_legs = true,
                                 .game_tick = game_state.game_tick,
-                                .animation_type = soldier.legs_animation.GetType(),
-                                .frame = soldier.legs_animation.GetFrame(),
-                                .speed = soldier.legs_animation.GetSpeed(),
+                                .animation_type = soldier.legs_animation->GetType(),
+                                .frame = soldier.legs_animation->GetFrame(),
+                                .speed = soldier.legs_animation->GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1,
                                 .soldier_position = soldier.particle.position });
                             last_added_legs_animation = recorded_animations.back();
                         }
                         if (last_added_body_animation.animation_type !=
-                            soldier.body_animation.GetType()) {
+                            soldier.body_animation->GetType()) {
                             recorded_animations.push_back(
                               { .is_legs = false,
                                 .game_tick = game_state.game_tick,
-                                .animation_type = soldier.body_animation.GetType(),
-                                .frame = soldier.body_animation.GetFrame(),
-                                .speed = soldier.body_animation.GetSpeed(),
+                                .animation_type = soldier.body_animation->GetType(),
+                                .frame = soldier.body_animation->GetFrame(),
+                                .speed = soldier.body_animation->GetSpeed(),
                                 .soldier_looking_left = soldier.direction == -1,
                                 .soldier_position = soldier.particle.position });
                             last_added_body_animation = recorded_animations.back();

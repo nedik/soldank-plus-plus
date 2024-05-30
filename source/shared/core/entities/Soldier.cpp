@@ -44,12 +44,8 @@ Soldier::Soldier(std::uint8_t soldier_id,
     , collider_distance(255)
     , half_dead(false)
     , skeleton(std::move(skeleton))
-    , legs_animation(animation_data_manager.Get(AnimationType::Stand))
-    , legs_animation_state_machine(
-        std::make_shared<LegsStandAnimationState>(animation_data_manager))
-    , body_animation(animation_data_manager.Get(AnimationType::Stand))
-    , body_animation_state_machine(
-        std::make_shared<BodyStandAnimationState>(animation_data_manager))
+    , legs_animation(std::make_shared<LegsStandAnimationState>(animation_data_manager))
+    , body_animation(std::make_shared<BodyStandAnimationState>(animation_data_manager))
     , control()
     , active_weapon(0)
     , weapons{ initial_weapons }

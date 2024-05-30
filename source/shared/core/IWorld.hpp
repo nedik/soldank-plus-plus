@@ -36,6 +36,10 @@ public:
     virtual WorldEvents& GetWorldEvents() = 0;
     virtual std::shared_ptr<const AnimationData> GetAnimationData(
       AnimationType animation_type) const = 0;
+    virtual std::shared_ptr<AnimationState> GetBodyAnimationState(
+      AnimationType animation_type) const = 0;
+    virtual std::shared_ptr<AnimationState> GetLegsAnimationState(
+      AnimationType animation_type) const = 0;
 
     virtual const Soldier& CreateSoldier(
       std::optional<unsigned int> force_soldier_id = std::nullopt) = 0;

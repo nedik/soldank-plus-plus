@@ -272,7 +272,7 @@ bool SoldierRenderer::IsPrimaryWeaponTypeVisible(
             }
         }
 
-        if (soldier.body_animation.GetType() == AnimationType::ReloadBow) {
+        if (soldier.body_animation->GetType() == AnimationType::ReloadBow) {
             if (soldier_part_type == Sprites::SoldierPartPrimaryWeaponSpriteType::BowReload) {
                 return true;
             }
@@ -453,7 +453,7 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
         };
 
         int n = 0;
-        if (soldier.body_animation.GetType() == AnimationType::Throw) {
+        if (soldier.body_animation->GetType() == AnimationType::Throw) {
             n = std::min(5, ammo - 1);
         } else {
             n = std::min(5, ammo);
@@ -474,7 +474,7 @@ bool SoldierRenderer::IsTertiaryWeaponTypeVisible(
         };
 
         int n = 0;
-        if (soldier.body_animation.GetType() == AnimationType::Throw) {
+        if (soldier.body_animation->GetType() == AnimationType::Throw) {
             n = std::min(5, ammo - 1);
         } else {
             n = std::min(5, ammo);

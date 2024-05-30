@@ -66,7 +66,7 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
         return new_state;
     }
 
-    if (soldier.legs_animation.GetFrame() > 25 && soldier.on_ground) {
+    if (soldier.legs_animation->GetFrame() > 25 && soldier.on_ground) {
         if (soldier.control.left || soldier.control.right) {
             return std::make_shared<BodyProneMoveAnimationState>(animation_data_manager_);
         }

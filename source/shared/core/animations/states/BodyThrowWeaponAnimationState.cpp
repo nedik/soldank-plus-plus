@@ -35,11 +35,11 @@ void BodyThrowWeaponAnimationState::Enter(Soldier& soldier)
 std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::HandleInput(
   Soldier& soldier)
 {
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::Roll) {
+    if (soldier.legs_animation->GetType() == AnimationType::Roll) {
         return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::RollBack) {
+    if (soldier.legs_animation->GetType() == AnimationType::RollBack) {
         return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
     }
 
@@ -48,7 +48,7 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::Ha
     }
 
     if ((soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind == WeaponType::Knife &&
-         (!soldier.control.drop || soldier.body_animation.GetFrame() == 16)) ||
+         (!soldier.control.drop || GetFrame() == 16)) ||
         GetFrame() == GetFramesCount()) {
 
         if (soldier.stance == PhysicsConstants::STANCE_CROUCH) {

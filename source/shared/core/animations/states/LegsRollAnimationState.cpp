@@ -71,9 +71,9 @@ void LegsRollAnimationState::Update(Soldier& soldier, const PhysicsEvents& physi
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
 
-    if (soldier.legs_animation.GetSpeed() > 1) {
-        soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
-        soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
+    if (GetSpeed() > 1) {
+        soldier.particle.velocity_.x /= (float)GetSpeed();
+        soldier.particle.velocity_.y /= (float)GetSpeed();
     }
 
     if (soldier.on_ground) {

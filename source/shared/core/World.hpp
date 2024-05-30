@@ -15,63 +15,64 @@
 
 namespace Soldank
 {
-class World : public IWorld
+class World final : public IWorld
 {
 public:
     World();
 
-    void RunLoop(int fps_limit) override;
-    void Update(double delta_time) override;
-    void UpdateSoldier(unsigned int soldier_id) override;
-    const std::shared_ptr<StateManager>& GetStateManager() const override;
-    const Soldier& GetSoldier(unsigned int soldier_id) const override;
-    PhysicsEvents& GetPhysicsEvents() override;
-    WorldEvents& GetWorldEvents() override;
+    void RunLoop(int fps_limit) final;
+    void Update(double delta_time) final;
+    void UpdateSoldier(unsigned int soldier_id) final;
+    const std::shared_ptr<StateManager>& GetStateManager() const final;
+    const Soldier& GetSoldier(unsigned int soldier_id) const final;
+    PhysicsEvents& GetPhysicsEvents() final;
+    WorldEvents& GetWorldEvents() final;
     std::shared_ptr<const AnimationData> GetAnimationData(
       AnimationType animation_type) const override;
+    std::shared_ptr<AnimationState> GetBodyAnimationState(AnimationType animation_type) const final;
+    std::shared_ptr<AnimationState> GetLegsAnimationState(AnimationType animation_type) const final;
 
-    const Soldier& CreateSoldier(
-      std::optional<unsigned int> force_soldier_id = std::nullopt) override;
+    const Soldier& CreateSoldier(std::optional<unsigned int> force_soldier_id = std::nullopt) final;
     glm::vec2 SpawnSoldier(unsigned int soldier_id,
-                           std::optional<glm::vec2> spawn_position = std::nullopt) override;
-    void KillSoldier(unsigned int soldier_id) override;
-    void HitSoldier(unsigned int soldier_id, float damage) override;
+                           std::optional<glm::vec2> spawn_position = std::nullopt) final;
+    void KillSoldier(unsigned int soldier_id) final;
+    void HitSoldier(unsigned int soldier_id, float damage) final;
 
     void UpdateWeaponChoices(unsigned int soldier_id,
                              WeaponType primary_weapon_type,
-                             WeaponType secondary_weapon_type) override;
+                             WeaponType secondary_weapon_type) final;
 
-    void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) override
+    void SetShouldStopGameLoopCallback(TShouldStopGameLoopCallback callback) final
     {
         should_stop_game_loop_callback_ = std::move(callback);
     }
 
-    void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback) override
+    void SetPreGameLoopIterationCallback(TPreGameLoopIterationCallback callback) final
     {
         pre_game_loop_iteration_callback_ = std::move(callback);
     }
 
-    void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback) override
+    void SetPreWorldUpdateCallback(TPreWorldUpdateCallback callback) final
     {
         pre_world_update_callback_ = std::move(callback);
     }
 
-    void SetPostWorldUpdateCallback(TPostWorldUpdateCallback callback) override
+    void SetPostWorldUpdateCallback(TPostWorldUpdateCallback callback) final
     {
         post_world_update_callback_ = std::move(callback);
     }
 
-    void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) override
+    void SetPostGameLoopIterationCallback(TPostGameLoopIterationCallback callback) final
     {
         post_game_loop_iteration_callback_ = std::move(callback);
     }
 
-    void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) override
+    void SetPreSoldierUpdateCallback(TPreSoldierUpdateCallback callback) final
     {
         pre_soldier_update_callback_ = std::move(callback);
     }
 
-    void SetPreProjectileSpawnCallback(TPreProjectileSpawnCallback callback) override
+    void SetPreProjectileSpawnCallback(TPreProjectileSpawnCallback callback) final
     {
         pre_projectile_spawn_callback_ = std::move(callback);
     }

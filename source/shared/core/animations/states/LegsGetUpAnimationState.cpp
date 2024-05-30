@@ -44,7 +44,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleIn
             }
 
             // Set jump frame 6 to 9 depending on which unprone frame we're in
-            auto id = soldier.legs_animation.GetFrame() - (23 - (9 - 1));
+            auto id = GetFrame() - (23 - (9 - 1));
             auto new_state = std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
             new_state->SetFrame(id);
             return new_state;

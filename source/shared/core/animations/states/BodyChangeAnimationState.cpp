@@ -32,11 +32,11 @@ std::optional<std::shared_ptr<AnimationState>> BodyChangeAnimationState::HandleI
         SetNextFrame();
     }
 
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::Roll) {
+    if (soldier.legs_animation->GetType() == AnimationType::Roll) {
         return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::RollBack) {
+    if (soldier.legs_animation->GetType() == AnimationType::RollBack) {
         return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
     }
 

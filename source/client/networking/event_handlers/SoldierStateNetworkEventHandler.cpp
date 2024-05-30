@@ -59,13 +59,13 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
         if (soldier.id == soldier_id) {
             soldier.particle.old_position = soldier_old_position;
             soldier.particle.position = soldier_position;
-            soldier.body_animation = world_->GetAnimationData(body_animation_type);
-            soldier.body_animation.SetFrame(body_animation_frame);
-            soldier.body_animation.SetSpeed(body_animation_speed);
+            soldier.body_animation = world_->GetBodyAnimationState(body_animation_type);
+            soldier.body_animation->SetFrame(body_animation_frame);
+            soldier.body_animation->SetSpeed(body_animation_speed);
 
-            soldier.legs_animation = world_->GetAnimationData(legs_animation_type);
-            soldier.legs_animation.SetFrame(legs_animation_frame);
-            soldier.legs_animation.SetSpeed(legs_animation_speed);
+            soldier.legs_animation = world_->GetLegsAnimationState(legs_animation_type);
+            soldier.legs_animation->SetFrame(legs_animation_frame);
+            soldier.legs_animation->SetSpeed(legs_animation_speed);
 
             soldier.particle.SetVelocity(soldier_velocity);
             soldier.particle.SetForce(soldier_force);
@@ -111,8 +111,8 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                 RepositionSoldierSkeletonParts(soldier);
 
                 if (!soldier.dead_meat) {
-                    soldier.body_animation.DoAnimation();
-                    soldier.legs_animation.DoAnimation();
+                    soldier.body_animation->DoAnimation();
+                    soldier.legs_animation->DoAnimation();
                     soldier.skeleton->DoVerletTimestepFor(22, 29);
                     soldier.skeleton->DoVerletTimestepFor(24, 30);
                 }

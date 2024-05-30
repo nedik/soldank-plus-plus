@@ -47,12 +47,12 @@ void LegsProneMoveAnimationState::Update(Soldier& soldier, const PhysicsEvents& 
 {
     soldier.stance = PhysicsConstants::STANCE_PRONE;
 
-    if (soldier.legs_animation.GetSpeed() > 2) {
+    if (GetSpeed() > 2) {
         soldier.particle.velocity_.x /= (float)GetSpeed();
         soldier.particle.velocity_.y /= (float)GetSpeed();
     }
 
-    if ((soldier.legs_animation.GetFrame() < 4) || (soldier.legs_animation.GetFrame() > 14)) {
+    if ((GetFrame() < 4) || (GetFrame() > 14)) {
         if (soldier.on_ground && soldier.control.left) {
 
             glm::vec2 particle_force = soldier.particle.GetForce();

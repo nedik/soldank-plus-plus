@@ -94,7 +94,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
     }
 
     if (soldier.control.right) {
-        if ((soldier.legs_animation.GetFrame() > 3) && (soldier.legs_animation.GetFrame() < 11)) {
+        if ((GetFrame() > 3) && (GetFrame() < 11)) {
             glm::vec2 particle_force = soldier.particle.GetForce();
             particle_force.x = PhysicsConstants::JUMPDIRSPEED;
             particle_force.y = -PhysicsConstants::JUMPDIRSPEED / 1.2F;
@@ -103,9 +103,8 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
     }
 
     if (soldier.control.left) {
-        if (soldier.legs_animation.GetType() == AnimationType::JumpSide) {
-            if ((soldier.legs_animation.GetFrame() > 3) &&
-                (soldier.legs_animation.GetFrame() < 11)) {
+        if (GetType() == AnimationType::JumpSide) {
+            if ((GetFrame() > 3) && (GetFrame() < 11)) {
                 glm::vec2 particle_force = soldier.particle.GetForce();
                 particle_force.x = -PhysicsConstants::JUMPDIRSPEED;
                 particle_force.y = -PhysicsConstants::JUMPDIRSPEED / 1.2F;
