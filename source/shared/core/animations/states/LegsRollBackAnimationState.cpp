@@ -78,9 +78,9 @@ void LegsRollBackAnimationState::Update(Soldier& soldier, const PhysicsEvents& p
 {
     soldier.stance = PhysicsConstants::STANCE_STAND;
 
-    if (soldier.legs_animation.GetSpeed() > 1) {
-        soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
-        soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
+    if (GetSpeed() > 1) {
+        soldier.particle.velocity_.x /= (float)GetSpeed();
+        soldier.particle.velocity_.y /= (float)GetSpeed();
     }
 
     if (soldier.on_ground) {
@@ -93,7 +93,7 @@ void LegsRollBackAnimationState::Update(Soldier& soldier, const PhysicsEvents& p
           { -(float)soldier.direction * 2.0F * PhysicsConstants::FLYSPEED, particle_force.y });
     }
 
-    if ((soldier.legs_animation.GetFrame() > 1) && (soldier.legs_animation.GetFrame() < 8)) {
+    if ((GetFrame() > 1) && (GetFrame() < 8)) {
         // so apparently in soldat there's no difference between a RollBack and a backflip
         // if you press W during a Rollback in those frames then it pushes you up and therefore
         // it turns into a backflip. That's how also cannonballs works, if we release W fast enough,

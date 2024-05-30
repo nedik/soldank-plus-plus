@@ -24,19 +24,7 @@ const Weapon& GetTertiaryWeapon(Soldier& soldier);
 
 void SwitchWeapon(Soldier& soldier);
 void UpdateKeys(Soldier& soldier, const Control& control);
-void LegsApplyAnimation(Soldier& soldier,
-                        const AnimationDataManager& animation_data_manager,
-                        AnimationType id,
-                        unsigned int frame);
-void BodyApplyAnimation(Soldier& soldier,
-                        const AnimationDataManager& animation_data_manager,
-                        AnimationType id,
-                        unsigned int frame);
 void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier);
-void UpdateControl(State& state,
-                   Soldier& soldier,
-                   const AnimationDataManager& animation_data_manager,
-                   std::vector<BulletParams>& bullet_emitter);
 void Update(State& state,
             Soldier& soldier,
             const PhysicsEvents& physics_events,
@@ -64,7 +52,6 @@ bool CheckSkeletonMapCollision(Soldier& soldier,
                                float y,
                                State& state);
 void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter);
-void ControlThrowGrenade(Soldier& soldier, const AnimationDataManager& animation_data_manager);
 } // namespace Soldank::SoldierPhysics
 
 #endif

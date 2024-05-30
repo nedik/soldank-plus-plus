@@ -180,17 +180,17 @@ void SoldierMovementSimulation::CheckSoldierAnimationState(
 {
     switch (expected_animation_state.part) {
         case SoldierAnimationPart::Legs: {
-            EXPECT_EQ(soldier.legs_animation.GetType(),
+            EXPECT_EQ(soldier.legs_animation->GetType(),
                       expected_animation_state.expected_animation_type);
-            EXPECT_EQ(soldier.legs_animation.GetFrame(), expected_animation_state.expected_frame);
-            EXPECT_EQ(soldier.legs_animation.GetSpeed(), expected_animation_state.expected_speed);
+            EXPECT_EQ(soldier.legs_animation->GetFrame(), expected_animation_state.expected_frame);
+            EXPECT_EQ(soldier.legs_animation->GetSpeed(), expected_animation_state.expected_speed);
             break;
         }
         case SoldierAnimationPart::Body: {
-            EXPECT_EQ(soldier.body_animation.GetType(),
+            EXPECT_EQ(soldier.body_animation->GetType(),
                       expected_animation_state.expected_animation_type);
-            EXPECT_EQ(soldier.body_animation.GetFrame(), expected_animation_state.expected_frame);
-            EXPECT_EQ(soldier.body_animation.GetSpeed(), expected_animation_state.expected_speed);
+            EXPECT_EQ(soldier.body_animation->GetFrame(), expected_animation_state.expected_frame);
+            EXPECT_EQ(soldier.body_animation->GetSpeed(), expected_animation_state.expected_speed);
             break;
         }
     }

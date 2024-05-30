@@ -53,7 +53,7 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
         auto aim_x = (float)soldier.control.mouse_aim_x;
         auto aim_y = (float)soldier.control.mouse_aim_y;
         auto dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - soldier.skeleton->GetPos(15));
-        auto frame = (float)soldier.body_animation.GetFrame();
+        auto frame = (float)soldier.body_animation->GetFrame();
         auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
         auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
         auto inherited_vel =

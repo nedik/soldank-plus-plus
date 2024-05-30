@@ -63,9 +63,9 @@ void LegsCrouchRunAnimationState::Update(Soldier& soldier, const PhysicsEvents& 
 {
     soldier.stance = PhysicsConstants::STANCE_CROUCH;
 
-    if (soldier.legs_animation.GetSpeed() > 2) {
-        soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
-        soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
+    if (GetSpeed() > 2) {
+        soldier.particle.velocity_.x /= (float)GetSpeed();
+        soldier.particle.velocity_.y /= (float)GetSpeed();
     }
 
     if (soldier.on_ground) {

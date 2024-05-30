@@ -81,899 +81,11 @@ void UpdateKeys(Soldier& soldier, const Control& control)
     soldier.control = control;
 }
 
-void LegsApplyAnimation(Soldier& soldier,
-                        const AnimationDataManager& animation_data_manager,
-                        AnimationType id,
-                        unsigned int frame)
-{
-    if (!soldier.legs_animation.IsAny({ AnimationType::Prone, AnimationType::ProneMove }) &&
-        soldier.legs_animation.GetType() != id) {
-        soldier.legs_animation = AnimationState(animation_data_manager.Get(id));
-        soldier.legs_animation.SetFrame(frame);
-    }
-}
-
-void BodyApplyAnimation(Soldier& soldier,
-                        const AnimationDataManager& animation_data_manager,
-                        AnimationType id,
-                        unsigned int frame)
-{
-    if (soldier.body_animation.GetType() != id) {
-        soldier.body_animation = AnimationState(animation_data_manager.Get(id));
-        soldier.body_animation.SetFrame(frame);
-    }
-}
-
 void HandleSpecialPolytypes(const Map& map, PMSPolygonType polytype, Soldier& soldier)
 {
     if (polytype == PMSPolygonType::Deadly || polytype == PMSPolygonType::BloodyDeadly ||
         polytype == PMSPolygonType::Explosive) {
         soldier.particle.position = glm::vec2(map.GetSpawnPoints()[0].x, map.GetSpawnPoints()[0].y);
-    }
-}
-
-void UpdateControl(State& state,
-                   Soldier& soldier,
-                   const AnimationDataManager& animation_data_manager,
-                   std::vector<BulletParams>& bullet_emitter)
-{
-
-    bool player_pressed_left_right = false;
-
-    auto cleft = soldier.control.left;
-    auto cright = soldier.control.right;
-
-    // If both left and right directions are pressed, then decide which direction
-    // to go in
-    if (cleft && cright) {
-        // Remember that both directions were pressed, as it's useful for some moves
-        player_pressed_left_right = true;
-
-        if (soldier.control.was_jumping) {
-            // If jumping, keep going in the old direction
-            if (soldier.control.was_running_left) {
-                cright = false;
-            } else {
-                cleft = false;
-            }
-        } else {
-            // If not jumping, instead go in the new direction
-            if (soldier.control.was_running_left) {
-                cleft = false;
-            } else {
-                cright = false;
-            }
-        }
-    } else {
-        soldier.control.was_running_left = cleft;
-        soldier.control.was_jumping = soldier.control.up;
-    }
-
-    if (soldier.dead_meat) {
-        // TODO: co to free controls?
-        // control.free_controls();
-    }
-
-    if (soldier.control.jets &&
-        (((soldier.legs_animation.GetType() == AnimationType::JumpSide) &&
-          (((soldier.direction == -1) && cright) || ((soldier.direction == 1) && cleft) ||
-           player_pressed_left_right)) ||
-         ((soldier.legs_animation.GetType() == AnimationType::RollBack) && soldier.control.up))) {
-        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
-        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
-    } else if (soldier.control.jets && (soldier.jets_count > 0)) {
-        if (soldier.on_ground) {
-            // particle.force.y = -2.5 * (state.gravity > 0.05 ? JETSPEED :
-            // state.gravity * 2.0);
-            glm::vec2 particle_force = soldier.particle.GetForce();
-            if (state.gravity > 0.05) {
-                soldier.particle.SetForce({ particle_force.x, -2.5F * JETSPEED });
-            } else {
-                soldier.particle.SetForce({ particle_force.x, -2.5 * (state.gravity * 2.0F) });
-            }
-        } else if (soldier.stance != STANCE_PRONE) {
-            // particle.force.y -= (state.gravity > 0.05 ? JETSPEED : state.gravity
-            // * 2.0);
-            glm::vec2 particle_force = soldier.particle.GetForce();
-            if (state.gravity > 0.05) {
-                soldier.particle.SetForce({ particle_force.x, particle_force.y - JETSPEED });
-            } else {
-                soldier.particle.SetForce(
-                  { particle_force.x, particle_force.y - state.gravity * 2.0 });
-            }
-        } else {
-            glm::vec2 particle_force = soldier.particle.GetForce();
-            soldier.particle.SetForce(
-              { particle_force.x + (float)soldier.direction *
-                                     (state.gravity > 0.05 ? JETSPEED / 2.0 : state.gravity),
-                particle_force.y });
-        }
-
-        if ((soldier.legs_animation.GetType() != AnimationType::GetUp) &&
-            (soldier.body_animation.GetType() != AnimationType::Roll) &&
-            (soldier.body_animation.GetType() != AnimationType::RollBack)) {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
-        }
-        soldier.jets_count -= 1;
-    }
-
-    // FIRE!!!!
-    if (GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Chainsaw ||
-        (soldier.body_animation.GetType() != AnimationType::Roll) &&
-          (soldier.body_animation.GetType() != AnimationType::RollBack) &&
-          (soldier.body_animation.GetType() != AnimationType::Melee) &&
-          (soldier.body_animation.GetType() != AnimationType::Change)) {
-        if (((soldier.body_animation.GetType() == AnimationType::HandsUpAim) &&
-             (soldier.body_animation.GetFrame() == 11)) ||
-            (soldier.body_animation.GetType() != AnimationType::HandsUpAim)) {
-            if (soldier.control.fire)
-            // and (SpriteC.CeaseFireCounter < 0)
-            {
-                if (GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::NoWeapon ||
-                    GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Knife) {
-                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Punch, 1);
-                } else {
-                    Fire(soldier, bullet_emitter);
-                }
-            }
-        }
-    }
-
-    ControlThrowGrenade(soldier, animation_data_manager);
-
-    // change weapon animation
-    if ((soldier.body_animation.GetType() != AnimationType::Roll) &&
-        (soldier.body_animation.GetType() != AnimationType::RollBack)) {
-        if (soldier.control.change) {
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Change, 1);
-        }
-    }
-
-    // change weapon
-    if (soldier.body_animation.GetType() == AnimationType::Change) {
-        if (soldier.body_animation.GetFrame() == 2) {
-            // TODO: play sound
-            soldier.body_animation.SetNextFrame();
-        } else if (soldier.body_animation.GetFrame() == 25) {
-            SwitchWeapon(soldier);
-        } else if ((soldier.body_animation.GetFrame() ==
-                    animation_data_manager.Get(AnimationType::Change)->GetFrames().size()) &&
-                   (GetPrimaryWeapon(soldier).GetAmmoCount() == 0)) {
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-        }
-    }
-
-    // throw weapon
-    if (soldier.control.drop &&
-        (soldier.body_animation.GetType() != AnimationType::Change ||
-         soldier.body_animation.GetFrame() > 25) &&
-        !soldier.body_animation.IsAny(
-          { AnimationType::Roll, AnimationType::RollBack, AnimationType::ThrowWeapon })
-        // && !flamegod bonus
-        && !GetPrimaryWeapon(soldier).IsAny({
-             WeaponType::Bow,
-             WeaponType::FlameBow,
-             WeaponType::NoWeapon,
-           })) {
-        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::ThrowWeapon, 1);
-
-        if (GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Knife) {
-            soldier.body_animation.SetSpeed(2);
-        }
-    }
-
-    // throw knife
-    if (soldier.body_animation.GetType() == AnimationType::ThrowWeapon &&
-        GetPrimaryWeapon(soldier).GetWeaponParameters().kind == WeaponType::Knife &&
-        (!soldier.control.drop || soldier.body_animation.GetFrame() == 16)) {
-
-        Weapon weapon{ WeaponParametersFactory::GetParameters(WeaponType::ThrownKnife, false) };
-        auto aim_x = (float)soldier.control.mouse_aim_x;
-        auto aim_y = (float)soldier.control.mouse_aim_y;
-        auto dir = Calc::Vec2Normalize(glm::vec2(aim_x, aim_y) - soldier.skeleton->GetPos(15));
-        auto frame = (float)soldier.body_animation.GetFrame();
-        auto thrown_mul = 1.5F * std::min(16.0F, std::max(8.0F, frame)) / 16.0F;
-        auto bullet_vel = dir * weapon.GetWeaponParameters().speed * thrown_mul;
-        auto inherited_vel =
-          soldier.particle.GetVelocity() * weapon.GetWeaponParameters().inherited_velocity;
-        auto velocity = bullet_vel + inherited_vel;
-
-        BulletParams params{
-            weapon.GetWeaponParameters().bullet_style,
-            weapon.GetWeaponParameters().kind,
-            soldier.skeleton->GetPos(16) + velocity,
-            velocity,
-            (std::int16_t)weapon.GetWeaponParameters().timeout,
-            weapon.GetWeaponParameters().hit_multiply,
-            TeamType::None,
-        };
-        bullet_emitter.push_back(params);
-
-        soldier.control.drop = false;
-        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-    }
-
-    // Punch!
-    if (!soldier.dead_meat) {
-        if ((soldier.body_animation.GetType() == AnimationType::Punch) &&
-            (soldier.body_animation.GetFrame() == 11)) {
-            soldier.body_animation.SetNextFrame();
-        }
-    }
-
-    // Buttstock!
-    if (soldier.dead_meat) {
-        if ((soldier.body_animation.GetType() == AnimationType::Melee) &&
-            (soldier.body_animation.GetFrame() == 12)) {
-            // weapons
-        }
-    }
-
-    if (soldier.body_animation.GetType() == AnimationType::Melee &&
-        soldier.body_animation.GetFrame() > 20) {
-        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-    }
-
-    // Prone
-    if (soldier.control.prone) {
-        if ((soldier.legs_animation.GetType() != AnimationType::GetUp) &&
-            (soldier.legs_animation.GetType() != AnimationType::Prone) &&
-            (soldier.legs_animation.GetType() != AnimationType::ProneMove)) {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 1);
-            if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
-                (soldier.body_animation.GetType() != AnimationType::Change) &&
-                (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 1);
-            }
-            soldier.old_direction = soldier.direction;
-            soldier.control.prone = false;
-        }
-    }
-
-    // Get up
-    if (soldier.stance == STANCE_PRONE) {
-        if (soldier.control.prone || (soldier.direction != soldier.old_direction)) {
-            if (((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                 (soldier.legs_animation.GetFrame() > 23)) ||
-                (soldier.legs_animation.GetType() == AnimationType::ProneMove)) {
-                if (soldier.legs_animation.GetType() != AnimationType::GetUp) {
-                    soldier.legs_animation =
-                      AnimationState(animation_data_manager.Get(AnimationType::GetUp));
-                    soldier.legs_animation.SetFrame(9);
-                    soldier.control.prone = false;
-                }
-                if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
-                    (soldier.body_animation.GetType() != AnimationType::Change) &&
-                    (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::GetUp, 9);
-                }
-            }
-        }
-    }
-
-    bool unprone = false;
-    // Immediately switch from unprone to jump/sidejump, because the end of the
-    // unprone animation can be seen as the "wind up" for the jump
-    if ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
-        (soldier.legs_animation.GetFrame() > 23 - (4 - 1)) && soldier.on_ground &&
-        soldier.control.up && (cright || cleft)) {
-        // Set sidejump frame 1 to 4 depending on which unprone frame we're in
-        auto id = soldier.legs_animation.GetFrame() - (23 - (4 - 1));
-        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::JumpSide, id);
-        unprone = true;
-    } else if ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
-               (soldier.legs_animation.GetFrame() > 23 - (4 - 1)) && soldier.on_ground &&
-               soldier.control.up && !(cright || cleft)) {
-        // Set jump frame 6 to 9 depending on which unprone frame we're in
-        auto id = soldier.legs_animation.GetFrame() - (23 - (9 - 1));
-        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Jump, id);
-        unprone = true;
-    } else if ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
-               (soldier.legs_animation.GetFrame() > 23)) {
-        if (cright || cleft) {
-            if ((soldier.direction == 1) ^ cleft) {
-                LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-            } else {
-                LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RunBack, 1);
-            }
-        } else if (!soldier.on_ground && soldier.control.up) {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-        } else {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-        }
-        unprone = true;
-    }
-
-    if (unprone) {
-        soldier.stance = STANCE_STAND;
-
-        if ((soldier.body_animation.GetType() != AnimationType::Reload) &&
-            (soldier.body_animation.GetType() != AnimationType::Change) &&
-            (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-        }
-    }
-
-    if (true) {
-        // self.stat == 0 {
-        if (((soldier.body_animation.GetType() == AnimationType::Stand) &&
-             (soldier.legs_animation.GetType() == AnimationType::Stand) && !soldier.dead_meat &&
-             (soldier.idle_time > 0)) ||
-            (soldier.idle_time > DEFAULT_IDLETIME)) {
-            if (soldier.idle_random >= 0) {
-                soldier.idle_time -= 1;
-            }
-        } else {
-            soldier.idle_time = DEFAULT_IDLETIME;
-        }
-
-        if (soldier.idle_random == 0) {
-            if (soldier.idle_time == 0) {
-                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Smoke, 1);
-                soldier.idle_time = DEFAULT_IDLETIME;
-            }
-
-            if ((soldier.body_animation.GetType() == AnimationType::Smoke) &&
-                (soldier.body_animation.GetFrame() == 17)) {
-                soldier.body_animation.SetNextFrame();
-            }
-
-            if (!soldier.dead_meat) {
-                if ((soldier.idle_time == 1) &&
-                    (soldier.body_animation.GetType() != AnimationType::Smoke) &&
-                    (soldier.legs_animation.GetType() == AnimationType::Stand)) {
-                    soldier.idle_time = DEFAULT_IDLETIME;
-                    soldier.idle_random = -1;
-                }
-            }
-        }
-
-        // *CHEAT*
-        if (soldier.legs_animation.GetSpeed() > 1) {
-            if ((soldier.legs_animation.GetType() == AnimationType::Jump) ||
-                (soldier.legs_animation.GetType() == AnimationType::JumpSide) ||
-                (soldier.legs_animation.GetType() == AnimationType::Roll) ||
-                (soldier.legs_animation.GetType() == AnimationType::RollBack) ||
-                (soldier.legs_animation.GetType() == AnimationType::Prone) ||
-                (soldier.legs_animation.GetType() == AnimationType::Run) ||
-                (soldier.legs_animation.GetType() == AnimationType::RunBack)) {
-                soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
-                soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
-            }
-
-            if (soldier.legs_animation.GetSpeed() > 2) {
-                if ((soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                    (soldier.legs_animation.GetType() == AnimationType::CrouchRun)) {
-                    soldier.particle.velocity_.x /= (float)soldier.legs_animation.GetSpeed();
-                    soldier.particle.velocity_.y /= (float)soldier.legs_animation.GetSpeed();
-                }
-            }
-        }
-
-        // TODO: Check if near collider
-
-        // TODO if targetmode > freecontrols
-        // End any ongoing idle animations if a key is pressed
-        if ((soldier.body_animation.GetType() == AnimationType::Cigar) ||
-            (soldier.body_animation.GetType() == AnimationType::Match) ||
-            (soldier.body_animation.GetType() == AnimationType::Smoke) ||
-            (soldier.body_animation.GetType() == AnimationType::Wipe) ||
-            (soldier.body_animation.GetType() == AnimationType::Groin)) {
-            if (cleft || cright || soldier.control.up || soldier.control.down ||
-                soldier.control.fire || soldier.control.jets || soldier.control.drop ||
-                soldier.control.change || soldier.control.change // TODO: 2x control.change
-                || soldier.control.throw_grenade || soldier.control.reload ||
-                soldier.control.prone) {
-                soldier.body_animation.SetFrame(
-                  animation_data_manager.Get(soldier.body_animation.GetType())
-                    ->GetFrames()
-                    .size()); // TODO: Check this if correct
-            }
-        }
-
-        // make anims out of controls
-        // rolling
-        if ((soldier.body_animation.GetType() != AnimationType::TakeOff) &&
-            (soldier.body_animation.GetType() != AnimationType::Piss) &&
-            (soldier.body_animation.GetType() != AnimationType::Mercy) &&
-            (soldier.body_animation.GetType() != AnimationType::Mercy2) &&
-            (soldier.body_animation.GetType() != AnimationType::Victory) &&
-            (soldier.body_animation.GetType() != AnimationType::Own)) {
-            if ((soldier.body_animation.GetType() == AnimationType::Roll) ||
-                (soldier.body_animation.GetType() == AnimationType::RollBack)) {
-                if (soldier.legs_animation.GetType() == AnimationType::Roll) {
-                    if (soldier.on_ground) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        soldier.particle.SetForce(
-                          { (float)soldier.direction * ROLLSPEED, particle_force.y });
-                    } else {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        soldier.particle.SetForce(
-                          { (float)soldier.direction * 2.0F * FLYSPEED, particle_force.y });
-                    }
-                } else if (soldier.legs_animation.GetType() == AnimationType::RollBack) {
-                    if (soldier.on_ground) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        particle_force.x = (-(float)soldier.direction) * ROLLSPEED;
-                        soldier.particle.SetForce(particle_force);
-                    } else {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        particle_force.x = (-(float)(soldier.direction)) * 2.0F * FLYSPEED;
-                        soldier.particle.SetForce(particle_force);
-                    }
-                    // if appropriate frames to move
-                    if ((soldier.legs_animation.GetFrame() > 1) &&
-                        (soldier.legs_animation.GetFrame() < 8)) {
-                        if (soldier.control.up) {
-                            glm::vec2 particle_force = soldier.particle.GetForce();
-                            particle_force.y -= JUMPDIRSPEED * 1.5F;
-                            particle_force.x *= 0.5;
-                            soldier.particle.SetForce(particle_force);
-                            soldier.particle.velocity_.x *= 0.8;
-                        }
-                    }
-                }
-                // downright
-            } else if ((cright) && (soldier.control.down)) {
-                if (soldier.on_ground) {
-                    // roll to the side
-                    if ((soldier.legs_animation.GetType() == AnimationType::Run) ||
-                        (soldier.legs_animation.GetType() == AnimationType::RunBack) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Fall) ||
-                        (soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                        ((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                         (soldier.legs_animation.GetFrame() >= 24))) {
-                        if ((soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                            ((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                             (soldier.legs_animation.GetFrame() ==
-                              soldier.legs_animation.GetFramesCount()))) {
-                            soldier.control.prone = false;
-                            soldier.stance = STANCE_STAND;
-                        }
-
-                        if (soldier.direction == 1) {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::Roll, 1);
-                            soldier.legs_animation =
-                              AnimationState(animation_data_manager.Get(AnimationType::Roll));
-                            soldier.legs_animation.SetFrame(1);
-                        } else {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::RollBack, 1);
-                            soldier.legs_animation =
-                              AnimationState(animation_data_manager.Get(AnimationType::RollBack));
-                            soldier.legs_animation.SetFrame(1);
-                        }
-                    } else {
-                        if (soldier.direction == 1) {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
-                        } else {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
-                        }
-                    }
-
-                    if ((soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        soldier.particle.SetForce({ CROUCHRUNSPEED, particle_force.y });
-                    } else if ((soldier.legs_animation.GetType() == AnimationType::Roll) ||
-                               (soldier.legs_animation.GetType() == AnimationType::RollBack)) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        soldier.particle.SetForce({ 2.0F * CROUCHRUNSPEED, particle_force.y });
-                    }
-                }
-                // downleft
-            } else if (cleft && soldier.control.down) {
-                if (soldier.on_ground) {
-                    // roll to the side
-                    if ((soldier.legs_animation.GetType() == AnimationType::Run) ||
-                        (soldier.legs_animation.GetType() == AnimationType::RunBack) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Fall) ||
-                        (soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                        ((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                         (soldier.legs_animation.GetFrame() >= 24))) {
-                        if ((soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                            ((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                             (soldier.legs_animation.GetFrame() ==
-                              soldier.legs_animation.GetFramesCount()))) {
-                            soldier.control.prone = false;
-                            soldier.stance = STANCE_STAND;
-                        }
-
-                        if (soldier.direction == 1) {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::RollBack, 1);
-                            soldier.legs_animation =
-                              AnimationState(animation_data_manager.Get(AnimationType::RollBack));
-                            soldier.legs_animation.SetFrame(1);
-                        } else {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::Roll, 1);
-                            soldier.legs_animation =
-                              AnimationState(animation_data_manager.Get(AnimationType::Roll));
-                            soldier.legs_animation.SetFrame(1);
-                        }
-                    } else {
-                        if (soldier.direction == 1) {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
-                        } else {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
-                        }
-                    }
-
-                    if ((soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        soldier.particle.SetForce({ -CROUCHRUNSPEED, particle_force.y });
-                    }
-                }
-                // Proning
-            } else if ((soldier.legs_animation.GetType() == AnimationType::Prone) ||
-                       (soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                       ((soldier.legs_animation.GetType() == AnimationType::GetUp) &&
-                        (soldier.body_animation.GetType() != AnimationType::Throw) &&
-                        (soldier.body_animation.GetType() != AnimationType::Punch))) {
-                if (soldier.on_ground) {
-                    if (((soldier.legs_animation.GetType() == AnimationType::Prone) &&
-                         (soldier.legs_animation.GetFrame() > 25)) ||
-                        (soldier.legs_animation.GetType() == AnimationType::ProneMove)) {
-                        if (cleft || cright) {
-                            if ((soldier.legs_animation.GetFrame() < 4) ||
-                                (soldier.legs_animation.GetFrame() > 14)) {
-
-                                glm::vec2 particle_force = soldier.particle.GetForce();
-                                if (cleft) {
-                                    particle_force.x = -PRONESPEED;
-                                } else {
-                                    particle_force.x = PRONESPEED;
-                                }
-                                soldier.particle.SetForce(particle_force);
-                            }
-
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::ProneMove, 1);
-
-                            if ((soldier.body_animation.GetType() != AnimationType::ClipIn) &&
-                                (soldier.body_animation.GetType() != AnimationType::ClipOut) &&
-                                (soldier.body_animation.GetType() != AnimationType::SlideBack) &&
-                                (soldier.body_animation.GetType() != AnimationType::Reload) &&
-                                (soldier.body_animation.GetType() != AnimationType::Change) &&
-                                (soldier.body_animation.GetType() != AnimationType::Throw) &&
-                                (soldier.body_animation.GetType() != AnimationType::ThrowWeapon)) {
-                                BodyApplyAnimation(
-                                  soldier, animation_data_manager, AnimationType::ProneMove, 1);
-                            }
-
-                            if (soldier.legs_animation.GetType() != AnimationType::ProneMove) {
-                                soldier.legs_animation = AnimationState(
-                                  animation_data_manager.Get(AnimationType::ProneMove));
-                            }
-                        } else {
-                            if (soldier.legs_animation.GetType() != AnimationType::Prone) {
-                                soldier.legs_animation =
-                                  AnimationState(animation_data_manager.Get(AnimationType::Prone));
-                            }
-                            soldier.legs_animation.SetFrame(26);
-                        }
-                    }
-                }
-            } else if (cright && soldier.control.up) {
-                if (soldier.on_ground) {
-                    if ((soldier.legs_animation.GetType() == AnimationType::Run) ||
-                        (soldier.legs_animation.GetType() == AnimationType::RunBack) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Stand) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Crouch) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
-                    }
-
-                    if (soldier.legs_animation.GetFrame() ==
-                        soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    }
-                } else if ((soldier.legs_animation.GetType() == AnimationType::Roll) ||
-                           (soldier.legs_animation.GetType() == AnimationType::RollBack)) {
-                    if (soldier.direction == 1) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::RunBack, 1);
-                    }
-                }
-                if (soldier.legs_animation.GetType() == AnimationType::Jump) {
-                    if (soldier.legs_animation.GetFrame() < 10) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
-                    }
-                }
-
-                if (soldier.legs_animation.GetType() == AnimationType::JumpSide) {
-                    if ((soldier.legs_animation.GetFrame() > 3) &&
-                        (soldier.legs_animation.GetFrame() < 11)) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        particle_force.x = JUMPDIRSPEED;
-                        particle_force.y = -JUMPDIRSPEED / 1.2F;
-                        soldier.particle.SetForce(particle_force);
-                    }
-                }
-            } else if (cleft && soldier.control.up) {
-                if (soldier.on_ground) {
-                    if ((soldier.legs_animation.GetType() == AnimationType::Run) ||
-                        (soldier.legs_animation.GetType() == AnimationType::RunBack) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Stand) ||
-                        (soldier.legs_animation.GetType() == AnimationType::Crouch) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-                        (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
-                    }
-
-                    if (soldier.legs_animation.GetFrame() ==
-                        soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    }
-                } else if ((soldier.legs_animation.GetType() == AnimationType::Roll) ||
-                           (soldier.legs_animation.GetType() == AnimationType::RollBack)) {
-                    if (soldier.direction == -1) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::RunBack, 1);
-                    }
-                }
-
-                if (soldier.legs_animation.GetType() == AnimationType::Jump) {
-                    if (soldier.legs_animation.GetFrame() < 10) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::JumpSide, 1);
-                    }
-                }
-
-                if (soldier.legs_animation.GetType() == AnimationType::JumpSide) {
-                    if ((soldier.legs_animation.GetFrame() > 3) &&
-                        (soldier.legs_animation.GetFrame() < 11)) {
-                        glm::vec2 particle_force = soldier.particle.GetForce();
-                        particle_force.x = -JUMPDIRSPEED;
-                        particle_force.y = -JUMPDIRSPEED / 1.2F;
-                        soldier.particle.SetForce(particle_force);
-                    }
-                }
-            } else if (soldier.control.up) {
-                if (soldier.on_ground) {
-                    if (soldier.legs_animation.GetType() != AnimationType::Jump) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Jump, 1);
-                    }
-                    if (soldier.legs_animation.GetFrame() ==
-                        soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::Stand, 1);
-                    }
-                }
-                if (soldier.legs_animation.GetType() == AnimationType::Jump) {
-                    if ((soldier.legs_animation.GetFrame() > 8) &&
-                        (soldier.legs_animation.GetFrame() < 15)) {
-                        glm::vec particle_force = soldier.particle.GetForce();
-                        particle_force.y = -JUMPSPEED;
-                        soldier.particle.SetForce(particle_force);
-                    }
-                    if (soldier.legs_animation.GetFrame() ==
-                        soldier.legs_animation.GetFramesCount()) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
-                    }
-                }
-            } else if (soldier.control.down) {
-                if (soldier.on_ground) {
-                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Crouch, 1);
-                }
-            } else if (cright) {
-                if (true) {
-                    // TODO
-                    // if para = 0
-                    if (soldier.direction == 1) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::RunBack, 1);
-                    }
-                }
-
-                if (soldier.on_ground) {
-                    glm::vec2 particle_force = soldier.particle.GetForce();
-                    particle_force.x = RUNSPEED;
-                    particle_force.y = -RUNSPEEDUP;
-                    soldier.particle.SetForce(particle_force);
-                } else {
-                    glm::vec2 particle_force = soldier.particle.GetForce();
-                    particle_force.x = FLYSPEED;
-                    soldier.particle.SetForce(particle_force);
-                }
-            } else if (cleft) {
-                if (true) {
-                    // if para = 0
-                    if (soldier.direction == -1) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::RunBack, 1);
-                    }
-                }
-
-                glm::vec2 particle_force = soldier.particle.GetForce();
-                if (soldier.on_ground) {
-                    particle_force.x = -RUNSPEED;
-                    particle_force.y = -RUNSPEEDUP;
-                } else {
-                    particle_force.x = -FLYSPEED;
-                }
-                soldier.particle.SetForce(particle_force);
-            } else {
-                if (soldier.on_ground) {
-                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-                } else {
-                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
-                }
-            }
-        }
-        // Body animations
-
-        if ((soldier.legs_animation.GetType() == AnimationType::Roll) &&
-            (soldier.body_animation.GetType() != AnimationType::Roll)) {
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Roll, 1);
-        }
-        if ((soldier.body_animation.GetType() == AnimationType::Roll) &&
-            (soldier.legs_animation.GetType() != AnimationType::Roll)) {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Roll, 1);
-        }
-        if ((soldier.legs_animation.GetType() == AnimationType::RollBack) &&
-            (soldier.body_animation.GetType() != AnimationType::RollBack)) {
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
-        }
-        if ((soldier.body_animation.GetType() == AnimationType::RollBack) &&
-            (soldier.legs_animation.GetType() != AnimationType::RollBack)) {
-            LegsApplyAnimation(soldier, animation_data_manager, AnimationType::RollBack, 1);
-        }
-
-        if ((soldier.body_animation.GetType() == AnimationType::Roll) ||
-            (soldier.body_animation.GetType() == AnimationType::RollBack)) {
-            if (soldier.legs_animation.GetFrame() != soldier.body_animation.GetFrame()) {
-                if (soldier.legs_animation.GetFrame() > soldier.body_animation.GetFrame()) {
-                    soldier.body_animation.SetFrame(soldier.legs_animation.GetFrame());
-                } else {
-                    soldier.legs_animation.SetFrame(soldier.body_animation.GetFrame());
-                }
-            }
-        }
-
-        // Gracefully end a roll animation
-        if (((soldier.body_animation.GetType() == AnimationType::Roll) ||
-             (soldier.body_animation.GetType() == AnimationType::RollBack)) &&
-            (soldier.body_animation.GetFrame() == soldier.body_animation.GetFramesCount())) {
-            // Was probably a roll
-            if (soldier.on_ground) {
-                if (soldier.control.down) {
-                    if (cleft || cright) {
-                        if (soldier.body_animation.GetType() == AnimationType::Roll) {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRun, 1);
-                        } else {
-                            LegsApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
-                        }
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::Crouch, 15);
-                    }
-                }
-                // Was probably a backflip
-            } else if ((soldier.body_animation.GetType() == AnimationType::RollBack) &&
-                       soldier.control.up) {
-                if (cleft || cright) {
-                    // Run back or forward depending on facing direction and direction key
-                    // pressed
-                    if ((soldier.direction == 1) ^ (cleft)) {
-                        LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Run, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::RunBack, 1);
-                    }
-                } else {
-                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Fall, 1);
-                }
-                // Was probably a roll (that ended mid-air)
-            } else if (soldier.control.down) {
-                if (cleft || cright) {
-                    if (soldier.body_animation.GetType() == AnimationType::Roll) {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::CrouchRun, 1);
-                    } else {
-                        LegsApplyAnimation(
-                          soldier, animation_data_manager, AnimationType::CrouchRunBack, 1);
-                    }
-                } else {
-                    LegsApplyAnimation(soldier, animation_data_manager, AnimationType::Crouch, 15);
-                }
-            }
-            BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-        }
-
-        if ((!soldier.control.throw_grenade &&
-             (soldier.body_animation.GetType() != AnimationType::Recoil) &&
-             (soldier.body_animation.GetType() != AnimationType::SmallRecoil) &&
-             (soldier.body_animation.GetType() != AnimationType::AimRecoil) &&
-             (soldier.body_animation.GetType() != AnimationType::HandsUpRecoil) &&
-             (soldier.body_animation.GetType() != AnimationType::Shotgun) &&
-             (soldier.body_animation.GetType() != AnimationType::Barret) &&
-             (soldier.body_animation.GetType() != AnimationType::Change) &&
-             (soldier.body_animation.GetType() != AnimationType::ThrowWeapon) &&
-             (soldier.body_animation.GetType() != AnimationType::WeaponNone) &&
-             (soldier.body_animation.GetType() != AnimationType::Punch) &&
-             (soldier.body_animation.GetType() != AnimationType::Roll) &&
-             (soldier.body_animation.GetType() != AnimationType::RollBack) &&
-             (soldier.body_animation.GetType() != AnimationType::ReloadBow) &&
-             (soldier.body_animation.GetType() != AnimationType::Cigar) &&
-             (soldier.body_animation.GetType() != AnimationType::Match) &&
-             (soldier.body_animation.GetType() != AnimationType::Smoke) &&
-             (soldier.body_animation.GetType() != AnimationType::Wipe) &&
-             (soldier.body_animation.GetType() != AnimationType::TakeOff) &&
-             (soldier.body_animation.GetType() != AnimationType::Groin) &&
-             (soldier.body_animation.GetType() != AnimationType::Piss) &&
-             (soldier.body_animation.GetType() != AnimationType::Mercy) &&
-             (soldier.body_animation.GetType() != AnimationType::Mercy2) &&
-             (soldier.body_animation.GetType() != AnimationType::Victory) &&
-             (soldier.body_animation.GetType() != AnimationType::Own) &&
-             (soldier.body_animation.GetType() != AnimationType::Reload) &&
-             (soldier.body_animation.GetType() != AnimationType::Prone) &&
-             (soldier.body_animation.GetType() != AnimationType::GetUp) &&
-             (soldier.body_animation.GetType() != AnimationType::ProneMove) &&
-             (soldier.body_animation.GetType() != AnimationType::Melee)) ||
-            ((soldier.body_animation.GetFrame() == soldier.body_animation.GetFramesCount()) &&
-             (soldier.body_animation.GetType() != AnimationType::Prone))) {
-            if (soldier.stance != STANCE_PRONE) {
-                if (soldier.stance == STANCE_STAND) {
-                    BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Stand, 1);
-                }
-
-                if (soldier.stance == STANCE_CROUCH) {
-                    if (soldier.collider_distance < 255) {
-                        if (soldier.body_animation.GetType() == AnimationType::HandsUpRecoil) {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::HandsUpAim, 11);
-                        } else {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::HandsUpAim, 1);
-                        }
-                    } else {
-                        if (soldier.body_animation.GetType() == AnimationType::AimRecoil) {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::Aim, 6);
-                        } else {
-                            BodyApplyAnimation(
-                              soldier, animation_data_manager, AnimationType::Aim, 1);
-                        }
-                    }
-                }
-            } else {
-                BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Prone, 26);
-            }
-        }
-
-        if ((soldier.legs_animation.GetType() == AnimationType::Crouch) ||
-            (soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-            (soldier.legs_animation.GetType() == AnimationType::CrouchRunBack)) {
-            soldier.stance = STANCE_CROUCH;
-        } else {
-            soldier.stance = STANCE_STAND;
-        }
-        if ((soldier.legs_animation.GetType() == AnimationType::Prone) ||
-            (soldier.legs_animation.GetType() == AnimationType::ProneMove)) {
-            soldier.stance = STANCE_PRONE;
-        }
     }
 }
 
@@ -993,16 +105,16 @@ void Update(State& state,
         soldier.is_shooting = false;
     }
 
-    if (soldier.legs_animation.GetSpeed() < 1) {
-        soldier.legs_animation.SetSpeed(1);
+    if (soldier.legs_animation->GetSpeed() < 1) {
+        soldier.legs_animation->SetSpeed(1);
     }
 
-    if (soldier.legs_animation_state_machine->GetSpeed() < 1) {
-        soldier.legs_animation_state_machine->SetSpeed(1);
+    if (soldier.legs_animation->GetSpeed() < 1) {
+        soldier.legs_animation->SetSpeed(1);
     }
 
-    if (soldier.body_animation.GetSpeed() < 1) {
-        soldier.body_animation.SetSpeed(1);
+    if (soldier.body_animation->GetSpeed() < 1) {
+        soldier.body_animation->SetSpeed(1);
     }
 
     soldier.control.mouse_aim_x =
@@ -1053,27 +165,23 @@ void Update(State& state,
     soldier.control.mouse_aim_y =
       (int)((float)soldier.control.mouse_aim_y + soldier.particle.GetVelocity().y);
 
-    // UpdateControl(state, soldier, animation_data_manager, bullet_emitter);
-    auto maybe_new_legs_animation_state_machine =
-      soldier.legs_animation_state_machine->HandleInput(soldier);
+    auto maybe_new_legs_animation_state_machine = soldier.legs_animation->HandleInput(soldier);
     if (maybe_new_legs_animation_state_machine.has_value()) {
-        soldier.legs_animation_state_machine->Exit(soldier, physics_events);
-        soldier.legs_animation_state_machine = *maybe_new_legs_animation_state_machine;
-        soldier.legs_animation_state_machine->Enter(soldier);
-    }
-    soldier.body_animation_state_machine->TryToShoot(soldier, physics_events);
-    auto maybe_new_body_animation_state_machine =
-      soldier.body_animation_state_machine->HandleInput(soldier);
-    if (maybe_new_body_animation_state_machine.has_value()) {
-        soldier.body_animation_state_machine->Exit(soldier, physics_events);
-        soldier.body_animation_state_machine = *maybe_new_body_animation_state_machine;
-        soldier.body_animation_state_machine->Enter(soldier);
+        soldier.legs_animation->Exit(soldier, physics_events);
+        soldier.legs_animation = *maybe_new_legs_animation_state_machine;
+        soldier.legs_animation->Enter(soldier);
     }
 
-    soldier.legs_animation_state_machine->Update(soldier, physics_events);
-    soldier.body_animation_state_machine->Update(soldier, physics_events);
-    soldier.legs_animation = *soldier.legs_animation_state_machine;
-    soldier.body_animation = *soldier.body_animation_state_machine;
+    soldier.body_animation->TryToShoot(soldier, physics_events);
+    auto maybe_new_body_animation_state_machine = soldier.body_animation->HandleInput(soldier);
+    if (maybe_new_body_animation_state_machine.has_value()) {
+        soldier.body_animation->Exit(soldier, physics_events);
+        soldier.body_animation = *maybe_new_body_animation_state_machine;
+        soldier.body_animation->Enter(soldier);
+    }
+
+    soldier.legs_animation->Update(soldier, physics_events);
+    soldier.body_animation->Update(soldier, physics_events);
 
     RepositionSoldierSkeletonParts(soldier);
 
@@ -1085,10 +193,8 @@ void Update(State& state,
     }
 
     if (!soldier.dead_meat) {
-        soldier.body_animation.DoAnimation();
-        soldier.legs_animation.DoAnimation();
-        soldier.legs_animation_state_machine->DoAnimation();
-        soldier.body_animation_state_machine->DoAnimation();
+        soldier.body_animation->DoAnimation();
+        soldier.legs_animation->DoAnimation();
 
         soldier.on_ground = false;
 
@@ -1239,15 +345,15 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                     }
 
                     if (area == 0) {
-                        if ((soldier.legs_animation.GetType() == AnimationType::Stand) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Crouch) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Prone) ||
-                            (soldier.legs_animation.GetType() == AnimationType::ProneMove) ||
-                            (soldier.legs_animation.GetType() == AnimationType::GetUp) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Fall) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Mercy) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Mercy2) ||
-                            (soldier.legs_animation.GetType() == AnimationType::Own)) {
+                        if ((soldier.legs_animation->GetType() == AnimationType::Stand) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Crouch) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Prone) ||
+                            (soldier.legs_animation->GetType() == AnimationType::ProneMove) ||
+                            (soldier.legs_animation->GetType() == AnimationType::GetUp) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Fall) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Mercy) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Mercy2) ||
+                            (soldier.legs_animation->GetType() == AnimationType::Own)) {
                             if ((soldier.particle.velocity_.x < SLIDELIMIT) &&
                                 (soldier.particle.velocity_.x > -SLIDELIMIT) &&
                                 (step.y > SLIDELIMIT)) {
@@ -1259,18 +365,18 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
 
                             if ((step.y > SLIDELIMIT) && (polytype != PMSPolygonType::Ice) &&
                                 (polytype != PMSPolygonType::Bouncy)) {
-                                if ((soldier.legs_animation.GetType() == AnimationType::Stand) ||
-                                    (soldier.legs_animation.GetType() == AnimationType::Fall) ||
-                                    (soldier.legs_animation.GetType() == AnimationType::Crouch)) {
+                                if ((soldier.legs_animation->GetType() == AnimationType::Stand) ||
+                                    (soldier.legs_animation->GetType() == AnimationType::Fall) ||
+                                    (soldier.legs_animation->GetType() == AnimationType::Crouch)) {
                                     soldier.particle.velocity_.x *= STANDSURFACECOEFX;
                                     soldier.particle.velocity_.y *= STANDSURFACECOEFY;
 
                                     glm::vec2 particle_force = soldier.particle.GetForce();
                                     particle_force.x -= soldier.particle.velocity_.x;
                                     soldier.particle.SetForce(particle_force);
-                                } else if (soldier.legs_animation.GetType() ==
+                                } else if (soldier.legs_animation->GetType() ==
                                            AnimationType::Prone) {
-                                    if (soldier.legs_animation.GetFrame() > 24) {
+                                    if (soldier.legs_animation->GetFrame() > 24) {
                                         if (!(soldier.control.down &&
                                               (soldier.control.left || soldier.control.right))) {
                                             soldier.particle.velocity_.x *= STANDSURFACECOEFX;
@@ -1284,18 +390,19 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                                         soldier.particle.velocity_.x *= SURFACECOEFX;
                                         soldier.particle.velocity_.y *= SURFACECOEFY;
                                     }
-                                } else if (soldier.legs_animation.GetType() ==
+                                } else if (soldier.legs_animation->GetType() ==
                                            AnimationType::GetUp) {
                                     soldier.particle.velocity_.x *= SURFACECOEFX;
                                     soldier.particle.velocity_.y *= SURFACECOEFY;
-                                } else if (soldier.legs_animation.GetType() ==
+                                } else if (soldier.legs_animation->GetType() ==
                                            AnimationType::ProneMove) {
                                     soldier.particle.velocity_.x *= STANDSURFACECOEFX;
                                     soldier.particle.velocity_.y *= STANDSURFACECOEFY;
                                 }
                             }
-                        } else if ((soldier.legs_animation.GetType() == AnimationType::CrouchRun) ||
-                                   (soldier.legs_animation.GetType() ==
+                        } else if ((soldier.legs_animation->GetType() ==
+                                    AnimationType::CrouchRun) ||
+                                   (soldier.legs_animation->GetType() ==
                                     AnimationType::CrouchRunBack)) {
                             soldier.particle.velocity_.x *= CROUCHMOVESURFACECOEFX;
                             soldier.particle.velocity_.y *= CROUCHMOVESURFACECOEFY;
@@ -1511,8 +618,8 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
 
     glm::vec2 dir;
     if (weapon.GetWeaponParameters().bullet_style == BulletType::Blade ||
-        soldier.body_animation.GetType() == AnimationType::Mercy ||
-        soldier.body_animation.GetType() == AnimationType::Mercy2) {
+        soldier.body_animation->GetType() == AnimationType::Mercy ||
+        soldier.body_animation->GetType() == AnimationType::Mercy2) {
         dir = Calc::Vec2Normalize(soldier.skeleton->GetPos(15) - soldier.skeleton->GetPos(16));
     } else {
         auto aim_x = (float)soldier.control.mouse_aim_x;
@@ -1557,12 +664,12 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
             break;
         case WeaponType::LAW: {
             if ((soldier.on_ground || soldier.on_ground_permanent || soldier.on_ground_for_law) &&
-                (((soldier.legs_animation.GetType() == AnimationType::Crouch &&
-                   soldier.legs_animation.GetFrame() > 13) ||
-                  soldier.legs_animation.GetType() == AnimationType::CrouchRun ||
-                  soldier.legs_animation.GetType() == AnimationType::CrouchRunBack) ||
-                 (soldier.legs_animation.GetType() == AnimationType::Prone &&
-                  soldier.legs_animation.GetFrame() > 23))) {
+                (((soldier.legs_animation->GetType() == AnimationType::Crouch &&
+                   soldier.legs_animation->GetFrame() > 13) ||
+                  soldier.legs_animation->GetType() == AnimationType::CrouchRun ||
+                  soldier.legs_animation->GetType() == AnimationType::CrouchRunBack) ||
+                 (soldier.legs_animation->GetType() == AnimationType::Prone &&
+                  soldier.legs_animation->GetFrame() > 23))) {
                 bullet_emitter.push_back(params);
             }
             break;
@@ -1573,38 +680,5 @@ void Fire(Soldier& soldier, std::vector<BulletParams>& bullet_emitter)
     };
 
     soldier.is_shooting = true;
-}
-
-void ControlThrowGrenade(Soldier& soldier, const AnimationDataManager& animation_data_manager)
-{
-    if (!soldier.control.throw_grenade) {
-        soldier.grenade_can_throw = true;
-    }
-
-    if (soldier.grenade_can_throw && soldier.control.throw_grenade &&
-        soldier.body_animation.GetType() != AnimationType::Roll &&
-        soldier.body_animation.GetType() != AnimationType::RollBack) {
-
-        BodyApplyAnimation(soldier, animation_data_manager, AnimationType::Throw, 1);
-    }
-
-    if (soldier.body_animation.GetType() == AnimationType::Throw &&
-        (!soldier.control.throw_grenade || (soldier.body_animation.GetFrame() == 36))) {
-
-        // Grenade throw
-        if (soldier.body_animation.GetFrame() > 14 && soldier.body_animation.GetFrame() < 37 &&
-            GetTertiaryWeapon(soldier).GetAmmoCount() > 0 /*&& CeaseFireCounter < 0*/) {
-
-            // TODO: implement spawning grenade as a projectile
-        }
-
-        if (soldier.control.throw_grenade) {
-            soldier.grenade_can_throw = false;
-        }
-
-        if (GetPrimaryWeapon(soldier).GetAmmoCount() == 0) {
-            // TODO: implement stopping reloading of the weapon while throwing grenade
-        }
-    }
 }
 } // namespace Soldank::SoldierPhysics

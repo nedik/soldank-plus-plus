@@ -32,16 +32,16 @@ void BodyThrowAnimationState::Enter(Soldier& soldier)
 std::optional<std::shared_ptr<AnimationState>> BodyThrowAnimationState::HandleInput(
   Soldier& soldier)
 {
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::Roll) {
+    if (soldier.legs_animation->GetType() == AnimationType::Roll) {
         return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::RollBack) {
+    if (soldier.legs_animation->GetType() == AnimationType::RollBack) {
         return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
     }
 
     // Prone cancelling
-    if (soldier.legs_animation_state_machine->GetType() == AnimationType::GetUp) {
+    if (soldier.legs_animation->GetType() == AnimationType::GetUp) {
         auto new_state = std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
         new_state->SetFrame(9);
         return new_state;

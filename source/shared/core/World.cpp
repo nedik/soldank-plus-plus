@@ -1,5 +1,33 @@
 #include "World.hpp"
 
+#include "core/animations/AnimationData.hpp"
+
+#include "core/animations/states/BodyAimAnimationState.hpp"
+#include "core/animations/states/BodyChangeAnimationState.hpp"
+#include "core/animations/states/BodyGetUpAnimationState.hpp"
+#include "core/animations/states/BodyProneAnimationState.hpp"
+#include "core/animations/states/BodyProneMoveAnimationState.hpp"
+#include "core/animations/states/BodyPunchAnimationState.hpp"
+#include "core/animations/states/BodyRollAnimationState.hpp"
+#include "core/animations/states/BodyRollBackAnimationState.hpp"
+#include "core/animations/states/BodyStandAnimationState.hpp"
+#include "core/animations/states/BodyThrowAnimationState.hpp"
+#include "core/animations/states/BodyThrowWeaponAnimationState.hpp"
+#include "core/animations/states/LegsCrouchAnimationState.hpp"
+#include "core/animations/states/LegsCrouchRunAnimationState.hpp"
+#include "core/animations/states/LegsCrouchRunBackAnimationState.hpp"
+#include "core/animations/states/LegsFallAnimationState.hpp"
+#include "core/animations/states/LegsGetUpAnimationState.hpp"
+#include "core/animations/states/LegsJumpAnimationState.hpp"
+#include "core/animations/states/LegsJumpSideAnimationState.hpp"
+#include "core/animations/states/LegsProneAnimationState.hpp"
+#include "core/animations/states/LegsProneMoveAnimationState.hpp"
+#include "core/animations/states/LegsRollAnimationState.hpp"
+#include "core/animations/states/LegsRollBackAnimationState.hpp"
+#include "core/animations/states/LegsRunAnimationState.hpp"
+#include "core/animations/states/LegsRunBackAnimationState.hpp"
+#include "core/animations/states/LegsStandAnimationState.hpp"
+
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
 #include "core/physics/BulletPhysics.hpp"
@@ -12,6 +40,7 @@
 #include <random>
 #include <ranges>
 #include <memory>
+#include <stdexcept>
 #include <tuple>
 #include <chrono>
 
@@ -206,6 +235,77 @@ WorldEvents& World::GetWorldEvents()
 std::shared_ptr<const AnimationData> World::GetAnimationData(AnimationType animation_type) const
 {
     return animation_data_manager_.Get(animation_type);
+}
+
+std::shared_ptr<AnimationState> World::GetBodyAnimationState(AnimationType animation_type) const
+{
+    switch (animation_type) {
+        case AnimationType::Stand:
+            return std::make_shared<BodyStandAnimationState>(animation_data_manager_);
+        case AnimationType::Throw:
+            return std::make_shared<BodyThrowAnimationState>(animation_data_manager_);
+        case AnimationType::Change:
+            return std::make_shared<BodyChangeAnimationState>(animation_data_manager_);
+        case AnimationType::ThrowWeapon:
+            return std::make_shared<BodyThrowWeaponAnimationState>(animation_data_manager_);
+        case AnimationType::Punch:
+            return std::make_shared<BodyPunchAnimationState>(animation_data_manager_);
+        case AnimationType::Roll:
+            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+        case AnimationType::RollBack:
+            return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+        case AnimationType::Prone:
+            return std::make_shared<BodyProneAnimationState>(animation_data_manager_);
+        case AnimationType::Aim:
+            return std::make_shared<BodyAimAnimationState>(animation_data_manager_);
+        case AnimationType::ProneMove:
+            return std::make_shared<BodyProneMoveAnimationState>(animation_data_manager_);
+        case AnimationType::GetUp:
+            return std::make_shared<BodyGetUpAnimationState>(animation_data_manager_);
+        default:
+            // TODO: for now throw error, it will be easier to find this place. Once everything is
+            // implemented, do std::unreachable()
+            throw std::runtime_error("Body animation not implemented!");
+    }
+}
+
+std::shared_ptr<AnimationState> World::GetLegsAnimationState(AnimationType animation_type) const
+{
+    switch (animation_type) {
+        case AnimationType::Stand:
+            return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
+        case AnimationType::Run:
+            return std::make_shared<LegsRunAnimationState>(animation_data_manager_, false, false);
+        case AnimationType::RunBack:
+            return std::make_shared<LegsRunBackAnimationState>(
+              animation_data_manager_, false, false);
+        case AnimationType::Jump:
+            return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
+        case AnimationType::JumpSide:
+            return std::make_shared<LegsJumpSideAnimationState>(animation_data_manager_);
+        case AnimationType::Fall:
+            return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
+        case AnimationType::Crouch:
+            return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
+        case AnimationType::CrouchRun:
+            return std::make_shared<LegsCrouchRunAnimationState>(animation_data_manager_);
+        case AnimationType::Roll:
+            return std::make_shared<LegsRollAnimationState>(animation_data_manager_);
+        case AnimationType::RollBack:
+            return std::make_shared<LegsRollBackAnimationState>(animation_data_manager_);
+        case AnimationType::CrouchRunBack:
+            return std::make_shared<LegsCrouchRunBackAnimationState>(animation_data_manager_);
+        case AnimationType::Prone:
+            return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
+        case AnimationType::ProneMove:
+            return std::make_shared<LegsProneMoveAnimationState>(animation_data_manager_);
+        case AnimationType::GetUp:
+            return std::make_shared<LegsGetUpAnimationState>(animation_data_manager_);
+        default:
+            // TODO: for now throw error, it will be easier to find this place. Once everything is
+            // implemented, do std::unreachable()
+            throw std::runtime_error("Legs animation not implemented!");
+    }
 }
 
 const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id)
