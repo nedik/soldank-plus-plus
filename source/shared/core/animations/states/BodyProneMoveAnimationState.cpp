@@ -32,20 +32,14 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneMoveAnimationState::Hand
     }
 
     if (soldier.on_ground) {
-        if (soldier.control.down && soldier.control.left && soldier.direction == -1) {
-            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
-        }
+        if (soldier.control.down && (soldier.control.left || soldier.control.right)) {
+            if (soldier.legs_animation->GetType() == AnimationType::Roll) {
+                return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+            }
 
-        if (soldier.control.down && soldier.control.right && soldier.direction == 1) {
-            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
-        }
-
-        if (soldier.control.down && soldier.control.left && soldier.direction == 1) {
-            return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
-        }
-
-        if (soldier.control.down && soldier.control.right && soldier.direction == -1) {
-            return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+            if (soldier.legs_animation->GetType() == AnimationType::RollBack) {
+                return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+            }
         }
     }
 

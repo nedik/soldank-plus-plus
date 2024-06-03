@@ -27,20 +27,14 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
 {
 
     if (GetFrame() >= 23 && soldier.on_ground) {
-        if (soldier.control.down && soldier.control.left && soldier.direction == -1) {
-            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
-        }
+        if (soldier.control.down && (soldier.control.left || soldier.control.right)) {
+            if (soldier.legs_animation->GetType() == AnimationType::Roll) {
+                return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
+            }
 
-        if (soldier.control.down && soldier.control.right && soldier.direction == 1) {
-            return std::make_shared<BodyRollAnimationState>(animation_data_manager_);
-        }
-
-        if (soldier.control.down && soldier.control.left && soldier.direction == 1) {
-            return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
-        }
-
-        if (soldier.control.down && soldier.control.right && soldier.direction == -1) {
-            return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+            if (soldier.legs_animation->GetType() == AnimationType::RollBack) {
+                return std::make_shared<BodyRollBackAnimationState>(animation_data_manager_);
+            }
         }
     }
 
@@ -66,7 +60,7 @@ std::optional<std::shared_ptr<AnimationState>> BodyProneAnimationState::HandleIn
         return new_state;
     }
 
-    if (soldier.legs_animation->GetFrame() > 25 && soldier.on_ground) {
+    if (soldier.legs_animation->GetType() == AnimationType::ProneMove && soldier.on_ground) {
         if (soldier.control.left || soldier.control.right) {
             return std::make_shared<BodyProneMoveAnimationState>(animation_data_manager_);
         }
