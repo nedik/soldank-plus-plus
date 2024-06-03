@@ -57,8 +57,7 @@ std::optional<std::shared_ptr<AnimationState>> LegsGetUpAnimationState::HandleIn
         }
 
         if (!soldier.on_ground && soldier.control.up) {
-            return std::make_shared<LegsRunAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
+            return std::make_shared<LegsRunAnimationState>(animation_data_manager_);
         }
     }
     return std::nullopt;
