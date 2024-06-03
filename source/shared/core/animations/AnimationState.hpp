@@ -42,7 +42,7 @@ public:
     void TryToShoot(Soldier& soldier, const PhysicsEvents& physics_events) const;
 
     virtual void Enter(Soldier& soldier);
-    virtual std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier);
+    virtual std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) = 0;
     virtual void Update(Soldier& soldier, const PhysicsEvents& physics_events);
     virtual void Exit(Soldier& soldier, const PhysicsEvents& physics_events);
 

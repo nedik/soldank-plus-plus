@@ -69,8 +69,6 @@ void AnimationState::TryToShoot(Soldier& soldier, const PhysicsEvents& physics_e
 
 void AnimationState::Enter(Soldier& soldier) {}
 
-std::optional<std::shared_ptr<AnimationState>> AnimationState::HandleInput(Soldier& soldier) {}
-
 void AnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events) {}
 
 void AnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events) {}

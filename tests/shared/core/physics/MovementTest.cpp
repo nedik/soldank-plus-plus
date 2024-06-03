@@ -87,12 +87,14 @@ TEST(MovementTest, TestFallAndJumpSideLeft)
 {
     SoldankTesting::SoldierMovementSimulation simulation{ FileReaderForTestsWorkingDirectory() };
     simulation.RunUntilSoldierOnGround();
+    simulation.LookLeft();
+    simulation.RunFor(10);
     simulation.HoldLeft();
     simulation.HoldJump();
     simulation.AddSoldierExpectedAnimationState(
       0,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
-        .expected_animation_type = Soldank::AnimationType::Run,
+        .expected_animation_type = Soldank::AnimationType::JumpSide,
         .expected_frame = 2,
         .expected_speed = 1,
         .expected_position_diff_from_origin = { 0.0F, 0.0F } });
@@ -100,7 +102,7 @@ TEST(MovementTest, TestFallAndJumpSideLeft)
       3,
       { .part = SoldankTesting::SoldierAnimationPart::Legs,
         .expected_animation_type = Soldank::AnimationType::JumpSide,
-        .expected_frame = 2,
+        .expected_frame = 5,
         .expected_speed = 1,
         .expected_position_diff_from_origin = { 0.0F, 0.0802F } });
     simulation.RunFor(10);
