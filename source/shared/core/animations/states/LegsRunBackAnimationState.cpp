@@ -35,8 +35,17 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunBackAnimationState::Handle
     }
 
     if (soldier.on_ground) {
+        bool was_holding_left = soldier.control.left;
+        bool was_holding_right = soldier.control.right;
+        if (IsRunningLeft(soldier)) {
+            soldier.control.right = false;
+        } else {
+            soldier.control.left = false;
+        }
         auto maybe_rolling_animation_state =
           CommonAnimationStateTransitions::TryTransitionToRolling(soldier, animation_data_manager_);
+        soldier.control.left = was_holding_left;
+        soldier.control.right = was_holding_right;
         if (maybe_rolling_animation_state.has_value()) {
             return *maybe_rolling_animation_state;
         }
