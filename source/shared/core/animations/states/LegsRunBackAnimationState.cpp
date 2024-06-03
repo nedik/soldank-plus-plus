@@ -76,6 +76,11 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunBackAnimationState::Handle
         }
     }
 
+    // if using jets, reset animation because first frame looks like "directional" jetting
+    if (soldier.control.jets && soldier.jets_count > 0) {
+        return std::make_shared<LegsRunBackAnimationState>(animation_data_manager_);
+    }
+
     was_holding_right_ = soldier.control.right;
     was_holding_left_ = soldier.control.left;
     return std::nullopt;

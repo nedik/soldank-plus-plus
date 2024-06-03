@@ -50,6 +50,13 @@ std::optional<std::shared_ptr<AnimationState>> LegsJumpSideAnimationState::Handl
             (soldier.control.right && soldier.direction == -1)) {
             return std::make_shared<LegsRollBackAnimationState>(animation_data_manager_);
         }
+
+        if (soldier.jets_count > 0) {
+            if (soldier.on_ground) {
+                return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
+            }
+            return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
+        }
     }
 
     if (!soldier.control.up && !soldier.control.down && !soldier.control.left &&

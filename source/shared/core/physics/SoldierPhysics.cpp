@@ -156,6 +156,41 @@ void Update(State& state,
     soldier.legs_animation->Update(soldier, physics_events);
     soldier.body_animation->Update(soldier, physics_events);
 
+    bool jets_can_be_applied = true;
+    if (soldier.legs_animation->GetType() == AnimationType::RollBack && soldier.control.up) {
+        // jets cannot be applied during RollBack animation when "up" is pressed because
+        // that animation adds its forces on the soldier
+        jets_can_be_applied = false;
+    }
+
+    if (jets_can_be_applied && soldier.control.jets && (soldier.jets_count > 0)) {
+        if (soldier.on_ground) {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            if (state.gravity > 0.05F) {
+                soldier.particle.SetForce({ particle_force.x, -2.5F * PhysicsConstants::JETSPEED });
+            } else {
+                soldier.particle.SetForce({ particle_force.x, -2.5F * (state.gravity * 2.0F) });
+            }
+        } else if (soldier.stance != PhysicsConstants::STANCE_PRONE) {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            if (state.gravity > 0.05F) {
+                soldier.particle.SetForce(
+                  { particle_force.x, particle_force.y - PhysicsConstants::JETSPEED });
+            } else {
+                soldier.particle.SetForce(
+                  { particle_force.x, particle_force.y - state.gravity * 2.0F });
+            }
+        } else {
+            glm::vec2 particle_force = soldier.particle.GetForce();
+            soldier.particle.SetForce(
+              { particle_force.x +
+                  (float)soldier.direction *
+                    (state.gravity > 0.05F ? PhysicsConstants::JETSPEED / 2.0F : state.gravity),
+                particle_force.y });
+        }
+        soldier.jets_count -= 1;
+    }
+
     RepositionSoldierSkeletonParts(soldier);
 
     for (int i = 1; i <= 20; i++) {
