@@ -16,14 +16,16 @@
 
 namespace Soldank
 {
-LegsRunAnimationState::LegsRunAnimationState(const AnimationDataManager& animation_data_manager,
-                                             bool was_holding_left,
-                                             bool was_holding_right)
+LegsRunAnimationState::LegsRunAnimationState(const AnimationDataManager& animation_data_manager)
     : AnimationState(animation_data_manager.Get(AnimationType::Run))
     , animation_data_manager_(animation_data_manager)
-    , was_holding_left_(was_holding_left)
-    , was_holding_right_(was_holding_right)
 {
+}
+
+void LegsRunAnimationState::Enter(Soldier& soldier)
+{
+    was_holding_left_ = soldier.control.left;
+    was_holding_right_ = soldier.control.right;
 }
 
 std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInput(Soldier& soldier)
@@ -58,20 +60,19 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInpu
     }
 
     if (soldier.control.up && soldier.on_ground) {
+        soldier.control.was_running_left = IsRunningLeft(soldier);
         return std::make_shared<LegsJumpSideAnimationState>(animation_data_manager_);
     }
 
     if (!was_holding_left_ || !soldier.control.right) {
         if (soldier.control.left && soldier.direction == 1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
+            return std::make_shared<LegsRunBackAnimationState>(animation_data_manager_);
         }
     }
 
     if (!was_holding_right_ || !soldier.control.left) {
         if (soldier.control.right && soldier.direction == -1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
+            return std::make_shared<LegsRunBackAnimationState>(animation_data_manager_);
         }
     }
 
@@ -104,5 +105,28 @@ void LegsRunAnimationState::Update(Soldier& soldier, const PhysicsEvents& physic
             soldier.particle.SetForce(particle_force);
         }
     }
+}
+
+bool LegsRunAnimationState::IsRunningLeft(const Soldier& soldier) const
+{
+    if (soldier.control.left && soldier.control.right) {
+        if (soldier.direction == 1) {
+            if (!was_holding_left_) {
+                // left was just pressed so should be running left
+                return true;
+            }
+        }
+
+        if (soldier.direction == -1) {
+            if (!was_holding_right_) {
+                // right was just pressed so should be running right
+                return false;
+            }
+        }
+
+        return soldier.direction != 1;
+    }
+
+    return soldier.control.left;
 }
 } // namespace Soldank

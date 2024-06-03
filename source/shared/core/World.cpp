@@ -275,10 +275,9 @@ std::shared_ptr<AnimationState> World::GetLegsAnimationState(AnimationType anima
         case AnimationType::Stand:
             return std::make_shared<LegsStandAnimationState>(animation_data_manager_);
         case AnimationType::Run:
-            return std::make_shared<LegsRunAnimationState>(animation_data_manager_, false, false);
+            return std::make_shared<LegsRunAnimationState>(animation_data_manager_);
         case AnimationType::RunBack:
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, false, false);
+            return std::make_shared<LegsRunBackAnimationState>(animation_data_manager_);
         case AnimationType::Jump:
             return std::make_shared<LegsJumpAnimationState>(animation_data_manager_);
         case AnimationType::JumpSide:

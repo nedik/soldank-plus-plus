@@ -6,6 +6,7 @@
 #include "core/animations/states/LegsRunBackAnimationState.hpp"
 #include "core/animations/states/LegsRunAnimationState.hpp"
 #include "core/animations/states/LegsProneAnimationState.hpp"
+#include "core/animations/states/CommonAnimationStateTransitions.hpp"
 
 #include "core/physics/Constants.hpp"
 #include "core/entities/Soldier.hpp"
@@ -24,24 +25,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInp
         return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
     }
 
-    if (soldier.control.right) {
-        if (soldier.direction == -1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
-        }
-
-        return std::make_shared<LegsRunAnimationState>(
-          animation_data_manager_, soldier.control.left, soldier.control.right);
-    }
-
-    if (soldier.control.left) {
-        if (soldier.direction == 1) {
-            return std::make_shared<LegsRunBackAnimationState>(
-              animation_data_manager_, soldier.control.left, soldier.control.right);
-        }
-
-        return std::make_shared<LegsRunAnimationState>(
-          animation_data_manager_, soldier.control.left, soldier.control.right);
+    auto maybe_running_animation_state =
+      CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);
+    if (maybe_running_animation_state.has_value()) {
+        return *maybe_running_animation_state;
     }
 
     if (soldier.on_ground) {
