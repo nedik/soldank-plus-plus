@@ -1,14 +1,13 @@
 #include "core/physics/SoldierSkeletonPhysics.hpp"
 
+#include "core/physics/Constants.hpp"
+
 #include "core/math/Calc.hpp"
 
 namespace Soldank
 {
 void RepositionSoldierSkeletonParts(Soldier& soldier)
 {
-    const std::uint8_t stance_stand = 1;
-    const std::uint8_t stance_crouch = 2;
-    const std::uint8_t stance_prone = 3;
     float body_y = 0.0F;
     float arm_s = NAN;
 
@@ -25,13 +24,13 @@ void RepositionSoldierSkeletonParts(Soldier& soldier)
         // skeleton->SetPos(25, skeleton.GetPos(25) + particle.velocity);
     }
     switch (soldier.stance) {
-        case stance_stand:
+        case PhysicsConstants::STANCE_STAND:
             body_y = 8.0F;
             break;
-        case stance_crouch:
+        case PhysicsConstants::STANCE_CROUCH:
             body_y = 9.0F;
             break;
-        case stance_prone: {
+        case PhysicsConstants::STANCE_PRONE: {
             if (soldier.body_animation->GetType() == AnimationType::Prone) {
                 if (soldier.body_animation->GetFrame() > 9) {
                     body_y = -2.0F;

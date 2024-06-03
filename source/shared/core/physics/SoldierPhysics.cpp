@@ -11,41 +11,14 @@
 #include "core/types/WeaponType.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
+#include "core/physics/Constants.hpp"
+
 #include "spdlog/spdlog.h"
 
 #include <cmath>
 #include <utility>
 #include <vector>
 #include <algorithm>
-
-const float SLIDELIMIT = 0.2F;
-const float GRAV = 0.06F;
-const float SURFACECOEFX = 0.970F;
-const float SURFACECOEFY = 0.970F;
-const float CROUCHMOVESURFACECOEFX = 0.85F;
-const float CROUCHMOVESURFACECOEFY = 0.97F;
-const float STANDSURFACECOEFX = 0.00F;
-const float STANDSURFACECOEFY = 0.00F;
-
-const std::uint8_t STANCE_STAND = 1;
-const std::uint8_t STANCE_CROUCH = 2;
-const std::uint8_t STANCE_PRONE = 3;
-
-const float MAX_VELOCITY = 11.0F;
-const float SOLDIER_COL_RADIUS = 3.0F;
-
-const float RUNSPEED = 0.118F;
-const float RUNSPEEDUP = RUNSPEED / 6.0F;
-const float FLYSPEED = 0.03F;
-const float JUMPSPEED = 0.66F;
-const float CROUCHRUNSPEED = RUNSPEED / 0.6F;
-const float PRONESPEED = RUNSPEED * 4.0F;
-const float ROLLSPEED = RUNSPEED / 1.2F;
-const float JUMPDIRSPEED = 0.30F;
-const float JETSPEED = 0.10F;
-const int SECOND = 60;
-
-const int DEFAULT_IDLETIME = SECOND * 8;
 
 namespace Soldank::SoldierPhysics
 {
@@ -283,17 +256,17 @@ void Update(State& state,
         // CheckSkeletonOutOfBounds;
     }
 
-    if (soldier.particle.velocity_.x > MAX_VELOCITY) {
-        soldier.particle.velocity_.x = MAX_VELOCITY;
+    if (soldier.particle.velocity_.x > PhysicsConstants::MAX_VELOCITY) {
+        soldier.particle.velocity_.x = PhysicsConstants::MAX_VELOCITY;
     }
-    if (soldier.particle.velocity_.x < -MAX_VELOCITY) {
-        soldier.particle.velocity_.x = -MAX_VELOCITY;
+    if (soldier.particle.velocity_.x < -PhysicsConstants::MAX_VELOCITY) {
+        soldier.particle.velocity_.x = -PhysicsConstants::MAX_VELOCITY;
     }
-    if (soldier.particle.velocity_.y > MAX_VELOCITY) {
-        soldier.particle.velocity_.y = MAX_VELOCITY;
+    if (soldier.particle.velocity_.y > PhysicsConstants::MAX_VELOCITY) {
+        soldier.particle.velocity_.y = PhysicsConstants::MAX_VELOCITY;
     }
-    if (soldier.particle.velocity_.y < -MAX_VELOCITY) {
-        soldier.particle.velocity_.y = MAX_VELOCITY;
+    if (soldier.particle.velocity_.y < -PhysicsConstants::MAX_VELOCITY) {
+        soldier.particle.velocity_.y = PhysicsConstants::MAX_VELOCITY;
     }
 }
 
@@ -332,9 +305,10 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                         perp *= dist;
                     }
                     if ((area == 0) ||
-                        ((area == 1) && ((soldier.particle.velocity_.y < 0.0) ||
-                                         (soldier.particle.velocity_.x > SLIDELIMIT) ||
-                                         (soldier.particle.velocity_.x < -SLIDELIMIT)))) {
+                        ((area == 1) &&
+                         ((soldier.particle.velocity_.y < 0.0) ||
+                          (soldier.particle.velocity_.x > PhysicsConstants::SLIDELIMIT) ||
+                          (soldier.particle.velocity_.x < -PhysicsConstants::SLIDELIMIT)))) {
                         soldier.particle.old_position = soldier.particle.position;
                         soldier.particle.position -= perp;
                         if (map.GetPolygons()[poly].polygon_type == PMSPolygonType::Bouncy) {
@@ -354,22 +328,25 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                             (soldier.legs_animation->GetType() == AnimationType::Mercy) ||
                             (soldier.legs_animation->GetType() == AnimationType::Mercy2) ||
                             (soldier.legs_animation->GetType() == AnimationType::Own)) {
-                            if ((soldier.particle.velocity_.x < SLIDELIMIT) &&
-                                (soldier.particle.velocity_.x > -SLIDELIMIT) &&
-                                (step.y > SLIDELIMIT)) {
+                            if ((soldier.particle.velocity_.x < PhysicsConstants::SLIDELIMIT) &&
+                                (soldier.particle.velocity_.x > -PhysicsConstants::SLIDELIMIT) &&
+                                (step.y > PhysicsConstants::SLIDELIMIT)) {
                                 soldier.particle.position = soldier.particle.old_position;
                                 glm::vec2 particle_force = soldier.particle.GetForce();
-                                particle_force.y -= GRAV;
+                                particle_force.y -= PhysicsConstants::GRAV;
                                 soldier.particle.SetForce(particle_force);
                             }
 
-                            if ((step.y > SLIDELIMIT) && (polytype != PMSPolygonType::Ice) &&
+                            if ((step.y > PhysicsConstants::SLIDELIMIT) &&
+                                (polytype != PMSPolygonType::Ice) &&
                                 (polytype != PMSPolygonType::Bouncy)) {
                                 if ((soldier.legs_animation->GetType() == AnimationType::Stand) ||
                                     (soldier.legs_animation->GetType() == AnimationType::Fall) ||
                                     (soldier.legs_animation->GetType() == AnimationType::Crouch)) {
-                                    soldier.particle.velocity_.x *= STANDSURFACECOEFX;
-                                    soldier.particle.velocity_.y *= STANDSURFACECOEFY;
+                                    soldier.particle.velocity_.x *=
+                                      PhysicsConstants::STANDSURFACECOEFX;
+                                    soldier.particle.velocity_.y *=
+                                      PhysicsConstants::STANDSURFACECOEFY;
 
                                     glm::vec2 particle_force = soldier.particle.GetForce();
                                     particle_force.x -= soldier.particle.velocity_.x;
@@ -379,36 +356,44 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                                     if (soldier.legs_animation->GetFrame() > 24) {
                                         if (!(soldier.control.down &&
                                               (soldier.control.left || soldier.control.right))) {
-                                            soldier.particle.velocity_.x *= STANDSURFACECOEFX;
-                                            soldier.particle.velocity_.y *= STANDSURFACECOEFY;
+                                            soldier.particle.velocity_.x *=
+                                              PhysicsConstants::STANDSURFACECOEFX;
+                                            soldier.particle.velocity_.y *=
+                                              PhysicsConstants::STANDSURFACECOEFY;
 
                                             glm::vec2 particle_force = soldier.particle.GetForce();
                                             particle_force.x -= soldier.particle.velocity_.x;
                                             soldier.particle.SetForce(particle_force);
                                         }
                                     } else {
-                                        soldier.particle.velocity_.x *= SURFACECOEFX;
-                                        soldier.particle.velocity_.y *= SURFACECOEFY;
+                                        soldier.particle.velocity_.x *=
+                                          PhysicsConstants::SURFACECOEFX;
+                                        soldier.particle.velocity_.y *=
+                                          PhysicsConstants::SURFACECOEFY;
                                     }
                                 } else if (soldier.legs_animation->GetType() ==
                                            AnimationType::GetUp) {
-                                    soldier.particle.velocity_.x *= SURFACECOEFX;
-                                    soldier.particle.velocity_.y *= SURFACECOEFY;
+                                    soldier.particle.velocity_.x *= PhysicsConstants::SURFACECOEFX;
+                                    soldier.particle.velocity_.y *= PhysicsConstants::SURFACECOEFY;
                                 } else if (soldier.legs_animation->GetType() ==
                                            AnimationType::ProneMove) {
-                                    soldier.particle.velocity_.x *= STANDSURFACECOEFX;
-                                    soldier.particle.velocity_.y *= STANDSURFACECOEFY;
+                                    soldier.particle.velocity_.x *=
+                                      PhysicsConstants::STANDSURFACECOEFX;
+                                    soldier.particle.velocity_.y *=
+                                      PhysicsConstants::STANDSURFACECOEFY;
                                 }
                             }
                         } else if ((soldier.legs_animation->GetType() ==
                                     AnimationType::CrouchRun) ||
                                    (soldier.legs_animation->GetType() ==
                                     AnimationType::CrouchRunBack)) {
-                            soldier.particle.velocity_.x *= CROUCHMOVESURFACECOEFX;
-                            soldier.particle.velocity_.y *= CROUCHMOVESURFACECOEFY;
+                            soldier.particle.velocity_.x *=
+                              PhysicsConstants::CROUCHMOVESURFACECOEFX;
+                            soldier.particle.velocity_.y *=
+                              PhysicsConstants::CROUCHMOVESURFACECOEFY;
                         } else {
-                            soldier.particle.velocity_.x *= SURFACECOEFX;
-                            soldier.particle.velocity_.y *= SURFACECOEFY;
+                            soldier.particle.velocity_.x *= PhysicsConstants::SURFACECOEFX;
+                            soldier.particle.velocity_.y *= PhysicsConstants::SURFACECOEFY;
                         }
                     }
 
@@ -496,7 +481,7 @@ bool CheckRadiusMapCollision(Soldier& soldier,
                     for (int k = 0; k < 2; k++) { // TODO: czy tu powinno być k < 3?
                         auto norm = glm::vec2(map.GetPolygons()[poly].perpendiculars[k].x,
                                               map.GetPolygons()[poly].perpendiculars[k].y);
-                        norm *= -SOLDIER_COL_RADIUS;
+                        norm *= -PhysicsConstants::SOLDIER_COL_RADIUS;
 
                         auto pos = s_pos + norm;
 
