@@ -4,6 +4,7 @@
 #include "core/map/Map.hpp"
 #include "core/entities/Bullet.hpp"
 #include "core/entities/Soldier.hpp"
+#include "core/entities/Item.hpp"
 
 #include <vector>
 #include <list>
@@ -17,6 +18,7 @@ struct State
     float gravity = 0.06F;
     std::list<Bullet> bullets;
     std::list<Soldier> soldiers;
+    std::vector<Item> items;
     std::vector<unsigned int> colliding_polygon_ids;
 };
 } // namespace Soldank
