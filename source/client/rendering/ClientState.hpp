@@ -48,6 +48,11 @@ struct ClientState
     WeaponType secondary_weapon_type_choice = WeaponType::USSOCOM;
 
     bool kill_button_just_pressed = false;
+
+    bool player_was_holding_left = false;
+    bool player_was_holding_right = false;
+    bool player_was_running_left = false;
+    bool player_was_jumping = false;
 };
 } // namespace Soldank
 

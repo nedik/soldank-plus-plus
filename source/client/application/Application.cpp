@@ -3,6 +3,7 @@
 #include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
+#include "application/input/PlayerInput.hpp"
 
 #include "communication/NetworkPackets.hpp"
 #include "core/state/Control.hpp"
@@ -214,6 +215,12 @@ void Run()
                       client_soldier_id,
                       ControlActionType::Fire,
                       Mouse::Button(GLFW_MOUSE_BUTTON_LEFT));
+
+                    world->GetStateManager()->SoldierControlApply(
+                      client_soldier_id, [](const Soldier& soldier, Control& control) {
+                          PlayerInput::UpdatePlayerSoldierControlCollisions(
+                            soldier, control, client_state);
+                      });
                 }
                 world->GetStateManager()->ChangeSoldierMousePosition(client_soldier_id,
                                                                      mouse_position);

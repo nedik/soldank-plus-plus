@@ -43,6 +43,14 @@ void StateManager::ChangeSoldierControlActionState(std::uint8_t soldier_id,
     target_field_to_change = new_state;
 }
 
+void StateManager::SoldierControlApply(
+  std::uint8_t soldier_id,
+  const std::function<void(const Soldier& soldier, Control& control)>& apply_function)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    apply_function(soldier, soldier.control);
+}
+
 void StateManager::ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2 new_mouse_position)
 {
     Soldier& soldier = GetSoldierRef(soldier_id);

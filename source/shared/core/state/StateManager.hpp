@@ -5,6 +5,7 @@
 #include "core/state/Control.hpp"
 
 #include <memory>
+#include <functional>
 
 namespace Soldank
 {
@@ -16,6 +17,10 @@ public:
     void ChangeSoldierControlActionState(std::uint8_t soldier_id,
                                          ControlActionType control_action_type,
                                          bool new_state);
+    void SoldierControlApply(
+      std::uint8_t soldier_id,
+      const std::function<void(const Soldier& soldier, Control& control)>& apply_function);
+
     void ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2 new_mouse_position);
     void SwitchSoldierWeapon(std::uint8_t soldier_id);
 
