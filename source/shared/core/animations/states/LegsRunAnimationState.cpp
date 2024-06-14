@@ -87,6 +87,9 @@ std::optional<std::shared_ptr<AnimationState>> LegsRunAnimationState::HandleInpu
 
     // if using jets, reset animation because first frame looks like "directional" jetting
     if (soldier.control.jets && soldier.jets_count > 0) {
+        if (soldier.control.up) {
+            return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
+        }
         return std::make_shared<LegsRunAnimationState>(animation_data_manager_);
     }
 

@@ -44,6 +44,19 @@ std::optional<std::shared_ptr<AnimationState>> LegsCrouchRunBackAnimationState::
         return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
     }
 
+    if (soldier.control.jets && soldier.jets_count > 0) {
+        if (soldier.on_ground) {
+            auto maybe_rolling_animation_state =
+              CommonAnimationStateTransitions::TryTransitionToRolling(soldier,
+                                                                      animation_data_manager_);
+            if (maybe_rolling_animation_state.has_value()) {
+                return *maybe_rolling_animation_state;
+            }
+        }
+
+        return std::make_shared<LegsFallAnimationState>(animation_data_manager_);
+    }
+
     if (!soldier.control.left && !soldier.control.right) {
         return std::make_shared<LegsCrouchAnimationState>(animation_data_manager_);
     }

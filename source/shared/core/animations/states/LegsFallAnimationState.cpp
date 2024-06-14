@@ -25,6 +25,10 @@ std::optional<std::shared_ptr<AnimationState>> LegsFallAnimationState::HandleInp
         return std::make_shared<LegsProneAnimationState>(animation_data_manager_);
     }
 
+    if (soldier.control.up && !soldier.on_ground) {
+        return std::nullopt;
+    }
+
     auto maybe_running_animation_state =
       CommonAnimationStateTransitions::TryTransitionToRunning(soldier, animation_data_manager_);
     if (maybe_running_animation_state.has_value()) {
