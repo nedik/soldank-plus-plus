@@ -19,6 +19,8 @@ Soldier::Soldier(std::uint8_t soldier_id,
                  std::shared_ptr<ParticleSystem> skeleton,
                  const std::vector<Weapon>& initial_weapons)
     : id(soldier_id)
+    , camera(spawn_position)
+    , camera_prev(spawn_position)
     , active(false)
     , dead_meat(false)
     , style(0)

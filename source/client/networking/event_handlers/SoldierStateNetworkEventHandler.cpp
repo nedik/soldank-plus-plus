@@ -155,7 +155,11 @@ NetworkEventHandlerResult SoldierStateNetworkEventHandler::HandleNetworkMessageI
                   soldier_id, ControlActionType::Prone, player_control.prone);
 
                 world_->GetStateManager()->ChangeSoldierMousePosition(
-                  soldier_id, { it->mouse_position_x, it->mouse_position_y });
+                  soldier_id,
+                  { it->mouse_position_x, it->mouse_position_y },
+                  false); // TODO: smooth camera handling, probably need to send mouse aim instead
+                          // of cursor pos
+                          // in packets
                 world_->GetStateManager()->ChangeSoldierControlActionState(
                   soldier_id, ControlActionType::UseJets, player_control.jets);
 

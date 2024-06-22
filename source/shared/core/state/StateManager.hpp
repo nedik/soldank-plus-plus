@@ -21,7 +21,9 @@ public:
       std::uint8_t soldier_id,
       const std::function<void(const Soldier& soldier, Control& control)>& apply_function);
 
-    void ChangeSoldierMousePosition(std::uint8_t soldier_id, glm::vec2 new_mouse_position);
+    void ChangeSoldierMousePosition(std::uint8_t soldier_id,
+                                    glm::vec2 new_mouse_position,
+                                    bool is_camera_smooth);
     void SwitchSoldierWeapon(std::uint8_t soldier_id);
 
     void CreateProjectile(const BulletParams& bullet_params);

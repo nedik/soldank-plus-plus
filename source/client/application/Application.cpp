@@ -222,33 +222,15 @@ void Run()
                             soldier, control, client_state);
                       });
                 }
-                world->GetStateManager()->ChangeSoldierMousePosition(client_soldier_id,
-                                                                     mouse_position);
+
+                world->GetStateManager()->ChangeSoldierMousePosition(
+                  client_soldier_id, mouse_position, client_state->smooth_camera);
                 world->UpdateWeaponChoices(client_soldier_id,
                                            client_state->primary_weapon_type_choice,
                                            client_state->secondary_weapon_type_choice);
-                if (client_state->smooth_camera) {
-                    auto z = 1.0F;
-                    glm::vec2 m{ 0.0F, 0.0F };
 
-                    m.x = z * (client_state->mouse.x - client_state->game_width / 2.0F) / 7.0F *
-                          ((2.0F * 640.0F / client_state->game_width - 1.0F) +
-                           (client_state->game_width - 640.0F) / client_state->game_width * 0.0F /
-                             6.8F);
-                    m.y = z * (client_state->mouse.y - client_state->game_height / 2.0F) / 7.0F;
-
-                    glm::vec2 cam_v = client_state->camera;
-                    glm::vec2 p = { world->GetSoldier(client_soldier_id).particle.position.x,
-                                    -world->GetSoldier(client_soldier_id).particle.position.y };
-                    glm::vec2 norm = p - cam_v;
-                    glm::vec2 s = norm * 0.14F;
-                    cam_v += s;
-                    cam_v += m;
-                    client_state->camera = cam_v;
-                } else {
-                    client_state->camera = { world->GetSoldier(client_soldier_id).camera.x,
-                                             -world->GetSoldier(client_soldier_id).camera.y };
-                }
+                client_state->camera = { world->GetSoldier(client_soldier_id).camera.x,
+                                         -world->GetSoldier(client_soldier_id).camera.y };
             } else {
                 client_state->camera = { 0.0F, 0.0F };
             }

@@ -224,11 +224,11 @@ void SoldierMovementSimulation::AddControlToChangeAt(unsigned int tick,
 
 void SoldierMovementSimulation::TurnSoldierLeft()
 {
-    state_manager_.ChangeSoldierMousePosition(0, { 0.0F, 0.0F });
+    state_manager_.ChangeSoldierMousePosition(0, { 0.0F, 0.0F }, false);
 }
 
 void SoldierMovementSimulation::TurnSoldierRight()
 {
-    state_manager_.ChangeSoldierMousePosition(0, { 640.0F, 0.0F });
+    state_manager_.ChangeSoldierMousePosition(0, { 640.0F, 0.0F }, false);
 }
 } // namespace SoldankTesting
