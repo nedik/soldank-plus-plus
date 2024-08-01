@@ -10,10 +10,12 @@
 // #ifdef _WIN32
 // int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow)
 // #else
-int main(int /*argc*/, char* /*argv*/[])
+int main(int argc, const char* argv[])
 // #endif
 {
-    Soldank::Application::Init();
+    if (!Soldank::Application::Init(argc, argv)) {
+        return 1;
+    }
     Soldank::Application::Run();
     Soldank::Application::Free();
 

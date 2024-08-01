@@ -20,6 +20,7 @@ The project is written in C++23 and depends on:
 - [gtest 1.13.0+](https://github.com/google/googletest)
 - [GameNetworkingSockets](https://github.com/ValveSoftware/GameNetworkingSockets)
 - [daScript 0.4](https://dascript.org/)
+- [cxxopts](https://github.com/jarro2783/cxxopts)
 
 ## Building
 Recommended to build using [vcpkg](https://github.com/microsoft/vcpkg) to prepare

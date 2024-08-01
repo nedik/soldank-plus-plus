@@ -1,9 +1,11 @@
 #include "Application.hpp"
 
+#include "application/cli/CommandLineParameters.hpp"
 #include "application/config/Config.hpp"
 #include "application/input/Keyboard.hpp"
 #include "application/input/Mouse.hpp"
 #include "application/input/PlayerInput.hpp"
+#include "cli/CommandLineParameters.hpp"
 
 #include "communication/NetworkPackets.hpp"
 #include "core/state/Control.hpp"
@@ -64,7 +66,8 @@ void DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type, const char*
     }
 }
 
-void Init()
+// NOLINTNEXTLINE modernize-avoid-c-arrays
+bool Init(int argc, const char* argv[])
 {
     spdlog::set_level(spdlog::level::debug);
 
@@ -91,6 +94,16 @@ void Init()
         } else {
             spdlog::info("Online = false");
         }
+    }
+
+    CommandLineParameters::ParsedValues cli_parameters = CommandLineParameters::Parse(argc, argv);
+    if (!cli_parameters.is_parsing_successful) {
+        return false;
+    }
+
+    if (cli_parameters.is_online) {
+        is_online = *cli_parameters.is_online;
+        spdlog::info("Online = true");
     }
 
     window = std::make_unique<Window>();
@@ -131,6 +144,8 @@ void Init()
     } else {
         CoreEventHandler::ObserveAll(world.get());
     }
+
+    return true;
 }
 
 void Run()

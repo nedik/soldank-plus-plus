@@ -33,6 +33,7 @@ CPMAddPackage(
     NAME soldatbase
     URL https://github.com/nedik/soldat-base/archive/55c6867a943a6ffc62a57b46eb7742c2e39766aa.tar.gz
 )
+CPMAddPackage("gh:jarro2783/cxxopts#v3.2.1")
 
 if (BUILD_CLIENT_ENABLED)
     CPMAddPackage("gh:glfw/glfw#3.3.8")
