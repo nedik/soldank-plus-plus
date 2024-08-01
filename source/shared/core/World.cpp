@@ -32,6 +32,7 @@
 #include "core/state/Control.hpp"
 #include "core/physics/BulletPhysics.hpp"
 #include "core/physics/SoldierPhysics.hpp"
+#include "core/physics/ItemPhysics.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
 #include "spdlog/spdlog.h"
@@ -148,6 +149,10 @@ void World::Update(double /*delta_time*/)
     state_manager_->GetState().bullets.erase(removed_bullets_range.begin(),
                                              removed_bullets_range.end());
 
+    auto removed_items_range = std::ranges::remove_if(
+      state_manager_->GetState().items, [](const Item& item) { return !item.active; });
+    state_manager_->GetState().items.erase(removed_items_range.begin(), removed_items_range.end());
+
     std::vector<BulletParams> bullet_emitter;
 
     for (auto& soldier : state_manager_->GetState().soldiers) {
@@ -188,6 +193,11 @@ void World::Update(double /*delta_time*/)
             state_manager_->GetState().bullets.emplace_back(bullet_params);
         }
     }
+
+    for (auto& item : state_manager_->GetState().items) {
+        ItemPhysics::Update(state_manager_->GetState(), item, *physics_events_);
+    }
+
     state_manager_->ClearBulletEmitter();
 }
 

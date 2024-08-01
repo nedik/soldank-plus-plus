@@ -58,7 +58,12 @@ struct Constraint
 
 enum class ParticleSystemType : unsigned int
 {
-    Soldier = 0
+    Soldier = 0,
+    Flag,
+    Weapon,
+    Kit,
+    Parachute,
+    StationaryGun
 };
 
 class ParticleSystem
@@ -103,6 +108,16 @@ public:
     void SetOldPos(unsigned int particle_num, glm::vec2 new_old_pos)
     {
         particles_[particle_num - 1].old_position = new_old_pos;
+    }
+
+    glm::vec2 GetForce(unsigned int particle_num)
+    {
+        return particles_[particle_num - 1].GetForce();
+    }
+
+    void SetForce(unsigned int particle_num, glm::vec2 new_force)
+    {
+        particles_[particle_num - 1].SetForce(new_force);
     }
 
     const std::vector<Particle>& GetParticles() const { return particles_; }

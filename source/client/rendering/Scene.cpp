@@ -1,5 +1,7 @@
 #include "Scene.hpp"
 
+#include "core/entities/Item.hpp"
+#include "rendering/renderer/ItemRenderer.hpp"
 #include "rendering/renderer/interface/debug/DebugUI.hpp"
 
 #include "application/input/Mouse.hpp"
@@ -27,6 +29,7 @@ Scene::Scene(const std::shared_ptr<StateManager>& game_state)
     , soldier_renderer_(sprite_manager_)
     , text_renderer_("play-regular.ttf", 48)
     , bullet_renderer_(sprite_manager_)
+    , item_renderer_(sprite_manager_)
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -46,9 +49,12 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
     if (client_state.draw_server_pov_client_pos) {
         rectangle_renderer_.Render(camera_.GetView(), client_state.soldier_position_server_pov);
     }
-    RenderSoldiers(game_state, client_state, frame_percent);
     for (const Bullet& bullet : game_state.bullets) {
         bullet_renderer_.Render(camera_.GetView(), bullet, frame_percent);
+    }
+    RenderSoldiers(game_state, client_state, frame_percent);
+    for (const Item& item : game_state.items) {
+        item_renderer_.Render(camera_.GetView(), item, frame_percent);
     }
     sceneries_renderer_.Render(camera_.GetView(), 1, game_state.map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());

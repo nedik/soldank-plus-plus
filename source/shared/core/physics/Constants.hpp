@@ -33,6 +33,11 @@ const float JETSPEED = 0.10F;
 const int SECOND = 60;
 
 const int DEFAULT_IDLETIME = SECOND * 8;
+
+const int FLAG_HOLDING_FORCEUP = -14;
+const int FLAG_STAND_FORCEUP = -16;
+
+const float MINMOVEDELTA = 0.63;
 } // namespace Soldank::PhysicsConstants
 
 #endif
