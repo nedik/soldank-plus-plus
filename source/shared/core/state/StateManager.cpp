@@ -1,10 +1,21 @@
 #include "core/state/StateManager.hpp"
+#include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
 
 #include "spdlog/spdlog.h"
 
 namespace Soldank
 {
+const int SECOND = 60;
+const int GUN_RADIUS = 10;
+const int BOW_RADIUS = 20;
+const int KIT_RADIUS = 12;
+const int STAT_RADIUS = 15;
+const int FLAG_TIMEOUT = SECOND * 25;
+// TODO: why the duplication?
+const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
+const int WAYPOINT_TIMEOUT_BIG = SECOND * 8;        // = 480
+
 void StateManager::ChangeSoldierControlActionState(std::uint8_t soldier_id,
                                                    ControlActionType control_action_type,
                                                    bool new_state)
@@ -115,6 +126,91 @@ const std::vector<BulletParams>& StateManager::GetBulletEmitter() const
 void StateManager::ClearBulletEmitter()
 {
     bullet_emitter_.clear();
+}
+
+void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style)
+{
+    Item new_item;
+    new_item.active = true;
+    new_item.style = style;
+    new_item.num = 0; // TODO: is it ID of the item?
+    new_item.holding_sprite = 0;
+    new_item.owner = owner_id;
+    new_item.time_out = 0;
+    // new_item.skeleton = std::make_shared<ParticleSystem>();
+    new_item.static_type = false;
+    new_item.in_base = false;
+
+    for (std::uint8_t& i : new_item.collide_count) {
+        i = 0;
+    }
+
+    if (owner_id != 255) {
+        // TODO: set direction
+    }
+
+    switch (style) {
+        case ItemType::AlphaFlag:
+        case ItemType::BravoFlag:
+        case ItemType::PointmatchFlag:
+            new_item.radius = 19;
+            break;
+        case ItemType::USSOCOM:
+        case ItemType::DesertEagles:
+        case ItemType::MP5:
+        case ItemType::Ak74:
+        case ItemType::SteyrAUG:
+        case ItemType::Spas12:
+        case ItemType::Ruger77:
+        case ItemType::M79:
+        case ItemType::Barrett:
+        case ItemType::Minimi:
+        case ItemType::Minigun:
+        case ItemType::Bow:
+        case ItemType::MedicalKit:
+        case ItemType::GrenadeKit:
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Kit);
+            // new_item.skeleton->VDamping = 0.989;
+            // new_item.skeleton->GravityMultiplier = 1.07;
+            new_item.radius = KIT_RADIUS;
+            new_item.time_out = FLAG_TIMEOUT;
+            // new_item.interest : = DEFAULT_INTEREST_TIME;
+            new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
+            break;
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::VestKit:
+        case ItemType::BerserkKit:
+        case ItemType::ClusterKit:
+        case ItemType::Parachute:
+        case ItemType::Knife:
+        case ItemType::Chainsaw:
+        case ItemType::LAW:
+        case ItemType::M2:
+            break;
+    }
+
+    state_.items.push_back(new_item);
+    SetItemPosition(state_.items.size() - 1, position);
+}
+
+void StateManager::SetItemPosition(unsigned int id, glm::vec2 new_position)
+{
+    Item& item = state_.items.at(id);
+    for (unsigned int i = 1; i <= item.skeleton->GetParticles().size(); ++i) {
+        item.skeleton->SetPos(i, new_position);
+        item.skeleton->SetOldPos(i, new_position);
+    }
+}
+
+void StateManager::MoveItemIntoDirection(unsigned int id, glm::vec2 direction)
+{
+    Item& item = state_.items.at(id);
+    for (unsigned int i = 1; i <= item.skeleton->GetParticles().size(); ++i) {
+        glm::vec2 new_position = item.skeleton->GetPos(i) + direction;
+        item.skeleton->SetPos(i, new_position);
+        item.skeleton->SetOldPos(i, new_position);
+    }
 }
 
 Soldier& StateManager::GetSoldierRef(std::uint8_t soldier_id)

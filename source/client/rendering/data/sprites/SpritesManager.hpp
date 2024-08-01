@@ -7,6 +7,7 @@
 
 #include "core/math/Glm.hpp"
 #include "core/entities/Bullet.hpp"
+#include "core/types/ItemType.hpp"
 
 #include <string>
 #include <vector>
@@ -40,6 +41,7 @@ public:
 
     Texture::TextureData GetBulletTexture(WeaponSpriteType weapon_sprite_type) const;
     Texture::TextureData GetBulletTexture(const Bullet& bullet) const;
+    Texture::TextureData GetItemTexture(ItemType item_type) const;
 
 private:
     using TSoldierPartSpriteData = std::unique_ptr<SoldierPartData>;
@@ -50,7 +52,7 @@ private:
     using TSoldierPartListItem = std::pair<TSoldierPartSpriteKey, TSoldierPartSpriteData>;
     using TSoldierPartList = std::vector<TSoldierPartListItem>;
 
-    using TSpriteKey = std::variant<SoldierPartSpriteType, WeaponSpriteType>;
+    using TSpriteKey = std::variant<SoldierPartSpriteType, WeaponSpriteType, ObjectSpriteType>;
 
     void AddSprite(TSoldierPartSpriteKey soldier_part_sprite_key,
                    TSpriteKey sprite_key,

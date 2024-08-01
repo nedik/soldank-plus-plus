@@ -2,6 +2,7 @@
 
 #include "rendering/data/Texture.hpp"
 
+#include "rendering/data/sprites/SpriteTypes.hpp"
 #include "spdlog/spdlog.h"
 
 #include <memory>
@@ -250,6 +251,18 @@ SpriteManager::SpriteManager()
         { WeaponSpriteType::M2, "weapons-gfx/m2.png" },
         { WeaponSpriteType::M22, "weapons-gfx/m2-2.png" },
         { WeaponSpriteType::M2Stat, "weapons-gfx/m2-stat.png" },
+
+        { ObjectSpriteType::Flag, "textures/objects/flag.bmp" },
+        { ObjectSpriteType::Infflag, "textures/objects/infflag.bmp" },
+        { ObjectSpriteType::Medikit, "textures/objects/medikit.bmp" },
+        { ObjectSpriteType::Grenadekit, "textures/objects/grenadekit.bmp" },
+        { ObjectSpriteType::Flamerkit, "textures/objects/flamerkit.bmp" },
+        { ObjectSpriteType::Predatorkit, "textures/objects/predatorkit.bmp" },
+        { ObjectSpriteType::Vestkit, "textures/objects/vestkit.bmp" },
+        { ObjectSpriteType::Berserkerkit, "textures/objects/berserkerkit.bmp" },
+        { ObjectSpriteType::Clusterkit, "textures/objects/clusterkit.bmp" },
+        { ObjectSpriteType::Ilum, "objects-gfx/ilum.bmp" },
+        { ObjectSpriteType::FlagHandle, "objects-gfx/flag.bmp" },
     };
 
     std::ranges::for_each(
@@ -545,6 +558,44 @@ Texture::TextureData SpriteManager::GetBulletTexture(const Bullet& bullet) const
         case BulletType::M2Bullet:
             // TODO: I'm not sure which sprite to return here
             return all_sprites_.at(WeaponSpriteType::Bullet);
+    }
+}
+
+Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
+{
+    switch (item_type) {
+        case ItemType::AlphaFlag:
+        case ItemType::BravoFlag:
+            return all_sprites_.at(ObjectSpriteType::Flag);
+        case ItemType::PointmatchFlag:
+
+        case ItemType::USSOCOM:
+        case ItemType::DesertEagles:
+        case ItemType::MP5:
+        case ItemType::Ak74:
+        case ItemType::SteyrAUG:
+        case ItemType::Spas12:
+        case ItemType::Ruger77:
+        case ItemType::M79:
+        case ItemType::Barrett:
+        case ItemType::Minimi:
+        case ItemType::Minigun:
+        case ItemType::Bow:
+        case ItemType::MedicalKit:
+            return all_sprites_.at(ObjectSpriteType::Medikit);
+        case ItemType::GrenadeKit:
+            return all_sprites_.at(ObjectSpriteType::Grenadekit);
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::VestKit:
+        case ItemType::BerserkKit:
+        case ItemType::ClusterKit:
+        case ItemType::Parachute:
+        case ItemType::Knife:
+        case ItemType::Chainsaw:
+        case ItemType::LAW:
+        case ItemType::M2:
+            break;
     }
 }
 } // namespace Soldank::Sprites

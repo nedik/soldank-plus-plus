@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include <optional>
+#include <array>
 
 namespace Soldank::Renderer
 {
@@ -28,6 +29,8 @@ void DrawElements(GLenum mode,
                   GLsizei count,
                   GLenum type,
                   std::optional<unsigned int> indices_offset);
+
+void DrawQuad(const std::vector<float>& vertices, unsigned int texture_id);
 } // namespace Soldank::Renderer
 
 #endif

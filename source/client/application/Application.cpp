@@ -343,6 +343,8 @@ void Run()
         const auto& soldier = world->CreateSoldier();
         client_state->client_soldier_id = soldier.id;
         world->SpawnSoldier(soldier.id);
+
+        world->GetStateManager()->CreateItem({ 0.0F, -200.0F }, 0, ItemType::GrenadeKit);
     }
 
     world->RunLoop(Config::FPS_LIMIT);
