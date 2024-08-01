@@ -30,7 +30,7 @@ ParsedValues Parse(int argc, const char* argv[])
             ("o,online",
                 "Start online game. You need to provide IP and Port with --ip and --port options")
             ("ip", "IP of the server to join", cxxopts::value<std::string>())
-            ("port", "Port of the server to join", cxxopts::value<std::uint8_t>());
+            ("port", "Port of the server to join", cxxopts::value<std::uint16_t>());
         // clang-format on
 
         auto result = options.parse(argc, argv);
@@ -40,14 +40,29 @@ ParsedValues Parse(int argc, const char* argv[])
             return parsed_values;
         }
 
+        if (result.count("local") != 0 && result.count("online") != 0) {
+            std::cout << "Options --local and --online can't be used at the same time" << std::endl;
+        }
+
         if (result.count("local") != 0) {
-            std::cout << "local" << std::endl;
             parsed_values.is_online = false;
         }
 
         if (result.count("online") != 0) {
-            std::cout << "online" << std::endl;
             parsed_values.is_online = true;
+
+            if (result.count("ip") == 0) {
+                std::cout << "IP is missing" << std::endl;
+                return parsed_values;
+            }
+
+            if (result.count("port") == 0) {
+                std::cout << "Port is missing" << std::endl;
+                return parsed_values;
+            }
+
+            parsed_values.join_server_ip = result["ip"].as<std::string>();
+            parsed_values.join_server_port = result["port"].as<std::uint16_t>();
         }
 
         parsed_values.is_parsing_successful = true;

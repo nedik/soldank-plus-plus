@@ -103,6 +103,10 @@ bool Init(int argc, const char* argv[])
 
     if (cli_parameters.is_online) {
         is_online = *cli_parameters.is_online;
+        if (is_online) {
+            server_ip = cli_parameters.join_server_ip;
+            server_port = cli_parameters.join_server_port;
+        }
         spdlog::info("Online = true");
     }
 
