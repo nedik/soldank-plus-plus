@@ -13,6 +13,7 @@ struct ParsedValues
     std::optional<bool> is_online = std::nullopt;
     std::string join_server_ip;
     std::uint16_t join_server_port;
+    std::optional<std::string> map;
 };
 
 // NOLINTNEXTLINE modernize-avoid-c-arrays

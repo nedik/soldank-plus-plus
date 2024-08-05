@@ -101,17 +101,23 @@ bool Init(int argc, const char* argv[])
         return false;
     }
 
+    std::string map_path = "maps/ctf_Ash.pms";
+
     if (cli_parameters.is_online) {
         is_online = *cli_parameters.is_online;
         if (is_online) {
             server_ip = cli_parameters.join_server_ip;
             server_port = cli_parameters.join_server_port;
+        } else {
+            if (cli_parameters.map) {
+                map_path = "maps/" + *cli_parameters.map + ".pms";
+            }
         }
         spdlog::info("Online = true");
     }
 
     window = std::make_unique<Window>();
-    world = std::make_shared<World>();
+    world = std::make_shared<World>(map_path);
     client_state = std::make_shared<ClientState>();
     client_state->server_reconciliation = true;
     client_state->client_side_prediction = true;

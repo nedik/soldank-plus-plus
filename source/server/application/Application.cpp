@@ -37,7 +37,7 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
 }
 
 Application::Application()
-    : world_(std::make_shared<World>())
+    : world_(std::make_shared<World>("maps/ctf_Ash.pms"))
 {
     spdlog::set_level(spdlog::level::debug);
 

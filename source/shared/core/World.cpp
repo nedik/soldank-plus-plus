@@ -46,13 +46,13 @@
 
 namespace Soldank
 {
-World::World()
+World::World(const std::string& map_path)
     : state_manager_(std::make_shared<StateManager>())
     , physics_events_(std::make_unique<PhysicsEvents>())
     , world_events_(std::make_unique<WorldEvents>())
     , mersenne_twister_engine_(random_device_())
 {
-    state_manager_->GetState().map.LoadMap("maps/ctf_Ash.pms");
+    state_manager_->GetState().map.LoadMap(map_path);
     animation_data_manager_.LoadAllAnimationDatas();
 }
 

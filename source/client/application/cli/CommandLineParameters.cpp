@@ -29,7 +29,8 @@ ParsedValues Parse(int argc, const char* argv[])
             ("o,online",
                 "Start online game. You need to provide IP and Port with --ip and --port options")
             ("ip", "IP of the server to join", cxxopts::value<std::string>())
-            ("port", "Port of the server to join", cxxopts::value<std::uint16_t>());
+            ("port", "Port of the server to join", cxxopts::value<std::uint16_t>())
+            ("m,map", "Choose a map to load at the start of the game. Only in local", cxxopts::value<std::string>());
         // clang-format on
 
         auto result = options.parse(argc, argv);
@@ -62,6 +63,10 @@ ParsedValues Parse(int argc, const char* argv[])
 
             parsed_values.join_server_ip = result["ip"].as<std::string>();
             parsed_values.join_server_port = result["port"].as<std::uint16_t>();
+        }
+
+        if (result.count("map") != 0) {
+            parsed_values.map = result["map"].as<std::string>();
         }
 
         parsed_values.is_parsing_successful = true;
