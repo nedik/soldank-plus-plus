@@ -80,5 +80,9 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
             world->GetStateManager()->CreateProjectile(bullet_params);
         }
     });
+    world->GetPhysicsEvents().soldier_collides_with_item.AddObserver(
+      [](Soldier& soldier, Item& item) {
+          spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.num, soldier.id);
+      });
 }
 } // namespace Soldank

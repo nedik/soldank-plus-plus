@@ -1,15 +1,18 @@
 #include "core/physics/ItemPhysics.hpp"
 
 #include "core/entities/Item.hpp"
+#include "core/entities/Soldier.hpp"
 #include "core/map/Map.hpp"
 #include "core/map/PMSEnums.hpp"
 #include "core/math/Calc.hpp"
 #include "core/state/State.hpp"
 #include "core/physics/PhysicsEvents.hpp"
 #include "core/physics/Constants.hpp"
+#include "core/types/BulletType.hpp"
 
 #include <chrono>
 #include <cmath>
+#include <spdlog/spdlog.h>
 #include <xtimec.h>
 
 namespace Soldank::ItemPhysics
@@ -123,7 +126,14 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
     }
 
     if (item.style != ItemType::M2) {
-        CheckSoldierCollision(item, state);
+        int colliding_player_id = CheckSoldierCollision(item, state);
+        if (colliding_player_id >= 0) {
+            for (auto it = state.soldiers.begin(); it != state.soldiers.end(); ++it) {
+                if (colliding_player_id == it->id) {
+                    physics_events.soldier_collides_with_item.Notify(*it, item);
+                }
+            }
+        }
     }
 
     --item.time_out;
@@ -250,9 +260,59 @@ bool CheckMapCollision(Item& item, const Map& map, float x, float y, int i, Stat
     return false;
 }
 
+const int STARTHEALTH = 150; // TODO: move me somewhere else
+const int MAXGRENADES = 5;   // TODO: move me somewhere else
+
 int CheckSoldierCollision(Item& item, State& state)
 {
-    return 0;
+    glm::vec2 a = item.skeleton->GetPos(1) - item.skeleton->GetPos(2);
+    float k = Calc::Vec2Length(a) / 2;
+    a = Calc::Vec2Normalize(a);
+    a = Calc::Vec2Scale(a, -k);
+    glm::vec2 pos = item.skeleton->GetPos(1) + a;
+
+    float closestdist = 99999999.0;
+    int closestplayer = -1;
+
+    for (auto soldier_it = state.soldiers.begin(); soldier_it != state.soldiers.end();
+         ++soldier_it) {
+        if (soldier_it->active &&
+            !soldier_it->dead_meat /* && soldier_it->team != SPECTATOR TODO*/) {
+            glm::vec2 col_pos = soldier_it->particle.position;
+            glm::vec2 norm = pos - col_pos;
+            if (Calc::Vec2Length(norm) >= item.radius) {
+                pos = item.skeleton->GetPos(1);
+                col_pos = soldier_it->particle.position;
+                norm = pos - col_pos;
+
+                if (Calc::Vec2Length(norm) >= item.radius) {
+                    pos = item.skeleton->GetPos(2);
+                    col_pos = soldier_it->particle.position;
+                    norm = pos - col_pos;
+                }
+            }
+
+            float dist = Calc::Vec2Length(norm);
+            if (dist < item.radius) {
+                if (dist < closestdist) {
+                    if (item.style != ItemType::MedicalKit || soldier_it->health != STARTHEALTH) {
+                        if (item.style != ItemType::GrenadeKit ||
+                            soldier_it->weapons[2].GetAmmoCount() != MAXGRENADES ||
+                            soldier_it->weapons[2].GetWeaponParameters().bullet_style !=
+                              BulletType::FragGrenade) {
+                            if (!(IsItemFlag(
+                                  item) /*&& soldier_it->cease_fire_counter > 0 TODO */)) {
+                                closestdist = dist;
+                                closestplayer = soldier_it->id;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return closestplayer;
 }
 
 } // namespace Soldank::ItemPhysics
