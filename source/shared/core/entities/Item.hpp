@@ -15,7 +15,7 @@ struct Item
 {
     bool active;
     ItemType style;
-    std::uint8_t num;
+    std::uint8_t id;
     std::uint8_t owner;
     std::uint8_t holding_sprite;
     std::uint8_t ammo_count;
