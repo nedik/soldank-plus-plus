@@ -82,7 +82,7 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
     });
     world->GetPhysicsEvents().soldier_collides_with_item.AddObserver(
       [](Soldier& soldier, Item& item) {
-          spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.num, soldier.id);
+          spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.id, soldier.id);
       });
 }
 } // namespace Soldank

@@ -15,8 +15,10 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
 {
     LoadSpriteData(sprite_manager, ItemType::AlphaFlag, { 0.5, 0.5 });
-    LoadSpriteData(sprite_manager, ItemType::MedicalKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::GrenadeKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::MedicalKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::VestKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::ClusterKit, { 0.5F, 0.5F });
 }
 
 void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager,
@@ -58,14 +60,14 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
     glm::vec2 scale = { 1.0F, 1.0F };
     ItemSpriteData item_sprite_data = item_sprite_type_to_gl_data_.at(item.style);
     glm::vec2 pos = item.skeleton->GetPos(1);
-    float rot = 0.0F;
+    float rot = 1.5708F; // 90 degrees
     auto main_color = GetMainColor(item.style);
 
     shader_.Use();
     // Renderer::SetupVertexArray(item_sprite_data.vbo, item_sprite_data.ebo, false, true);
 
     // TODO: magic number, this is in mod.ini
-    scale /= 2.0F;
+    scale /= 4.5F;
 
     glm::mat4 current_scenery_transform = transform;
 
@@ -83,16 +85,16 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
     // Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glm::vec2 pivot;
-    pivot.x *= (float)item_sprite_data.texture_data.width;
-    pivot.y *= (float)item_sprite_data.texture_data.height;
-    // float w0 = 0.0F - pivot.x;
-    // float w1 = (float)item_sprite_data.texture_data.width - pivot.x;
-    // float h0 = 0.0F - pivot.y;
-    // float h1 = (float)item_sprite_data.texture_data.height - pivot.y;
-    float w0 = 0.0F;
-    float w1 = (float)item_sprite_data.texture_data.width;
-    float h0 = 0.0F;
-    float h1 = (float)item_sprite_data.texture_data.height;
+    pivot.x = (float)item_sprite_data.texture_data.width / 2.0F;
+    pivot.y = (float)item_sprite_data.texture_data.height / 2.0F;
+    float w0 = 0.0F - pivot.x;
+    float w1 = (float)item_sprite_data.texture_data.width - pivot.x;
+    float h0 = 0.0F - pivot.y;
+    float h1 = (float)item_sprite_data.texture_data.height - pivot.y;
+    // float w0 = 0.0F;
+    // float w1 = (float)item_sprite_data.texture_data.width;
+    // float h0 = 0.0F;
+    // float h1 = (float)item_sprite_data.texture_data.height;
     glm::vec2 pos1 = { w0, h0 };
     glm::vec2 pos2 = { w1, h0 };
     glm::vec2 pos3 = { w0, h1 };

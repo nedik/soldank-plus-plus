@@ -164,16 +164,16 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
     // CheckOutOfBounds;
 
     if ((!was_static) && item.static_type) {
-        item.skeleton->SetPos(1, item.skeleton->GetOldPos(1));
-        item.skeleton->SetPos(2, item.skeleton->GetOldPos(2));
-        item.skeleton->SetPos(3, item.skeleton->GetOldPos(3));
-        item.skeleton->SetPos(4, item.skeleton->GetOldPos(4));
+        item.skeleton->SetOldPos(1, item.skeleton->GetPos(1));
+        item.skeleton->SetOldPos(2, item.skeleton->GetPos(2));
+        item.skeleton->SetOldPos(3, item.skeleton->GetPos(3));
+        item.skeleton->SetOldPos(4, item.skeleton->GetPos(4));
     }
 }
 
 bool CheckMapCollision(Item& item, const Map& map, float x, float y, int i, State& state)
 {
-    glm::vec2 pos = { x, y - 1.0F }; // TODO: this looks wrong
+    glm::vec2 pos = { x, y }; // TODO: this looks wrong
     auto rx = ((int)std::round((pos.x / (float)map.GetSectorsSize()))) + 25;
     auto ry = ((int)std::round((pos.y / (float)map.GetSectorsSize()))) + 25;
     if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&

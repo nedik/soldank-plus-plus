@@ -3,6 +3,7 @@
 #include "core/state/Control.hpp"
 
 #include "spdlog/spdlog.h"
+#include <algorithm>
 
 namespace Soldank
 {
@@ -130,10 +131,20 @@ void StateManager::ClearBulletEmitter()
 
 void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style)
 {
+    std::vector<std::uint8_t> current_ids;
+    std::uint8_t new_id = 0;
+    current_ids.reserve(state_.items.size());
+    for (const auto& item : state_.items) {
+        current_ids.push_back(item.id);
+    }
+    std::sort(current_ids.begin(), current_ids.end());
+    while (new_id < current_ids.size() && new_id == current_ids.at(new_id)) {
+        new_id++;
+    }
     Item new_item;
     new_item.active = true;
     new_item.style = style;
-    new_item.num = 0; // TODO: is it ID of the item?
+    new_item.id = new_id;
     new_item.holding_sprite = 0;
     new_item.owner = owner_id;
     new_item.time_out = 0;
@@ -168,6 +179,8 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
         case ItemType::Minigun:
         case ItemType::Bow:
         case ItemType::MedicalKit:
+        case ItemType::ClusterKit:
+        case ItemType::VestKit:
         case ItemType::GrenadeKit:
             new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Kit);
             // new_item.skeleton->VDamping = 0.989;
@@ -179,9 +192,7 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
             break;
         case ItemType::FlamerKit:
         case ItemType::PredatorKit:
-        case ItemType::VestKit:
         case ItemType::BerserkKit:
-        case ItemType::ClusterKit:
         case ItemType::Parachute:
         case ItemType::Knife:
         case ItemType::Chainsaw:

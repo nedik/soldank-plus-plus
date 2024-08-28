@@ -254,13 +254,13 @@ SpriteManager::SpriteManager()
 
         { ObjectSpriteType::Flag, "textures/objects/flag.bmp" },
         { ObjectSpriteType::Infflag, "textures/objects/infflag.bmp" },
-        { ObjectSpriteType::Medikit, "textures/objects/medikit.bmp" },
-        { ObjectSpriteType::Grenadekit, "textures/objects/grenadekit.bmp" },
+        { ObjectSpriteType::Medikit, "textures/objects/medikit.png" },
+        { ObjectSpriteType::Grenadekit, "textures/objects/grenadekit.png" },
         { ObjectSpriteType::Flamerkit, "textures/objects/flamerkit.bmp" },
         { ObjectSpriteType::Predatorkit, "textures/objects/predatorkit.bmp" },
-        { ObjectSpriteType::Vestkit, "textures/objects/vestkit.bmp" },
+        { ObjectSpriteType::Vestkit, "textures/objects/vestkit.png" },
         { ObjectSpriteType::Berserkerkit, "textures/objects/berserkerkit.bmp" },
-        { ObjectSpriteType::Clusterkit, "textures/objects/clusterkit.bmp" },
+        { ObjectSpriteType::Clusterkit, "textures/objects/clusterkit.png" },
         { ObjectSpriteType::Ilum, "objects-gfx/ilum.bmp" },
         { ObjectSpriteType::FlagHandle, "objects-gfx/flag.bmp" },
     };
@@ -588,8 +588,10 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
         case ItemType::FlamerKit:
         case ItemType::PredatorKit:
         case ItemType::VestKit:
+            return all_sprites_.at(ObjectSpriteType::Vestkit);
         case ItemType::BerserkKit:
         case ItemType::ClusterKit:
+            return all_sprites_.at(ObjectSpriteType::Clusterkit);
         case ItemType::Parachute:
         case ItemType::Knife:
         case ItemType::Chainsaw:
