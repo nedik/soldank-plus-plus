@@ -170,6 +170,21 @@ bool Init(int argc, const char* argv[])
               }
           }
       });
+    world->GetPhysicsEvents().item_collides_with_polygon.AddObserver(
+      [&](Item& /*item*/, const PMSPolygon& polygon) {
+          if (client_state->draw_colliding_polygons) {
+              bool exists = false;
+              for (unsigned int poly_id : client_state->colliding_polygon_ids) {
+                  if (polygon.id == poly_id) {
+                      exists = true;
+                      break;
+                  }
+              }
+              if (!exists) {
+                  client_state->colliding_polygon_ids.push_back(polygon.id);
+              }
+          }
+      });
 
     return true;
 }

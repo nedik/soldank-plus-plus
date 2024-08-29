@@ -44,25 +44,29 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
                                               item.skeleton->GetPos(i).x - 10,
                                               item.skeleton->GetPos(i).y - 8,
                                               i,
-                                              state) ||
+                                              state,
+                                              physics_events) ||
                             CheckMapCollision(item,
                                               state.map,
                                               item.skeleton->GetPos(i).x + 10,
                                               item.skeleton->GetPos(i).y - 8,
                                               i,
-                                              state) ||
+                                              state,
+                                              physics_events) ||
                             CheckMapCollision(item,
                                               state.map,
                                               item.skeleton->GetPos(i).x - 10,
                                               item.skeleton->GetPos(i).y,
                                               i,
-                                              state) ||
+                                              state,
+                                              physics_events) ||
                             CheckMapCollision(item,
                                               state.map,
                                               item.skeleton->GetPos(i).x + 10,
                                               item.skeleton->GetPos(i).y,
                                               i,
-                                              state)) {
+                                              state,
+                                              physics_events)) {
                             if (collided) {
                                 collided2 = true;
                             }
@@ -81,7 +85,8 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
                                               item.skeleton->GetPos(i).x,
                                               item.skeleton->GetPos(i).y,
                                               i,
-                                              state)) {
+                                              state,
+                                              physics_events)) {
                             if (collided) {
                                 collided2 = true;
                             }
@@ -94,7 +99,8 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
                                           item.skeleton->GetPos(i).x,
                                           item.skeleton->GetPos(i).y,
                                           i,
-                                          state)) {
+                                          state,
+                                          physics_events)) {
                         if (collided) {
                             collided2 = true;
                         }
@@ -171,9 +177,15 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
     }
 }
 
-bool CheckMapCollision(Item& item, const Map& map, float x, float y, int i, State& state)
+bool CheckMapCollision(Item& item,
+                       const Map& map,
+                       float x,
+                       float y,
+                       int i,
+                       State& state,
+                       const PhysicsEvents& physics_events)
 {
-    glm::vec2 pos = { x, y }; // TODO: this looks wrong
+    glm::vec2 pos = { x, y - 0.5F }; // TODO: this looks wrong
     auto rx = ((int)std::round((pos.x / (float)map.GetSectorsSize()))) + 25;
     auto ry = ((int)std::round((pos.y / (float)map.GetSectorsSize()))) + 25;
     if ((rx > 0) && (rx < map.GetSectorsCount() + 25) && (ry > 0) &&
@@ -252,6 +264,7 @@ bool CheckMapCollision(Item& item, const Map& map, float x, float y, int i, Stat
 
                     ++item.collide_count.at(i - 1);
 
+                    physics_events.item_collides_with_polygon.Notify(item, map.GetPolygons().at(w));
                     return true;
                 }
             }
