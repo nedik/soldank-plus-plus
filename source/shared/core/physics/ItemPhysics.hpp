@@ -14,7 +14,13 @@ struct PhysicsEvents;
 namespace Soldank::ItemPhysics
 {
 void Update(State& state, Item& item, const PhysicsEvents& physics_events);
-bool CheckMapCollision(Item& item, const Map& map, float x, float y, int i, State& state);
+bool CheckMapCollision(Item& item,
+                       const Map& map,
+                       float x,
+                       float y,
+                       int i,
+                       State& state,
+                       const PhysicsEvents& physics_events);
 int CheckSoldierCollision(Item& item, State& state);
 } // namespace Soldank::ItemPhysics
 

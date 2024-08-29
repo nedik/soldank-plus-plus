@@ -16,6 +16,7 @@ struct PhysicsEvents
     Observable<Soldier&> soldier_fires_primary_weapon;
     Observable<const Soldier&, const PMSPolygon&> soldier_collides_with_polygon;
     Observable<Soldier&, Item&> soldier_collides_with_item;
+    Observable<Item&, const PMSPolygon&> item_collides_with_polygon;
 };
 } // namespace Soldank
 
