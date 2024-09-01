@@ -243,19 +243,24 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
     ImGui::NewFrame();
 
     {
-        ImGui::Begin("Debug window");
+        ImGui::Begin("Network window (Works only when connected to a server)");
         ImGui::Checkbox("Server reconciliation", &client_state.server_reconciliation);
         ImGui::Checkbox("Client side prediction", &client_state.client_side_prediction);
         ImGui::Checkbox("Objects interpolation", &client_state.objects_interpolation);
-        ImGui::Checkbox("Smooth camera", &client_state.smooth_camera);
-        ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Non-acknowledged inputs: %llu", client_state.pending_inputs.size());
         ImGui::Text("Ping: %hu", client_state.ping_timer.GetLastPingMeasure());
         ImGui::SliderInt("Fake lag (milliseconds)", &client_state.network_lag, 0, 500);
-        ImGui::Text("Bullets in game: %zu", game_state.bullets.size());
         ImGui::Checkbox("Draw server POV client position",
                         &client_state.draw_server_pov_client_pos);
+        ImGui::End();
+    }
+
+    {
+        ImGui::Begin("Debug window");
         ImGui::Checkbox("Draw colliding polygons", &client_state.debug_draw_colliding_polygons);
+        ImGui::Checkbox("Smooth camera", &client_state.smooth_camera);
+        ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
+        ImGui::Text("Bullets in game: %zu", game_state.bullets.size());
         if (ImGui::Button("/kill")) {
             client_state.kill_button_just_pressed = true;
         }
