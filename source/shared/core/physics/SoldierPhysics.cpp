@@ -208,11 +208,11 @@ void Update(State& state,
 
         auto xy = soldier.particle.position;
 
-        CheckMapCollision(soldier, map, xy.x - 3.5, xy.y - 12.0, 1, state);
+        CheckMapCollision(soldier, map, xy.x - 3.5, xy.y - 12.0, 1, state, physics_events);
 
         xy = soldier.particle.position;
 
-        CheckMapCollision(soldier, map, xy.x + 3.5, xy.y - 12.0, 1, state);
+        CheckMapCollision(soldier, map, xy.x + 3.5, xy.y - 12.0, 1, state, physics_events);
 
         body_y = 0.0;
         arm_s = 0.0;
@@ -248,23 +248,24 @@ void Update(State& state,
         }
 
         xy = soldier.particle.position;
-        soldier.on_ground =
-          CheckMapCollision(soldier, map, xy.x + 2.0, xy.y + 2.0 - body_y, 0, state);
+        soldier.on_ground = CheckMapCollision(
+          soldier, map, xy.x + 2.0, xy.y + 2.0 - body_y, 0, state, physics_events);
 
         xy = soldier.particle.position;
         soldier.on_ground =
           soldier.on_ground ||
-          CheckMapCollision(soldier, map, xy.x - 2.0, xy.y + 2.0 - arm_s, 0, state);
+          CheckMapCollision(soldier, map, xy.x - 2.0, xy.y + 2.0 - arm_s, 0, state, physics_events);
 
         xy = soldier.particle.position;
         auto grounded = soldier.on_ground;
         soldier.on_ground_for_law =
-          CheckRadiusMapCollision(soldier, map, xy.x, xy.y - 1.0, grounded, state);
+          CheckRadiusMapCollision(soldier, map, xy.x, xy.y - 1.0, grounded, state, physics_events);
 
         xy = soldier.particle.position;
         grounded = soldier.on_ground || soldier.on_ground_for_law;
-        soldier.on_ground = soldier.on_ground || CheckMapVerticesCollision(
-                                                   soldier, map, xy.x, xy.y, 3.0, grounded, state);
+        soldier.on_ground =
+          soldier.on_ground ||
+          CheckMapVerticesCollision(soldier, map, xy.x, xy.y, 3.0, grounded, state, physics_events);
 
         if (!(soldier.on_ground ^ soldier.on_ground_last_frame)) {
             soldier.on_ground_permanent = soldier.on_ground;
@@ -305,7 +306,13 @@ void Update(State& state,
     }
 }
 
-bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int area, State& state)
+bool CheckMapCollision(Soldier& soldier,
+                       const Map& map,
+                       float x,
+                       float y,
+                       int area,
+                       State& state,
+                       const PhysicsEvents& physics_events)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
     auto rx = ((int)std::round((pos.x / (float)map.GetSectorsSize()))) + 25;
@@ -432,6 +439,7 @@ bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int a
                         }
                     }
 
+                    physics_events.soldier_collides_with_polygon.Notify(soldier, polygons);
                     return true;
                 }
             }
@@ -447,7 +455,8 @@ bool CheckMapVerticesCollision(Soldier& soldier,
                                float y,
                                float r,
                                bool has_collided,
-                               State& state)
+                               State& state,
+                               const PhysicsEvents& physics_events)
 {
     auto pos = glm::vec2(x, y) + soldier.particle.velocity_;
     auto rx = ((int)std::round(pos.x / (float)map.GetSectorsSize())) + 25;
@@ -473,6 +482,8 @@ bool CheckMapVerticesCollision(Soldier& soldier,
                         auto dir = pos - vert;
                         dir = Calc::Vec2Normalize(dir);
                         soldier.particle.position += dir;
+                        physics_events.soldier_collides_with_polygon.Notify(
+                          soldier, map.GetPolygons()[poly]);
 
                         return true;
                     }
@@ -488,7 +499,8 @@ bool CheckRadiusMapCollision(Soldier& soldier,
                              float x,
                              float y,
                              bool has_collided,
-                             State& state)
+                             State& state,
+                             const PhysicsEvents& physics_events)
 {
     auto s_pos = glm::vec2(x, y - 3.0f);
 
@@ -560,6 +572,8 @@ bool CheckRadiusMapCollision(Soldier& soldier,
 
                             soldier.particle.position = soldier.particle.old_position;
                             soldier.particle.velocity_ = soldier.particle.GetForce() - perp;
+                            physics_events.soldier_collides_with_polygon.Notify(
+                              soldier, map.GetPolygons()[poly]);
 
                             return true;
                         }

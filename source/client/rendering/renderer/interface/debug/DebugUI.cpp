@@ -255,6 +255,7 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
         ImGui::Text("Bullets in game: %zu", game_state.bullets.size());
         ImGui::Checkbox("Draw server POV client position",
                         &client_state.draw_server_pov_client_pos);
+        ImGui::Checkbox("Draw colliding polygons", &client_state.debug_draw_colliding_polygons);
         if (ImGui::Button("/kill")) {
             client_state.kill_button_just_pressed = true;
         }

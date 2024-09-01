@@ -53,6 +53,9 @@ struct ClientState
     bool player_was_holding_right = false;
     bool player_was_running_left = false;
     bool player_was_jumping = false;
+
+    bool debug_draw_colliding_polygons = false;
+    std::vector<unsigned int> colliding_polygon_ids;
 };
 } // namespace Soldank
 

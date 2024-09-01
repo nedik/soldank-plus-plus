@@ -65,6 +65,7 @@ void Map::ReadPolygonsFromBuffer(std::stringstream& buffer)
     map_data_.polygons.clear();
     for (int i = 0; i < polygons_count; i++) {
         PMSPolygon new_polygon;
+        new_polygon.id = i;
 
         for (unsigned int j = 0; j < 3; j++) {
             ReadFromBuffer(buffer, new_polygon.vertices.at(j));

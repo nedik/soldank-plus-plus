@@ -52,12 +52,8 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
     }
     sceneries_renderer_.Render(camera_.GetView(), 1, game_state.map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());
-    if (Config::DEBUG_DRAW) {
-        std::sort(game_state.colliding_polygon_ids.begin(), game_state.colliding_polygon_ids.end());
-        game_state.colliding_polygon_ids.erase(std::unique(game_state.colliding_polygon_ids.begin(),
-                                                           game_state.colliding_polygon_ids.end()),
-                                               game_state.colliding_polygon_ids.end());
-        for (unsigned int polygon_id : game_state.colliding_polygon_ids) {
+    if (client_state.debug_draw_colliding_polygons) {
+        for (unsigned int polygon_id : client_state.colliding_polygon_ids) {
             polygon_outlines_renderer_.Render(camera_.GetView(), polygon_id);
         }
     }

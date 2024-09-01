@@ -73,6 +73,7 @@ struct PMSVertex
 
 struct PMSPolygon
 {
+    unsigned int id{};
     std::array<PMSVertex, 3> vertices;
     std::array<PMSVector, 3> perpendiculars{};
     PMSPolygonType polygon_type{};

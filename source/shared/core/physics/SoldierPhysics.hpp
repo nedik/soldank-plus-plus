@@ -31,20 +31,28 @@ void Update(State& state,
             const AnimationDataManager& animation_data_manager,
             std::vector<BulletParams>& bullet_emitter);
 
-bool CheckMapCollision(Soldier& soldier, const Map& map, float x, float y, int area, State& state);
+bool CheckMapCollision(Soldier& soldier,
+                       const Map& map,
+                       float x,
+                       float y,
+                       int area,
+                       State& state,
+                       const PhysicsEvents& physics_events);
 bool CheckMapVerticesCollision(Soldier& soldier,
                                const Map& map,
                                float x,
                                float y,
                                float r,
                                bool has_collided,
-                               State& state);
+                               State& state,
+                               const PhysicsEvents& physics_events);
 bool CheckRadiusMapCollision(Soldier& soldier,
                              const Map& map,
                              float x,
                              float y,
                              bool has_collided,
-                             State& state);
+                             State& state,
+                             const PhysicsEvents& physics_events);
 bool CheckSkeletonMapCollision(Soldier& soldier,
                                const Map& map,
                                unsigned int i,
