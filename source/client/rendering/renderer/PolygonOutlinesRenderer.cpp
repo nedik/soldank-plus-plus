@@ -1,10 +1,7 @@
 #include "PolygonOutlinesRenderer.hpp"
 
-#include "rendering/data/Texture.hpp"
 #include "rendering/renderer/Renderer.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
-
-#include <filesystem>
 
 namespace Soldank
 {

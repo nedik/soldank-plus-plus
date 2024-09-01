@@ -52,9 +52,9 @@ SoldierRenderer::~SoldierRenderer()
         Renderer::FreeEBO(ebo);
     }
     for (auto vbo : vbos_) {
-        Renderer::FreeEBO(vbo.first);
+        Renderer::FreeVBO(vbo.first);
         if (vbo.second.has_value()) {
-            Renderer::FreeEBO(*vbo.second);
+            Renderer::FreeVBO(*vbo.second);
         }
     }
 }

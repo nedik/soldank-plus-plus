@@ -27,6 +27,14 @@ constexpr const char* const DYNAMIC_COLOR_FRAGMENT_SHADER_SOURCE =
 #include "DynamicColor.fs"
   ;
 
+constexpr const char* const DYNAMIC_COLOR_NO_TEXTURE_VERTEX_SHADER_SOURCE =
+#include "DynamicColorNoTexture.vs"
+  ;
+
+constexpr const char* const DYNAMIC_COLOR_NO_TEXTURE_FRAGMENT_SHADER_SOURCE =
+#include "DynamicColorNoTexture.fs"
+  ;
+
 constexpr const char* const FONT_VERTEX_SHADER_SOURCE =
 #include "Font.vs"
   ;
