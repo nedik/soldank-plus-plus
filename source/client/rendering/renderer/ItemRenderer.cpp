@@ -60,66 +60,43 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
     glm::vec2 scale = { 1.0F, 1.0F };
     ItemSpriteData item_sprite_data = item_sprite_type_to_gl_data_.at(item.style);
     glm::vec2 pos = item.skeleton->GetPos(1);
-    float rot = 1.5708F; // 90 degrees
     auto main_color = GetMainColor(item.style);
 
     shader_.Use();
-    // Renderer::SetupVertexArray(item_sprite_data.vbo, item_sprite_data.ebo, false, true);
 
     // TODO: magic number, this is in mod.ini
     scale /= 4.5F;
 
-    glm::mat4 current_scenery_transform = transform;
-
-    current_scenery_transform =
-      glm::translate(current_scenery_transform, glm::vec3(pos.x, -pos.y, 0.0));
-    current_scenery_transform =
-      glm::rotate(current_scenery_transform, rot, glm::vec3(0.0, 0.0, 1.0));
-    current_scenery_transform =
-      glm::scale(current_scenery_transform, glm::vec3(scale.x, scale.y, 0.0));
-
-    shader_.SetMatrix4("transform", current_scenery_transform);
-    // shader_.SetVec4("color", main_color);
-
-    // Renderer::BindTexture(item_sprite_data.texture_data.opengl_id);
-    // Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    glm::vec2 pivot;
-    pivot.x = (float)item_sprite_data.texture_data.width / 2.0F;
-    pivot.y = (float)item_sprite_data.texture_data.height / 2.0F;
-    float w0 = 0.0F - pivot.x;
-    float w1 = (float)item_sprite_data.texture_data.width - pivot.x;
-    float h0 = 0.0F - pivot.y;
-    float h1 = (float)item_sprite_data.texture_data.height - pivot.y;
-    // float w0 = 0.0F;
-    // float w1 = (float)item_sprite_data.texture_data.width;
-    // float h0 = 0.0F;
-    // float h1 = (float)item_sprite_data.texture_data.height;
-    glm::vec2 pos1 = { w0, h0 };
-    glm::vec2 pos2 = { w1, h0 };
-    glm::vec2 pos3 = { w0, h1 };
-    glm::vec2 pos4 = { w1, h1 };
-    // pos1 = item.skeleton->GetPos(1);
-    // pos2 = item.skeleton->GetPos(2);
-    // pos3 = item.skeleton->GetPos(3);
-    // pos4 = item.skeleton->GetPos(4);
+    // Set corners of the item on a (0,0) anchor from 1st corner
+    glm::vec2 pos1 = item.skeleton->GetPos(1) - item.skeleton->GetPos(1);
+    glm::vec2 pos2 = item.skeleton->GetPos(2) - item.skeleton->GetPos(1);
+    glm::vec2 pos3 = item.skeleton->GetPos(3) - item.skeleton->GetPos(1);
+    glm::vec2 pos4 = item.skeleton->GetPos(4) - item.skeleton->GetPos(1);
+    // OpenGL top screen is 1.0 but all the physics code has top screen at 0.0
+    // So we need to flip the corners vertically (horizontal mirror image)
+    pos1.y = -pos1.y;
+    pos2.y = -pos2.y;
+    pos3.y = -pos3.y;
+    pos4.y = -pos4.y;
 
     // clang-format off
     std::vector<float> vertices{
       // position             // color                  // texture
       pos1.x, pos1.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
       pos2.x, pos2.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
-      pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F,
-      pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F
+      pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F,
+      pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F
     };
-    // std::vector<float> vertices{
-    //   // position             // color                  // texture
-    //   pos2.x, pos2.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F,
-    //   pos1.x, pos1.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
-    //   pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
-    //   pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F
-    // };
     // clang-format on
+
+    glm::mat4 current_scenery_transform = transform;
+
+    // We need to move the corners from (0,0) anchor to the position on the map
+    current_scenery_transform =
+      glm::translate(current_scenery_transform, glm::vec3(pos.x, -pos.y, 0.0));
+
+    shader_.SetMatrix4("transform", current_scenery_transform);
+
     Renderer::DrawQuad(vertices, item_sprite_data.texture_data.opengl_id);
 }
 
