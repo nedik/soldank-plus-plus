@@ -586,10 +586,13 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
         case ItemType::GrenadeKit:
             return all_sprites_.at(ObjectSpriteType::Grenadekit);
         case ItemType::FlamerKit:
+            return all_sprites_.at(ObjectSpriteType::Flamerkit);
         case ItemType::PredatorKit:
+            return all_sprites_.at(ObjectSpriteType::Predatorkit);
         case ItemType::VestKit:
             return all_sprites_.at(ObjectSpriteType::Vestkit);
         case ItemType::BerserkKit:
+            return all_sprites_.at(ObjectSpriteType::Berserkerkit);
         case ItemType::ClusterKit:
             return all_sprites_.at(ObjectSpriteType::Clusterkit);
         case ItemType::Parachute:

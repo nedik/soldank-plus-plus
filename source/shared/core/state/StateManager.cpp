@@ -178,6 +178,9 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
         case ItemType::Minimi:
         case ItemType::Minigun:
         case ItemType::Bow:
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::BerserkKit:
         case ItemType::MedicalKit:
         case ItemType::ClusterKit:
         case ItemType::VestKit:
@@ -190,9 +193,6 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
             // new_item.interest : = DEFAULT_INTEREST_TIME;
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
-        case ItemType::FlamerKit:
-        case ItemType::PredatorKit:
-        case ItemType::BerserkKit:
         case ItemType::Parachute:
         case ItemType::Knife:
         case ItemType::Chainsaw:
