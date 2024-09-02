@@ -35,6 +35,14 @@ constexpr const char* const DYNAMIC_COLOR_NO_TEXTURE_FRAGMENT_SHADER_SOURCE =
 #include "DynamicColorNoTexture.fs"
   ;
 
+constexpr const char* const CIRCLE_VERTEX_SHADER_SOURCE =
+#include "Circle.vs"
+  ;
+
+constexpr const char* const CIRCLE_FRAGMENT_SHADER_SOURCE =
+#include "Circle.fs"
+  ;
+
 constexpr const char* const FONT_VERTEX_SHADER_SOURCE =
 #include "Font.vs"
   ;

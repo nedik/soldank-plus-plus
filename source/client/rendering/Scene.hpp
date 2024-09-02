@@ -14,6 +14,7 @@
 #include "rendering/renderer/RectangleRenderer.hpp"
 #include "rendering/renderer/BulletRenderer.hpp"
 #include "rendering/renderer/LineRenderer.hpp"
+#include "rendering/renderer/CircleRenderer.hpp"
 
 #include "core/state/StateManager.hpp"
 #include "core/entities/Soldier.hpp"
@@ -46,6 +47,7 @@ private:
     RectangleRenderer rectangle_renderer_;
     BulletRenderer bullet_renderer_;
     LineRenderer line_renderer_;
+    CircleRenderer circle_renderer_;
 };
 } // namespace Soldank
 
