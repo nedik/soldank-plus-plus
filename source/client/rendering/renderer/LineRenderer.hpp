@@ -20,7 +20,7 @@ public:
     LineRenderer(LineRenderer&&) = delete;
     LineRenderer& operator=(LineRenderer&& other) = delete;
 
-    void Render(glm::mat4 transform, float x1, float y1, float x2, float y2, float thickness);
+    void Render(glm::mat4 transform, glm::vec2 p1, glm::vec2 p2, glm::vec4 color, float thickness);
 
 private:
     Shader shader_;

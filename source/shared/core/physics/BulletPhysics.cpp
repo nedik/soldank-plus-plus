@@ -198,13 +198,11 @@ static std::optional<glm::vec2> CheckSoldierCollision(const PhysicsEvents& physi
                 auto p = Calc::LineCircleCollision(start_point, end_point, col_pos, r);
                 if (p.has_value()) {
                     pos = *p;
-                    if (Calc::LineCircleCollision(start_point, end_point, col_pos, r)) {
-                        auto dist = Calc::SquareDistance(start_point, pos);
+                    auto dist = Calc::SquareDistance(start_point, pos);
 
-                        if (dist < min_dist) {
-                            where = body_part_id;
-                            min_dist = dist;
-                        }
+                    if (dist < min_dist) {
+                        where = body_part_id;
+                        min_dist = dist;
                     }
                 }
             }

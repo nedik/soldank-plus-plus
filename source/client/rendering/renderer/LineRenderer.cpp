@@ -26,16 +26,15 @@ LineRenderer::~LineRenderer()
 }
 
 void LineRenderer::Render(glm::mat4 transform,
-                          float x1,
-                          float y1,
-                          float x2,
-                          float y2,
+                          glm::vec2 p1,
+                          glm::vec2 p2,
+                          glm::vec4 color,
                           float thickness)
 {
-    y1 = -y1;
-    y2 = -y2;
-    float dx = x2 - x1;
-    float dy = y2 - y1;
+    p1.y = -p1.y;
+    p2.y = -p2.y;
+    float dx = p2.x - p1.x;
+    float dy = p2.y - p1.y;
     float length = sqrt(dx * dx + dy * dy);
 
     // Normalize direction vector
@@ -49,17 +48,17 @@ void LineRenderer::Render(glm::mat4 transform,
     // Vertex positions for a thick line (rectangle)
     // clang-format off
     std::vector<float> vertices{
-        x1 + px, y1 + py, 1.0F,  // First vertex (offset from start point)
-        x1 - px, y1 - py, 1.0F,  // Second vertex (opposite side of the start point)
-        x2 + px, y2 + py, 1.0F,  // Third vertex (offset from end point)
-        x2 - px, y2 - py, 1.0F   // Fourth vertex (opposite side of the end point)
+        p1.x + px, p1.y + py, 1.0F,  // First vertex (offset from start point)
+        p1.x - px, p1.y - py, 1.0F,  // Second vertex (opposite side of the start point)
+        p2.x + px, p2.y + py, 1.0F,  // Third vertex (offset from end point)
+        p2.x - px, p2.y - py, 1.0F   // Fourth vertex (opposite side of the end point)
     };
     // clang-format on
 
     shader_.Use();
     Renderer::SetupVertexArray(vbo_, std::nullopt, false, false);
     shader_.SetMatrix4("transform", transform);
-    shader_.SetVec4("color", glm::vec4(1.0F, 1.0F, 1.0F, 1.0F));
+    shader_.SetVec4("color", color);
 
     glBufferSubData(
       GL_ARRAY_BUFFER, 0, (long long)vertices.size() * (long long)sizeof(float), vertices.data());

@@ -59,6 +59,34 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
     }
     sceneries_renderer_.Render(camera_.GetView(), 2, game_state.map.GetSceneryInstances());
 
+    if (client_state.draw_soldier_hitboxes) {
+        const auto bullet_colliding_body_parts = std::array{ 12, 11, 10, 6, 5, 4, 3 };
+        for (const auto& soldier : game_state.soldiers) {
+            glm::vec2 soldier_pos = soldier.particle.position;
+            for (auto body_part_id : bullet_colliding_body_parts) {
+                auto body_part_offset =
+                  soldier.skeleton->GetPos(body_part_id) - soldier.particle.position;
+                auto body_part_center_position = soldier_pos + body_part_offset;
+                float radius = 7.0F;
+                circle_renderer_.Render(camera_.GetView(),
+                                        body_part_center_position,
+                                        { 1.0F, 0.0F, 0.0F, 1.0F },
+                                        radius,
+                                        radius - 0.5F);
+            }
+        }
+    }
+
+    if (client_state.draw_bullet_hitboxes) {
+        for (const auto& bullet : game_state.bullets) {
+            auto start_point = bullet.particle.position;
+            auto end_point = bullet.particle.position + bullet.particle.GetVelocity();
+
+            line_renderer_.Render(
+              camera_.GetView(), start_point, end_point, { 1.0F, 0.0F, 0.0F, 1.0F }, 0.5F);
+        }
+    }
+
     DebugUI::Render(game_state, client_state, frame_percent, fps);
     if (!DebugUI::GetWantCaptureMouse()) {
         cursor_renderer_.Render({ client_state.mouse.x, client_state.mouse.y });
@@ -101,24 +129,6 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
             rectangle_renderer_.Render(
               camera_.GetView(),
               glm::vec2(soldier.control.mouse_aim_x, soldier.control.mouse_aim_y));
-        }
-    }
-
-    if (client_state.draw_soldier_hitboxes) {
-        const auto bullet_colliding_body_parts = std::array{ 12, 11, 10, 6, 5, 4, 3 };
-        for (const auto& soldier : game_state.soldiers) {
-            glm::vec2 soldier_pos = soldier.particle.position;
-            for (auto body_part_id : bullet_colliding_body_parts) {
-                auto body_part_offset =
-                  soldier.skeleton->GetPos(body_part_id) - soldier.particle.position;
-                auto body_part_center_position = soldier_pos + body_part_offset;
-                float radius = 7.0F;
-                circle_renderer_.Render(camera_.GetView(),
-                                        body_part_center_position,
-                                        { 1.0F, 0.0F, 0.0F, 1.0F },
-                                        radius,
-                                        radius - 0.5F);
-            }
         }
     }
 }
