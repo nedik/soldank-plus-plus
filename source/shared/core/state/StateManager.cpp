@@ -208,10 +208,8 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
 void StateManager::SetItemPosition(unsigned int id, glm::vec2 new_position)
 {
     Item& item = state_.items.at(id);
-    for (unsigned int i = 1; i <= item.skeleton->GetParticles().size(); ++i) {
-        item.skeleton->SetPos(i, new_position);
-        item.skeleton->SetOldPos(i, new_position);
-    }
+    glm::vec2 direction = new_position - item.skeleton->GetPos(1);
+    MoveItemIntoDirection(id, direction);
 }
 
 void StateManager::MoveItemIntoDirection(unsigned int id, glm::vec2 direction)
