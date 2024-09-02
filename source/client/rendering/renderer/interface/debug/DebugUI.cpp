@@ -257,7 +257,9 @@ void Render(State& game_state, ClientState& client_state, double /*frame_percent
 
     {
         ImGui::Begin("Debug window");
-        ImGui::Checkbox("Draw colliding polygons", &client_state.debug_draw_colliding_polygons);
+        ImGui::Checkbox("Draw colliding polygons", &client_state.draw_colliding_polygons);
+        ImGui::Checkbox("Draw soldier hitboxes", &client_state.draw_soldier_hitboxes);
+
         ImGui::Checkbox("Smooth camera", &client_state.smooth_camera);
         ImGui::Text("Application average %.3f ms/frame (%d FPS)", 1000.0F / (float)fps, fps);
         ImGui::Text("Bullets in game: %zu", game_state.bullets.size());

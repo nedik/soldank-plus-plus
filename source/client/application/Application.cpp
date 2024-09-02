@@ -157,7 +157,7 @@ bool Init(int argc, const char* argv[])
 
     world->GetPhysicsEvents().soldier_collides_with_polygon.AddObserver(
       [&](const Soldier& /*soldier*/, const PMSPolygon& polygon) {
-          if (client_state->debug_draw_colliding_polygons) {
+          if (client_state->draw_colliding_polygons) {
               bool exists = false;
               for (unsigned int poly_id : client_state->colliding_polygon_ids) {
                   if (polygon.id == poly_id) {

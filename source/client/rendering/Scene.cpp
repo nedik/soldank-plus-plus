@@ -52,7 +52,7 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
     }
     sceneries_renderer_.Render(camera_.GetView(), 1, game_state.map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());
-    if (client_state.debug_draw_colliding_polygons) {
+    if (client_state.draw_colliding_polygons) {
         for (unsigned int polygon_id : client_state.colliding_polygon_ids) {
             polygon_outlines_renderer_.Render(camera_.GetView(), polygon_id);
         }
@@ -101,6 +101,24 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
             rectangle_renderer_.Render(
               camera_.GetView(),
               glm::vec2(soldier.control.mouse_aim_x, soldier.control.mouse_aim_y));
+        }
+    }
+
+    if (client_state.draw_soldier_hitboxes) {
+        const auto bullet_colliding_body_parts = std::array{ 12, 11, 10, 6, 5, 4, 3 };
+        for (const auto& soldier : game_state.soldiers) {
+            glm::vec2 soldier_pos = soldier.particle.position;
+            for (auto body_part_id : bullet_colliding_body_parts) {
+                auto body_part_offset =
+                  soldier.skeleton->GetPos(body_part_id) - soldier.particle.position;
+                auto body_part_center_position = soldier_pos + body_part_offset;
+                float radius = 7.0F;
+                circle_renderer_.Render(camera_.GetView(),
+                                        body_part_center_position,
+                                        { 1.0F, 0.0F, 0.0F, 1.0F },
+                                        radius,
+                                        radius - 0.5F);
+            }
         }
     }
 }
