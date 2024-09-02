@@ -83,6 +83,20 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
         }
     }
 
+    if (client_state.draw_item_hitboxes) {
+        for (const Item& item : game_state.items) {
+            for (unsigned int i = 1; i <= 4; ++i) {
+                glm::vec2 start_pos = item.skeleton->GetPos(i);
+                glm::vec2 end_pos = item.skeleton->GetPos((i % 4) + 1);
+                float radius = 1.0F;
+                circle_renderer_.Render(
+                  camera_.GetView(), start_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
+                line_renderer_.Render(
+                  camera_.GetView(), start_pos, end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, 0.5F);
+            }
+        }
+    }
+
     if (client_state.draw_bullet_hitboxes) {
         for (const auto& bullet : game_state.bullets) {
             auto start_point = bullet.particle.position;

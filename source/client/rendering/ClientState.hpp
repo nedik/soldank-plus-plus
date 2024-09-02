@@ -57,6 +57,7 @@ struct ClientState
     bool draw_colliding_polygons = false;
     bool draw_soldier_hitboxes = false;
     bool draw_bullet_hitboxes = false;
+    bool draw_item_hitboxes = false;
     std::vector<unsigned int> colliding_polygon_ids;
 };
 } // namespace Soldank
