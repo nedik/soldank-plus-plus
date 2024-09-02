@@ -19,6 +19,9 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadSpriteData(sprite_manager, ItemType::MedicalKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::VestKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::ClusterKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::PredatorKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::BerserkKit, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::FlamerKit, { 0.5F, 0.5F });
 }
 
 void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager,
