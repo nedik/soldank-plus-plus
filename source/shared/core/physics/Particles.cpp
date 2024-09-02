@@ -156,7 +156,7 @@ std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle
         }
         case ParticleSystemType::Kit: {
             static auto soldier_particle_system =
-              LoadFromFile("kit.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.989F, file_reader);
+              LoadFromFile("kit.po", 2.0F, 1.0F, 1.06F * grav, 0.0F, 0.989F, file_reader);
             return std::make_shared<ParticleSystem>(*soldier_particle_system);
         }
         case ParticleSystemType::Parachute: {
