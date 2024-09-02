@@ -121,7 +121,7 @@ void DrawElements(GLenum mode,
 void DrawQuad(const std::vector<float>& vertices, unsigned int texture_id)
 {
     unsigned vbo = CreateVBO(vertices, GL_STATIC_DRAW);
-    std::vector<unsigned int> indices{ 0, 1, 2, 1, 3, 2 };
+    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
     unsigned int ebo = CreateEBO(indices, GL_STATIC_DRAW);
     SetupVertexArray(vbo, ebo, true, true);
     BindTexture(texture_id);
