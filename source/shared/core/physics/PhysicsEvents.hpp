@@ -12,7 +12,7 @@ struct PhysicsEvents
 {
     Observable<Soldier&, float /* damage */> soldier_hit_by_bullet;
     Observable<Soldier&> soldier_switches_weapon;
-    Observable<const Soldier&> soldier_throws_knife;
+    Observable<const Soldier&> soldier_throws_active_weapon;
     Observable<Soldier&> soldier_fires_primary_weapon;
     Observable<const Soldier&, const PMSPolygon&> soldier_collides_with_polygon;
     Observable<Soldier&, Item&> soldier_collides_with_item;

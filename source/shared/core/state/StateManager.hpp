@@ -27,6 +27,7 @@ public:
                                     glm::vec2 new_mouse_position,
                                     bool is_camera_smooth);
     void SwitchSoldierWeapon(std::uint8_t soldier_id);
+    void ChangeSoldierPrimaryWeapon(std::uint8_t soldier_id, WeaponType new_weapon_type);
 
     void CreateProjectile(const BulletParams& bullet_params);
     const std::vector<BulletParams>& GetBulletEmitter() const;

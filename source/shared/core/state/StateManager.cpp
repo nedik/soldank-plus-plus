@@ -1,6 +1,8 @@
 #include "core/state/StateManager.hpp"
+
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
+#include "core/entities/WeaponParametersFactory.hpp"
 
 #include "spdlog/spdlog.h"
 #include <algorithm>
@@ -112,6 +114,13 @@ void StateManager::SwitchSoldierWeapon(std::uint8_t soldier_id)
     // weapons[new_active_weapon].reload_time_prev = weapons[new_active_weapon].reload_time_count;
     soldier.weapons[new_active_weapon].SetReloadTimePrev(
       soldier.weapons[new_active_weapon].GetReloadTimeCount());
+}
+
+void StateManager::ChangeSoldierPrimaryWeapon(std::uint8_t soldier_id, WeaponType new_weapon_type)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    auto new_weapon_parameters = WeaponParametersFactory::GetParameters(new_weapon_type, false);
+    soldier.weapons[soldier.active_weapon] = new_weapon_parameters;
 }
 
 void StateManager::CreateProjectile(const BulletParams& bullet_params)

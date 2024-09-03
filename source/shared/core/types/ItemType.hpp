@@ -35,6 +35,10 @@ enum class ItemType : std::uint8_t
     LAW,
     M2,
 };
-}
+
+bool IsItemTypeFlag(ItemType item_type);
+bool IsItemTypeWeapon(ItemType item_type);
+bool IsItemTypeKit(ItemType item_type);
+} // namespace Soldank
 
 #endif
