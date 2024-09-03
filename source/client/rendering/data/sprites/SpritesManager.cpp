@@ -566,9 +566,8 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
     switch (item_type) {
         case ItemType::AlphaFlag:
         case ItemType::BravoFlag:
-            return all_sprites_.at(ObjectSpriteType::Flag);
         case ItemType::PointmatchFlag:
-
+            return all_sprites_.at(ObjectSpriteType::Flag);
         case ItemType::USSOCOM:
             return all_sprites_.at(WeaponSpriteType::Socom);
         case ItemType::DesertEagles:
