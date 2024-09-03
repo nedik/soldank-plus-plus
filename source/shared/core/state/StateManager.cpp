@@ -14,6 +14,7 @@ const int GUN_RADIUS = 10;
 const int BOW_RADIUS = 20;
 const int KIT_RADIUS = 12;
 const int STAT_RADIUS = 15;
+const int FLAG_RADIUS = 19;
 const int FLAG_TIMEOUT = SECOND * 25;
 // TODO: why the duplication?
 const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
@@ -172,9 +173,14 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
     switch (style) {
         case ItemType::AlphaFlag:
         case ItemType::BravoFlag:
-        case ItemType::PointmatchFlag:
-            new_item.radius = 19;
+        case ItemType::PointmatchFlag: {
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Flag);
+            new_item.radius = FLAG_RADIUS;
+            new_item.time_out = FLAG_TIMEOUT;
+            new_item.collide_with_bullets = true;
+            // TODO: inf flag doesn't collide
             break;
+        }
         case ItemType::DesertEagles:
         case ItemType::MP5:
         case ItemType::Ak74:
@@ -189,12 +195,12 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
         case ItemType::Knife:
         case ItemType::Chainsaw:
         case ItemType::LAW:
-        case ItemType::Bow:
+        case ItemType::Bow: // TODO: bow has different condition
             new_item.skeleton = ParticleSystem::Load(
               ParticleSystemType::Weapon); // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
-            new_item.radius = KIT_RADIUS;
-            new_item.time_out = FLAG_TIMEOUT;
+            new_item.radius = GUN_RADIUS;
+            new_item.time_out = FLAG_TIMEOUT; // TODO
             // new_item.interest : = DEFAULT_INTEREST_TIME;
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
@@ -209,7 +215,7 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
             // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
             new_item.radius = KIT_RADIUS;
-            new_item.time_out = FLAG_TIMEOUT;
+            new_item.time_out = FLAG_TIMEOUT; // TODO
             // new_item.interest : = DEFAULT_INTEREST_TIME;
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;

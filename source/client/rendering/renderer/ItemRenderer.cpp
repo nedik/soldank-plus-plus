@@ -1,5 +1,6 @@
 #include "rendering/renderer/ItemRenderer.hpp"
 
+#include "core/types/ItemType.hpp"
 #include "rendering/data/sprites/SpriteTypes.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
 #include "rendering/renderer/Renderer.hpp"
@@ -17,6 +18,8 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
 {
     // Flags
     LoadSpriteData(sprite_manager, ItemType::AlphaFlag, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, ItemType::BravoFlag, { 0.5, 0.5 });
+    LoadSpriteData(sprite_manager, ItemType::PointmatchFlag, { 0.5, 0.5 });
 
     // Kits
     LoadSpriteData(sprite_manager, ItemType::GrenadeKit, { 0.5F, 0.5F });
@@ -81,40 +84,16 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
         return;
     }
 
-    switch (item.style) {
-        case ItemType::AlphaFlag:
-        case ItemType::BravoFlag:
-        case ItemType::PointmatchFlag:
-            return;
-        case ItemType::USSOCOM:
-        case ItemType::DesertEagles:
-        case ItemType::MP5:
-        case ItemType::Ak74:
-        case ItemType::SteyrAUG:
-        case ItemType::Spas12:
-        case ItemType::Ruger77:
-        case ItemType::M79:
-        case ItemType::Barrett:
-        case ItemType::Minimi:
-        case ItemType::Minigun:
-        case ItemType::Bow:
-            RenderWeapon(transform, item, frame_percent);
-            break;
-        case ItemType::MedicalKit:
-        case ItemType::GrenadeKit:
-        case ItemType::FlamerKit:
-        case ItemType::PredatorKit:
-        case ItemType::VestKit:
-        case ItemType::BerserkKit:
-        case ItemType::ClusterKit:
-            RenderQuad(transform, item, frame_percent);
-            break;
-        case ItemType::Parachute:
-        case ItemType::Knife:
-        case ItemType::Chainsaw:
-        case ItemType::LAW:
-        case ItemType::M2:
-            break;
+    if (IsItemTypeFlag(item.style)) {
+        RenderQuad(transform, item, frame_percent);
+    }
+
+    if (IsItemTypeWeapon(item.style)) {
+        RenderWeapon(transform, item, frame_percent);
+    }
+
+    if (IsItemTypeKit(item.style)) {
+        RenderQuad(transform, item, frame_percent);
     }
 }
 
@@ -140,11 +119,11 @@ void ItemRenderer::RenderQuad(glm::mat4 transform, const Item& item, double fram
 
     // clang-format off
     std::vector<float> vertices{
-      // position             // color                  // texture
-      pos1.x, pos1.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
-      pos2.x, pos2.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
-      pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F,
-      pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F
+      // position             // color                                          // texture
+      pos1.x, pos1.y, 1.0F,   main_color.x, main_color.y, main_color.z, 1.0F,   0.0F, 0.0F,
+      pos2.x, pos2.y, 1.0F,   main_color.x, main_color.y, main_color.z, 1.0F,   1.0F, 0.0F,
+      pos3.x, pos3.y, 1.0F,   main_color.x, main_color.y, main_color.z, 1.0F,   1.0F, 1.0F,
+      pos4.x, pos4.y, 1.0F,   main_color.x, main_color.y, main_color.z, 1.0F,   0.0F, 1.0F
     };
     // clang-format on
 

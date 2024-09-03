@@ -359,6 +359,7 @@ void Run()
         client_state->client_soldier_id = soldier.id;
         world->SpawnSoldier(soldier.id);
 
+        world->GetStateManager()->CreateItem({ -50.0F, -500.0F }, 0, ItemType::AlphaFlag);
         world->GetStateManager()->CreateItem({ -40.0F, -200.0F }, 0, ItemType::GrenadeKit);
         world->GetStateManager()->CreateItem({ -10.0F, -200.0F }, 0, ItemType::MedicalKit);
         world->GetStateManager()->CreateItem({ 10.0F, -200.0F }, 0, ItemType::USSOCOM);

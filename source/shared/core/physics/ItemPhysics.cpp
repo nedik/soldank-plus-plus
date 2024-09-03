@@ -9,6 +9,7 @@
 #include "core/physics/PhysicsEvents.hpp"
 #include "core/physics/Constants.hpp"
 #include "core/types/BulletType.hpp"
+#include "core/types/ItemType.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -17,12 +18,6 @@
 
 namespace Soldank::ItemPhysics
 {
-bool IsItemFlag(const Item& item)
-{
-    return item.style == ItemType::AlphaFlag || item.style == ItemType::BravoFlag ||
-           item.style == ItemType::PointmatchFlag;
-}
-
 void Update(State& state, Item& item, const PhysicsEvents& physics_events)
 {
     bool was_static = item.static_type;
@@ -37,7 +32,7 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
             if (item.skeleton->GetActive(i) &&
                 (item.holding_sprite == 0 || (item.holding_sprite > 0 && i == 1))) {
 
-                if (IsItemFlag(item)) {
+                if (IsItemTypeFlag(item.style)) {
                     if (i == 1) {
                         if (CheckMapCollision(item,
                                               state.map,
@@ -226,9 +221,28 @@ bool CheckMapCollision(Item& item,
                     switch (item.style) {
                         case ItemType::AlphaFlag:
                         case ItemType::BravoFlag:
-                        case ItemType::PointmatchFlag:
-                            break;
+                        case ItemType::PointmatchFlag: {
+                            if (i == 1) {
+                                item.skeleton->SetPos(i, item.skeleton->GetOldPos(i));
+                            } else {
+                                auto pos_diff =
+                                  item.skeleton->GetPos(i) - item.skeleton->GetOldPos(i);
+                                auto pos_diff_len = Calc::Vec2Length(pos_diff);
+                                auto pos_diff_perp = Calc::Vec2Normalize(perp);
+                                pos_diff_perp = Calc::Vec2Scale(pos_diff_perp, pos_diff_len);
+                                item.skeleton->SetPos(i, item.skeleton->GetPos(i) - perp);
+                                item.skeleton->SetOldPos(i,
+                                                         item.skeleton->GetPos(i) + pos_diff_perp);
 
+                                // TODO: HoldingSprite = 0
+                                if (i == 2 /*&& HoldingSprite = 0*/) {
+                                    auto new_force = item.skeleton->GetForce(i);
+                                    new_force.y -= 1;
+                                    item.skeleton->SetForce(i, new_force);
+                                }
+                            }
+                            break;
+                        }
                         case ItemType::USSOCOM:
                         case ItemType::DesertEagles:
                         case ItemType::MP5:
@@ -315,11 +329,15 @@ int CheckSoldierCollision(Item& item, State& state)
                             soldier_it->weapons[2].GetAmmoCount() != MAXGRENADES ||
                             soldier_it->weapons[2].GetWeaponParameters().bullet_style !=
                               BulletType::FragGrenade) {
-                            if (!(IsItemFlag(
-                                  item) /*&& soldier_it->cease_fire_counter > 0 TODO */)) {
-                                closestdist = dist;
-                                closestplayer = soldier_it->id;
-                            }
+
+                            // TODO: Don't pick flag if player just spawned
+                            // cease_fire_counter is the invincibility time for the spawned
+                            // player...
+                            // if (!(IsItemTypeFlag(item.style) && soldier_it->cease_fire_counter >
+                            // 0)) {
+                            closestdist = dist;
+                            closestplayer = soldier_it->id;
+                            // }
                         }
                     }
                 }

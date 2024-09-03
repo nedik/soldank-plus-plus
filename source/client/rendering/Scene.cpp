@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 
 #include "core/entities/Item.hpp"
+#include "core/types/ItemType.hpp"
 #include "rendering/renderer/ItemRenderer.hpp"
 #include "rendering/renderer/interface/debug/DebugUI.hpp"
 
@@ -85,59 +86,26 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
 
     if (client_state.draw_item_hitboxes) {
         for (const Item& item : game_state.items) {
-            switch (item.style) {
-                case ItemType::AlphaFlag:
-
-                case ItemType::BravoFlag:
-                case ItemType::PointmatchFlag:
-                    break;
-                case ItemType::DesertEagles:
-                case ItemType::MP5:
-                case ItemType::Ak74:
-                case ItemType::SteyrAUG:
-                case ItemType::Spas12:
-                case ItemType::Ruger77:
-                case ItemType::M79:
-                case ItemType::Barrett:
-                case ItemType::Minimi:
-                case ItemType::Minigun:
-                case ItemType::Bow:
-                case ItemType::USSOCOM:
-                case ItemType::Knife:
-                case ItemType::Chainsaw:
-                case ItemType::LAW: {
-                    glm::vec2 start_pos = item.skeleton->GetPos(1);
-                    glm::vec2 end_pos = item.skeleton->GetPos(2);
+            if (IsItemTypeWeapon(item.style)) {
+                glm::vec2 start_pos = item.skeleton->GetPos(1);
+                glm::vec2 end_pos = item.skeleton->GetPos(2);
+                float radius = 1.0F;
+                circle_renderer_.Render(
+                  camera_.GetView(), start_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
+                circle_renderer_.Render(
+                  camera_.GetView(), end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
+                line_renderer_.Render(
+                  camera_.GetView(), start_pos, end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, 0.5F);
+            } else {
+                for (unsigned int i = 1; i <= 4; ++i) {
+                    glm::vec2 start_pos = item.skeleton->GetPos(i);
+                    glm::vec2 end_pos = item.skeleton->GetPos((i % 4) + 1);
                     float radius = 1.0F;
                     circle_renderer_.Render(
                       camera_.GetView(), start_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
-                    circle_renderer_.Render(
-                      camera_.GetView(), end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
                     line_renderer_.Render(
                       camera_.GetView(), start_pos, end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, 0.5F);
-                    break;
                 }
-                case ItemType::MedicalKit:
-                case ItemType::GrenadeKit:
-                case ItemType::FlamerKit:
-                case ItemType::PredatorKit:
-                case ItemType::VestKit:
-                case ItemType::BerserkKit:
-                case ItemType::ClusterKit: {
-                    for (unsigned int i = 1; i <= 4; ++i) {
-                        glm::vec2 start_pos = item.skeleton->GetPos(i);
-                        glm::vec2 end_pos = item.skeleton->GetPos((i % 4) + 1);
-                        float radius = 1.0F;
-                        circle_renderer_.Render(
-                          camera_.GetView(), start_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, radius);
-                        line_renderer_.Render(
-                          camera_.GetView(), start_pos, end_pos, { 1.0F, 0.0F, 0.0F, 1.0F }, 0.5F);
-                    }
-                    break;
-                }
-                case ItemType::Parachute:
-                case ItemType::M2:
-                    break;
             }
         }
     }
