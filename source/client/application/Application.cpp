@@ -361,6 +361,7 @@ void Run()
 
         world->GetStateManager()->CreateItem({ -40.0F, -200.0F }, 0, ItemType::GrenadeKit);
         world->GetStateManager()->CreateItem({ -10.0F, -200.0F }, 0, ItemType::MedicalKit);
+        world->GetStateManager()->CreateItem({ 10.0F, -200.0F }, 0, ItemType::USSOCOM);
         world->GetStateManager()->CreateItem({ 20.0F, -200.0F }, 0, ItemType::FlamerKit);
         world->GetStateManager()->CreateItem({ 30.0F, -200.0F }, 0, ItemType::ClusterKit);
         world->GetStateManager()->CreateItem({ 40.0F, -200.0F }, 0, ItemType::PredatorKit);

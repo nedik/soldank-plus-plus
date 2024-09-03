@@ -570,17 +570,29 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
         case ItemType::PointmatchFlag:
 
         case ItemType::USSOCOM:
+            return all_sprites_.at(WeaponSpriteType::Socom);
         case ItemType::DesertEagles:
+            return all_sprites_.at(WeaponSpriteType::Deagles);
         case ItemType::MP5:
+            return all_sprites_.at(WeaponSpriteType::Mp5);
         case ItemType::Ak74:
+            return all_sprites_.at(WeaponSpriteType::Ak74);
         case ItemType::SteyrAUG:
+            return all_sprites_.at(WeaponSpriteType::Steyr);
         case ItemType::Spas12:
+            return all_sprites_.at(WeaponSpriteType::Spas);
         case ItemType::Ruger77:
+            return all_sprites_.at(WeaponSpriteType::Ruger);
         case ItemType::M79:
+            return all_sprites_.at(WeaponSpriteType::M79);
         case ItemType::Barrett:
+            return all_sprites_.at(WeaponSpriteType::Barrett);
         case ItemType::Minimi:
+            return all_sprites_.at(WeaponSpriteType::Minimi);
         case ItemType::Minigun:
+            return all_sprites_.at(WeaponSpriteType::Minigun);
         case ItemType::Bow:
+            return all_sprites_.at(WeaponSpriteType::Bow);
         case ItemType::MedicalKit:
             return all_sprites_.at(ObjectSpriteType::Medikit);
         case ItemType::GrenadeKit:
@@ -597,8 +609,11 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
             return all_sprites_.at(ObjectSpriteType::Clusterkit);
         case ItemType::Parachute:
         case ItemType::Knife:
+            return all_sprites_.at(WeaponSpriteType::Knife);
         case ItemType::Chainsaw:
+            return all_sprites_.at(WeaponSpriteType::Chainsaw);
         case ItemType::LAW:
+            return all_sprites_.at(WeaponSpriteType::Law);
         case ItemType::M2:
             break;
     }

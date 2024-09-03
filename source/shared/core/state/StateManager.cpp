@@ -166,7 +166,6 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
         case ItemType::PointmatchFlag:
             new_item.radius = 19;
             break;
-        case ItemType::USSOCOM:
         case ItemType::DesertEagles:
         case ItemType::MP5:
         case ItemType::Ak74:
@@ -177,7 +176,19 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
         case ItemType::Barrett:
         case ItemType::Minimi:
         case ItemType::Minigun:
+        case ItemType::USSOCOM:
+        case ItemType::Knife:
+        case ItemType::Chainsaw:
+        case ItemType::LAW:
         case ItemType::Bow:
+            new_item.skeleton = ParticleSystem::Load(
+              ParticleSystemType::Weapon); // new_item.skeleton->VDamping = 0.989;
+            // new_item.skeleton->GravityMultiplier = 1.07;
+            new_item.radius = KIT_RADIUS;
+            new_item.time_out = FLAG_TIMEOUT;
+            // new_item.interest : = DEFAULT_INTEREST_TIME;
+            new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
+            break;
         case ItemType::FlamerKit:
         case ItemType::PredatorKit:
         case ItemType::BerserkKit:
@@ -194,9 +205,6 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
         case ItemType::Parachute:
-        case ItemType::Knife:
-        case ItemType::Chainsaw:
-        case ItemType::LAW:
         case ItemType::M2:
             break;
     }
