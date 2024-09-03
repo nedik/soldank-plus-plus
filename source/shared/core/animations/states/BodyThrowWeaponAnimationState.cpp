@@ -98,10 +98,7 @@ std::optional<std::shared_ptr<AnimationState>> BodyThrowWeaponAnimationState::Ha
 void BodyThrowWeaponAnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events)
 {
     if (should_throw_weapon_) {
-        if (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
-            WeaponType::Knife) {
-            physics_events.soldier_throws_knife.Notify(soldier);
-        }
+        physics_events.soldier_throws_active_weapon.Notify(soldier);
     }
 }
 } // namespace Soldank
