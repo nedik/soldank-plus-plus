@@ -33,7 +33,7 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
 
         // BGState.BackgroundTestPrepare();
 
-        for (int i = 1; i <= 4; ++i) {
+        for (int i = 1; i <= (int)item.skeleton->GetParticles().size(); ++i) {
             if (item.skeleton->GetActive(i) &&
                 (item.holding_sprite == 0 || (item.holding_sprite > 0 && i == 1))) {
 
@@ -170,10 +170,9 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
     // CheckOutOfBounds;
 
     if ((!was_static) && item.static_type) {
-        item.skeleton->SetOldPos(1, item.skeleton->GetPos(1));
-        item.skeleton->SetOldPos(2, item.skeleton->GetPos(2));
-        item.skeleton->SetOldPos(3, item.skeleton->GetPos(3));
-        item.skeleton->SetOldPos(4, item.skeleton->GetPos(4));
+        for (unsigned int i = 1; i <= item.skeleton->GetParticles().size(); ++i) {
+            item.skeleton->SetOldPos(i, item.skeleton->GetPos(i));
+        }
     }
 }
 
@@ -228,6 +227,7 @@ bool CheckMapCollision(Item& item,
                         case ItemType::AlphaFlag:
                         case ItemType::BravoFlag:
                         case ItemType::PointmatchFlag:
+                            break;
 
                         case ItemType::USSOCOM:
                         case ItemType::DesertEagles:
@@ -243,6 +243,8 @@ bool CheckMapCollision(Item& item,
                         case ItemType::Knife:
                         case ItemType::Chainsaw:
                         case ItemType::LAW: {
+                            item.skeleton->SetPos(i, item.skeleton->GetOldPos(i));
+                            item.skeleton->SetPos(i, item.skeleton->GetPos(i) - perp);
                             break;
                         }
                         case ItemType::Bow:

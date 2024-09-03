@@ -6,6 +6,7 @@
 
 #include "core/math/Calc.hpp"
 
+#include <glm/ext/quaternion_transform.hpp>
 #include <numbers>
 #include <cmath>
 
@@ -14,7 +15,10 @@ namespace Soldank
 ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     : shader_(ShaderSources::VERTEX_SHADER_SOURCE, ShaderSources::FRAGMENT_SHADER_SOURCE)
 {
+    // Flags
     LoadSpriteData(sprite_manager, ItemType::AlphaFlag, { 0.5, 0.5 });
+
+    // Kits
     LoadSpriteData(sprite_manager, ItemType::GrenadeKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::MedicalKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::VestKit, { 0.5F, 0.5F });
@@ -22,6 +26,23 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadSpriteData(sprite_manager, ItemType::PredatorKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::BerserkKit, { 0.5F, 0.5F });
     LoadSpriteData(sprite_manager, ItemType::FlamerKit, { 0.5F, 0.5F });
+
+    // Weapons
+    LoadSpriteData(sprite_manager, ItemType::DesertEagles, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::MP5, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Ak74, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::SteyrAUG, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Spas12, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Ruger77, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::M79, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Barrett, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Minimi, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Minigun, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::USSOCOM, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Chainsaw, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Knife, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::LAW, { 0.5F, 0.5F });
+    LoadSpriteData(sprite_manager, ItemType::Bow, { 0.5F, 0.5F });
 }
 
 void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager,
@@ -60,15 +81,50 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
         return;
     }
 
-    glm::vec2 scale = { 1.0F, 1.0F };
+    switch (item.style) {
+        case ItemType::AlphaFlag:
+        case ItemType::BravoFlag:
+        case ItemType::PointmatchFlag:
+            return;
+        case ItemType::USSOCOM:
+        case ItemType::DesertEagles:
+        case ItemType::MP5:
+        case ItemType::Ak74:
+        case ItemType::SteyrAUG:
+        case ItemType::Spas12:
+        case ItemType::Ruger77:
+        case ItemType::M79:
+        case ItemType::Barrett:
+        case ItemType::Minimi:
+        case ItemType::Minigun:
+        case ItemType::Bow:
+            RenderWeapon(transform, item, frame_percent);
+            break;
+        case ItemType::MedicalKit:
+        case ItemType::GrenadeKit:
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::VestKit:
+        case ItemType::BerserkKit:
+        case ItemType::ClusterKit:
+            RenderQuad(transform, item, frame_percent);
+            break;
+        case ItemType::Parachute:
+        case ItemType::Knife:
+        case ItemType::Chainsaw:
+        case ItemType::LAW:
+        case ItemType::M2:
+            break;
+    }
+}
+
+void ItemRenderer::RenderQuad(glm::mat4 transform, const Item& item, double frame_percent)
+{
     ItemSpriteData item_sprite_data = item_sprite_type_to_gl_data_.at(item.style);
     glm::vec2 pos = item.skeleton->GetPos(1);
     auto main_color = GetMainColor(item.style);
 
     shader_.Use();
-
-    // TODO: magic number, this is in mod.ini
-    scale /= 4.5F;
 
     // Set corners of the item on a (0,0) anchor from 1st corner
     glm::vec2 pos1 = item.skeleton->GetPos(1) - item.skeleton->GetPos(1);
@@ -100,7 +156,64 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
 
     shader_.SetMatrix4("transform", current_scenery_transform);
 
-    Renderer::DrawQuad(vertices, item_sprite_data.texture_data.opengl_id);
+    unsigned vbo = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
+    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
+    unsigned int ebo = Renderer::CreateEBO(indices, GL_STATIC_DRAW);
+    Renderer::SetupVertexArray(vbo, ebo, true, true);
+    Renderer::BindTexture(item_sprite_data.texture_data.opengl_id);
+    Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    Renderer::FreeVBO(vbo);
+    Renderer::FreeEBO(ebo);
+}
+
+void ItemRenderer::RenderWeapon(glm::mat4 transform, const Item& item, double frame_percent)
+{
+    glm::vec2 pos = item.skeleton->GetPos(1);
+    float rotation = Calc::Vec2Angle(item.skeleton->GetPos(2) - pos);
+
+    ItemSpriteData item_sprite_data = item_sprite_type_to_gl_data_.at(item.style);
+    float w0 = 0.0F;
+    auto w1 = (float)item_sprite_data.texture_data.width;
+    float h0 = 0.0F;
+    auto h1 = (float)item_sprite_data.texture_data.height;
+    glm::vec2 pos1 = { w0, h0 };
+    glm::vec2 pos2 = { w1, h0 };
+    glm::vec2 pos3 = { w1, h1 };
+    glm::vec2 pos4 = { w0, h1 };
+
+    // clang-format off
+    std::vector<float> vertices{
+      // position             // color                  // texture
+      pos1.x, pos1.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
+      pos2.x, pos2.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
+      pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F,
+      pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F
+    };
+    // clang-format on
+
+    glm::mat4 current_scenery_transform = transform;
+
+    glm::vec2 scale = { 1.0F, 1.0F };
+    scale /= 4.5F;
+
+    // We need to move the corners from (0,0) anchor to the position on the map
+    current_scenery_transform =
+      glm::translate(current_scenery_transform, glm::vec3(pos.x, -pos.y, 0.0));
+    current_scenery_transform =
+      glm::rotate(current_scenery_transform, rotation, glm::vec3(0.0, 0.0, 1.0));
+    current_scenery_transform =
+      glm::scale(current_scenery_transform, glm::vec3(scale.x, scale.y, 0.0));
+
+    shader_.SetMatrix4("transform", current_scenery_transform);
+
+    unsigned vbo = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
+    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
+    unsigned int ebo = Renderer::CreateEBO(indices, GL_STATIC_DRAW);
+    Renderer::SetupVertexArray(vbo, ebo, true, true);
+    Renderer::BindTexture(item_sprite_data.texture_data.opengl_id);
+    Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    Renderer::FreeVBO(vbo);
+    Renderer::FreeEBO(ebo);
 }
 
 glm::vec4 ItemRenderer::GetMainColor(ItemType item_type)

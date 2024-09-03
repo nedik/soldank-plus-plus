@@ -41,6 +41,9 @@ private:
                         ItemType item_type,
                         glm::vec2 pivot);
 
+    void RenderQuad(glm::mat4 transform, const Item& item, double frame_percent);
+    void RenderWeapon(glm::mat4 transform, const Item& item, double frame_percent);
+
     static glm::vec4 GetMainColor(ItemType item_type);
 
     Shader shader_;
