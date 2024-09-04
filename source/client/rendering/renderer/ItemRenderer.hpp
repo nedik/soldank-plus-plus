@@ -37,18 +37,28 @@ private:
         Texture::TextureData texture_data;
     };
 
-    void LoadSpriteData(const Sprites::SpriteManager& sprite_manager,
-                        ItemType item_type,
-                        glm::vec2 pivot);
+    void LoadSpriteData(const Sprites::SpriteManager& sprite_manager, ItemType item_type);
+    void LoadObjectSpriteData(const Sprites::SpriteManager& sprite_manager,
+                              Sprites::ObjectSpriteType object_sprite_type);
 
     void RenderQuad(glm::mat4 transform, const Item& item, double frame_percent);
     void RenderWeapon(glm::mat4 transform, const Item& item, double frame_percent);
+    void RenderFlagSprites(glm::mat4 transform, const Item& item, double frame_percent);
+    void RenderSprite(glm::mat4 transform,
+                      const Texture::TextureData& item_sprite_data,
+                      glm::vec2 position,
+                      float rotation,
+                      glm::vec2 scale);
 
-    static glm::vec4 GetMainColor(ItemType item_type);
+    static glm::vec4 GetQuadMainColor(ItemType item_type);
+    static glm::vec4 GetQuadTopColor(ItemType item_type);
+    static glm::vec4 GetQuadLowColor(ItemType item_type);
 
     Shader shader_;
 
-    std::unordered_map<ItemType, ItemSpriteData> item_sprite_type_to_gl_data_;
+    std::unordered_map<ItemType, Texture::TextureData> item_sprite_type_to_gl_data_;
+    std::unordered_map<Sprites::ObjectSpriteType, Texture::TextureData>
+      object_sprite_type_to_gl_data_;
 };
 } // namespace Soldank
 

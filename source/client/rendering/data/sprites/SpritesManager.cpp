@@ -261,8 +261,8 @@ SpriteManager::SpriteManager()
         { ObjectSpriteType::Vestkit, "textures/objects/vestkit.png" },
         { ObjectSpriteType::Berserkerkit, "textures/objects/berserkerkit.bmp" },
         { ObjectSpriteType::Clusterkit, "textures/objects/clusterkit.png" },
-        { ObjectSpriteType::Ilum, "objects-gfx/ilum.bmp" },
-        { ObjectSpriteType::FlagHandle, "objects-gfx/flag.bmp" },
+        { ObjectSpriteType::Ilum, "objects-gfx/ilum.png" },
+        { ObjectSpriteType::FlagHandle, "objects-gfx/flag.png" },
     };
 
     std::ranges::for_each(
@@ -615,6 +615,34 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
             return all_sprites_.at(WeaponSpriteType::Law);
         case ItemType::M2:
             break;
+    }
+}
+
+Texture::TextureData SpriteManager::GetObjectSprite(ObjectSpriteType object_sprite_type) const
+{
+    switch (object_sprite_type) {
+        case ObjectSpriteType::Flag:
+            return all_sprites_.at(ObjectSpriteType::Flag);
+        case ObjectSpriteType::Infflag:
+            return all_sprites_.at(ObjectSpriteType::Infflag);
+        case ObjectSpriteType::Medikit:
+            return all_sprites_.at(ObjectSpriteType::Medikit);
+        case ObjectSpriteType::Grenadekit:
+            return all_sprites_.at(ObjectSpriteType::Grenadekit);
+        case ObjectSpriteType::Flamerkit:
+            return all_sprites_.at(ObjectSpriteType::Flamerkit);
+        case ObjectSpriteType::Predatorkit:
+            return all_sprites_.at(ObjectSpriteType::Predatorkit);
+        case ObjectSpriteType::Vestkit:
+            return all_sprites_.at(ObjectSpriteType::Vestkit);
+        case ObjectSpriteType::Berserkerkit:
+            return all_sprites_.at(ObjectSpriteType::Berserkerkit);
+        case ObjectSpriteType::Clusterkit:
+            return all_sprites_.at(ObjectSpriteType::Clusterkit);
+        case ObjectSpriteType::Ilum:
+            return all_sprites_.at(ObjectSpriteType::Ilum);
+        case ObjectSpriteType::FlagHandle:
+            return all_sprites_.at(ObjectSpriteType::FlagHandle);
     }
 }
 } // namespace Soldank::Sprites
