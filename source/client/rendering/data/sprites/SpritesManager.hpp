@@ -42,6 +42,7 @@ public:
     Texture::TextureData GetBulletTexture(WeaponSpriteType weapon_sprite_type) const;
     Texture::TextureData GetBulletTexture(const Bullet& bullet) const;
     Texture::TextureData GetItemTexture(ItemType item_type) const;
+    Texture::TextureData GetObjectSprite(ObjectSpriteType object_sprite_type) const;
 
 private:
     using TSoldierPartSpriteData = std::unique_ptr<SoldierPartData>;
