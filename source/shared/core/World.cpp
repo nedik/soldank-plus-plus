@@ -327,9 +327,9 @@ const Soldier& World::CreateSoldier(std::optional<unsigned int> force_soldier_id
             current_soldier_ids.push_back(soldier.id);
         }
         std::sort(current_soldier_ids.begin(), current_soldier_ids.end());
-        unsigned int free_soldier_id = 0;
-        while (free_soldier_id < current_soldier_ids.size() &&
-               current_soldier_ids[free_soldier_id] == free_soldier_id) {
+        unsigned int free_soldier_id = 1;
+        while (free_soldier_id <= current_soldier_ids.size() &&
+               current_soldier_ids.at(free_soldier_id - 1) == free_soldier_id) {
             free_soldier_id++;
         }
 
