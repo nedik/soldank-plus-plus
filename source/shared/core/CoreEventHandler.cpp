@@ -7,6 +7,7 @@
 
 #include "core/physics/SoldierPhysics.hpp"
 
+#include "core/types/ItemType.hpp"
 #include "spdlog/spdlog.h"
 #include <utility>
 
@@ -140,7 +141,11 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
     });
     world->GetPhysicsEvents().soldier_collides_with_item.AddObserver(
       [](Soldier& soldier, Item& item) {
-          spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.id, soldier.id);
+          if (IsItemTypeFlag(item.style) && item.holding_soldier_id == 0) {
+              item.holding_soldier_id = soldier.id;
+          } else {
+              spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.id, soldier.id);
+          }
       });
 }
 } // namespace Soldank

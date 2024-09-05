@@ -18,6 +18,12 @@
 
 namespace Soldank::ItemPhysics
 {
+// TODO: move somewhere
+const int SECOND = 60;
+const int FLAG_TIMEOUT = SECOND * 25;
+const int FLAG_HOLDING_FORCEUP = -14;
+const float GRAV = 0.06;
+
 void Update(State& state, Item& item, const PhysicsEvents& physics_events)
 {
     bool was_static = item.static_type;
@@ -30,7 +36,7 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
 
         for (int i = 1; i <= (int)item.skeleton->GetParticles().size(); ++i) {
             if (item.skeleton->GetActive(i) &&
-                (item.holding_sprite == 0 || (item.holding_sprite > 0 && i == 1))) {
+                (item.holding_soldier_id == 0 || (item.holding_soldier_id > 0 && i == 1))) {
 
                 if (IsItemTypeFlag(item.style)) {
                     if (i == 1) {
@@ -121,6 +127,19 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
                 if ((Calc::Vec2Length(a) + Calc::Vec2Length(b)) / 2 <
                     PhysicsConstants::MINMOVEDELTA) {
                     item.static_type = true;
+                }
+            }
+        }
+
+        if (IsItemTypeFlag(item.style) && item.holding_soldier_id > 0) {
+            for (auto soldier_it = state.soldiers.begin(); soldier_it != state.soldiers.end();
+                 ++soldier_it) {
+                if (soldier_it->id == item.holding_soldier_id) {
+                    item.skeleton->SetPos(1, soldier_it->skeleton->GetPos(8));
+                    auto new_force = item.skeleton->GetForce(2);
+                    new_force.y += (float)FLAG_HOLDING_FORCEUP * GRAV;
+                    item.skeleton->SetForce(2, new_force);
+                    item.time_out = FLAG_TIMEOUT;
                 }
             }
         }
@@ -234,8 +253,7 @@ bool CheckMapCollision(Item& item,
                                 item.skeleton->SetOldPos(i,
                                                          item.skeleton->GetPos(i) + pos_diff_perp);
 
-                                // TODO: HoldingSprite = 0
-                                if (i == 2 /*&& HoldingSprite = 0*/) {
+                                if (i == 2 && item.holding_soldier_id == 0) {
                                     auto new_force = item.skeleton->GetForce(i);
                                     new_force.y -= 1;
                                     item.skeleton->SetForce(i, new_force);

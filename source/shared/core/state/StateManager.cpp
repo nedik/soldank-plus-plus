@@ -155,7 +155,7 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
     new_item.active = true;
     new_item.style = style;
     new_item.id = new_id;
-    new_item.holding_sprite = 0;
+    new_item.holding_soldier_id = 0;
     new_item.owner = owner_id;
     new_item.time_out = 0;
     // new_item.skeleton = std::make_shared<ParticleSystem>();

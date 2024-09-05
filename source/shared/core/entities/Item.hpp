@@ -17,7 +17,7 @@ struct Item
     ItemType style;
     std::uint8_t id;
     std::uint8_t owner;
-    std::uint8_t holding_sprite;
+    std::uint8_t holding_soldier_id;
     std::uint8_t ammo_count;
     float radius;
     std::int32_t time_out;
