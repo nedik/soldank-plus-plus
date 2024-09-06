@@ -71,6 +71,16 @@ public:
     static bool PointInPoly(glm::vec2 p, PMSPolygon poly);
     bool PointInPolyEdges(float x, float y, int i) const;
     glm::vec2 ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) const;
+    bool CollisionTest(glm::vec2 pos, glm::vec2& perp_vec, bool is_flag = false) const;
+    bool RayCast(glm::vec2 a,
+                 glm::vec2 b,
+                 float& distance,
+                 float max_dist,
+                 bool player = false,
+                 bool flag = false,
+                 bool bullet = true,
+                 bool check_collider = false,
+                 std::uint8_t team_id = 0);
 
     int GetVersion() const { return map_data_.version; }
 

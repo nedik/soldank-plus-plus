@@ -1,14 +1,17 @@
 #include "core/state/StateManager.hpp"
 
+#include "core/math/Calc.hpp"
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
 #include "core/entities/WeaponParametersFactory.hpp"
 
+#include "core/types/ItemType.hpp"
 #include "spdlog/spdlog.h"
 #include <algorithm>
 
 namespace Soldank
 {
+// TODO: Move these somewhere
 const int SECOND = 60;
 const int GUN_RADIUS = 10;
 const int BOW_RADIUS = 20;
@@ -19,6 +22,7 @@ const int FLAG_TIMEOUT = SECOND * 25;
 // TODO: why the duplication?
 const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
 const int WAYPOINT_TIMEOUT_BIG = SECOND * 8;        // = 480
+const float FLAGTHROW_POWER = 4.225;
 
 void StateManager::ChangeSoldierControlActionState(std::uint8_t soldier_id,
                                                    ControlActionType control_action_type,
@@ -122,6 +126,80 @@ void StateManager::ChangeSoldierPrimaryWeapon(std::uint8_t soldier_id, WeaponTyp
     Soldier& soldier = GetSoldierRef(soldier_id);
     auto new_weapon_parameters = WeaponParametersFactory::GetParameters(new_weapon_type, false);
     soldier.weapons[soldier.active_weapon] = new_weapon_parameters;
+}
+
+void StateManager::ThrowSoldierFlags(std::uint8_t soldier_id)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    for (auto item_it = state_.items.begin(); item_it != state_.items.end(); ++item_it) {
+        if (IsItemTypeFlag(item_it->style)) {
+            glm::vec2 aim_direction = GetSoldierAimDirection(soldier_id);
+            aim_direction = Calc::Vec2Scale(aim_direction, FLAGTHROW_POWER);
+
+            glm::vec2 flagger_offset = Calc::Vec2Scale(aim_direction, 5);
+
+            glm::vec2 flagger_velocity = aim_direction + soldier.particle.GetVelocity();
+
+            glm::vec2 new_pos_diff = flagger_offset + flagger_velocity;
+            glm::vec2 look_point_1 = item_it->skeleton->GetPos(1) + new_pos_diff;
+            glm::vec2 future_point_1 = look_point_1 + glm::vec2{ -10, -8 };
+            glm::vec2 future_point_2 = look_point_1 + glm::vec2{ 10, -8 };
+            glm::vec2 future_point_3 = look_point_1 + glm::vec2{ -10, 8 };
+            glm::vec2 future_point_4 = look_point_1 + glm::vec2{ 10, 8 };
+
+            glm::vec2 perp;
+            float distance = 0.0F;
+
+            glm::vec2 look_point_2 = item_it->skeleton->GetPos(2) + new_pos_diff;
+            glm::vec2 look_point_3 = item_it->skeleton->GetPos(3) + new_pos_diff;
+            glm::vec2 look_point_4 = item_it->skeleton->GetPos(4) + new_pos_diff;
+
+            if (!state_.map.RayCast(
+                  soldier.skeleton->GetPos(15), look_point_2, distance, 200, false, true, false) &&
+                !state_.map.RayCast(
+                  soldier.skeleton->GetPos(15), look_point_3, distance, 200, false, true, false) &&
+                !state_.map.RayCast(
+                  soldier.skeleton->GetPos(15), look_point_4, distance, 200, false, true, false) &&
+                !state_.map.CollisionTest(future_point_1, perp, true) &&
+                !state_.map.CollisionTest(future_point_2, perp, true) &&
+                !state_.map.CollisionTest(future_point_3, perp, true) &&
+                !state_.map.CollisionTest(future_point_4, perp, true)) {
+
+                for (unsigned int j = 1; j <= 4; ++j) {
+                    // Apply offset from flagger
+                    item_it->skeleton->SetPos(j, item_it->skeleton->GetPos(j) + flagger_offset);
+
+                    // Apply velocities
+                    item_it->skeleton->SetPos(j, item_it->skeleton->GetPos(j) + flagger_velocity);
+                    item_it->skeleton->SetOldPos(j,
+                                                 item_it->skeleton->GetPos(j) - flagger_velocity);
+                }
+
+                // Add some spin for visual effect
+                perp = { -flagger_velocity.y, flagger_velocity.x };
+                perp = Calc::Vec2Normalize(perp);
+                perp = Calc::Vec2Scale(perp, soldier.direction);
+                item_it->skeleton->SetPos(1, item_it->skeleton->GetPos(1) - perp);
+                item_it->skeleton->SetPos(2, item_it->skeleton->GetPos(2) + perp);
+
+                // Release the flag
+                item_it->static_type = false;
+                item_it->holding_soldier_id = 0;
+                soldier.is_holding_flags = false;
+            }
+        }
+    }
+}
+
+glm::vec2 StateManager::GetSoldierAimDirection(std::uint8_t soldier_id)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    glm::vec2 mouse_aim = { soldier.control.mouse_aim_x, soldier.control.mouse_aim_y };
+
+    glm::vec2 aim_direction = mouse_aim - soldier.skeleton->GetPos(15);
+    aim_direction = Calc::Vec2Normalize(aim_direction);
+
+    return aim_direction;
 }
 
 void StateManager::CreateProjectile(const BulletParams& bullet_params)

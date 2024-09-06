@@ -67,16 +67,32 @@ void AnimationState::TryToShoot(Soldier& soldier, const PhysicsEvents& physics_e
     }
 }
 
+void AnimationState::TryToThrowFlags(Soldier& soldier, const PhysicsEvents& physics_events) const
+{
+    if (IsSoldierFlagThrowingPossible(soldier)) {
+        if (soldier.control.flag_throw && soldier.is_holding_flags) {
+            physics_events.soldier_throws_flags.Notify(soldier);
+        }
+    }
+}
+
 void AnimationState::Enter(Soldier& soldier) {}
 
 void AnimationState::Update(Soldier& soldier, const PhysicsEvents& physics_events) {}
 
 void AnimationState::Exit(Soldier& soldier, const PhysicsEvents& physics_events) {}
 
-bool AnimationState::IsSoldierShootingPossible(const Soldier& soldier) const
+bool AnimationState::IsSoldierShootingPossible(const Soldier& /*soldier*/) const
 {
     // By default we return false. Child classes should determine whether the player is able to
     // shoot or not in the current state
+    return false;
+}
+
+bool AnimationState::IsSoldierFlagThrowingPossible(const Soldier& /*soldier*/) const
+{
+    // By default we return false. Child classes should determine whether the player is able to
+    // throw flags or not in the current state
     return false;
 }
 } // namespace Soldank

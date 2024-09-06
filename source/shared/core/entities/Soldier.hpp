@@ -66,6 +66,7 @@ struct Soldier
     std::uint8_t fired;
     Particle particle;
     bool is_shooting;
+    bool is_holding_flags;
 
     int ticks_to_respawn;
 

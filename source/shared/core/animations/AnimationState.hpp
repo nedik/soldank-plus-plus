@@ -41,6 +41,11 @@ public:
     // animations. That's why we need to handle it in a special way.
     void TryToShoot(Soldier& soldier, const PhysicsEvents& physics_events) const;
 
+    // This method calls a flag throwing event.It has a separate method for that because it's a
+    // shared functionality between many animation types and players are allowed to shoot during
+    // animations. That's why we need to handle it in a special way.
+    void TryToThrowFlags(Soldier& soldier, const PhysicsEvents& physics_events) const;
+
     virtual void Enter(Soldier& soldier);
     virtual std::optional<std::shared_ptr<AnimationState>> HandleInput(Soldier& soldier) = 0;
     virtual void Update(Soldier& soldier, const PhysicsEvents& physics_events);
@@ -50,6 +55,10 @@ protected:
     // This method should be overwritten by child classes to determine whether it's possible to
     // shoot during the current animation state
     virtual bool IsSoldierShootingPossible(const Soldier& soldier) const;
+
+    // This method should be overwritten by child classes to determine whether it's possible to
+    // throw all the flags during the current animation state
+    virtual bool IsSoldierFlagThrowingPossible(const Soldier& soldier) const;
 
     std::shared_ptr<const AnimationData> animation_data_;
 

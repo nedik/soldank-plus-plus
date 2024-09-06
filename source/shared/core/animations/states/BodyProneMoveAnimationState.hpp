@@ -19,6 +19,7 @@ public:
 
 private:
     bool IsSoldierShootingPossible(const Soldier& /*soldier*/) const final { return true; }
+    bool IsSoldierFlagThrowingPossible(const Soldier& /*soldier*/) const final { return true; };
 
     const AnimationDataManager& animation_data_manager_;
 };

@@ -264,6 +264,10 @@ void Run()
                       client_soldier_id, ControlActionType::DropWeapon, Keyboard::Key(GLFW_KEY_F));
                     world->GetStateManager()->ChangeSoldierControlActionState(
                       client_soldier_id, ControlActionType::Prone, Keyboard::Key(GLFW_KEY_X));
+                    world->GetStateManager()->ChangeSoldierControlActionState(
+                      client_soldier_id,
+                      ControlActionType::ThrowFlag,
+                      Keyboard::Key(GLFW_KEY_W) && Keyboard::Key(GLFW_KEY_S));
 
                     world->GetStateManager()->ChangeSoldierControlActionState(
                       client_soldier_id,
