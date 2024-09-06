@@ -142,10 +142,16 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
     world->GetPhysicsEvents().soldier_collides_with_item.AddObserver(
       [](Soldier& soldier, Item& item) {
           if (IsItemTypeFlag(item.style) && item.holding_soldier_id == 0) {
+              item.static_type = false;
               item.holding_soldier_id = soldier.id;
+              soldier.is_holding_flags = true;
           } else {
               spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.id, soldier.id);
           }
       });
+    world->GetPhysicsEvents().soldier_throws_flags.AddObserver([world](Soldier& soldier) {
+        spdlog::info("PLAYER {} THROWS FLAGS", soldier.id);
+        world->GetStateManager()->ThrowSoldierFlags(soldier.id);
+    });
 }
 } // namespace Soldank

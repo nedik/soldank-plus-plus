@@ -2,9 +2,12 @@
 
 #include "core/map/Map.hpp"
 #include "core/map/PMSConstants.hpp"
+#include "core/map/PMSEnums.hpp"
 #include "core/math/Calc.hpp"
 
+#include <algorithm>
 #include <array>
+#include <math.h>
 #include <spdlog/spdlog.h>
 #include <utility>
 #include <sstream>
@@ -321,5 +324,56 @@ glm::vec2 Map::ClosestPerpendicular(int j, glm::vec2 pos, float* d, int* n) cons
     }
 
     return { 0.0F, 0.0F };
+}
+
+bool Map::CollisionTest(glm::vec2 pos, glm::vec2& perp_vec, bool is_flag) const
+{
+    constexpr const std::array EXCLUDED1 = {
+        PMSPolygonType::OnlyBulletsCollide, PMSPolygonType::OnlyPlayersCollide,
+        PMSPolygonType::NoCollide,          PMSPolygonType::AlphaPlayers,
+        PMSPolygonType::BravoPlayers,       PMSPolygonType::CharliePlayers,
+        PMSPolygonType::DeltaPlayers, /* TODO: add those PMSPolygonType::BACKGROUND,
+                                         PMSPolygonType::BACKGROUND_TRANSITION*/
+    };
+
+    constexpr const std::array EXCLUDED2 = {
+        PMSPolygonType::FlaggerCollides,
+        PMSPolygonType::NonFlaggerCollides, /* TODO: what's that: PMSPolygonType::NOT_FLAGGERS???*/
+    };
+
+    auto rx = ((int)std::round((pos.x / (float)GetSectorsSize()))) + 25;
+    auto ry = ((int)std::round((pos.y / (float)GetSectorsSize()))) + 25;
+    if ((rx > 0) && (rx < GetSectorsCount() + 25) && (ry > 0) && (ry < GetSectorsCount() + 25)) {
+        for (unsigned short polygon_id : GetSector(rx, ry).polygons) {
+            auto poly = GetPolygons().at(polygon_id - 1);
+
+            if (!std::ranges::contains(EXCLUDED1, poly.polygon_type) &&
+                (is_flag || !std::ranges::contains(EXCLUDED2, poly.polygon_type))) {
+                if (PointInPoly(pos, poly)) {
+                    float d = NAN;
+                    int b = 0;
+                    perp_vec = ClosestPerpendicular(polygon_id - 1, pos, &d, &b);
+                    perp_vec = Calc::Vec2Scale(perp_vec, 1.5F * d);
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Map::RayCast(glm::vec2 a,
+                  glm::vec2 b,
+                  float& distance,
+                  float max_dist,
+                  bool player,
+                  bool flag,
+                  bool bullet,
+                  bool check_collider,
+                  std::uint8_t team_id)
+{
+    // TODO: implement this
+    return false;
 }
 } // namespace Soldank

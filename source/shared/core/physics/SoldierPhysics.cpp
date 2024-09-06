@@ -146,6 +146,7 @@ void Update(State& state,
     }
 
     soldier.body_animation->TryToShoot(soldier, physics_events);
+    soldier.body_animation->TryToThrowFlags(soldier, physics_events);
     auto maybe_new_body_animation_state_machine = soldier.body_animation->HandleInput(soldier);
     if (maybe_new_body_animation_state_machine.has_value()) {
         soldier.body_animation->Exit(soldier, physics_events);
