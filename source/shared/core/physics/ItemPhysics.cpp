@@ -23,6 +23,7 @@ const int SECOND = 60;
 const int FLAG_TIMEOUT = SECOND * 25;
 const int FLAG_HOLDING_FORCEUP = -14;
 const float GRAV = 0.06;
+const int BASE_RADIUS = 75;
 
 void Update(State& state, Item& item, const PhysicsEvents& physics_events)
 {
@@ -142,6 +143,22 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
                     item.time_out = FLAG_TIMEOUT;
                 }
             }
+        }
+    }
+
+    if (item.style == ItemType::AlphaFlag || item.style == ItemType::BravoFlag) {
+        PMSSpawnPointType spawn_point_type = PMSSpawnPointType::AlphaFlag;
+        if (item.style == ItemType::BravoFlag) {
+            spawn_point_type = PMSSpawnPointType::BravoFlag;
+        }
+
+        auto spawn_point = state.map.FindFirstSpawnPoint(spawn_point_type);
+        if (spawn_point && Calc::Distance(item.skeleton->GetPos(1),
+                                          { spawn_point->x, spawn_point->y }) < BASE_RADIUS) {
+            item.in_base = true;
+            item.time_out = FLAG_TIMEOUT;
+        } else {
+            item.in_base = false;
         }
     }
 

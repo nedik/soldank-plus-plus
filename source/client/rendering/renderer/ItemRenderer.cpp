@@ -1,6 +1,7 @@
 #include "rendering/renderer/ItemRenderer.hpp"
 
 #include "core/types/ItemType.hpp"
+#include "rendering/data/Texture.hpp"
 #include "rendering/data/sprites/SpriteTypes.hpp"
 #include "rendering/shaders/ShaderSources.hpp"
 #include "rendering/renderer/Renderer.hpp"
@@ -21,6 +22,7 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadSpriteData(sprite_manager, ItemType::BravoFlag);
     LoadSpriteData(sprite_manager, ItemType::PointmatchFlag);
     LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::FlagHandle);
+    LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::Ilum);
 
     // Kits
     LoadSpriteData(sprite_manager, ItemType::GrenadeKit);
@@ -62,7 +64,10 @@ void ItemRenderer::LoadObjectSpriteData(const Sprites::SpriteManager& sprite_man
       sprite_manager.GetObjectSprite(object_sprite_type);
 }
 
-void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_percent)
+void ItemRenderer::Render(glm::mat4 transform,
+                          const Item& item,
+                          double frame_percent,
+                          unsigned int game_tick)
 {
     if (!item.active) {
         return;
@@ -75,7 +80,7 @@ void ItemRenderer::Render(glm::mat4 transform, const Item& item, double frame_pe
                 return;
             }
         }
-        RenderFlagSprites(transform, item, frame_percent);
+        RenderFlagSprites(transform, item, frame_percent, game_tick);
         RenderQuad(transform, item, frame_percent);
     }
 
@@ -157,26 +162,54 @@ void ItemRenderer::RenderWeapon(glm::mat4 transform, const Item& item, double fr
     RenderSprite(transform, item_sprite_type_to_gl_data_.at(item.style), position, rotation, scale);
 }
 
-void ItemRenderer::RenderFlagSprites(glm::mat4 transform, const Item& item, double frame_percent)
+void ItemRenderer::RenderFlagSprites(glm::mat4 transform,
+                                     const Item& item,
+                                     double frame_percent,
+                                     unsigned int game_tick)
 {
-    glm::vec2 position =
+    glm::vec2 skeleton_position_1 =
       Calc::Lerp(item.skeleton->GetOldPos(1), item.skeleton->GetPos(1), (float)frame_percent);
-    float rotation = Calc::Vec2Angle(item.skeleton->GetPos(2) - position);
+    glm::vec2 skeleton_position_2 =
+      Calc::Lerp(item.skeleton->GetOldPos(2), item.skeleton->GetPos(2), (float)frame_percent);
+    float rotation = Calc::Vec2Angle(skeleton_position_2 - skeleton_position_1);
     glm::vec2 scale = { 1.0F, 1.0F };
     scale /= 4.5F;
 
     RenderSprite(transform,
                  object_sprite_type_to_gl_data_.at(Sprites::ObjectSpriteType::FlagHandle),
-                 position,
+                 skeleton_position_1,
                  rotation,
                  scale);
+
+    if (item.in_base) {
+        const Texture::TextureData& ilum_texture =
+          object_sprite_type_to_gl_data_.at(Sprites::ObjectSpriteType::Ilum);
+        glm::vec2 ilum_size = { ilum_texture.width, ilum_texture.height };
+        ilum_size *= scale;
+        glm::vec2 ilum_position;
+        ilum_position.x = skeleton_position_1.x +
+                          (skeleton_position_2.x - skeleton_position_1.x) / 2.0F -
+                          ilum_size.x / 2.0F;
+        ilum_position.y = skeleton_position_1.y +
+                          (skeleton_position_2.y - skeleton_position_1.y) / 2.0F +
+                          ilum_size.x / 2.0F;
+
+        RenderSprite(
+          transform,
+          ilum_texture,
+          ilum_position,
+          0.0F,
+          scale,
+          { 1.0F, 1.0F, 1.0F, std::abs(5 + 20 * std::sin(0.0765 * game_tick)) / 255.0F });
+    }
 }
 
 void ItemRenderer::RenderSprite(glm::mat4 transform,
                                 const Texture::TextureData& item_sprite_data,
                                 glm::vec2 position,
                                 float rotation,
-                                glm::vec2 scale)
+                                glm::vec2 scale,
+                                glm::vec4 color)
 {
     shader_.Use();
     float w0 = 0.0F;
@@ -190,11 +223,11 @@ void ItemRenderer::RenderSprite(glm::mat4 transform,
 
     // clang-format off
     std::vector<float> vertices{
-      // position             // color                  // texture
-      pos1.x, pos1.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
-      pos2.x, pos2.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
-      pos3.x, pos3.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F,
-      pos4.x, pos4.y, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F
+      // position             // color                              // texture
+      pos1.x, pos1.y, 1.0F,   color.x, color.y, color.z, color.w,   0.0F, 0.0F,
+      pos2.x, pos2.y, 1.0F,   color.x, color.y, color.z, color.w,   1.0F, 0.0F,
+      pos3.x, pos3.y, 1.0F,   color.x, color.y, color.z, color.w,   1.0F, 1.0F,
+      pos4.x, pos4.y, 1.0F,   color.x, color.y, color.z, color.w,   0.0F, 1.0F
     };
     // clang-format on
 
