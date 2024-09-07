@@ -9,6 +9,7 @@
 #include "core/data/IFileReader.hpp"
 #include "core/data/FileReader.hpp"
 
+#include <optional>
 #include <utility>
 #include <vector>
 #include <sstream>
@@ -129,6 +130,8 @@ public:
     {
         return map_data_.sectors_poly[x][y];
     }
+
+    std::optional<PMSSpawnPoint> FindFirstSpawnPoint(PMSSpawnPointType spawn_point_type) const;
 
     enum MapBoundary
     {

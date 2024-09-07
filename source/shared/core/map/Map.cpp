@@ -376,4 +376,15 @@ bool Map::RayCast(glm::vec2 a,
     // TODO: implement this
     return false;
 }
+
+std::optional<PMSSpawnPoint> Map::FindFirstSpawnPoint(PMSSpawnPointType spawn_point_type) const
+{
+    for (const auto& spawn_point : GetSpawnPoints()) {
+        if (spawn_point.type == spawn_point_type) {
+            return spawn_point;
+        }
+    }
+
+    return std::nullopt;
+}
 } // namespace Soldank

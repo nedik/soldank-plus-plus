@@ -27,7 +27,10 @@ public:
     ItemRenderer(ItemRenderer&&) = delete;
     ItemRenderer& operator=(ItemRenderer&& other) = delete;
 
-    void Render(glm::mat4 transform, const Item& item, double frame_percent);
+    void Render(glm::mat4 transform,
+                const Item& item,
+                double frame_percent,
+                unsigned int game_tick);
 
 private:
     struct ItemSpriteData
@@ -43,12 +46,16 @@ private:
 
     void RenderQuad(glm::mat4 transform, const Item& item, double frame_percent);
     void RenderWeapon(glm::mat4 transform, const Item& item, double frame_percent);
-    void RenderFlagSprites(glm::mat4 transform, const Item& item, double frame_percent);
+    void RenderFlagSprites(glm::mat4 transform,
+                           const Item& item,
+                           double frame_percent,
+                           unsigned int game_tick);
     void RenderSprite(glm::mat4 transform,
                       const Texture::TextureData& item_sprite_data,
                       glm::vec2 position,
                       float rotation,
-                      glm::vec2 scale);
+                      glm::vec2 scale,
+                      glm::vec4 color = { 1.0F, 1.0F, 1.0F, 1.0F });
 
     static glm::vec4 GetQuadMainColor(ItemType item_type);
     static glm::vec4 GetQuadTopColor(ItemType item_type);

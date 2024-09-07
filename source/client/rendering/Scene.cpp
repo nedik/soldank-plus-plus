@@ -55,7 +55,7 @@ void Scene::Render(State& game_state, ClientState& client_state, double frame_pe
     }
     RenderSoldiers(game_state, client_state, frame_percent);
     for (const Item& item : game_state.items) {
-        item_renderer_.Render(camera_.GetView(), item, frame_percent);
+        item_renderer_.Render(camera_.GetView(), item, frame_percent, game_state.game_tick);
     }
     sceneries_renderer_.Render(camera_.GetView(), 1, game_state.map.GetSceneryInstances());
     polygons_renderer_.Render(camera_.GetView());
