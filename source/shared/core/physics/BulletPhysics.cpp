@@ -35,6 +35,7 @@ void UpdateBullet(const PhysicsEvents& physics_events, Bullet& bullet, const Map
     if (collision) {
         bullet.particle.position = collision.value().first;
         bullet.active = false;
+        physics_events.bullet_collides_with_polygon.Notify(bullet, collision.value().first);
     }
 
     bullet.timeout_prev = bullet.timeout;

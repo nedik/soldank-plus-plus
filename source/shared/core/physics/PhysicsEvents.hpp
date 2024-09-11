@@ -19,6 +19,8 @@ struct PhysicsEvents
     Observable<Soldier&> soldier_throws_flags;
 
     Observable<Item&, const PMSPolygon&> item_collides_with_polygon;
+
+    Observable<const Bullet&, const glm::vec2&> bullet_collides_with_polygon;
 };
 } // namespace Soldank
 
