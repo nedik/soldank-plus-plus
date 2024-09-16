@@ -173,6 +173,34 @@ void Update(State& state, Item& item, const PhysicsEvents& physics_events)
         }
     }
 
+    // Parachute
+    if (item.style == ItemType::Parachute) {
+        if (item.holding_soldier_id != 0) {
+            for (auto& soldier : state.soldiers) {
+                if (soldier.id == item.holding_soldier_id) {
+                    item.skeleton->SetPos(4, soldier.skeleton->GetPos(12));
+                    glm::vec2 force = soldier.particle.GetVelocity();
+                    force.y = -force.y;
+                    item.skeleton->SetForce(1, force);
+
+                    if (item.skeleton->GetPos(3).x < item.skeleton->GetPos(4).x) {
+                        glm::vec2 a = item.skeleton->GetPos(4);
+                        item.skeleton->SetPos(4, item.skeleton->GetPos(3));
+                        item.skeleton->SetOldPos(4, item.skeleton->GetPos(3));
+                        item.skeleton->SetPos(3, a);
+                        item.skeleton->SetOldPos(3, a);
+                        force = soldier.particle.GetForce();
+                        soldier.particle.SetForce({ force.x, GRAV });
+                    }
+                }
+            }
+        } else {
+            if (item.time_out > 180) {
+                item.time_out = 180;
+            }
+        }
+    }
+
     --item.time_out;
     if (item.time_out < -1000) {
         item.time_out = -1000;
