@@ -298,6 +298,9 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
         case ItemType::Parachute:
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Parachute);
+            new_item.time_out = 3600;
+            break;
         case ItemType::M2:
             break;
     }

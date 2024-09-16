@@ -38,6 +38,8 @@ const int FLAG_HOLDING_FORCEUP = -14;
 const int FLAG_STAND_FORCEUP = -16;
 
 const float MINMOVEDELTA = 0.63;
+
+const float SOLDIER_SPEED_WITH_PARACHUTE = -0.5 * 0.06; // Grav
 } // namespace Soldank::PhysicsConstants
 
 #endif

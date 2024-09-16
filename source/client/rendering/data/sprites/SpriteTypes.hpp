@@ -126,12 +126,6 @@ enum class SoldierPartSpriteType : unsigned int
     Team2RannyBiodro2,
     Team2Lecistopa,
     Team2Lecistopa2,
-
-    // Preserve order of these parachute textures.
-
-    ParaRope,
-    Para,
-    Para2
 };
 
 // The range Shell to M2Stat is checked for size restriction too, so
@@ -342,6 +336,11 @@ enum class ObjectSpriteType : unsigned int
     Clusterkit,
     Ilum,
     FlagHandle,
+    // Preserve order of these parachute textures.
+
+    ParaRope,
+    Para,
+    Para2
 };
 
 // Preserve order of Guns*

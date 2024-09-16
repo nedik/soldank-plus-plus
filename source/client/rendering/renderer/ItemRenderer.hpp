@@ -50,12 +50,14 @@ private:
                            const Item& item,
                            double frame_percent,
                            unsigned int game_tick);
+    void RenderParachute(glm::mat4 transform, const Item& item, double frame_percent);
     void RenderSprite(glm::mat4 transform,
                       const Texture::TextureData& item_sprite_data,
                       glm::vec2 position,
                       float rotation,
                       glm::vec2 scale,
-                      glm::vec4 color = { 1.0F, 1.0F, 1.0F, 1.0F });
+                      glm::vec4 color = { 1.0F, 1.0F, 1.0F, 1.0F },
+                      glm::vec2 pivot = { 0.0F, 0.0F });
 
     static glm::vec4 GetQuadMainColor(ItemType item_type);
     static glm::vec4 GetQuadTopColor(ItemType item_type);

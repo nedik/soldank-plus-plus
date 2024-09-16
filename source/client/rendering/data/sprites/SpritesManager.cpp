@@ -139,13 +139,6 @@ SpriteManager::SpriteManager()
         { SoldierPartSpriteType::Team2RannyBiodro2, "gostek-gfx/team2/ranny/biodro2.png" },
         { SoldierPartSpriteType::Team2Lecistopa, "gostek-gfx/team2/lecistopa.png" },
         { SoldierPartSpriteType::Team2Lecistopa2, "gostek-gfx/team2/lecistopa2.png" },
-
-        // Preserve order of these parachute textures.
-
-        { SoldierPartSpriteType::ParaRope, "gostek-gfx/para-rope.png" },
-        { SoldierPartSpriteType::Para, "gostek-gfx/para.png" },
-        { SoldierPartSpriteType::Para2, "gostek-gfx/para2.png" },
-
         { WeaponSpriteType::Shell, "weapons-gfx/shell.png" },
         { WeaponSpriteType::Bullet, "weapons-gfx/bullet.png" },
         { WeaponSpriteType::Smudge, "weapons-gfx/smudge.png" },
@@ -263,6 +256,12 @@ SpriteManager::SpriteManager()
         { ObjectSpriteType::Clusterkit, "textures/objects/clusterkit.png" },
         { ObjectSpriteType::Ilum, "objects-gfx/ilum.png" },
         { ObjectSpriteType::FlagHandle, "objects-gfx/flag.png" },
+
+        // Preserve order of these parachute textures.
+
+        { ObjectSpriteType::ParaRope, "gostek-gfx/para-rope.png" },
+        { ObjectSpriteType::Para, "gostek-gfx/para.png" },
+        { ObjectSpriteType::Para2, "gostek-gfx/para2.png" },
     };
 
     std::ranges::for_each(
@@ -643,6 +642,13 @@ Texture::TextureData SpriteManager::GetObjectSprite(ObjectSpriteType object_spri
             return all_sprites_.at(ObjectSpriteType::Ilum);
         case ObjectSpriteType::FlagHandle:
             return all_sprites_.at(ObjectSpriteType::FlagHandle);
+        case ObjectSpriteType::ParaRope:
+            return all_sprites_.at(ObjectSpriteType::ParaRope);
+        case ObjectSpriteType::Para:
+            return all_sprites_.at(ObjectSpriteType::Para);
+        case ObjectSpriteType::Para2:
+            return all_sprites_.at(ObjectSpriteType::Para2);
+            break;
     }
 }
 } // namespace Soldank::Sprites

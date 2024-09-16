@@ -283,6 +283,27 @@ void Update(State& state,
         }
         soldier.alpha = 255;
 
+        for (auto& item : state.items) {
+            if (item.holding_soldier_id == soldier.id && item.style == ItemType::Parachute) {
+                glm::vec2 force = soldier.particle.GetForce();
+                soldier.particle.SetForce(
+                  { force.x, PhysicsConstants::SOLDIER_SPEED_WITH_PARACHUTE });
+                // {$IFDEF SERVER}
+                // if CeaseFireCounter < 1 then
+                // {$ELSE}
+                // if ((sv_survivalmode.Value) and (CeaseFireCounter < CeaseFireTime * 3 - 30)) or
+                //    (CeaseFireCounter < CeaseFireTime - 30) then
+                // {$ENDIF}
+                if (soldier.on_ground || soldier.control.jets) {
+                    item.holding_soldier_id = 0;
+                    // TODO
+                    // Dec(Thing[HoldedThing].Skeleton.ConstraintCount);
+                    item.time_out = 3 * 60;
+                    // HoldedThing := 0;
+                }
+            }
+        }
+
         soldier.skeleton->DoVerletTimestepFor(22, 29);
         soldier.skeleton->DoVerletTimestepFor(24, 30);
     }
@@ -291,6 +312,20 @@ void Update(State& state,
         soldier.skeleton->DoVerletTimestep();
         soldier.particle.position = soldier.skeleton->GetPos(12);
         // CheckSkeletonOutOfBounds;
+
+        for (auto& item : state.items) {
+            if (item.holding_soldier_id == soldier.id && item.style == ItemType::Parachute) {
+                glm::vec2 force = soldier.skeleton->GetForce(12);
+                soldier.skeleton->SetForce(
+                  12, { force.x, 25 * PhysicsConstants::SOLDIER_SPEED_WITH_PARACHUTE });
+                if (soldier.on_ground) {
+                    item.holding_soldier_id = 0;
+                    // TODO
+                    // Dec(Thing[HoldedThing].Skeleton.ConstraintCount);
+                    item.time_out = 3 * 60;
+                }
+            }
+        }
     }
 
     if (soldier.particle.velocity_.x > PhysicsConstants::MAX_VELOCITY) {

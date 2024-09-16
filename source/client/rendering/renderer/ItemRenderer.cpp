@@ -49,6 +49,11 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadSpriteData(sprite_manager, ItemType::Knife);
     LoadSpriteData(sprite_manager, ItemType::LAW);
     LoadSpriteData(sprite_manager, ItemType::Bow);
+
+    // Parachute
+    LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::ParaRope);
+    LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::Para);
+    LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::Para2);
 }
 
 void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager, ItemType item_type)
@@ -90,6 +95,10 @@ void ItemRenderer::Render(glm::mat4 transform,
 
     if (IsItemTypeKit(item.style)) {
         RenderQuad(transform, item, frame_percent);
+    }
+
+    if (item.style == ItemType::Parachute) {
+        RenderParachute(transform, item, frame_percent);
     }
 }
 
@@ -204,18 +213,90 @@ void ItemRenderer::RenderFlagSprites(glm::mat4 transform,
     }
 }
 
+void ItemRenderer::RenderParachute(glm::mat4 transform, const Item& item, double frame_percent)
+{
+    const Texture::TextureData& parachute1_texture =
+      object_sprite_type_to_gl_data_.at(Sprites::ObjectSpriteType::Para);
+    const Texture::TextureData& parachute2_texture =
+      object_sprite_type_to_gl_data_.at(Sprites::ObjectSpriteType::Para2);
+    const Texture::TextureData& parachute_rope_texture =
+      object_sprite_type_to_gl_data_.at(Sprites::ObjectSpriteType::ParaRope);
+
+    glm::vec2 skeleton_position_1 =
+      Calc::Lerp(item.skeleton->GetOldPos(1), item.skeleton->GetPos(1), (float)frame_percent);
+    glm::vec2 skeleton_position_2 =
+      Calc::Lerp(item.skeleton->GetOldPos(2), item.skeleton->GetPos(2), (float)frame_percent);
+    glm::vec2 skeleton_position_3 =
+      Calc::Lerp(item.skeleton->GetOldPos(3), item.skeleton->GetPos(3), (float)frame_percent);
+    glm::vec2 skeleton_position_4 =
+      Calc::Lerp(item.skeleton->GetOldPos(4), item.skeleton->GetPos(4), (float)frame_percent);
+
+    glm::vec2 scale = { 1.0F, 1.0F };
+    scale /= 4.5F;
+
+    RenderSprite(transform,
+                 parachute_rope_texture,
+                 { skeleton_position_4.x, skeleton_position_4.y - 0.55 },
+                 Calc::Vec2Angle(skeleton_position_2 - skeleton_position_4),
+                 scale,
+                 { 1.0F, 1.0F, 1.0F, 1.0F },
+                 { 0.07F, 0.0F });
+    RenderSprite(transform,
+                 parachute_rope_texture,
+                 { skeleton_position_4.x, skeleton_position_4.y - 0.55 },
+                 Calc::Vec2Angle(skeleton_position_3 - skeleton_position_4) +
+                   (5.0F * 3.14F / 180.0F),
+                 scale,
+                 { 1.0F, 1.0F, 1.0F, 1.0F },
+                 { 0.07F, 0.0F });
+    RenderSprite(transform,
+                 parachute_rope_texture,
+                 { skeleton_position_4.x, skeleton_position_4.y - 0.55 },
+                 Calc::Vec2Angle(skeleton_position_1 - skeleton_position_4),
+                 scale,
+                 { 1.0F, 1.0F, 1.0F, 1.0F },
+                 { 0.07F, 0.0F });
+
+    glm::vec2 a = skeleton_position_2 - skeleton_position_3;
+    scale.y = Calc::Vec2Length(a) / 45.83F;
+    scale.x = scale.y;
+    if (scale.y > 2.0F) {
+        return;
+    }
+    scale /= 4.5F;
+
+    RenderSprite(transform,
+                 parachute2_texture,
+                 skeleton_position_3,
+                 Calc::Vec2Angle(skeleton_position_1 - skeleton_position_3),
+                 scale,
+                 { 1.0F, 1.0F, 1.0F, 1.0F },
+                 { 0.0F, 1.0F });
+
+    RenderSprite(transform,
+                 parachute1_texture,
+                 skeleton_position_1,
+                 Calc::Vec2Angle(skeleton_position_2 - skeleton_position_1),
+                 scale,
+                 { 1.0F, 1.0F, 1.0F, 1.0F },
+                 { 0.0F, 1.0F });
+}
+
 void ItemRenderer::RenderSprite(glm::mat4 transform,
                                 const Texture::TextureData& item_sprite_data,
                                 glm::vec2 position,
                                 float rotation,
                                 glm::vec2 scale,
-                                glm::vec4 color)
+                                glm::vec4 color,
+                                glm::vec2 pivot)
 {
     shader_.Use();
-    float w0 = 0.0F;
-    auto w1 = (float)item_sprite_data.width;
-    float h0 = 0.0F;
-    auto h1 = (float)item_sprite_data.height;
+    pivot.x *= (float)item_sprite_data.width;
+    pivot.y *= (float)item_sprite_data.height;
+    float w0 = 0.0F - pivot.x;
+    auto w1 = (float)item_sprite_data.width - pivot.x;
+    float h0 = 0.0F - pivot.y;
+    auto h1 = (float)item_sprite_data.height - pivot.y;
     glm::vec2 pos1 = { w0, h0 };
     glm::vec2 pos2 = { w1, h0 };
     glm::vec2 pos3 = { w1, h1 };
