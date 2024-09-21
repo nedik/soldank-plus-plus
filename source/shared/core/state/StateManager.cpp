@@ -280,7 +280,7 @@ void StateManager::ClearBulletEmitter()
     bullet_emitter_.clear();
 }
 
-void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style)
+Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style)
 {
     std::vector<std::uint8_t> current_ids;
     std::uint8_t new_id = 0;
@@ -370,6 +370,8 @@ void StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTyp
 
     state_.items.push_back(new_item);
     SetItemPosition(state_.items.size() - 1, position);
+
+    return state_.items.back();
 }
 
 void StateManager::SetItemPosition(unsigned int id, glm::vec2 new_position)

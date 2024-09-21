@@ -126,10 +126,32 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
             spdlog::debug("soldier {} throws a weapon", soldier.id);
             WeaponType current_soldier_weapon_type =
               soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind;
-            world->GetStateManager()->CreateItem(soldier.skeleton->GetPos(16),
-                                                 soldier.id,
-                                                 WeaponTypeToItemType(current_soldier_weapon_type));
+            Item& new_item = world->GetStateManager()->CreateItem(
+              soldier.skeleton->GetPos(16),
+              soldier.id,
+              WeaponTypeToItemType(current_soldier_weapon_type));
             world->GetStateManager()->ChangeSoldierPrimaryWeapon(soldier.id, WeaponType::NoWeapon);
+            new_item.skeleton->SetPos(
+              1, new_item.skeleton->GetPos(1) + soldier.particle.GetVelocity());
+            new_item.skeleton->SetPos(
+              2, new_item.skeleton->GetPos(2) + soldier.particle.GetVelocity());
+
+            glm::vec2 aim_direction = { soldier.control.mouse_aim_x, soldier.control.mouse_aim_y };
+            aim_direction -= soldier.skeleton->GetPos(15);
+            aim_direction = Calc::Vec2Normalize(aim_direction);
+
+            float weapon_throw_speed_pos1 = 0.01F;
+            float weapon_throw_speed_pos2 = 3.0F;
+            if (soldier.dead_meat) {
+                weapon_throw_speed_pos1 = 0.02F;
+                weapon_throw_speed_pos2 = 0.64F;
+            }
+
+            glm::vec2 weapon_throw_velocity =
+              Calc::Vec2Scale(aim_direction, weapon_throw_speed_pos1);
+            new_item.skeleton->SetPos(1, new_item.skeleton->GetPos(1) + weapon_throw_velocity);
+            weapon_throw_velocity = Calc::Vec2Scale(aim_direction, weapon_throw_speed_pos2);
+            new_item.skeleton->SetPos(2, new_item.skeleton->GetPos(2) + weapon_throw_velocity);
         }
     });
     world->GetPhysicsEvents().soldier_fires_primary_weapon.AddObserver([world](Soldier& soldier) {

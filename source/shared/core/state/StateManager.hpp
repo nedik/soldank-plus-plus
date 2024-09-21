@@ -36,7 +36,7 @@ public:
     const std::vector<BulletParams>& GetBulletEmitter() const;
     void ClearBulletEmitter();
 
-    void CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style);
+    Item& CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style);
     void SetItemPosition(unsigned int id, glm::vec2 new_position);
     void MoveItemIntoDirection(unsigned int id, glm::vec2 direction);
 
