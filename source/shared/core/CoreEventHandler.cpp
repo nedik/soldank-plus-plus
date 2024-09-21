@@ -140,11 +140,17 @@ void CoreEventHandler::ObserveAllPhysicsEvents(IWorld* world)
         }
     });
     world->GetPhysicsEvents().soldier_collides_with_item.AddObserver(
-      [](Soldier& soldier, Item& item) {
+      [world](Soldier& soldier, Item& item) {
           if (IsItemTypeFlag(item.style) && item.holding_soldier_id == 0) {
               item.static_type = false;
               item.holding_soldier_id = soldier.id;
               soldier.is_holding_flags = true;
+          } else if (IsItemTypeWeapon(item.style)) {
+              if (soldier.weapons[soldier.active_weapon].GetWeaponParameters().kind ==
+                  WeaponType::NoWeapon) {
+                  world->GetStateManager()->SoldierPickupWeapon(soldier.id, item);
+                  item.active = false;
+              }
           } else {
               spdlog::info("COLLISION BETWEEN ITEM {} AND PLAYER {}", item.id, soldier.id);
           }

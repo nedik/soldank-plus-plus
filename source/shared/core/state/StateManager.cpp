@@ -1,5 +1,6 @@
 #include "core/state/StateManager.hpp"
 
+#include "core/entities/Weapon.hpp"
 #include "core/math/Calc.hpp"
 #include "core/physics/Particles.hpp"
 #include "core/state/Control.hpp"
@@ -8,6 +9,7 @@
 #include "core/types/ItemType.hpp"
 #include "spdlog/spdlog.h"
 #include <algorithm>
+#include <utility>
 
 namespace Soldank
 {
@@ -23,6 +25,58 @@ const int FLAG_TIMEOUT = SECOND * 25;
 const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
 const int WAYPOINT_TIMEOUT_BIG = SECOND * 8;        // = 480
 const float FLAGTHROW_POWER = 4.225;
+
+WeaponType ItemTypeToWeaponType(ItemType item_type)
+{
+    switch (item_type) {
+        case ItemType::USSOCOM:
+            return WeaponType::USSOCOM;
+        case ItemType::DesertEagles:
+            return WeaponType::DesertEagles;
+        case ItemType::MP5:
+            return WeaponType::MP5;
+        case ItemType::Ak74:
+            return WeaponType::Ak74;
+        case ItemType::SteyrAUG:
+            return WeaponType::SteyrAUG;
+        case ItemType::Spas12:
+            return WeaponType::Spas12;
+        case ItemType::Ruger77:
+            return WeaponType::Ruger77;
+        case ItemType::M79:
+            return WeaponType::M79;
+        case ItemType::Barrett:
+            return WeaponType::Barrett;
+        case ItemType::Minimi:
+            return WeaponType::Minimi;
+        case ItemType::Minigun:
+            return WeaponType::Minigun;
+        case ItemType::Bow:
+            return WeaponType::Bow;
+        case ItemType::Knife:
+            return WeaponType::Knife;
+        case ItemType::Chainsaw:
+            return WeaponType::Chainsaw;
+        case ItemType::LAW:
+            return WeaponType::LAW;
+        case ItemType::AlphaFlag:
+        case ItemType::BravoFlag:
+        case ItemType::PointmatchFlag:
+        case ItemType::MedicalKit:
+        case ItemType::GrenadeKit:
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::VestKit:
+        case ItemType::BerserkKit:
+        case ItemType::ClusterKit:
+        case ItemType::Parachute:
+        case ItemType::M2:
+            break;
+    }
+
+    spdlog::critical("Invalid ItemType to WeaponType conversion");
+    std::unreachable();
+}
 
 void StateManager::ChangeSoldierControlActionState(std::uint8_t soldier_id,
                                                    ControlActionType control_action_type,
@@ -125,6 +179,15 @@ void StateManager::ChangeSoldierPrimaryWeapon(std::uint8_t soldier_id, WeaponTyp
 {
     Soldier& soldier = GetSoldierRef(soldier_id);
     auto new_weapon_parameters = WeaponParametersFactory::GetParameters(new_weapon_type, false);
+    soldier.weapons[soldier.active_weapon] = new_weapon_parameters;
+}
+
+void StateManager::SoldierPickupWeapon(std::uint8_t soldier_id, const Item& item)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    WeaponType new_weapon_type = ItemTypeToWeaponType(item.style);
+    auto new_weapon_parameters = WeaponParametersFactory::GetParameters(new_weapon_type, false);
+    new_weapon_parameters.ammo = item.ammo_count;
     soldier.weapons[soldier.active_weapon] = new_weapon_parameters;
 }
 
