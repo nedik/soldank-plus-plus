@@ -66,6 +66,7 @@ private:
     Shader shader_;
 
     std::unordered_map<ItemType, Texture::TextureData> item_sprite_type_to_gl_data_;
+    std::unordered_map<ItemType, Texture::TextureData> item_sprite_type_to_flipped_gl_data_;
     std::unordered_map<Sprites::ObjectSpriteType, Texture::TextureData>
       object_sprite_type_to_gl_data_;
 

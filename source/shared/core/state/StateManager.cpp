@@ -21,6 +21,7 @@ const int KIT_RADIUS = 12;
 const int STAT_RADIUS = 15;
 const int FLAG_RADIUS = 19;
 const int FLAG_TIMEOUT = SECOND * 25;
+const int GUN_TIMEOUT = SECOND * 20;
 // TODO: why the duplication?
 const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
 const int WAYPOINT_TIMEOUT_BIG = SECOND * 8;        // = 480
@@ -364,20 +365,83 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
     // new_item.skeleton = std::make_shared<ParticleSystem>();
     new_item.static_type = false;
     new_item.in_base = false;
+    new_item.flipped = false;
 
     for (std::uint8_t& i : new_item.collide_count) {
         i = 0;
     }
 
-    if (owner_id != 255) {
-        // TODO: set direction
+    if (owner_id != 255 && owner_id != 0) {
+        Soldier& soldier = GetSoldierRef(owner_id);
+        if (soldier.direction == -1) {
+            new_item.flipped = true;
+        }
+    }
+
+    // TODO: handle this better
+    float particle_scale = 1.0F;
+
+    switch (style) {
+        case ItemType::USSOCOM:
+            particle_scale = 1.0F;
+            break;
+        case ItemType::DesertEagles:
+            particle_scale = 1.1F;
+            break;
+        case ItemType::Knife:
+            particle_scale = 1.8F;
+            break;
+        case ItemType::MedicalKit:
+        case ItemType::GrenadeKit:
+        case ItemType::FlamerKit:
+        case ItemType::PredatorKit:
+        case ItemType::VestKit:
+        case ItemType::BerserkKit:
+        case ItemType::ClusterKit:
+            particle_scale = 2.15F;
+            break;
+        case ItemType::MP5:
+            particle_scale = 2.2F;
+            break;
+        case ItemType::M79:
+        case ItemType::Chainsaw:
+        case ItemType::LAW:
+            particle_scale = 2.8F;
+            break;
+        case ItemType::Spas12:
+        case ItemType::Ruger77:
+            particle_scale = 3.6F;
+            break;
+        case ItemType::Ak74:
+        case ItemType::SteyrAUG:
+            particle_scale = 3.7F;
+            break;
+        case ItemType::Minimi:
+            particle_scale = 3.9F;
+            break;
+        case ItemType::AlphaFlag:
+        case ItemType::BravoFlag:
+        case ItemType::PointmatchFlag:
+        case ItemType::M2:
+            particle_scale = 4.0F;
+            break;
+        case ItemType::Barrett:
+            particle_scale = 4.3F;
+            break;
+        case ItemType::Bow:
+        case ItemType::Parachute:
+            particle_scale = 5.0F;
+            break;
+        case ItemType::Minigun:
+            particle_scale = 5.5F;
+            break;
     }
 
     switch (style) {
         case ItemType::AlphaFlag:
         case ItemType::BravoFlag:
         case ItemType::PointmatchFlag: {
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Flag);
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Flag, particle_scale);
             new_item.radius = FLAG_RADIUS;
             new_item.time_out = FLAG_TIMEOUT;
             new_item.collide_with_bullets = true;
@@ -399,13 +463,13 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
         case ItemType::Chainsaw:
         case ItemType::LAW:
         case ItemType::Bow: // TODO: bow has different condition
-            new_item.skeleton = ParticleSystem::Load(
-              ParticleSystemType::Weapon); // new_item.skeleton->VDamping = 0.989;
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Weapon, particle_scale);
+            // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
             new_item.radius = GUN_RADIUS;
-            new_item.time_out = FLAG_TIMEOUT; // TODO
+            new_item.time_out = GUN_TIMEOUT;
             // new_item.interest : = DEFAULT_INTEREST_TIME;
-            new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
+            new_item.collide_with_bullets = true; // TODO: sv_guns_collide.Value;
             break;
         case ItemType::FlamerKit:
         case ItemType::PredatorKit:
@@ -414,7 +478,7 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
         case ItemType::ClusterKit:
         case ItemType::VestKit:
         case ItemType::GrenadeKit:
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Kit);
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Kit, particle_scale);
             // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
             new_item.radius = KIT_RADIUS;
@@ -423,10 +487,15 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
         case ItemType::Parachute:
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Parachute);
+            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Parachute, particle_scale);
             new_item.time_out = 3600;
             break;
         case ItemType::M2:
+            new_item.skeleton =
+              ParticleSystem::Load(ParticleSystemType::StationaryGun, particle_scale);
+            new_item.time_out = 60;
+            new_item.radius = STAT_RADIUS;
+            new_item.collide_with_bullets = false;
             break;
     }
 

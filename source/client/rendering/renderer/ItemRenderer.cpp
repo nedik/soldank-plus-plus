@@ -81,6 +81,8 @@ void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager, 
 {
     auto texture_data = sprite_manager.GetItemTexture(item_type);
     item_sprite_type_to_gl_data_[item_type] = texture_data;
+    texture_data = sprite_manager.GetItemTexture(item_type, true);
+    item_sprite_type_to_flipped_gl_data_[item_type] = texture_data;
 }
 
 void ItemRenderer::LoadObjectSpriteData(const Sprites::SpriteManager& sprite_manager,
@@ -181,11 +183,33 @@ void ItemRenderer::RenderWeapon(glm::mat4 transform, const Item& item, double fr
 {
     glm::vec2 position =
       Calc::Lerp(item.skeleton->GetOldPos(1), item.skeleton->GetPos(1), (float)frame_percent);
-    float rotation = Calc::Vec2Angle(item.skeleton->GetPos(2) - position);
+    glm::vec2 position2 =
+      Calc::Lerp(item.skeleton->GetOldPos(2), item.skeleton->GetPos(2), (float)frame_percent);
+    float rotation = Calc::Vec2Angle(position2 - position);
     glm::vec2 scale = { 1.0F, 1.0F };
     scale /= 4.5F;
 
-    RenderSprite(transform, item_sprite_type_to_gl_data_.at(item.style), position, rotation, scale);
+    position.y -= 3.0F;
+    glm::vec4 color = { 1.0F, 1.0F, 1.0F, 1.0F };
+    glm::vec2 pivot = { 0.0F, 0.5F };
+
+    if (item.flipped) {
+        RenderSprite(transform,
+                     item_sprite_type_to_flipped_gl_data_.at(item.style),
+                     position,
+                     rotation,
+                     scale,
+                     color,
+                     pivot);
+    } else {
+        RenderSprite(transform,
+                     item_sprite_type_to_gl_data_.at(item.style),
+                     position,
+                     rotation,
+                     scale,
+                     color,
+                     pivot);
+    }
 }
 
 void ItemRenderer::RenderFlagSprites(glm::mat4 transform,

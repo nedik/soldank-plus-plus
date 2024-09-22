@@ -29,7 +29,7 @@ SoldierMovementSimulation::SoldierMovementSimulation(const Soldank::IFileReader&
       0,
       glm::vec2{ 0.0F, -29.0F },
       animation_data_manager_,
-      Soldank::ParticleSystem::Load(Soldank::ParticleSystemType::Soldier, file_reader),
+      Soldank::ParticleSystem::Load(Soldank::ParticleSystemType::Soldier, 4.5F, file_reader),
       weapons);
 }
 

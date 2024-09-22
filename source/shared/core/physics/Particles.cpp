@@ -7,6 +7,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <map>
 
 namespace Soldank
 {
@@ -133,6 +134,7 @@ void ParticleSystem::SatisfyConstraint(const Constraint& constraint,
 }
 
 std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle_system_type,
+                                                     float scale,
                                                      const IFileReader& file_reader)
 {
     // TODO: const
@@ -140,34 +142,55 @@ std::shared_ptr<ParticleSystem> ParticleSystem::Load(ParticleSystemType particle
     switch (particle_system_type) {
         case ParticleSystemType::Soldier: {
             // TODO: load it at the application start
-            static auto soldier_particle_system =
-              LoadFromFile("gostek.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>>
+              soldier_particle_system_by_scale;
+            if (!soldier_particle_system_by_scale.contains(scale)) {
+                soldier_particle_system_by_scale[scale] =
+                  LoadFromFile("gostek.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*soldier_particle_system_by_scale.at(scale));
         }
         case ParticleSystemType::Flag: {
-            static auto soldier_particle_system =
-              LoadFromFile("flag.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>> flag_particle_system_by_scale;
+            if (!flag_particle_system_by_scale.contains(scale)) {
+                flag_particle_system_by_scale[scale] =
+                  LoadFromFile("flag.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*flag_particle_system_by_scale.at(scale));
         }
         case ParticleSystemType::Weapon: {
-            static auto soldier_particle_system =
-              LoadFromFile("karabin.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>> weapon_particle_system_by_scale;
+            if (!weapon_particle_system_by_scale.contains(scale)) {
+                weapon_particle_system_by_scale[scale] =
+                  LoadFromFile("karabin.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*weapon_particle_system_by_scale.at(scale));
         }
         case ParticleSystemType::Kit: {
-            static auto soldier_particle_system =
-              LoadFromFile("kit.po", 2.0F, 1.0F, 1.06F * grav, 0.0F, 0.989F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>> kit_particle_system_by_scale;
+            if (!kit_particle_system_by_scale.contains(scale)) {
+                kit_particle_system_by_scale[scale] =
+                  LoadFromFile("kit.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.989F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*kit_particle_system_by_scale.at(scale));
         }
         case ParticleSystemType::Parachute: {
-            static auto soldier_particle_system =
-              LoadFromFile("para.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>>
+              parachute_particle_system_by_scale;
+            if (!parachute_particle_system_by_scale.contains(scale)) {
+                parachute_particle_system_by_scale[scale] =
+                  LoadFromFile("para.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*parachute_particle_system_by_scale.at(scale));
         }
         case ParticleSystemType::StationaryGun: {
-            static auto soldier_particle_system =
-              LoadFromFile("stat.po", 4.5F, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
-            return std::make_shared<ParticleSystem>(*soldier_particle_system);
+            static std::map<float, std::shared_ptr<ParticleSystem>>
+              stat_gun_particle_system_by_scale;
+            if (!stat_gun_particle_system_by_scale.contains(scale)) {
+                stat_gun_particle_system_by_scale[scale] =
+                  LoadFromFile("stat.po", scale, 1.0F, 1.06F * grav, 0.0F, 0.9945F, file_reader);
+            }
+            return std::make_shared<ParticleSystem>(*stat_gun_particle_system_by_scale.at(scale));
         }
     }
 }

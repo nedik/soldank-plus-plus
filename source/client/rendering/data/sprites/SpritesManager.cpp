@@ -560,17 +560,54 @@ Texture::TextureData SpriteManager::GetBulletTexture(const Bullet& bullet) const
     }
 }
 
-Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
+Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type, bool flipped) const
 {
+    if (flipped) {
+        switch (item_type) {
+            case ItemType::USSOCOM:
+                return all_sprites_.at(WeaponSpriteType::NSocom2);
+            case ItemType::DesertEagles:
+                return all_sprites_.at(WeaponSpriteType::NDeagles2);
+            case ItemType::MP5:
+                return all_sprites_.at(WeaponSpriteType::Mp52);
+            case ItemType::Ak74:
+                return all_sprites_.at(WeaponSpriteType::Ak742);
+            case ItemType::SteyrAUG:
+                return all_sprites_.at(WeaponSpriteType::Steyr2);
+            case ItemType::Spas12:
+                return all_sprites_.at(WeaponSpriteType::Spas2);
+            case ItemType::Ruger77:
+                return all_sprites_.at(WeaponSpriteType::Ruger2);
+            case ItemType::M79:
+                return all_sprites_.at(WeaponSpriteType::M792);
+            case ItemType::Barrett:
+                return all_sprites_.at(WeaponSpriteType::Barrett2);
+            case ItemType::Minimi:
+                return all_sprites_.at(WeaponSpriteType::Minimi2);
+            case ItemType::Minigun:
+                return all_sprites_.at(WeaponSpriteType::Minigun2);
+            case ItemType::Bow:
+                return all_sprites_.at(WeaponSpriteType::NBow2);
+            case ItemType::Knife:
+                return all_sprites_.at(WeaponSpriteType::Knife2);
+            case ItemType::Chainsaw:
+                return all_sprites_.at(WeaponSpriteType::Chainsaw2);
+            case ItemType::LAW:
+                return all_sprites_.at(WeaponSpriteType::Law2);
+            default:
+                break;
+        }
+    }
+
     switch (item_type) {
         case ItemType::AlphaFlag:
         case ItemType::BravoFlag:
         case ItemType::PointmatchFlag:
             return all_sprites_.at(ObjectSpriteType::Flag);
         case ItemType::USSOCOM:
-            return all_sprites_.at(WeaponSpriteType::Socom);
+            return all_sprites_.at(WeaponSpriteType::NSocom);
         case ItemType::DesertEagles:
-            return all_sprites_.at(WeaponSpriteType::Deagles);
+            return all_sprites_.at(WeaponSpriteType::NDeagles);
         case ItemType::MP5:
             return all_sprites_.at(WeaponSpriteType::Mp5);
         case ItemType::Ak74:
@@ -590,7 +627,7 @@ Texture::TextureData SpriteManager::GetItemTexture(ItemType item_type) const
         case ItemType::Minigun:
             return all_sprites_.at(WeaponSpriteType::Minigun);
         case ItemType::Bow:
-            return all_sprites_.at(WeaponSpriteType::Bow);
+            return all_sprites_.at(WeaponSpriteType::NBow);
         case ItemType::MedicalKit:
             return all_sprites_.at(ObjectSpriteType::Medikit);
         case ItemType::GrenadeKit:
