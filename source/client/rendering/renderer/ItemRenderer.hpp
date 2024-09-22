@@ -18,7 +18,7 @@ class ItemRenderer
 {
 public:
     ItemRenderer(const Sprites::SpriteManager& sprite_manager);
-    ~ItemRenderer() = default;
+    ~ItemRenderer();
 
     // it's not safe to be able to copy/move this because we would also need to take care of the
     // created OpenGL buffers and textures
@@ -68,6 +68,9 @@ private:
     std::unordered_map<ItemType, Texture::TextureData> item_sprite_type_to_gl_data_;
     std::unordered_map<Sprites::ObjectSpriteType, Texture::TextureData>
       object_sprite_type_to_gl_data_;
+
+    unsigned vbo_;
+    unsigned ebo_;
 };
 } // namespace Soldank
 

@@ -19,6 +19,15 @@ unsigned int CreateVBO(const std::vector<float>& vertices, GLenum usage)
     return vbo;
 }
 
+void ModifyVBOVertices(unsigned int vbo, const std::vector<float>& vertices, int offset)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER,
+                    offset,
+                    (long long)vertices.size() * (long long)sizeof(float),
+                    vertices.data());
+}
+
 unsigned int CreateEBO(const std::vector<unsigned int>& indices, GLenum usage)
 {
     unsigned int ebo = 0;
