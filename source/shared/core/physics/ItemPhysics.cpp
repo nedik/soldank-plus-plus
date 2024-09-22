@@ -11,10 +11,7 @@
 #include "core/types/BulletType.hpp"
 #include "core/types/ItemType.hpp"
 
-#include <chrono>
 #include <cmath>
-#include <spdlog/spdlog.h>
-#include <xtimec.h>
 
 namespace Soldank::ItemPhysics
 {
