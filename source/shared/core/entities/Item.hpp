@@ -27,6 +27,7 @@ struct Item
     bool in_base;
     std::uint8_t last_spawn;
     std::uint8_t team;
+    bool flipped;
     std::shared_ptr<ParticleSystem> skeleton;
     std::array<std::uint8_t, 4> collide_count;
 };

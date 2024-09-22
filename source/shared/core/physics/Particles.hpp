@@ -81,6 +81,7 @@ public:
     static void SatisfyConstraint(const Constraint& constraint, std::vector<Particle>& particles);
 
     static std::shared_ptr<ParticleSystem> Load(ParticleSystemType particle_system_type,
+                                                float scale = 4.5F,
                                                 const IFileReader& file_reader = FileReader());
 
     bool GetActive(unsigned int particle_num) const
@@ -125,6 +126,7 @@ public:
     const std::vector<Constraint>& GetConstraints() const { return constraints_; }
 
 private:
+    static void ScaleParticles(ParticleSystem* particle_system, float scale);
     static std::shared_ptr<ParticleSystem> LoadFromFile(
       const std::string& file_name,
       float scale,
