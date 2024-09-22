@@ -29,6 +29,7 @@ public:
     void SwitchSoldierWeapon(std::uint8_t soldier_id);
     void ChangeSoldierPrimaryWeapon(std::uint8_t soldier_id, WeaponType new_weapon_type);
     void SoldierPickupWeapon(std::uint8_t soldier_id, const Item& item);
+    void SoldierPickupKit(std::uint8_t soldier_id, std::uint8_t item_id);
     void ThrowSoldierFlags(std::uint8_t soldier_id);
     glm::vec2 GetSoldierAimDirection(std::uint8_t soldier_id);
 
@@ -42,6 +43,7 @@ public:
 
 private:
     Soldier& GetSoldierRef(std::uint8_t soldier_id);
+    Item& GetItemRef(std::uint8_t item_id);
 
     State state_;
     std::vector<BulletParams> bullet_emitter_;
