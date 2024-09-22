@@ -7,7 +7,7 @@ namespace Soldank
 {
 struct Item;
 class Map;
-class State;
+struct State;
 struct PhysicsEvents;
 } // namespace Soldank
 

@@ -387,22 +387,14 @@ int CheckSoldierCollision(Item& item, State& state)
             float dist = Calc::Vec2Length(norm);
             if (dist < item.radius) {
                 if (dist < closestdist) {
-                    if (item.style != ItemType::MedicalKit || soldier_it->health != STARTHEALTH) {
-                        if (item.style != ItemType::GrenadeKit ||
-                            soldier_it->weapons[2].GetAmmoCount() != MAXGRENADES ||
-                            soldier_it->weapons[2].GetWeaponParameters().bullet_style !=
-                              BulletType::FragGrenade) {
-
-                            // TODO: Don't pick flag if player just spawned
-                            // cease_fire_counter is the invincibility time for the spawned
-                            // player...
-                            // if (!(IsItemTypeFlag(item.style) && soldier_it->cease_fire_counter >
-                            // 0)) {
-                            closestdist = dist;
-                            closestplayer = soldier_it->id;
-                            // }
-                        }
-                    }
+                    // TODO: Don't pick flag if player just spawned
+                    // cease_fire_counter is the invincibility time for the spawned
+                    // player...
+                    // if (!(IsItemTypeFlag(item.style) && soldier_it->cease_fire_counter >
+                    // 0)) {
+                    closestdist = dist;
+                    closestplayer = soldier_it->id;
+                    // }
                 }
             }
         }

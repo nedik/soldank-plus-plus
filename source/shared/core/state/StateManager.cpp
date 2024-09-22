@@ -25,6 +25,8 @@ const int FLAG_TIMEOUT = SECOND * 25;
 const int WAYPOINT_TIMEOUT_SMALL = SECOND * 5 + 20; // = 320
 const int WAYPOINT_TIMEOUT_BIG = SECOND * 8;        // = 480
 const float FLAGTHROW_POWER = 4.225;
+const int SOLDIER_START_HEALTH = 150;
+const int SOLDIER_DEFAULT_VEST = 100;
 
 WeaponType ItemTypeToWeaponType(ItemType item_type)
 {
@@ -189,6 +191,66 @@ void StateManager::SoldierPickupWeapon(std::uint8_t soldier_id, const Item& item
     auto new_weapon_parameters = WeaponParametersFactory::GetParameters(new_weapon_type, false);
     new_weapon_parameters.ammo = item.ammo_count;
     soldier.weapons[soldier.active_weapon] = new_weapon_parameters;
+}
+
+void StateManager::SoldierPickupKit(std::uint8_t soldier_id, std::uint8_t item_id)
+{
+    Soldier& soldier = GetSoldierRef(soldier_id);
+    Item& item = GetItemRef(item_id);
+
+    if (item.style == ItemType::MedicalKit) {
+        if (soldier.health >= SOLDIER_START_HEALTH) {
+            return;
+        }
+
+        soldier.health = SOLDIER_START_HEALTH;
+        item.active = false;
+    }
+
+    if (item.style == ItemType::GrenadeKit) {
+        if (soldier.weapons[2].GetWeaponParameters().kind == WeaponType::ClusterGrenade &&
+            soldier.weapons[2].GetAmmoCount() > 0) {
+            // Don't pickup normal grenades if Soldier has any Cluster grenades already
+            return;
+        }
+
+        if (soldier.weapons[2].GetAmmoCount() >= soldier.weapons[2].GetWeaponParameters().ammo) {
+            // Don't pickup if Soldier has all the grenades (or more)
+            return;
+        }
+
+        soldier.weapons[2] = WeaponParametersFactory::GetParameters(WeaponType::FragGrenade, false);
+        item.active = false;
+    }
+
+    if (item.style == ItemType::FlamerKit) {
+        // TODO
+    }
+
+    if (item.style == ItemType::PredatorKit) {
+        // TODO
+    }
+
+    if (item.style == ItemType::VestKit) {
+        soldier.vest = SOLDIER_DEFAULT_VEST;
+        item.active = false;
+    }
+
+    if (item.style == ItemType::BerserkKit) {
+        // TODO
+    }
+
+    if (item.style == ItemType::ClusterKit) {
+        if (soldier.weapons[2].GetWeaponParameters().kind == WeaponType::ClusterGrenade &&
+            soldier.weapons[2].GetAmmoCount() > 0) {
+            // Don't pickup more cluster grenades if Soldier has already some
+            return;
+        }
+
+        soldier.weapons[2] =
+          WeaponParametersFactory::GetParameters(WeaponType::ClusterGrenade, false);
+        item.active = false;
+    }
 }
 
 void StateManager::ThrowSoldierFlags(std::uint8_t soldier_id)
@@ -400,6 +462,18 @@ Soldier& StateManager::GetSoldierRef(std::uint8_t soldier_id)
     }
 
     spdlog::critical("Trying to access soldier of invalid id: {}", soldier_id);
+    std::unreachable();
+}
+
+Item& StateManager::GetItemRef(std::uint8_t item_id)
+{
+    for (auto& item : state_.items) {
+        if (item.id == item_id) {
+            return item;
+        }
+    }
+
+    spdlog::critical("Trying to access item of invalid id: {}", item_id);
     std::unreachable();
 }
 } // namespace Soldank
