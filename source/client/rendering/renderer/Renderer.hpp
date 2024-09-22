@@ -12,6 +12,7 @@
 namespace Soldank::Renderer
 {
 unsigned int CreateVBO(const std::vector<float>& vertices, GLenum usage);
+void ModifyVBOVertices(unsigned int vbo, const std::vector<float>& vertices, int offset = 0);
 unsigned int CreateEBO(const std::vector<unsigned int>& indices, GLenum usage);
 
 void FreeVBO(unsigned int vbo);

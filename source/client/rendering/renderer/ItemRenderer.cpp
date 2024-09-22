@@ -54,6 +54,27 @@ ItemRenderer::ItemRenderer(const Sprites::SpriteManager& sprite_manager)
     LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::ParaRope);
     LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::Para);
     LoadObjectSpriteData(sprite_manager, Sprites::ObjectSpriteType::Para2);
+
+    // generate vertices
+    // clang-format off
+    std::vector<float> vertices{
+      // position         // color                  // texture
+      0.0F, 0.0F, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 0.0F,
+      0.0F, 0.0F, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 0.0F,
+      0.0F, 0.0F, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   1.0F, 1.0F,
+      0.0F, 0.0F, 1.0F,   1.0F, 1.0F, 1.0F, 1.0F,   0.0F, 1.0F
+    };
+    // clang-format on
+
+    vbo_ = Renderer::CreateVBO(vertices, GL_DYNAMIC_DRAW);
+    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
+    ebo_ = Renderer::CreateEBO(indices, GL_STATIC_DRAW);
+}
+
+ItemRenderer::~ItemRenderer()
+{
+    Renderer::FreeVBO(vbo_);
+    Renderer::FreeEBO(ebo_);
 }
 
 void ItemRenderer::LoadSpriteData(const Sprites::SpriteManager& sprite_manager, ItemType item_type)
@@ -150,14 +171,10 @@ void ItemRenderer::RenderQuad(glm::mat4 transform, const Item& item, double fram
 
     shader_.SetMatrix4("transform", current_scenery_transform);
 
-    unsigned vbo = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
-    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
-    unsigned int ebo = Renderer::CreateEBO(indices, GL_STATIC_DRAW);
-    Renderer::SetupVertexArray(vbo, ebo, true, true);
+    Renderer::ModifyVBOVertices(vbo_, vertices);
+    Renderer::SetupVertexArray(vbo_, ebo_, true, true);
     Renderer::BindTexture(item_sprite_data.opengl_id);
     Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    Renderer::FreeVBO(vbo);
-    Renderer::FreeEBO(ebo);
 }
 
 void ItemRenderer::RenderWeapon(glm::mat4 transform, const Item& item, double frame_percent)
@@ -324,14 +341,10 @@ void ItemRenderer::RenderSprite(glm::mat4 transform,
 
     shader_.SetMatrix4("transform", current_scenery_transform);
 
-    unsigned vbo = Renderer::CreateVBO(vertices, GL_STATIC_DRAW);
-    std::vector<unsigned int> indices{ 0, 1, 3, 1, 2, 3 };
-    unsigned int ebo = Renderer::CreateEBO(indices, GL_STATIC_DRAW);
-    Renderer::SetupVertexArray(vbo, ebo, true, true);
+    Renderer::ModifyVBOVertices(vbo_, vertices);
+    Renderer::SetupVertexArray(vbo_, ebo_, true, true);
     Renderer::BindTexture(item_sprite_data.opengl_id);
     Renderer::DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    Renderer::FreeVBO(vbo);
-    Renderer::FreeEBO(ebo);
 }
 
 glm::vec4 ItemRenderer::GetQuadMainColor(ItemType item_type)
