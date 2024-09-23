@@ -98,6 +98,7 @@ CPMAddPackage(
 )
 
 CPMAddPackage("gh:yhirose/cpp-httplib#v0.18.0")
+CPMAddPackage("gh:nlohmann/json#v3.11.3")
 endif()
 
 add_subdirectory(extern)
