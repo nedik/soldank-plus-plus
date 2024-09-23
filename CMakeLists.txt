@@ -96,6 +96,8 @@ CPMAddPackage(
     URL https://github.com/GaijinEntertainment/daScript/archive/9ae1c4cd73d7da06084aedb5741bb1da68b63b88.tar.gz
     EXCLUDE_FROM_ALL ON
 )
+
+CPMAddPackage("gh:yhirose/cpp-httplib#v0.18.0")
 endif()
 
 add_subdirectory(extern)
