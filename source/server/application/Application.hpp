@@ -6,6 +6,7 @@
 #include "core/World.hpp"
 
 #include "networking/GameServer.hpp"
+#include "networking/LobbyClient.hpp"
 
 #include "scripting/IScriptingEngine.hpp"
 
@@ -39,6 +40,7 @@ private:
     std::shared_ptr<NetworkEventDispatcher> server_network_event_dispatcher_;
     std::shared_ptr<ServerState> server_state_;
     std::shared_ptr<IScriptingEngine> scripting_engine_;
+    std::shared_ptr<LobbyClient> lobby_client_;
 };
 } // namespace Soldank
 
