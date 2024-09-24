@@ -52,8 +52,8 @@ Application::Application()
 
     CSimpleIniA ini_config;
     SI_Error rc = ini_config.LoadFile("soldat.ini");
-    std::string server_ip;
     std::uint16_t server_port = 0;
+    std::string server_name;
     if (rc < 0) {
         spdlog::critical("Error: INI File could not be loaded: soldat.ini");
         exit(1);
@@ -63,7 +63,17 @@ Application::Application()
             spdlog::critical("Error: Port can't be 0");
             exit(1);
         }
+
+        const char* server_name_cstr = ini_config.GetValue("NETWORK", "Server_Name");
+        if (server_name_cstr == nullptr) {
+            spdlog::critical("Error: Port can't be 0");
+            exit(1);
+        }
+        server_name = server_name_cstr;
     }
+
+    lobby_client_ = std::make_shared<LobbyClient>();
+    lobby_client_->Register(server_name, server_port);
 
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
