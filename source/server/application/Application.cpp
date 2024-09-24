@@ -38,6 +38,7 @@ void Application::DebugOutput(ESteamNetworkingSocketsDebugOutputType output_type
 
 Application::Application()
     : world_(std::make_shared<World>("maps/ctf_Ash.pms"))
+    , lobby_client_(std::make_shared<LobbyClient>())
 {
     spdlog::set_level(spdlog::level::debug);
 
@@ -50,16 +51,16 @@ Application::Application()
         spdlog::error("Could not initialize daScript module");
     }
 
+    server_state_ = std::make_shared<ServerState>();
+
     CSimpleIniA ini_config;
     SI_Error rc = ini_config.LoadFile("soldat.ini");
-    std::uint16_t server_port = 0;
-    std::string server_name;
     if (rc < 0) {
         spdlog::critical("Error: INI File could not be loaded: soldat.ini");
         exit(1);
     } else {
-        server_port = ini_config.GetLongValue("NETWORK", "Port");
-        if (server_port == 0) {
+        server_state_->server_port = ini_config.GetLongValue("NETWORK", "Port");
+        if (server_state_->server_port == 0) {
             spdlog::critical("Error: Port can't be 0");
             exit(1);
         }
@@ -69,11 +70,8 @@ Application::Application()
             spdlog::critical("Error: Port can't be 0");
             exit(1);
         }
-        server_name = server_name_cstr;
+        server_state_->server_name = server_name_cstr;
     }
-
-    lobby_client_ = std::make_shared<LobbyClient>();
-    lobby_client_->Register(server_name, server_port);
 
     SteamDatagramErrMsg err_msg;
     if (!GameNetworkingSockets_Init(nullptr, err_msg)) {
@@ -85,7 +83,6 @@ Application::Application()
     SteamNetworkingUtils()->SetDebugOutputFunction(k_ESteamNetworkingSocketsDebugOutputType_Msg,
                                                    DebugOutput);
 
-    server_state_ = std::make_shared<ServerState>();
     for (unsigned int& last_processed_input_id : server_state_->last_processed_input_id) {
         last_processed_input_id = 0;
     }
@@ -93,7 +90,7 @@ Application::Application()
     server_network_event_dispatcher_ =
       std::make_shared<NetworkEventDispatcher>(network_event_handlers);
     game_server_ = std::make_shared<GameServer>(
-      server_port, server_network_event_dispatcher_, world_, server_state_);
+      server_state_->server_port, server_network_event_dispatcher_, world_, server_state_);
     server_network_event_dispatcher_->AddNetworkEventHandler(
       std::make_shared<PingCheckNetworkEventHandler>(game_server_));
     server_network_event_dispatcher_->AddNetworkEventHandler(
@@ -152,6 +149,11 @@ void Application::Run()
             };
             game_server_->SendNetworkMessageToAll(
               { NetworkEvent::SoldierState, update_soldier_state_packet });
+        }
+
+        // Re-register the server in the lobby every 3 minutes
+        if (state.game_tick % (3600 * 3) == 0) {
+            lobby_client_->Register(server_state_->server_name, server_state_->server_port);
         }
 
         // for (const auto& soldier : state->soldiers) {
