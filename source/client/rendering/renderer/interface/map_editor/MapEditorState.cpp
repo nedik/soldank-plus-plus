@@ -5,6 +5,8 @@ module;
 #include <span>
 #include <bitset>
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <utility>
 #include <vector>
 
@@ -58,6 +60,13 @@ enum class ShortcutSelection
     Tool
 };
 
+struct MapEditorDocumentTab
+{
+    std::uint64_t id;
+    std::string name;
+    bool is_dirty;
+};
+
 struct MapEditorState
 {
     ToolType selected_tool = ToolType::Selection;
@@ -97,6 +106,9 @@ struct MapEditorState
     Observable<> event_palette_saved_colors_changed;
     Observable<> event_shortcuts_changed;
     Observable<> event_ui_scale_changed;
+    Observable<> event_create_document_tab;
+    Observable<std::uint64_t> event_select_document_tab;
+    Observable<std::uint64_t, std::size_t> event_reorder_document_tab;
 
     Observable<const std::string&> event_save_map;
     Observable<const std::string&> event_set_map_name;
@@ -211,5 +223,7 @@ struct MapEditorState
     std::string current_tool_action_description;
 
     bool is_map_changed = false;
+    std::vector<MapEditorDocumentTab> document_tabs;
+    std::optional<std::uint64_t> active_document_tab_id;
 };
 } // namespace Soldank

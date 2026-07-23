@@ -404,6 +404,37 @@ TEST_F(MapEditorControllersTest, DocumentTabsKeepCommandHistoriesIndependent)
     EXPECT_EQ(value, 0);
 }
 
+TEST_F(MapEditorControllersTest, MapEditorRoutesDocumentTabEvents)
+{
+    state_manager_.GetMap().SetName("first-map");
+    MapEditor editor(client_state_, state_manager_);
+
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 1U);
+    const std::uint64_t first_tab_id = client_state_.map_editor_state.document_tabs.at(0).id;
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, first_tab_id);
+
+    client_state_.map_editor_state.event_create_document_tab.Notify();
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 2U);
+    const std::uint64_t second_tab_id = client_state_.map_editor_state.document_tabs.at(1).id;
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, second_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.document_tabs.at(1).name, "Untitled");
+
+    client_state_.map_editor_state.event_set_map_name.Notify("second-map");
+    client_state_.map_editor_state.selected_scenery_ids = { 0U };
+    client_state_.map_editor_state.event_select_document_tab.Notify(first_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "first-map");
+    EXPECT_TRUE(client_state_.map_editor_state.selected_scenery_ids.empty());
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, first_tab_id);
+
+    client_state_.map_editor_state.event_reorder_document_tab.Notify(second_tab_id, 0U);
+    EXPECT_EQ(client_state_.map_editor_state.document_tabs.at(0).id, second_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.document_tabs.at(1).id, first_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, first_tab_id);
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(second_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+}
+
 TEST_F(MapEditorControllersTest, MapEditorRoutesInputActionsPropertiesAndLocking)
 {
     MapEditor editor(client_state_, state_manager_);

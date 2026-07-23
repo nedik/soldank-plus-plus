@@ -174,6 +174,10 @@ Application::Application(const std::vector<const char*>& cli_parameters)
         world_->GetStateManager()->LoadMapDocument(map_path);
     }
 
+    if (map_editor_) {
+        map_editor_->InitializeDocumentTabs();
+    }
+
     if (application_mode_ == ApplicationMode::Online) {
         const ServerEndpoint& server_endpoint = *parsed_launch_parameters.server_endpoint;
         const std::string& server_ip = server_endpoint.ip;

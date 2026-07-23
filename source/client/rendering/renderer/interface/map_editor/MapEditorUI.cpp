@@ -458,7 +458,7 @@ void RenderPaletteWindow(ClientState& client_state, ImGuiWindowFlags default_win
     ImGui::End();
 }
 
-void RenderMapTabBar(const StateManager& game_state_manager, ClientState& client_state)
+void RenderMapTabBar(ClientState& client_state)
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
@@ -472,19 +472,26 @@ void RenderMapTabBar(const StateManager& game_state_manager, ClientState& client
 
     if (ImGui::Begin("MapTabBarWindow", nullptr, flags)) {
         if (ImGui::BeginMenuBar()) {
-            if (ImGui::BeginTabBar("#MapTabBar")) {
-                ImGuiTabItemFlags tab_flags = ImGuiTabItemFlags_SetSelected;
-                if (client_state.map_editor_state.is_map_changed) {
-                    tab_flags |= ImGuiTabItemFlags_UnsavedDocument;
+            auto& map_editor_state = client_state.map_editor_state;
+            const auto document_tabs = map_editor_state.document_tabs;
+
+            if (ImGui::BeginTabBar("#MapTabBar", ImGuiTabBarFlags_Reorderable)) {
+                for (std::size_t index = 0; index < document_tabs.size(); ++index) {
+                    const auto& tab = document_tabs.at(index);
+                    std::string label = tab.name + "###MapTab" + std::to_string(tab.id);
+                    ImGuiTabItemFlags tab_flags =
+                      tab.is_dirty ? ImGuiTabItemFlags_UnsavedDocument : ImGuiTabItemFlags_None;
+
+                    if (ImGui::BeginTabItem(label.c_str(), nullptr, tab_flags)) {
+                        if (map_editor_state.active_document_tab_id != tab.id) {
+                            map_editor_state.event_select_document_tab.Notify(tab.id);
+                        }
+                        ImGui::EndTabItem();
+                    }
                 }
-                if (ImGui::BeginTabItem(
-                      game_state_manager.GetConstMap().GetName().value_or("Untitled").c_str(),
-                      nullptr,
-                      tab_flags)) {
-                    ImGui::EndTabItem();
-                }
-                if (ImGui::BeginTabItem("+", nullptr)) {
-                    ImGui::EndTabItem();
+                if (ImGui::TabItemButton(
+                      "+##MapTabAdd", ImGuiTabItemFlags_NoReorder | ImGuiTabItemFlags_Trailing)) {
+                    map_editor_state.event_create_document_tab.Notify();
                 }
                 ImGui::EndTabBar();
             }
@@ -1203,7 +1210,7 @@ void RenderFrameContents(const StateManager& game_state_manager, ClientState& cl
         MapEditorToolDetailsWindow::Render(game_state_manager, client_state);
     }
 
-    RenderMapTabBar(game_state_manager, client_state);
+    RenderMapTabBar(client_state);
     RenderStatusBar(game_state_manager, client_state);
     RenderSpawnPointPopup(client_state);
     RenderPolygonTypePopup(client_state);
