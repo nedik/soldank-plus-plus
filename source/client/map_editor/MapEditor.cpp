@@ -19,6 +19,7 @@ import MapEditorAction;
 import MapEditor.EditorCommandHistory;
 import MapEditor.Config;
 import MapEditor.EditorDocument;
+import MapEditor.EditorDocumentTabs;
 import MapEditor.EditorEventRouter;
 import MapEditor.EditorMapProperties;
 import MapEditor.EditorShortcutController;
@@ -107,8 +108,8 @@ private:
 
     std::function<void(std::unique_ptr<MapEditorAction>)> add_new_map_editor_action_;
     std::function<void(MapEditorAction*)> execute_without_adding_map_editor_action_;
+    EditorDocumentTabs document_tabs_;
     EditorDocument document_;
-    EditorCommandHistory command_history_;
     EditorEventRouter event_router_;
     EditorMapProperties map_properties_;
     std::unique_ptr<EditorToolController> tool_controller_;
@@ -129,11 +130,13 @@ namespace Soldank
 MapEditor::MapEditor(ClientState& client_state,
                      StateManager& game_state_manager,
                      std::filesystem::path config_file_path)
-    : document_(client_state, game_state_manager)
-    , map_properties_(client_state.map_editor_state, game_state_manager)
+    : document_(client_state, game_state_manager, document_tabs_)
+    , map_properties_(client_state.map_editor_state, game_state_manager, document_tabs_)
     , config_file_path_(std::move(config_file_path))
     , locked_(false)
 {
+    document_tabs_.InitializeFromActiveMap(game_state_manager);
+
     add_new_map_editor_action_ =
       [this, &client_state, &game_state_manager](std::unique_ptr<MapEditorAction> new_action) {
           ExecuteNewAction(client_state, game_state_manager, std::move(new_action));
@@ -717,7 +720,10 @@ void MapEditor::ExecuteNewAction(ClientState& client_state,
         return;
     }
 
-    if (command_history_.Execute(client_state, game_state_manager, std::move(new_action))) {
+    if (document_tabs_.GetActiveCommandHistory().Execute(
+          client_state, game_state_manager, std::move(new_action))) {
+        document_tabs_.StoreActiveMap(game_state_manager);
+        document_tabs_.SetActiveDirty(true);
         event_router_.Emit(EditorCommandExecutedEvent{});
     }
 }
@@ -728,7 +734,9 @@ void MapEditor::UndoLastAction(ClientState& client_state, StateManager& game_sta
         return;
     }
 
-    command_history_.Undo(client_state, game_state_manager);
+    document_tabs_.GetActiveCommandHistory().Undo(client_state, game_state_manager);
+    document_tabs_.StoreActiveMap(game_state_manager);
+    document_tabs_.SetActiveDirty(true);
     event_router_.Emit(EditorCommandUndoneEvent{});
 }
 
@@ -738,7 +746,9 @@ void MapEditor::RedoUndoneAction(ClientState& client_state, StateManager& game_s
         return;
     }
 
-    command_history_.Redo(client_state, game_state_manager);
+    document_tabs_.GetActiveCommandHistory().Redo(client_state, game_state_manager);
+    document_tabs_.StoreActiveMap(game_state_manager);
+    document_tabs_.SetActiveDirty(true);
     event_router_.Emit(EditorCommandRedoneEvent{});
 }
 

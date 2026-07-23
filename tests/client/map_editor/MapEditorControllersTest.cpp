@@ -22,6 +22,7 @@ import MapEditor.Config;
 import MapEditor.EditorAssetBrowser;
 import MapEditor.EditorCommandHistory;
 import MapEditor.EditorDocument;
+import MapEditor.EditorDocumentTabs;
 import MapEditor.EditorEventRouter;
 import MapEditor.EditorMapProperties;
 import MapEditor.EditorShortcutController;
@@ -282,7 +283,9 @@ TEST_F(MapEditorControllersTest, UiOptionsAndAssetBrowserReturnCompleteSortedCho
 
 TEST_F(MapEditorControllersTest, DocumentAndMapPropertiesUpdateStateAndMap)
 {
-    EditorDocument document(client_state_, state_manager_);
+    EditorDocumentTabs tabs;
+    tabs.InitializeFromActiveMap(state_manager_);
+    EditorDocument document(client_state_, state_manager_, tabs);
     document.SaveCurrentMapOrOpenSaveAs();
     EXPECT_TRUE(client_state_.map_editor_state.should_open_save_as_modal);
     document.OpenMapSettings();
@@ -291,7 +294,7 @@ TEST_F(MapEditorControllersTest, DocumentAndMapPropertiesUpdateStateAndMap)
     document.MarkClean();
     EXPECT_FALSE(client_state_.map_editor_state.is_map_changed);
 
-    EditorMapProperties properties(client_state_.map_editor_state, state_manager_);
+    EditorMapProperties properties(client_state_.map_editor_state, state_manager_, tabs);
     client_state_.map_editor_state.event_set_map_name.Notify("properties-map");
     client_state_.map_editor_state.event_set_map_description.Notify("description");
     client_state_.map_editor_state.event_set_map_weather_type.Notify(PMSWeatherType::Snow);
@@ -314,6 +317,13 @@ TEST_F(MapEditorControllersTest, DocumentAndMapPropertiesUpdateStateAndMap)
     EXPECT_EQ(map.GetMedikitsCount(), 5);
     EXPECT_EQ(map.GetJetCount(), 320);
     EXPECT_EQ(map.GetTextureName(), "stone.png");
+    EXPECT_TRUE(client_state_.map_editor_state.is_map_changed);
+    EXPECT_TRUE(tabs.IsActiveDirty());
+
+    client_state_.map_editor_state.event_save_map.Notify("properties-map.pms");
+    EXPECT_FALSE(client_state_.map_editor_state.is_map_changed);
+    EXPECT_FALSE(tabs.IsActiveDirty());
+    std::filesystem::remove("properties-map.pms");
 
     EXPECT_EQ(client_state_.map_editor_state.map_description_input.size(),
               DESCRIPTION_MAX_LENGTH + 1U);
@@ -321,6 +331,77 @@ TEST_F(MapEditorControllersTest, DocumentAndMapPropertiesUpdateStateAndMap)
     client_state_.map_editor_state.event_set_map_description.Notify(maximum_description);
     EXPECT_NO_THROW(state_manager_.GetMap().SaveMap("maximum-description.pms"));
     std::filesystem::remove("maximum-description.pms");
+}
+
+TEST_F(MapEditorControllersTest, DocumentTabsPreserveMapsDirtyStateAndOrder)
+{
+    state_manager_.GetMap().SetName("first-map");
+
+    EditorDocumentTabs tabs;
+    EXPECT_FALSE(tabs.IsInitialized());
+    tabs.InitializeFromActiveMap(state_manager_);
+
+    ASSERT_TRUE(tabs.IsInitialized());
+    ASSERT_EQ(tabs.GetTabCount(), 1U);
+    const std::uint64_t first_tab_id = *tabs.GetActiveTabId();
+    EXPECT_EQ(tabs.GetTabDisplays().at(0).name, "first-map");
+
+    state_manager_.GetMap().SetName("renamed-first-map");
+    tabs.SetActiveDirty(true);
+    const std::uint64_t second_tab_id = tabs.CreateEmptyAndSelect(state_manager_);
+
+    EXPECT_EQ(tabs.GetTabCount(), 2U);
+    EXPECT_EQ(tabs.GetActiveTabId(), second_tab_id);
+    EXPECT_FALSE(tabs.IsActiveDirty());
+    EXPECT_FALSE(state_manager_.GetConstMap().GetName().has_value());
+    EXPECT_EQ(tabs.GetTabDisplays().at(1).name, "Untitled");
+
+    state_manager_.GetMap().SetName("second-map");
+    tabs.StoreActiveMap(state_manager_);
+    tabs.SetActiveDirty(true);
+
+    ASSERT_TRUE(tabs.Select(first_tab_id, state_manager_));
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "renamed-first-map");
+    EXPECT_TRUE(tabs.IsActiveDirty());
+
+    ASSERT_TRUE(tabs.Select(second_tab_id, state_manager_));
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+    EXPECT_TRUE(tabs.IsActiveDirty());
+
+    ASSERT_TRUE(tabs.Reorder(second_tab_id, 0));
+    const auto displays = tabs.GetTabDisplays();
+    ASSERT_EQ(displays.size(), 2U);
+    EXPECT_EQ(displays.at(0).id, second_tab_id);
+    EXPECT_EQ(displays.at(1).id, first_tab_id);
+    EXPECT_EQ(tabs.GetActiveTabId(), second_tab_id);
+    EXPECT_FALSE(tabs.Reorder(9999U, 0));
+    EXPECT_FALSE(tabs.Reorder(second_tab_id, 2));
+}
+
+TEST_F(MapEditorControllersTest, DocumentTabsKeepCommandHistoriesIndependent)
+{
+    EditorDocumentTabs tabs;
+    tabs.InitializeFromActiveMap(state_manager_);
+    const std::uint64_t first_tab_id = *tabs.GetActiveTabId();
+
+    int value = 0;
+    EXPECT_TRUE(tabs.GetActiveCommandHistory().Execute(
+      client_state_, state_manager_, std::make_unique<CountingAction>(value)));
+    EXPECT_EQ(value, 1);
+
+    const std::uint64_t second_tab_id = tabs.CreateEmptyAndSelect(state_manager_);
+    tabs.GetActiveCommandHistory().Undo(client_state_, state_manager_);
+    EXPECT_EQ(value, 1);
+    EXPECT_FALSE(client_state_.map_editor_state.is_undo_enabled);
+
+    ASSERT_TRUE(tabs.Select(first_tab_id, state_manager_));
+    tabs.GetActiveCommandHistory().Undo(client_state_, state_manager_);
+    EXPECT_EQ(value, 0);
+    EXPECT_TRUE(client_state_.map_editor_state.is_redo_enabled);
+
+    ASSERT_TRUE(tabs.Select(second_tab_id, state_manager_));
+    tabs.GetActiveCommandHistory().Redo(client_state_, state_manager_);
+    EXPECT_EQ(value, 0);
 }
 
 TEST_F(MapEditorControllersTest, MapEditorRoutesInputActionsPropertiesAndLocking)

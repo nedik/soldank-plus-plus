@@ -50,6 +50,7 @@ set(client_lib_modules
     map_editor/EditorAssetBrowser.cpp
     map_editor/EditorCommandHistory.cpp
     map_editor/EditorDocument.cpp
+    map_editor/EditorDocumentTabs.cpp
     map_editor/EditorEventRouter.cpp
     map_editor/EditorMapProperties.cpp
     map_editor/EditorShortcutController.cpp
