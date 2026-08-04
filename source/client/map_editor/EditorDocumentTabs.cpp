@@ -29,8 +29,16 @@ class EditorDocumentTabs
 public:
     void InitializeFromActiveMap(StateManager& game_state_manager)
     {
+        InitializeFromActiveMap(game_state_manager, std::nullopt);
+    }
+
+    void InitializeFromActiveMap(StateManager& game_state_manager,
+                                 std::optional<std::uint8_t> client_soldier_id)
+    {
         tabs_.clear();
-        active_tab_id_ = CreateTab(game_state_manager.CreateMapDocumentSnapshot());
+        active_tab_id_ = CreateTab(game_state_manager.CreateMapDocumentSnapshot(),
+                                   game_state_manager.CreateSoldiersSnapshot(),
+                                   client_soldier_id);
     }
 
     bool IsInitialized() const { return active_tab_id_.has_value(); }
@@ -50,26 +58,42 @@ public:
         return displays;
     }
 
-    std::uint64_t CreateEmptyAndSelect(StateManager& game_state_manager)
+    std::uint64_t CreateEmptyAndSelect(StateManager& game_state_manager,
+                                       std::optional<std::uint8_t>& client_soldier_id)
     {
-        StoreActiveMap(game_state_manager);
+        StoreActiveState(game_state_manager, client_soldier_id);
 
         MapDocument document;
         document.CreateEmptyMap();
-        const std::uint64_t tab_id = CreateTab(std::move(document));
-        ApplyTab(tab_id, game_state_manager);
+        const std::uint64_t tab_id = CreateTab(
+          std::move(document), game_state_manager.CreateEmptySoldiersSnapshot(), std::nullopt);
+        ApplyTab(tab_id, game_state_manager, client_soldier_id);
         return tab_id;
     }
 
-    bool Select(std::uint64_t tab_id, StateManager& game_state_manager)
+    std::uint64_t CreateEmptyAndSelect(StateManager& game_state_manager)
+    {
+        std::optional<std::uint8_t> client_soldier_id;
+        return CreateEmptyAndSelect(game_state_manager, client_soldier_id);
+    }
+
+    bool Select(std::uint64_t tab_id,
+                StateManager& game_state_manager,
+                std::optional<std::uint8_t>& client_soldier_id)
     {
         if (!FindTab(tab_id) || active_tab_id_ == tab_id) {
             return active_tab_id_ == tab_id;
         }
 
-        StoreActiveMap(game_state_manager);
-        ApplyTab(tab_id, game_state_manager);
+        StoreActiveState(game_state_manager, client_soldier_id);
+        ApplyTab(tab_id, game_state_manager, client_soldier_id);
         return true;
+    }
+
+    bool Select(std::uint64_t tab_id, StateManager& game_state_manager)
+    {
+        std::optional<std::uint8_t> client_soldier_id;
+        return Select(tab_id, game_state_manager, client_soldier_id);
     }
 
     bool Reorder(std::uint64_t tab_id, std::size_t new_index)
@@ -97,6 +121,15 @@ public:
         FindTab(*active_tab_id_)->document = game_state_manager.CreateMapDocumentSnapshot();
     }
 
+    void StoreActiveState(const StateManager& game_state_manager,
+                          std::optional<std::uint8_t> client_soldier_id)
+    {
+        StoreActiveMap(game_state_manager);
+        EditorDocumentTab* tab = FindTab(*active_tab_id_);
+        tab->soldiers = game_state_manager.CreateSoldiersSnapshot();
+        tab->client_soldier_id = client_soldier_id;
+    }
+
     EditorCommandHistory& GetActiveCommandHistory()
     {
         return FindTab(*active_tab_id_)->command_history;
@@ -116,20 +149,34 @@ private:
     {
         std::uint64_t id;
         MapDocument document;
+        StateManager::SoldierStates soldiers;
+        std::optional<std::uint8_t> client_soldier_id;
         EditorCommandHistory command_history;
         bool is_dirty = false;
     };
 
-    std::uint64_t CreateTab(MapDocument document)
+    std::uint64_t CreateTab(MapDocument document,
+                            StateManager::SoldierStates soldiers,
+                            std::optional<std::uint8_t> client_soldier_id)
     {
         const std::uint64_t tab_id = next_tab_id_++;
-        tabs_.push_back({ tab_id, std::move(document), EditorCommandHistory{}, false });
+        tabs_.push_back({ tab_id,
+                          std::move(document),
+                          std::move(soldiers),
+                          client_soldier_id,
+                          EditorCommandHistory{},
+                          false });
         return tab_id;
     }
 
-    void ApplyTab(std::uint64_t tab_id, StateManager& game_state_manager)
+    void ApplyTab(std::uint64_t tab_id,
+                  StateManager& game_state_manager,
+                  std::optional<std::uint8_t>& client_soldier_id)
     {
-        game_state_manager.ApplyMapDocument(FindTab(tab_id)->document);
+        const EditorDocumentTab* tab = FindTab(tab_id);
+        game_state_manager.ApplyMapDocument(tab->document);
+        game_state_manager.ApplySoldiersSnapshot(tab->soldiers);
+        client_soldier_id = tab->client_soldier_id;
         active_tab_id_ = tab_id;
     }
 

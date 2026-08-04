@@ -37,6 +37,8 @@ export namespace Soldank
 class StateManager
 {
 public:
+    using SoldierStates = std::array<Soldier, MAX_SOLDIERS_COUNT>;
+
     StateManager(
       AnimationDataManager& animation_data_manager,
       std::shared_ptr<ParticleSystem> skeleton = ParticleSystem::Load(ParticleSystemType::Soldier));
@@ -68,6 +70,25 @@ public:
     void ApplyRuntimeMap(const RuntimeMap& runtime_map)
     {
         state_.map.ReplaceContents(runtime_map.GetMap());
+    }
+    SoldierStates CreateSoldiersSnapshot() const { return state_.soldiers; }
+    SoldierStates CreateEmptySoldiersSnapshot() const
+    {
+        SoldierStates soldiers = state_.soldiers;
+        for (auto& soldier : soldiers) {
+            soldier.active = false;
+            soldier.particle.active = false;
+        }
+        return soldiers;
+    }
+    void ApplySoldiersSnapshot(const SoldierStates& soldiers)
+    {
+        state_.soldiers = soldiers;
+        for (auto& soldier : state_.soldiers) {
+            if (soldier.active) {
+                RepositionSoldierSkeletonParts(soldier);
+            }
+        }
     }
 
     void ChangeSoldierControlActionState(std::uint8_t soldier_id,

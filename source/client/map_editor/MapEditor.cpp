@@ -39,6 +39,7 @@ import TransformSceneriesMapEditorAction;
 import TransformSpawnPointsMapEditorAction;
 
 import Shared.Core.State.StateManager;
+import Shared.Core.Map.MapDocument;
 import Shared.Core.Map.PMSEnums;
 import Shared.Core.Map.PMSStructs;
 
@@ -54,6 +55,9 @@ public:
     void Lock();
     void Unlock();
     void InitializeDocumentTabs();
+    MapDocument SnapshotActiveDocumentForPlayTest();
+    void RestoreActiveDocumentAfterPlayTest(const MapDocument& document,
+                                            glm::vec2 runtime_to_document_offset);
 
 private:
     void OnSelectNewTool(ToolType tool_type,
@@ -296,13 +300,14 @@ MapEditor::MapEditor(ClientState& client_state,
           if (locked_) {
               return;
           }
-          document_tabs_.CreateEmptyAndSelect(game_state_manager);
+          document_tabs_.CreateEmptyAndSelect(game_state_manager, client_state.client_soldier_id);
           ClearDocumentSpecificState(client_state);
           SynchronizeDocumentTabsState(client_state);
       });
     client_state.map_editor_state.event_select_document_tab.AddObserver(
       [this, &client_state, &game_state_manager](std::uint64_t tab_id) {
-          if (locked_ || !document_tabs_.Select(tab_id, game_state_manager)) {
+          if (locked_ ||
+              !document_tabs_.Select(tab_id, game_state_manager, client_state.client_soldier_id)) {
               return;
           }
           ClearDocumentSpecificState(client_state);
@@ -450,7 +455,24 @@ void MapEditor::Unlock()
 
 void MapEditor::InitializeDocumentTabs()
 {
-    document_tabs_.InitializeFromActiveMap(game_state_manager_);
+    document_tabs_.InitializeFromActiveMap(game_state_manager_, client_state_.client_soldier_id);
+    SynchronizeDocumentTabsState(client_state_);
+}
+
+MapDocument MapEditor::SnapshotActiveDocumentForPlayTest()
+{
+    document_tabs_.StoreActiveState(game_state_manager_, client_state_.client_soldier_id);
+    return game_state_manager_.CreateMapDocumentSnapshot();
+}
+
+void MapEditor::RestoreActiveDocumentAfterPlayTest(const MapDocument& document,
+                                                   glm::vec2 runtime_to_document_offset)
+{
+    game_state_manager_.ApplyMapDocument(document);
+    game_state_manager_.TransformSoldiers([this, runtime_to_document_offset](auto& soldier) {
+        game_state_manager_.MoveSoldier(soldier.id, runtime_to_document_offset);
+    });
+    document_tabs_.StoreActiveState(game_state_manager_, client_state_.client_soldier_id);
     SynchronizeDocumentTabsState(client_state_);
 }
 

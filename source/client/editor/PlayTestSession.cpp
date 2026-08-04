@@ -1,6 +1,7 @@
 module;
 
 #include <cstdint>
+#include <optional>
 export module Editor.PlayTestSession;
 
 import Extern.Glm;
@@ -11,6 +12,7 @@ import ClientState;
 
 import Shared.Core.IWorld;
 import Shared.Core.Map.RuntimeMap;
+import Shared.Core.Map.MapDocument;
 import Shared.Core.State.StateManager;
 
 export namespace Soldank
@@ -22,6 +24,12 @@ public:
 
     void Start(ClientState& client_state, IWorld& world, Window& window, MapEditor& map_editor)
     {
+        if (is_active_) {
+            return;
+        }
+
+        editable_document_ = map_editor.SnapshotActiveDocumentForPlayTest();
+
         if (!client_state.client_soldier_id.has_value() ||
             !world.GetStateManager()->GetSoldier(*client_state.client_soldier_id).active) {
             const auto& soldier = world.CreateSoldier();
@@ -35,10 +43,7 @@ public:
 
         client_state.camera.view.ResetZoom();
         world.GetStateManager()->UnPauseGame();
-        if (!is_map_normalized_for_runtime_) {
-            BuildRuntimeMapAndMoveSoldiers(world);
-            is_map_normalized_for_runtime_ = true;
-        }
+        runtime_offset_ = BuildRuntimeMapAndMoveSoldiers(world, *editable_document_);
         world.GetStateManager()->GetMap().GenerateSectors();
         window.SetCursorMode(CursorMode::Locked);
         map_editor.Lock();
@@ -47,24 +52,33 @@ public:
 
     void Stop(ClientState& /*client_state*/, IWorld& world, Window& window, MapEditor& map_editor)
     {
+        if (!is_active_) {
+            return;
+        }
+
         world.GetStateManager()->PauseGame();
         window.SetCursorMode(CursorMode::Normal);
+        map_editor.RestoreActiveDocumentAfterPlayTest(*editable_document_, -*runtime_offset_);
+        editable_document_.reset();
+        runtime_offset_.reset();
         map_editor.Unlock();
         is_active_ = false;
     }
 
 private:
-    static void BuildRuntimeMapAndMoveSoldiers(IWorld& world)
+    static glm::vec2 BuildRuntimeMapAndMoveSoldiers(IWorld& world, const MapDocument& document)
     {
-        RuntimeMap runtime_map = world.GetStateManager()->BuildRuntimeMapFromDocument();
+        RuntimeMap runtime_map = RuntimeMap::BuildFromDocument(document);
         glm::vec2 move_offset = runtime_map.GetDocumentToRuntimeOffset();
         world.GetStateManager()->ApplyRuntimeMap(runtime_map);
 
         world.GetStateManager()->TransformSoldiers(
           [&](auto& soldier) { world.GetStateManager()->MoveSoldier(soldier.id, move_offset); });
+        return move_offset;
     }
 
     bool is_active_ = false;
-    bool is_map_normalized_for_runtime_ = false;
+    std::optional<MapDocument> editable_document_;
+    std::optional<glm::vec2> runtime_offset_;
 };
 } // namespace Soldank

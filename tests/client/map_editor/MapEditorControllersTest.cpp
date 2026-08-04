@@ -34,6 +34,8 @@ import Shared.Core.Animations;
 import Shared.Core.Map.PMSConstants;
 import Shared.Core.Map.PMSEnums;
 import Shared.Core.Map.PMSStructs;
+import Shared.Core.Map.MapDocument;
+import Shared.Core.Map.RuntimeMap;
 import Shared.Core.State.StateManager;
 
 namespace
@@ -404,6 +406,43 @@ TEST_F(MapEditorControllersTest, DocumentTabsKeepCommandHistoriesIndependent)
     EXPECT_EQ(value, 0);
 }
 
+TEST_F(MapEditorControllersTest, DocumentTabsKeepSoldierStatesIndependent)
+{
+    const auto first_soldier_id = state_manager_.CreateSoldier(1U).id;
+    state_manager_.TransformSoldier(first_soldier_id, [](auto& soldier) {
+        soldier.particle.position = { 10.0F, 20.0F };
+        soldier.particle.old_position = soldier.particle.position;
+    });
+    client_state_.client_soldier_id = first_soldier_id;
+
+    EditorDocumentTabs tabs;
+    tabs.InitializeFromActiveMap(state_manager_, client_state_.client_soldier_id);
+    const std::uint64_t first_tab_id = *tabs.GetActiveTabId();
+    const std::uint64_t second_tab_id =
+      tabs.CreateEmptyAndSelect(state_manager_, client_state_.client_soldier_id);
+    EXPECT_FALSE(client_state_.client_soldier_id.has_value());
+    EXPECT_FALSE(state_manager_.GetSoldier(first_soldier_id).active);
+
+    const auto second_soldier_id = state_manager_.CreateSoldier(2U).id;
+    state_manager_.TransformSoldier(second_soldier_id, [](auto& soldier) {
+        soldier.particle.position = { 30.0F, 40.0F };
+        soldier.particle.old_position = soldier.particle.position;
+    });
+    client_state_.client_soldier_id = second_soldier_id;
+
+    ASSERT_TRUE(tabs.Select(first_tab_id, state_manager_, client_state_.client_soldier_id));
+    ASSERT_EQ(client_state_.client_soldier_id, first_soldier_id);
+    EXPECT_TRUE(state_manager_.GetSoldier(first_soldier_id).active);
+    EXPECT_FLOAT_EQ(state_manager_.GetSoldier(first_soldier_id).particle.position.x, 10.0F);
+    EXPECT_FALSE(state_manager_.GetSoldier(second_soldier_id).active);
+
+    ASSERT_TRUE(tabs.Select(second_tab_id, state_manager_, client_state_.client_soldier_id));
+    ASSERT_EQ(client_state_.client_soldier_id, second_soldier_id);
+    EXPECT_FALSE(state_manager_.GetSoldier(first_soldier_id).active);
+    EXPECT_TRUE(state_manager_.GetSoldier(second_soldier_id).active);
+    EXPECT_FLOAT_EQ(state_manager_.GetSoldier(second_soldier_id).particle.position.x, 30.0F);
+}
+
 TEST_F(MapEditorControllersTest, MapEditorRoutesDocumentTabEvents)
 {
     state_manager_.GetMap().SetName("first-map");
@@ -433,6 +472,43 @@ TEST_F(MapEditorControllersTest, MapEditorRoutesDocumentTabEvents)
 
     client_state_.map_editor_state.event_select_document_tab.Notify(second_tab_id);
     EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+}
+
+TEST_F(MapEditorControllersTest, PlayTestDocumentBoundaryRestoresSelectedEditableDocument)
+{
+    state_manager_.GetMap().SetName("first-map");
+    MapEditor editor(client_state_, state_manager_);
+    const std::uint64_t first_tab_id = client_state_.map_editor_state.document_tabs.at(0).id;
+
+    client_state_.map_editor_state.event_create_document_tab.Notify();
+    const std::uint64_t second_tab_id = client_state_.map_editor_state.document_tabs.at(1).id;
+    state_manager_.GetMap().SetName("second-map");
+    state_manager_.GetMap().AddNewPolygon(MakePolygon());
+    const auto soldier_id = state_manager_.CreateSoldier(1U).id;
+    state_manager_.TransformSoldier(soldier_id, [](auto& soldier) {
+        soldier.particle.position = { 100.0F, 100.0F };
+        soldier.particle.old_position = soldier.particle.position;
+    });
+
+    const MapDocument editable_second_document = editor.SnapshotActiveDocumentForPlayTest();
+    RuntimeMap runtime_map = state_manager_.BuildRuntimeMapFromDocument();
+    state_manager_.ApplyRuntimeMap(runtime_map);
+    const glm::vec2 runtime_offset = runtime_map.GetDocumentToRuntimeOffset();
+    state_manager_.TransformSoldiers(
+      [&](auto& soldier) { state_manager_.MoveSoldier(soldier.id, runtime_offset); });
+    EXPECT_NE(state_manager_.GetConstMap().GetPolygons().at(0).vertices.at(0).x,
+              editable_second_document.GetMap().GetPolygons().at(0).vertices.at(0).x);
+
+    editor.RestoreActiveDocumentAfterPlayTest(editable_second_document, -runtime_offset);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+    EXPECT_FLOAT_EQ(state_manager_.GetConstMap().GetPolygons().at(0).vertices.at(0).x, 0.0F);
+    EXPECT_FLOAT_EQ(state_manager_.GetSoldier(soldier_id).particle.position.x, 100.0F);
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(first_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "first-map");
+    client_state_.map_editor_state.event_select_document_tab.Notify(second_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+    EXPECT_EQ(state_manager_.GetConstMap().GetPolygons().size(), 1U);
 }
 
 TEST_F(MapEditorControllersTest, MapEditorRoutesInputActionsPropertiesAndLocking)
