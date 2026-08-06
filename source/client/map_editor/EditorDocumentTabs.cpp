@@ -3,6 +3,7 @@ module;
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <iterator>
 #include <optional>
 #include <string>
 #include <utility>
@@ -95,6 +96,46 @@ public:
     {
         std::optional<std::uint8_t> client_soldier_id;
         return Select(tab_id, game_state_manager, client_soldier_id);
+    }
+
+    bool Close(std::uint64_t tab_id,
+               StateManager& game_state_manager,
+               std::optional<std::uint8_t>& client_soldier_id)
+    {
+        const auto tab_iterator =
+          std::find_if(tabs_.begin(), tabs_.end(), [tab_id](const EditorDocumentTab& tab) {
+              return tab.id == tab_id;
+          });
+        if (tab_iterator == tabs_.end()) {
+            return false;
+        }
+
+        const bool is_active_tab = active_tab_id_ == tab_id;
+        if (is_active_tab) {
+            StoreActiveState(game_state_manager, client_soldier_id);
+        }
+
+        const std::size_t closed_tab_index =
+          static_cast<std::size_t>(std::distance(tabs_.begin(), tab_iterator));
+        tabs_.erase(tab_iterator);
+
+        if (tabs_.empty()) {
+            MapDocument document;
+            document.CreateEmptyMap();
+            const std::uint64_t new_tab_id = CreateTab(
+              std::move(document), game_state_manager.CreateEmptySoldiersSnapshot(), std::nullopt);
+            ApplyTab(new_tab_id, game_state_manager, client_soldier_id);
+        } else if (is_active_tab) {
+            const std::size_t new_active_tab_index = std::min(closed_tab_index, tabs_.size() - 1U);
+            ApplyTab(tabs_.at(new_active_tab_index).id, game_state_manager, client_soldier_id);
+        }
+        return true;
+    }
+
+    bool Close(std::uint64_t tab_id, StateManager& game_state_manager)
+    {
+        std::optional<std::uint8_t> client_soldier_id;
+        return Close(tab_id, game_state_manager, client_soldier_id);
     }
 
     bool Reorder(std::uint64_t tab_id, std::size_t new_index)

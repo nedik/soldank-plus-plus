@@ -26,8 +26,12 @@ TEST(ShortcutTest, DefinitionsMatchTheirBindingSlotsAndDefaults)
 
     EXPECT_EQ(GetShortcut(defaults, ShortcutId::MapEditorSave),
               EncodeShortcut(GLFW_KEY_S, GLFW_MOD_CONTROL));
+    EXPECT_EQ(GetShortcut(defaults, ShortcutId::MapEditorNew),
+              EncodeShortcut(GLFW_KEY_N, GLFW_MOD_CONTROL));
     EXPECT_EQ(GetShortcut(defaults, ShortcutId::MapEditorOpen),
               EncodeShortcut(GLFW_KEY_O, GLFW_MOD_CONTROL));
+    EXPECT_EQ(GetShortcut(defaults, ShortcutId::MapEditorCloseTab),
+              EncodeShortcut(GLFW_KEY_W, GLFW_MOD_CONTROL));
     EXPECT_EQ(GetShortcut(defaults, ShortcutId::MapEditorUndo),
               EncodeShortcut(GLFW_KEY_Z, GLFW_MOD_CONTROL));
 }

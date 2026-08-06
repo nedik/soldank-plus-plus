@@ -120,6 +120,21 @@ void RenderMainMenuBar(const StateManager& game_state_manager, ClientState& clie
 
     if (ImGui::BeginMenu("File")) {
         if (ImGui::MenuItem(
+              "New",
+              GetShortcutName(GetShortcut(client_state.map_editor_state.shortcut_bindings,
+                                          ShortcutId::MapEditorNew))
+                .c_str())) {
+            client_state.map_editor_state.event_create_document_tab.Notify();
+        }
+        if (ImGui::MenuItem(
+              "Open...",
+              GetShortcutName(GetShortcut(client_state.map_editor_state.shortcut_bindings,
+                                          ShortcutId::MapEditorOpen))
+                .c_str())) {
+            client_state.map_editor_state.should_open_open_map_modal = true;
+        }
+        ImGui::Separator();
+        if (ImGui::MenuItem(
               "Save",
               GetShortcutName(GetShortcut(client_state.map_editor_state.shortcut_bindings,
                                           ShortcutId::MapEditorSave))
@@ -133,11 +148,13 @@ void RenderMainMenuBar(const StateManager& game_state_manager, ClientState& clie
             }
         }
         if (ImGui::MenuItem(
-              "Open...",
+              "Close tab",
               GetShortcutName(GetShortcut(client_state.map_editor_state.shortcut_bindings,
-                                          ShortcutId::MapEditorOpen))
+                                          ShortcutId::MapEditorCloseTab))
                 .c_str())) {
-            client_state.map_editor_state.should_open_open_map_modal = true;
+            if (const auto active_tab_id = client_state.map_editor_state.active_document_tab_id) {
+                client_state.map_editor_state.event_close_document_tab.Notify(*active_tab_id);
+            }
         }
         ImGui::Separator();
         if (ImGui::MenuItem(
@@ -536,13 +553,18 @@ void RenderMapTabBar(ClientState& client_state)
                         tab_flags |= ImGuiTabItemFlags_SetSelected;
                     }
 
-                    const bool is_tab_open = ImGui::BeginTabItem(label.c_str(), nullptr, tab_flags);
-                    if (!is_document_tab_selection_synchronizing && is_tab_open &&
-                        map_editor_state.active_document_tab_id != tab.id) {
+                    bool should_keep_tab_open = true;
+                    const bool is_tab_active =
+                      ImGui::BeginTabItem(label.c_str(), &should_keep_tab_open, tab_flags);
+                    if (!is_document_tab_selection_synchronizing && should_keep_tab_open &&
+                        is_tab_active && map_editor_state.active_document_tab_id != tab.id) {
                         map_editor_state.event_select_document_tab.Notify(tab.id);
                     }
-                    if (is_tab_open) {
+                    if (is_tab_active) {
                         ImGui::EndTabItem();
+                    }
+                    if (!should_keep_tab_open) {
+                        map_editor_state.event_close_document_tab.Notify(tab.id);
                     }
                 }
                 if (ImGui::TabItemButton(

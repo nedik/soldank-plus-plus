@@ -107,6 +107,7 @@ struct MapEditorState
     Observable<> event_shortcuts_changed;
     Observable<> event_ui_scale_changed;
     Observable<> event_create_document_tab;
+    Observable<std::uint64_t> event_close_document_tab;
     Observable<std::uint64_t> event_select_document_tab;
     Observable<std::uint64_t, std::size_t> event_reorder_document_tab;
 

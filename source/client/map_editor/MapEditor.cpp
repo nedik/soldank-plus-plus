@@ -307,6 +307,15 @@ MapEditor::MapEditor(ClientState& client_state,
           ClearDocumentSpecificState(client_state);
           SynchronizeDocumentTabsState(client_state);
       });
+    client_state.map_editor_state.event_close_document_tab.AddObserver(
+      [this, &client_state, &game_state_manager](std::uint64_t tab_id) {
+          if (locked_ ||
+              !document_tabs_.Close(tab_id, game_state_manager, client_state.client_soldier_id)) {
+              return;
+          }
+          ClearDocumentSpecificState(client_state);
+          SynchronizeDocumentTabsState(client_state);
+      });
     client_state.map_editor_state.event_select_document_tab.AddObserver(
       [this, &client_state, &game_state_manager](std::uint64_t tab_id) {
           if (locked_ ||
@@ -673,6 +682,12 @@ void MapEditor::OnKeyPressed(int key,
     }
 
     const auto& shortcuts = client_state.map_editor_state.shortcut_bindings;
+    if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorNew))) {
+        client_state.map_editor_state.event_create_document_tab.Notify();
+
+        return;
+    }
+
     if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorOpen))) {
         client_state.map_editor_state.should_open_open_map_modal = true;
 
@@ -682,6 +697,13 @@ void MapEditor::OnKeyPressed(int key,
     if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorSave))) {
         document_.SaveCurrentMapOrOpenSaveAs();
 
+        return;
+    }
+
+    if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorCloseTab))) {
+        if (const auto active_tab_id = document_tabs_.GetActiveTabId()) {
+            client_state.map_editor_state.event_close_document_tab.Notify(*active_tab_id);
+        }
         return;
     }
 

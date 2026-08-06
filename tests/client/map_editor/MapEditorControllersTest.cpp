@@ -380,6 +380,27 @@ TEST_F(MapEditorControllersTest, DocumentTabsPreserveMapsDirtyStateAndOrder)
     EXPECT_FALSE(tabs.Reorder(second_tab_id, 2));
 }
 
+TEST_F(MapEditorControllersTest, ClosingDocumentTabsSelectsAnAdjacentTabAndKeepsOneEmptyTab)
+{
+    state_manager_.GetMap().SetName("first-map");
+
+    EditorDocumentTabs tabs;
+    tabs.InitializeFromActiveMap(state_manager_);
+    const std::uint64_t first_tab_id = *tabs.GetActiveTabId();
+    const std::uint64_t second_tab_id = tabs.CreateEmptyAndSelect(state_manager_);
+    state_manager_.GetMap().SetName("second-map");
+
+    ASSERT_TRUE(tabs.Close(second_tab_id, state_manager_));
+    EXPECT_EQ(tabs.GetTabCount(), 1U);
+    EXPECT_EQ(tabs.GetActiveTabId(), first_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "first-map");
+
+    ASSERT_TRUE(tabs.Close(first_tab_id, state_manager_));
+    EXPECT_EQ(tabs.GetTabCount(), 1U);
+    EXPECT_FALSE(state_manager_.GetConstMap().GetName().has_value());
+    EXPECT_EQ(tabs.GetTabDisplays().at(0).name, "Untitled");
+}
+
 TEST_F(MapEditorControllersTest, DocumentTabsKeepCommandHistoriesIndependent)
 {
     EditorDocumentTabs tabs;
@@ -472,6 +493,11 @@ TEST_F(MapEditorControllersTest, MapEditorRoutesDocumentTabEvents)
 
     client_state_.map_editor_state.event_select_document_tab.Notify(second_tab_id);
     EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
+
+    client_state_.map_editor_state.event_close_document_tab.Notify(second_tab_id);
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 1U);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, first_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "first-map");
 }
 
 TEST_F(MapEditorControllersTest, OpeningMapsCreatesAndSelectsDocumentTabs)
@@ -647,6 +673,9 @@ TEST_F(MapEditorControllersTest, MapEditorRoutesInputActionsPropertiesAndLocking
     EXPECT_TRUE(client_state_.map_editor_state.should_open_map_settings_modal);
     EXPECT_TRUE(client_state_.map_editor_state.should_open_open_map_modal);
     EXPECT_TRUE(client_state_.map_editor_state.should_open_save_as_modal);
+
+    client_state_.event_key_pressed.Notify(GLFW_KEY_N, GLFW_MOD_CONTROL);
+    EXPECT_EQ(client_state_.map_editor_state.document_tabs.size(), 2U);
 
     client_state_.event_middle_mouse_button_clicked.Notify();
     client_state_.event_mouse_screen_position_changed.Notify(glm::vec2{}, glm::vec2(5.0F, 8.0F));
