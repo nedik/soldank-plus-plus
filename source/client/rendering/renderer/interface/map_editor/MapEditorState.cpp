@@ -110,6 +110,7 @@ struct MapEditorState
     Observable<std::uint64_t> event_select_document_tab;
     Observable<std::uint64_t, std::size_t> event_reorder_document_tab;
 
+    Observable<const std::string&> event_open_map;
     Observable<const std::string&> event_save_map;
     Observable<const std::string&> event_set_map_name;
     Observable<const std::string&> event_set_map_description;
@@ -176,6 +177,7 @@ struct MapEditorState
     int selected_tool_shortcut_index = -1;
     int selected_shortcut_binding_index = -1;
     bool should_open_save_as_modal = false;
+    bool should_open_open_map_modal = false;
     bool should_open_selection_context_menu = false;
 
     bool draw_wireframe = false;
@@ -225,5 +227,6 @@ struct MapEditorState
     bool is_map_changed = false;
     std::vector<MapEditorDocumentTab> document_tabs;
     std::optional<std::uint64_t> active_document_tab_id;
+    std::optional<std::uint64_t> last_rendered_document_tab_id;
 };
 } // namespace Soldank

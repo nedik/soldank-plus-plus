@@ -132,6 +132,13 @@ void RenderMainMenuBar(const StateManager& game_state_manager, ClientState& clie
                 client_state.map_editor_state.should_open_save_as_modal = true;
             }
         }
+        if (ImGui::MenuItem(
+              "Open...",
+              GetShortcutName(GetShortcut(client_state.map_editor_state.shortcut_bindings,
+                                          ShortcutId::MapEditorOpen))
+                .c_str())) {
+            client_state.map_editor_state.should_open_open_map_modal = true;
+        }
         ImGui::Separator();
         if (ImGui::MenuItem(
               "Settings...",
@@ -229,6 +236,45 @@ void RenderMainMenuBar(const StateManager& game_state_manager, ClientState& clie
         client_state.map_editor_state.event_close_application_requested.Notify();
     }
     ImGui::EndMainMenuBar();
+}
+
+void RenderOpenMapModal(ClientState& client_state)
+{
+    if (client_state.map_editor_state.should_open_open_map_modal) {
+        client_state.map_editor_state.should_open_open_map_modal = false;
+        ImGui::OpenPopup("Open map...");
+    }
+
+    if (ImGui::BeginPopupModal("Open map...", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        client_state.map_editor_state.is_modal_or_popup_open = true;
+
+        std::vector<std::filesystem::path> map_paths;
+        const std::filesystem::path maps_directory = "maps";
+        if (std::filesystem::is_directory(maps_directory)) {
+            for (const auto& entry : std::filesystem::directory_iterator(maps_directory)) {
+                if (entry.is_regular_file() && entry.path().extension() == ".pms") {
+                    map_paths.push_back(entry.path());
+                }
+            }
+        }
+        std::ranges::sort(map_paths);
+
+        ImGui::TextUnformatted("Select a map from maps/");
+        ImGui::BeginChild("MapList", ImVec2(360.0F, 260.0F), true);
+        for (const auto& map_path : map_paths) {
+            const std::string map_name = map_path.filename().string();
+            if (ImGui::Selectable(map_name.c_str())) {
+                client_state.map_editor_state.event_open_map.Notify(map_path.string());
+                ImGui::CloseCurrentPopup();
+            }
+        }
+        ImGui::EndChild();
+
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
 template<std::size_t Size>
@@ -474,6 +520,10 @@ void RenderMapTabBar(ClientState& client_state)
         if (ImGui::BeginMenuBar()) {
             auto& map_editor_state = client_state.map_editor_state;
             const auto document_tabs = map_editor_state.document_tabs;
+            const bool is_document_tab_selection_synchronizing =
+              map_editor_state.last_rendered_document_tab_id.has_value() &&
+              map_editor_state.last_rendered_document_tab_id !=
+                map_editor_state.active_document_tab_id;
 
             if (ImGui::BeginTabBar("#MapTabBar", ImGuiTabBarFlags_Reorderable)) {
                 for (std::size_t index = 0; index < document_tabs.size(); ++index) {
@@ -481,11 +531,17 @@ void RenderMapTabBar(ClientState& client_state)
                     std::string label = tab.name + "###MapTab" + std::to_string(tab.id);
                     ImGuiTabItemFlags tab_flags =
                       tab.is_dirty ? ImGuiTabItemFlags_UnsavedDocument : ImGuiTabItemFlags_None;
+                    if (is_document_tab_selection_synchronizing &&
+                        map_editor_state.active_document_tab_id == tab.id) {
+                        tab_flags |= ImGuiTabItemFlags_SetSelected;
+                    }
 
-                    if (ImGui::BeginTabItem(label.c_str(), nullptr, tab_flags)) {
-                        if (map_editor_state.active_document_tab_id != tab.id) {
-                            map_editor_state.event_select_document_tab.Notify(tab.id);
-                        }
+                    const bool is_tab_open = ImGui::BeginTabItem(label.c_str(), nullptr, tab_flags);
+                    if (!is_document_tab_selection_synchronizing && is_tab_open &&
+                        map_editor_state.active_document_tab_id != tab.id) {
+                        map_editor_state.event_select_document_tab.Notify(tab.id);
+                    }
+                    if (is_tab_open) {
                         ImGui::EndTabItem();
                     }
                 }
@@ -495,6 +551,8 @@ void RenderMapTabBar(ClientState& client_state)
                 }
                 ImGui::EndTabBar();
             }
+            map_editor_state.last_rendered_document_tab_id =
+              map_editor_state.active_document_tab_id;
             ImGui::EndMenuBar();
         }
         ImGui::End();
@@ -1196,6 +1254,7 @@ void RenderFrameContents(const StateManager& game_state_manager, ClientState& cl
     const ImGuiWindowFlags default_window_flags = GetDefaultWindowFlags();
     {
         RenderMainMenuBar(game_state_manager, client_state);
+        RenderOpenMapModal(client_state);
         RenderSaveAsModal(game_state_manager, client_state);
         RenderMapSettingsModal(game_state_manager, client_state);
         RenderSettingsModal(client_state);

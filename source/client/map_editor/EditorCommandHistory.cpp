@@ -16,6 +16,12 @@ export namespace Soldank
 class EditorCommandHistory
 {
 public:
+    EditorCommandHistory() = default;
+    EditorCommandHistory(const EditorCommandHistory&) = delete;
+    EditorCommandHistory& operator=(const EditorCommandHistory&) = delete;
+    EditorCommandHistory(EditorCommandHistory&&) noexcept = default;
+    EditorCommandHistory& operator=(EditorCommandHistory&&) noexcept = default;
+
     bool Execute(ClientState& client_state,
                  StateManager& game_state_manager,
                  std::unique_ptr<MapEditorAction> action)

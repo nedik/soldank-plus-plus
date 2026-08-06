@@ -114,6 +114,9 @@ private:
       StateManager& game_state_manager);
     void SynchronizeDocumentTabsState(ClientState& client_state);
     void ClearDocumentSpecificState(ClientState& client_state);
+    void OpenMap(const std::string& map_path,
+                 ClientState& client_state,
+                 StateManager& game_state_manager);
 
     std::function<void(std::unique_ptr<MapEditorAction>)> add_new_map_editor_action_;
     std::function<void(MapEditorAction*)> execute_without_adding_map_editor_action_;
@@ -320,6 +323,10 @@ MapEditor::MapEditor(ClientState& client_state,
           }
           SynchronizeDocumentTabsState(client_state);
       });
+    client_state.map_editor_state.event_open_map.AddObserver(
+      [this, &client_state, &game_state_manager](const std::string& map_path) {
+          OpenMap(map_path, client_state, game_state_manager);
+      });
 
     const auto synchronize_document_tabs = [this, &client_state](const auto&...) {
         SynchronizeDocumentTabsState(client_state);
@@ -505,6 +512,7 @@ void MapEditor::ClearDocumentSpecificState(ClientState& client_state)
     map_editor_state.should_open_selection_context_menu = false;
     map_editor_state.should_open_map_settings_modal = false;
     map_editor_state.should_open_save_as_modal = false;
+    map_editor_state.should_open_open_map_modal = false;
     map_editor_state.map_description_input.fill(0);
     map_editor_state.save_as_map_name_input.fill(0);
     map_editor_state.texture_search_filter.fill(0);
@@ -512,6 +520,34 @@ void MapEditor::ClearDocumentSpecificState(ClientState& client_state)
     copied_polygons_.clear();
     copied_sceneries_.clear();
     copied_spawn_points_.clear();
+}
+
+void MapEditor::OpenMap(const std::string& map_path,
+                        ClientState& client_state,
+                        StateManager& game_state_manager)
+{
+    if (locked_) {
+        return;
+    }
+
+    const bool replace_active_tab = document_tabs_.IsActiveEmptyAndClean();
+    if (!replace_active_tab) {
+        document_tabs_.StoreActiveState(game_state_manager, client_state.client_soldier_id);
+    }
+
+    game_state_manager.LoadMapDocument(map_path);
+    game_state_manager.ApplySoldiersSnapshot(game_state_manager.CreateEmptySoldiersSnapshot());
+    client_state.client_soldier_id.reset();
+
+    if (replace_active_tab) {
+        document_tabs_.ReplaceActiveWithCurrentState(game_state_manager,
+                                                     client_state.client_soldier_id);
+    } else {
+        document_tabs_.CreateFromCurrentStateAndSelect(game_state_manager,
+                                                       client_state.client_soldier_id);
+    }
+    ClearDocumentSpecificState(client_state);
+    SynchronizeDocumentTabsState(client_state);
 }
 
 void MapEditor::OnSelectNewTool(ToolType tool_type,
@@ -637,6 +673,12 @@ void MapEditor::OnKeyPressed(int key,
     }
 
     const auto& shortcuts = client_state.map_editor_state.shortcut_bindings;
+    if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorOpen))) {
+        client_state.map_editor_state.should_open_open_map_modal = true;
+
+        return;
+    }
+
     if (MatchesShortcut(key, modifiers, GetShortcut(shortcuts, ShortcutId::MapEditorSave))) {
         document_.SaveCurrentMapOrOpenSaveAs();
 

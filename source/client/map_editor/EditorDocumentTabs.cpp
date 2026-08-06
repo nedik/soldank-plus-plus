@@ -12,6 +12,7 @@ export module MapEditor.EditorDocumentTabs;
 
 import MapEditor.EditorCommandHistory;
 
+import Shared.Core.Map.Map;
 import Shared.Core.Map.MapDocument;
 import Shared.Core.State.StateManager;
 
@@ -143,6 +144,31 @@ public:
     void SetActiveDirty(bool is_dirty) { FindTab(*active_tab_id_)->is_dirty = is_dirty; }
 
     bool IsActiveDirty() const { return FindTab(*active_tab_id_)->is_dirty; }
+
+    bool IsActiveEmptyAndClean() const
+    {
+        const EditorDocumentTab* active_tab = FindTab(*active_tab_id_);
+        return !active_tab->is_dirty && !active_tab->document.GetMap().GetName().has_value();
+    }
+
+    void ReplaceActiveWithCurrentState(const StateManager& game_state_manager,
+                                       std::optional<std::uint8_t> client_soldier_id)
+    {
+        EditorDocumentTab* active_tab = FindTab(*active_tab_id_);
+        active_tab->document = game_state_manager.CreateMapDocumentSnapshot();
+        active_tab->soldiers = game_state_manager.CreateSoldiersSnapshot();
+        active_tab->client_soldier_id = client_soldier_id;
+        active_tab->command_history = EditorCommandHistory{};
+        active_tab->is_dirty = false;
+    }
+
+    void CreateFromCurrentStateAndSelect(const StateManager& game_state_manager,
+                                         std::optional<std::uint8_t> client_soldier_id)
+    {
+        active_tab_id_ = CreateTab(game_state_manager.CreateMapDocumentSnapshot(),
+                                   game_state_manager.CreateSoldiersSnapshot(),
+                                   client_soldier_id);
+    }
 
 private:
     struct EditorDocumentTab

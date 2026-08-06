@@ -70,6 +70,36 @@ TEST(MapDocumentRuntimeMapTest, ReplacingMapContentsNotifiesPolygonObservers)
     EXPECT_EQ(notifications, 1);
 }
 
+TEST(MapDocumentRuntimeMapTest, ReplacingMapContentsNotifiesSceneryTypeObservers)
+{
+    Soldank::Map source_map;
+    source_map.CreateEmptyMap();
+    source_map.AddNewScenery({}, "new.png");
+
+    Soldank::Map destination_map;
+    destination_map.CreateEmptyMap();
+    destination_map.AddNewScenery({}, "old.png");
+
+    std::vector<std::string> removed_scenery_type_names;
+    std::vector<std::string> added_scenery_type_names;
+    destination_map.GetMapChangeEvents().removed_scenery_types.AddObserver(
+      [&removed_scenery_type_names](
+        const std::vector<std::pair<unsigned short, Soldank::PMSSceneryType>>& scenery_types) {
+          for (const auto& scenery_type : scenery_types) {
+              removed_scenery_type_names.push_back(scenery_type.second.name);
+          }
+      });
+    destination_map.GetMapChangeEvents().added_new_scenery_type.AddObserver(
+      [&added_scenery_type_names](const Soldank::PMSSceneryType& scenery_type) {
+          added_scenery_type_names.push_back(scenery_type.name);
+      });
+
+    destination_map.ReplaceContents(source_map);
+
+    EXPECT_EQ(removed_scenery_type_names, (std::vector<std::string>{ "old.png" }));
+    EXPECT_EQ(added_scenery_type_names, (std::vector<std::string>{ "new.png" }));
+}
+
 TEST(MapDocumentRuntimeMapTest, CollisionTestUsesTheCurrentMapCenterForSectorLookup)
 {
     Soldank::Map map;

@@ -474,6 +474,67 @@ TEST_F(MapEditorControllersTest, MapEditorRoutesDocumentTabEvents)
     EXPECT_EQ(state_manager_.GetConstMap().GetName(), "second-map");
 }
 
+TEST_F(MapEditorControllersTest, OpeningMapsCreatesAndSelectsDocumentTabs)
+{
+    ScopedTestDirectory test_directory("map_editor_open_tabs_test");
+    std::filesystem::create_directories("maps");
+    state_manager_.GetMap().SetName("original.pms");
+    state_manager_.GetMap().SaveMap("maps/original.pms");
+    state_manager_.CreateEmptyMapDocument();
+    state_manager_.GetMap().SetName("edited.pms");
+    state_manager_.GetMap().SaveMap("maps/edited.pms");
+    state_manager_.CreateEmptyMapDocument();
+    state_manager_.GetMap().SetName("third.pms");
+    state_manager_.GetMap().SaveMap("maps/third.pms");
+    state_manager_.CreateEmptyMapDocument();
+
+    MapEditor editor(client_state_, state_manager_);
+    client_state_.map_editor_state.event_open_map.Notify("maps/original.pms");
+
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 1U);
+    const std::uint64_t original_tab_id = client_state_.map_editor_state.document_tabs.at(0).id;
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, original_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "original.pms");
+
+    client_state_.map_editor_state.event_open_map.Notify("maps/edited.pms");
+
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 2U);
+    const std::uint64_t edited_tab_id = client_state_.map_editor_state.document_tabs.at(1).id;
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, edited_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "edited.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(original_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, original_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "original.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(edited_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, edited_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "edited.pms");
+
+    client_state_.map_editor_state.event_open_map.Notify("maps/third.pms");
+
+    ASSERT_EQ(client_state_.map_editor_state.document_tabs.size(), 3U);
+    const std::uint64_t third_tab_id = client_state_.map_editor_state.document_tabs.at(2).id;
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, third_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "third.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(edited_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, edited_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "edited.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(third_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, third_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "third.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(original_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, original_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "original.pms");
+
+    client_state_.map_editor_state.event_select_document_tab.Notify(edited_tab_id);
+    EXPECT_EQ(client_state_.map_editor_state.active_document_tab_id, edited_tab_id);
+    EXPECT_EQ(state_manager_.GetConstMap().GetName(), "edited.pms");
+}
+
 TEST_F(MapEditorControllersTest, PlayTestDocumentBoundaryRestoresSelectedEditableDocument)
 {
     state_manager_.GetMap().SetName("first-map");
@@ -580,9 +641,11 @@ TEST_F(MapEditorControllersTest, MapEditorRoutesInputActionsPropertiesAndLocking
 
     client_state_.event_key_pressed.Notify(GLFW_KEY_LEFT_CONTROL, GLFW_MOD_CONTROL);
     client_state_.event_key_pressed.Notify(GLFW_KEY_M, GLFW_MOD_CONTROL);
+    client_state_.event_key_pressed.Notify(GLFW_KEY_O, GLFW_MOD_CONTROL);
     client_state_.event_key_pressed.Notify(GLFW_KEY_S, GLFW_MOD_CONTROL);
     client_state_.event_key_released.Notify(GLFW_KEY_LEFT_CONTROL, 0);
     EXPECT_TRUE(client_state_.map_editor_state.should_open_map_settings_modal);
+    EXPECT_TRUE(client_state_.map_editor_state.should_open_open_map_modal);
     EXPECT_TRUE(client_state_.map_editor_state.should_open_save_as_modal);
 
     client_state_.event_middle_mouse_button_clicked.Notify();

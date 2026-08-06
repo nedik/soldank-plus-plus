@@ -3,6 +3,7 @@ module;
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstring>
 #include <filesystem>
 #include <memory>
@@ -136,12 +137,23 @@ PMSPolygon Map::AddNewPolygon(const PMSPolygon& polygon)
 
 void Map::ReplaceContents(const Map& source_map)
 {
+    std::vector<std::pair<unsigned short, PMSSceneryType>> removed_scenery_types;
+    removed_scenery_types.reserve(map_data_.scenery_types.size());
+    for (std::size_t index = 0; index < map_data_.scenery_types.size(); ++index) {
+        removed_scenery_types.emplace_back(static_cast<unsigned short>(index + 1),
+                                           map_data_.scenery_types.at(index));
+    }
+
     map_data_ = source_map.map_data_;
     are_sectors_generated_ = source_map.are_sectors_generated_;
 
     map_change_events_.changed_background_color.Notify(
       map_data_.background_top_color, map_data_.background_bottom_color, GetBoundaries());
     map_change_events_.changed_texture_name.Notify(map_data_.texture_name);
+    map_change_events_.removed_scenery_types.Notify(removed_scenery_types);
+    for (const auto& scenery_type : map_data_.scenery_types) {
+        map_change_events_.added_new_scenery_type.Notify(scenery_type);
+    }
     map_change_events_.modified_polygons.Notify(map_data_.polygons);
     map_change_events_.modified_sceneries.Notify(map_data_.scenery_instances);
     map_change_events_.modified_spawn_points.Notify(map_data_.spawn_points);
