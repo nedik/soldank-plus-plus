@@ -1,5 +1,8 @@
 module;
 
+#include <optional>
+#include <utility>
+
 export module Shared.Core.Physics.Bullets.BulletDamage;
 
 import Extern.Glm;
@@ -15,10 +18,36 @@ import Shared.Core.Types.BulletType;
 
 export namespace Soldank::BulletDamage
 {
-void ApplyDirectHit(const PhysicsEvents& physics_events,
-                    Bullet& bullet,
-                    StateManager& state_manager,
-                    const BulletCollisionResult& collision)
+enum class DirectHitOutcome
+{
+    Destroyed,
+    Penetrated,
+};
+
+std::optional<float> GetPenetrationVelocityMultiplier(bool target_was_dead,
+                                                      bool target_is_dead,
+                                                      float projectile_speed,
+                                                      float weapon_speed)
+{
+    if (target_was_dead) {
+        return 0.9F;
+    }
+
+    if (target_is_dead || projectile_speed > 23.0F) {
+        return 0.75F;
+    }
+
+    if (projectile_speed > 5.0F && weapon_speed > 0.0F && projectile_speed / weapon_speed >= 0.9F) {
+        return 0.66F;
+    }
+
+    return std::nullopt;
+}
+
+DirectHitOutcome ApplyDirectHit(const PhysicsEvents& physics_events,
+                                Bullet& bullet,
+                                StateManager& state_manager,
+                                const BulletCollisionResult& collision)
 {
     const Soldier& soldier = state_manager.GetSoldier(*collision.soldier_id);
     glm::vec2 bullet_velocity = bullet.particle.GetVelocity();
@@ -55,17 +84,17 @@ void ApplyDirectHit(const PhysicsEvents& physics_events,
                 physics_events.soldier_hit_by_bullet.Notify(target, damage);
             });
 
-            if (was_dead) {
-                bullet.particle.SetVelocity(Calc::Vec2Scale(bullet_velocity, 0.9F));
-                bullet_velocity = bullet.particle.GetVelocity();
+            const bool is_dead_after_hit =
+              state_manager.GetSoldier(*collision.soldier_id).dead_meat;
+            const auto penetration_multiplier = GetPenetrationVelocityMultiplier(
+              was_dead, is_dead_after_hit, speed, weapon_parameters.speed);
+            if (penetration_multiplier.has_value()) {
+                bullet.particle.SetVelocity(
+                  Calc::Vec2Scale(bullet_velocity, *penetration_multiplier));
+                return DirectHitOutcome::Penetrated;
             }
 
-            if (soldier.dead_meat || speed > 23.0F) {
-                bullet.particle.SetVelocity(Calc::Vec2Scale(bullet_velocity, 0.75F));
-            }
-
-            bullet.active = false;
-            break;
+            return DirectHitOutcome::Destroyed;
         }
         case BulletType::FragGrenade:
         case BulletType::Arrow:
@@ -77,7 +106,9 @@ void ApplyDirectHit(const PhysicsEvents& physics_events,
         case BulletType::ClusterGrenade:
         case BulletType::ThrownKnife:
             // TODO: implement style-specific direct-hit damage and impact behavior.
-            break;
+            return DirectHitOutcome::Destroyed;
     }
+
+    std::unreachable();
 }
 } // namespace Soldank::BulletDamage

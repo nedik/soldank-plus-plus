@@ -17,6 +17,7 @@ import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSEnums;
 import Shared.Core.Physics.BulletPhysics;
 import Shared.Core.Physics.Bullets.BulletCollision;
+import Shared.Core.Physics.Bullets.BulletDamage;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.Particles;
 import Shared.Core.Physics.PhysicsEvents;
@@ -220,6 +221,20 @@ TEST(BulletPhysicsTest, MapBulletCollisionPolicyCoversEverySpecialPolygonType)
               Soldank::Map::BulletCollidesWithPolygon(TEAM_PLAYER_TYPES.at(type_index), team_id));
         }
     }
+}
+
+TEST(BulletPhysicsTest, PreservesProjectilesForEligiblePenetratingHits)
+{
+    EXPECT_EQ(Soldank::BulletDamage::GetPenetrationVelocityMultiplier(true, true, 30.0F, 30.0F),
+              0.9F);
+    EXPECT_EQ(Soldank::BulletDamage::GetPenetrationVelocityMultiplier(false, true, 10.0F, 30.0F),
+              0.75F);
+    EXPECT_EQ(Soldank::BulletDamage::GetPenetrationVelocityMultiplier(false, false, 24.0F, 30.0F),
+              0.75F);
+    EXPECT_EQ(Soldank::BulletDamage::GetPenetrationVelocityMultiplier(false, false, 20.0F, 20.0F),
+              0.66F);
+    EXPECT_FALSE(
+      Soldank::BulletDamage::GetPenetrationVelocityMultiplier(false, false, 10.0F, 30.0F));
 }
 
 TEST(BulletPhysicsTest, ReducesDamageMultiplierAfterTravellingPastFirstThreshold)

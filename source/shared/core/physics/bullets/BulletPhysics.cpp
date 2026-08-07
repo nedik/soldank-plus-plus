@@ -83,7 +83,10 @@ void UpdateBullet(const PhysicsEvents& physics_events,
 
     if (const auto collision = BulletCollision::FindSoldierCollision(bullet, state_manager, -1.0F);
         collision.has_value()) {
-        BulletDamage::ApplyDirectHit(physics_events, bullet, state_manager, *collision);
+        if (BulletDamage::ApplyDirectHit(physics_events, bullet, state_manager, *collision) ==
+            BulletDamage::DirectHitOutcome::Destroyed) {
+            bullet.active = false;
+        }
     }
 }
 } // namespace Soldank::BulletPhysics
