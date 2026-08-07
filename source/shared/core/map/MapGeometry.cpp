@@ -83,6 +83,11 @@ bool PolygonCollidesWithCollisionTest(Soldank::PMSPolygonType polygon_type, bool
 
 namespace Soldank
 {
+bool Map::BulletCollidesWithPolygon(PMSPolygonType polygon_type, std::uint8_t team_id)
+{
+    return PolygonCollidesWith(polygon_type, { false, false, true, team_id });
+}
+
 bool Map::PointInPoly(glm::vec2 p, PMSPolygon poly)
 {
     auto a = poly.vertices[0];

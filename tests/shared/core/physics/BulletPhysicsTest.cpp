@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cstdint>
 #include <expected>
 #include <ios>
@@ -140,6 +141,8 @@ TEST(BulletPhysicsTest, DetectsMapCollisionAlongBulletSweepAndEmitsEvent)
       });
     auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
 
+    EXPECT_EQ(map->GetSectorsPerAxis(), 51);
+
     Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
 
     EXPECT_FALSE(bullet.active);
@@ -168,6 +171,55 @@ TEST(BulletPhysicsTest, MapCollisionResultContainsImpactDistanceAndTargetMetadat
     EXPECT_EQ(*collision->polygon_id, 0U);
     EXPECT_FALSE(collision->soldier_id.has_value());
     EXPECT_FALSE(collision->body_part_id.has_value());
+}
+
+TEST(BulletPhysicsTest, MapBulletCollisionPolicyCoversEverySpecialPolygonType)
+{
+    constexpr std::array ALWAYS_COLLIDABLE{
+        Soldank::PMSPolygonType::Normal,       Soldank::PMSPolygonType::Ice,
+        Soldank::PMSPolygonType::Deadly,       Soldank::PMSPolygonType::BloodyDeadly,
+        Soldank::PMSPolygonType::Hurts,        Soldank::PMSPolygonType::Regenerates,
+        Soldank::PMSPolygonType::Lava,         Soldank::PMSPolygonType::Bouncy,
+        Soldank::PMSPolygonType::Explosive,    Soldank::PMSPolygonType::HurtFlaggers,
+        Soldank::PMSPolygonType::FlagCollides,
+    };
+
+    for (const auto polygon_type : ALWAYS_COLLIDABLE) {
+        EXPECT_TRUE(Soldank::Map::BulletCollidesWithPolygon(polygon_type, 0));
+    }
+
+    EXPECT_TRUE(
+      Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::OnlyBulletsCollide, 0));
+    EXPECT_FALSE(
+      Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::OnlyPlayersCollide, 0));
+    EXPECT_FALSE(Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::NoCollide, 0));
+    EXPECT_FALSE(
+      Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::FlaggerCollides, 0));
+    EXPECT_FALSE(
+      Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::NonFlaggerCollides, 0));
+
+    constexpr std::array TEAM_BULLET_TYPES{
+        Soldank::PMSPolygonType::AlphaBullets,
+        Soldank::PMSPolygonType::BravoBullets,
+        Soldank::PMSPolygonType::CharlieBullets,
+        Soldank::PMSPolygonType::DeltaBullets,
+    };
+    constexpr std::array TEAM_PLAYER_TYPES{
+        Soldank::PMSPolygonType::AlphaPlayers,
+        Soldank::PMSPolygonType::BravoPlayers,
+        Soldank::PMSPolygonType::CharliePlayers,
+        Soldank::PMSPolygonType::DeltaPlayers,
+    };
+
+    for (std::uint8_t team_id = 1; team_id <= 4; ++team_id) {
+        for (std::size_t type_index = 0; type_index < TEAM_BULLET_TYPES.size(); ++type_index) {
+            EXPECT_EQ(
+              Soldank::Map::BulletCollidesWithPolygon(TEAM_BULLET_TYPES.at(type_index), team_id),
+              type_index == static_cast<std::size_t>(team_id - 1));
+            EXPECT_FALSE(
+              Soldank::Map::BulletCollidesWithPolygon(TEAM_PLAYER_TYPES.at(type_index), team_id));
+        }
+    }
 }
 
 TEST(BulletPhysicsTest, ReducesDamageMultiplierAfterTravellingPastFirstThreshold)

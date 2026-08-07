@@ -2,6 +2,7 @@ module;
 
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <optional>
 
@@ -12,46 +13,16 @@ import Extern.Glm;
 import Shared.Core.Entities.Bullet;
 import Shared.Core.Entities.Soldier;
 import Shared.Core.Map.Map;
-import Shared.Core.Map.PMSEnums;
 import Shared.Core.Map.PMSStructs;
 import Shared.Core.Math.Calc;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.State.StateManager;
 import Shared.Core.Types.BulletType;
-import Shared.Core.Types.TeamType;
 
 namespace Soldank
 {
 namespace
 {
-bool CollidesWithPoly(const PMSPolygon& poly, TeamType team)
-{
-    switch (poly.polygon_type) {
-        case PMSPolygonType::AlphaBullets:
-            return team == TeamType::Alpha;
-        case PMSPolygonType::BravoBullets:
-            return team == TeamType::Bravo;
-        case PMSPolygonType::CharlieBullets:
-            return team == TeamType::Charlie;
-        case PMSPolygonType::DeltaBullets:
-            return team == TeamType::Delta;
-        case PMSPolygonType::AlphaPlayers:
-        case PMSPolygonType::BravoPlayers:
-        case PMSPolygonType::CharliePlayers:
-        case PMSPolygonType::DeltaPlayers:
-        case PMSPolygonType::OnlyPlayersCollide:
-        case PMSPolygonType::NoCollide:
-        case PMSPolygonType::FlaggerCollides:
-        case PMSPolygonType::NonFlaggerCollides:
-            // TODO: missing polygon types
-            // case PMSPolygonType::ptBACKGROUND:
-            // case PMSPolygonType::ptBACKGROUND_TRANSITION:
-            return false;
-        default:
-            return true;
-    }
-}
-
 glm::vec2 GetSoldierCollisionPoint(const Soldier& soldier)
 {
     // TODO: use lag-compensated historical positions.
@@ -120,15 +91,18 @@ std::optional<BulletCollisionResult> FindMapCollision(const Bullet& bullet, cons
         const int sector_x = sector_index.x;
         const int sector_y = sector_index.y;
 
-        if (sector_x <= 0 || sector_x >= map.GetSectorsCount() + 25 || sector_y <= 0 ||
-            sector_y >= map.GetSectorsCount() + 25) {
+        const int sectors_per_axis = map.GetSectorsPerAxis();
+        if (sector_x < 0 || sector_x >= sectors_per_axis || sector_y < 0 ||
+            sector_y >= sectors_per_axis) {
             continue;
         }
 
         for (const unsigned int polygon_reference : map.GetSector(sector_x, sector_y).polygons) {
             const unsigned int polygon_id = polygon_reference - 1;
             const PMSPolygon& polygon = map.GetPolygons()[polygon_id];
-            if (CollidesWithPoly(polygon, bullet.team) && Map::PointInPoly(position, polygon)) {
+            if (Map::BulletCollidesWithPolygon(polygon.polygon_type,
+                                               static_cast<std::uint8_t>(bullet.team)) &&
+                Map::PointInPoly(position, polygon)) {
                 return BulletCollisionResult{
                     .kind = BulletCollisionKind::MapPolygon,
                     .position = position,

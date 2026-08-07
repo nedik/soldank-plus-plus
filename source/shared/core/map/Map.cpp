@@ -111,6 +111,8 @@ public:
 
     static bool PointInPoly(glm::vec2 p, PMSPolygon poly);
 
+    static bool BulletCollidesWithPolygon(PMSPolygonType polygon_type, std::uint8_t team_id);
+
     bool PointInPolyEdges(float x, float y, int i) const;
 
     static bool PointInScenery(glm::vec2 p, const PMSScenery& scenery);
@@ -297,6 +299,8 @@ public:
     int GetSectorsSize() const { return map_data_.sectors_size; }
 
     int GetSectorsCount() const { return map_data_.sectors_count; }
+
+    int GetSectorsPerAxis() const { return static_cast<int>(map_data_.sectors_poly.size()); }
 
     glm::ivec2 GetSectorIndex(glm::vec2 position) const
     {
