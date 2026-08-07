@@ -111,7 +111,7 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
-          version: latest
+          version: 4.0.22
 
       - name: Configure
         run: cmake --preset clang-ninja-coverage-all
