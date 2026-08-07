@@ -58,8 +58,8 @@ glm::vec2 GetSoldierCollisionPoint(const Soldier& soldier)
     return soldier.particle.position;
 }
 
-std::optional<BulletSoldierCollision> FindSoldierCollisionPoint(const Soldier& soldier,
-                                                                const Bullet& bullet)
+std::optional<BulletCollisionResult> FindSoldierCollisionPoint(const Soldier& soldier,
+                                                               const Bullet& bullet)
 {
     constexpr auto BODY_PARTS_PRIORITY = std::array{ 12, 11, 10, 6, 5, 4, 3 };
     constexpr int PART_RADIUS = 7;
@@ -74,7 +74,7 @@ std::optional<BulletSoldierCollision> FindSoldierCollisionPoint(const Soldier& s
     const glm::vec2 start_point = bullet.particle.position;
     const glm::vec2 end_point = start_point + bullet.particle.GetVelocity();
     float min_distance = std::numeric_limits<float>::max();
-    std::optional<BulletSoldierCollision> closest_collision;
+    std::optional<BulletCollisionResult> closest_collision;
 
     for (const int body_part_id : BODY_PARTS_PRIORITY) {
         glm::vec2 body_part_offset =
@@ -88,13 +88,15 @@ std::optional<BulletSoldierCollision> FindSoldierCollisionPoint(const Soldier& s
             continue;
         }
 
-        const float distance = Calc::SquareDistance(start_point, *hit_position);
+        const float distance = Calc::Vec2Length(*hit_position - bullet.particle.old_position);
         if (distance < min_distance) {
             min_distance = distance;
-            closest_collision = BulletSoldierCollision{
+            closest_collision = BulletCollisionResult{
+                .kind = BulletCollisionKind::Soldier,
+                .position = *hit_position,
+                .distance = distance,
                 .soldier_id = soldier.id,
                 .body_part_id = body_part_id,
-                .position = *hit_position,
             };
         }
     }
@@ -106,7 +108,7 @@ std::optional<BulletSoldierCollision> FindSoldierCollisionPoint(const Soldier& s
 
 export namespace Soldank::BulletCollision
 {
-std::optional<BulletMapCollision> FindMapCollision(const Bullet& bullet, const Map& map)
+std::optional<BulletCollisionResult> FindMapCollision(const Bullet& bullet, const Map& map)
 {
     const glm::vec2 start_point = bullet.particle.old_position;
     const glm::vec2 end_point = bullet.particle.position;
@@ -127,7 +129,12 @@ std::optional<BulletMapCollision> FindMapCollision(const Bullet& bullet, const M
             const unsigned int polygon_id = polygon_reference - 1;
             const PMSPolygon& polygon = map.GetPolygons()[polygon_id];
             if (CollidesWithPoly(polygon, bullet.team) && Map::PointInPoly(position, polygon)) {
-                return BulletMapCollision{ .position = position, .polygon_id = polygon_id };
+                return BulletCollisionResult{
+                    .kind = BulletCollisionKind::MapPolygon,
+                    .position = position,
+                    .distance = Calc::Vec2Length(position - start_point),
+                    .polygon_id = polygon_id,
+                };
             }
         }
     }
@@ -135,9 +142,9 @@ std::optional<BulletMapCollision> FindMapCollision(const Bullet& bullet, const M
     return std::nullopt;
 }
 
-std::optional<BulletSoldierCollision> FindSoldierCollision(const Bullet& bullet,
-                                                           const StateManager& state_manager,
-                                                           float last_hit_distance)
+std::optional<BulletCollisionResult> FindSoldierCollision(const Bullet& bullet,
+                                                          const StateManager& state_manager,
+                                                          float last_hit_distance)
 {
     constexpr int ARROW_RESIST = 280;
     if (bullet.style == BulletType::Arrow && bullet.timeout <= ARROW_RESIST) {
@@ -159,9 +166,7 @@ std::optional<BulletSoldierCollision> FindSoldierCollision(const Bullet& bullet,
     }
 
     if (last_hit_distance > -1.0F) {
-        const float collision_distance =
-          Calc::Vec2Length(collision->position - bullet.particle.old_position);
-        if (collision_distance > last_hit_distance) {
+        if (collision->distance > last_hit_distance) {
             return std::nullopt;
         }
     }

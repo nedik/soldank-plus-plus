@@ -18,11 +18,11 @@ export namespace Soldank::BulletDamage
 void ApplyDirectHit(const PhysicsEvents& physics_events,
                     Bullet& bullet,
                     StateManager& state_manager,
-                    const BulletSoldierCollision& collision)
+                    const BulletCollisionResult& collision)
 {
-    const Soldier& soldier = state_manager.GetSoldier(collision.soldier_id);
+    const Soldier& soldier = state_manager.GetSoldier(*collision.soldier_id);
     glm::vec2 bullet_velocity = bullet.particle.GetVelocity();
-    glm::vec2 normal = collision.position - soldier.skeleton->GetPos(collision.body_part_id);
+    glm::vec2 normal = collision.position - soldier.skeleton->GetPos(*collision.body_part_id);
     normal = Calc::Vec2Scale(normal, 1.3F);
     normal.y = -normal.y;
 
@@ -42,16 +42,16 @@ void ApplyDirectHit(const PhysicsEvents& physics_events,
             const auto weapon_parameters =
               WeaponParametersFactory::GetParameters(bullet.weapon, false /* TODO realistic */);
             float hitbox_modifier = weapon_parameters.modifier_head;
-            if (collision.body_part_id <= 4) {
+            if (*collision.body_part_id <= 4) {
                 hitbox_modifier = weapon_parameters.modifier_legs;
-            } else if (collision.body_part_id <= 11) {
+            } else if (*collision.body_part_id <= 11) {
                 hitbox_modifier = weapon_parameters.modifier_chest;
             }
 
             const float speed = Calc::Vec2Length(bullet_velocity);
             const bool was_dead = soldier.dead_meat;
             const float damage = speed * weapon_parameters.hit_multiply * hitbox_modifier;
-            state_manager.TransformSoldier(collision.soldier_id, [&](Soldier& target) {
+            state_manager.TransformSoldier(*collision.soldier_id, [&](Soldier& target) {
                 physics_events.soldier_hit_by_bullet.Notify(target, damage);
             });
 

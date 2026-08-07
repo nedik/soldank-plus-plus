@@ -9,16 +9,19 @@ import Extern.Glm;
 
 export namespace Soldank
 {
-struct BulletMapCollision
+enum class BulletCollisionKind
 {
-    glm::vec2 position;
-    unsigned int polygon_id;
+    MapPolygon,
+    Soldier,
 };
 
-struct BulletSoldierCollision
+struct BulletCollisionResult
 {
-    std::uint8_t soldier_id;
-    int body_part_id;
+    BulletCollisionKind kind;
     glm::vec2 position;
+    float distance;
+    std::optional<unsigned int> polygon_id;
+    std::optional<std::uint8_t> soldier_id;
+    std::optional<int> body_part_id;
 };
 } // namespace Soldank

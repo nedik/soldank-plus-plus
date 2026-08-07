@@ -15,6 +15,8 @@ import Shared.Core.Entities.Bullet;
 import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSEnums;
 import Shared.Core.Physics.BulletPhysics;
+import Shared.Core.Physics.Bullets.BulletCollision;
+import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.Particles;
 import Shared.Core.Physics.PhysicsEvents;
 import Shared.Core.State.StateManager;
@@ -145,6 +147,27 @@ TEST(BulletPhysicsTest, DetectsMapCollisionAlongBulletSweepAndEmitsEvent)
     EXPECT_LT(collision_position.x, 0.0F);
     EXPECT_GT(collision_position.y, 0.0F);
     EXPECT_LT(collision_position.y, 0.135F);
+}
+
+TEST(BulletPhysicsTest, MapCollisionResultContainsImpactDistanceAndTargetMetadata)
+{
+    auto map =
+      SoldankTesting::MapBuilder::Empty()
+        ->AddPolygon(
+          { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+        ->Build();
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+    bullet.particle.Euler();
+    const auto collision = Soldank::BulletCollision::FindMapCollision(bullet, *map);
+
+    ASSERT_TRUE(collision.has_value());
+    EXPECT_EQ(collision->kind, Soldank::BulletCollisionKind::MapPolygon);
+    EXPECT_GT(collision->distance, 0.0F);
+    EXPECT_TRUE(collision->polygon_id.has_value());
+    EXPECT_EQ(*collision->polygon_id, 0U);
+    EXPECT_FALSE(collision->soldier_id.has_value());
+    EXPECT_FALSE(collision->body_part_id.has_value());
 }
 
 TEST(BulletPhysicsTest, ReducesDamageMultiplierAfterTravellingPastFirstThreshold)

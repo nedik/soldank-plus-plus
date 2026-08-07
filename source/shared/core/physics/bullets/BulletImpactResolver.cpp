@@ -10,7 +10,7 @@ export namespace Soldank::BulletImpactResolver
 {
 void ResolveMapImpact(const PhysicsEvents& physics_events,
                       Bullet& bullet,
-                      const BulletMapCollision& collision)
+                      const BulletCollisionResult& collision)
 {
     bullet.particle.position = collision.position;
     bullet.active = false;
