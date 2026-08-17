@@ -11,6 +11,7 @@ export module Shared.Core.Physics.Bullets.BulletCollision;
 import Extern.Glm;
 
 import Shared.Core.Entities.Bullet;
+import Shared.Core.Entities.Item;
 import Shared.Core.Entities.Soldier;
 import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSStructs;
@@ -42,8 +43,8 @@ std::optional<BulletCollisionResult> FindSoldierCollisionPoint(const Soldier& so
 
     const int radius = bullet.style == BulletType::FragGrenade ? PART_RADIUS + 1 : PART_RADIUS;
     const glm::vec2 collision_origin = GetSoldierCollisionPoint(soldier);
-    const glm::vec2 start_point = bullet.particle.position;
-    const glm::vec2 end_point = start_point + bullet.particle.GetVelocity();
+    const glm::vec2 start_point = bullet.particle.old_position;
+    const glm::vec2 end_point = bullet.particle.position;
     float min_distance = std::numeric_limits<float>::max();
     std::optional<BulletCollisionResult> closest_collision;
 
@@ -125,26 +126,106 @@ std::optional<BulletCollisionResult> FindSoldierCollision(const Bullet& bullet,
         return std::nullopt;
     }
 
-    const Soldier* soldier = state_manager.FindSoldier([&](const Soldier& candidate) {
-        return FindSoldierCollisionPoint(candidate, bullet).has_value();
-    });
-    if (soldier == nullptr ||
-        ((bullet.style == BulletType::Fist || bullet.style == BulletType::Blade) &&
-         soldier->id == bullet.owner_id)) {
-        return std::nullopt;
-    }
-
-    const auto collision = FindSoldierCollisionPoint(*soldier, bullet);
-    if (!collision.has_value()) {
-        return std::nullopt;
-    }
-
-    if (last_hit_distance > -1.0F) {
-        if (collision->distance > last_hit_distance) {
-            return std::nullopt;
+    std::optional<BulletCollisionResult> closest_collision;
+    state_manager.ForEachSoldier([&](const Soldier& candidate) {
+        if ((bullet.style == BulletType::Fist || bullet.style == BulletType::Blade) &&
+            candidate.id == bullet.owner_id) {
+            return;
         }
+
+        const auto collision = FindSoldierCollisionPoint(candidate, bullet);
+        if (!collision.has_value() ||
+            (closest_collision.has_value() && collision->distance >= closest_collision->distance)) {
+            return;
+        }
+
+        closest_collision = collision;
+    });
+
+    if (closest_collision.has_value() && last_hit_distance > -1.0F &&
+        closest_collision->distance > last_hit_distance) {
+        return std::nullopt;
     }
 
-    return collision;
+    return closest_collision;
+}
+
+std::optional<BulletCollisionResult> FindColliderCollision(const Bullet& bullet, const Map& map)
+{
+    constexpr float COLLIDER_RADIUS_SCALE = 1.7F;
+    const glm::vec2 start_point = bullet.particle.old_position;
+    const glm::vec2 end_point = bullet.particle.position;
+    std::optional<BulletCollisionResult> closest_collision;
+
+    for (unsigned int collider_id = 0; collider_id < map.GetColliders().size(); ++collider_id) {
+        const PMSCollider& collider = map.GetColliders().at(collider_id);
+        if (collider.active == 0) {
+            continue;
+        }
+
+        const auto hit_position =
+          Calc::LineCircleCollision(start_point,
+                                    end_point,
+                                    { collider.x, collider.y },
+                                    collider.radius / COLLIDER_RADIUS_SCALE);
+        if (!hit_position.has_value()) {
+            continue;
+        }
+
+        const float distance = Calc::Vec2Length(*hit_position - start_point);
+        if (closest_collision.has_value() && distance >= closest_collision->distance) {
+            continue;
+        }
+
+        closest_collision = BulletCollisionResult{
+            .kind = BulletCollisionKind::MapCollider,
+            .position = *hit_position,
+            .distance = distance,
+            .collider_id = collider_id,
+        };
+    }
+
+    return closest_collision;
+}
+
+std::optional<BulletCollisionResult> FindThingCollision(const Bullet& bullet,
+                                                        const StateManager& state_manager)
+{
+    if (bullet.style == BulletType::FragGrenade) {
+        return std::nullopt;
+    }
+
+    const glm::vec2 start_point = bullet.particle.old_position;
+    const glm::vec2 end_point = bullet.particle.position;
+    std::optional<BulletCollisionResult> closest_collision;
+    state_manager.ForEachItem([&](const Item& item) {
+        if (!item.collide_with_bullets ||
+            (item.holding_soldier_id != 0 && item.holding_soldier_id == bullet.owner_id) ||
+            item.skeleton == nullptr) {
+            return;
+        }
+
+        for (unsigned int particle_id = 1; particle_id <= 2; ++particle_id) {
+            const auto hit_position = Calc::LineCircleCollision(
+              start_point, end_point, item.skeleton->GetPos(particle_id), item.radius);
+            if (!hit_position.has_value()) {
+                continue;
+            }
+
+            const float distance = Calc::Vec2Length(*hit_position - start_point);
+            if (closest_collision.has_value() && distance >= closest_collision->distance) {
+                continue;
+            }
+
+            closest_collision = BulletCollisionResult{
+                .kind = BulletCollisionKind::Item,
+                .position = *hit_position,
+                .distance = distance,
+                .item_id = item.id,
+            };
+        }
+    });
+
+    return closest_collision;
 }
 } // namespace Soldank::BulletCollision

@@ -13,6 +13,7 @@
 import Shared.Core.Animations;
 import Shared.Core.Data.IFileReader;
 import Shared.Core.Entities.Bullet;
+import Shared.Core.Entities.Soldier;
 import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSEnums;
 import Shared.Core.Physics.BulletPhysics;
@@ -68,6 +69,29 @@ Soldank::StateManager CreateStateManager(Soldank::AnimationDataManager& animatio
       animation_data_manager,
       std::make_shared<Soldank::ParticleSystem>(std::vector<Soldank::Particle>{},
                                                 std::vector<Soldank::Constraint>{}));
+}
+
+Soldank::StateManager CreateStateManagerWithSoldierSkeleton(
+  Soldank::AnimationDataManager& animation_data_manager)
+{
+    std::vector<Soldank::Particle> particles;
+    particles.reserve(23);
+    for (int particle_index = 0; particle_index < 23; ++particle_index) {
+        particles.emplace_back(true,
+                               glm::vec2(0.0F, 0.0F),
+                               glm::vec2(0.0F, 0.0F),
+                               glm::vec2(0.0F, 0.0F),
+                               glm::vec2(0.0F, 0.0F),
+                               1.0F,
+                               1.0F,
+                               0.0F,
+                               1.0F,
+                               0.0F);
+    }
+
+    return Soldank::StateManager(
+      animation_data_manager,
+      std::make_shared<Soldank::ParticleSystem>(particles, std::vector<Soldank::Constraint>{}));
 }
 
 Soldank::AnimationDataManager CreateAnimationDataManager()
@@ -172,6 +196,104 @@ TEST(BulletPhysicsTest, MapCollisionResultContainsImpactDistanceAndTargetMetadat
     EXPECT_EQ(*collision->polygon_id, 0U);
     EXPECT_FALSE(collision->soldier_id.has_value());
     EXPECT_FALSE(collision->body_part_id.has_value());
+}
+
+TEST(BulletPhysicsTest, SoldierCollisionResultContainsBodyPartAndImpactPosition)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManagerWithSoldierSkeleton(animation_data_manager);
+    auto soldiers = state_manager.CreateEmptySoldiersSnapshot();
+    soldiers.at(0).active = true;
+    state_manager.ApplySoldiersSnapshot(soldiers);
+    state_manager.TransformSoldier(0, [](Soldank::Soldier& soldier) {
+        soldier.dead_meat = true;
+        soldier.particle.position = { 0.0F, 0.0F };
+        for (unsigned int body_part_id = 1; body_part_id <= 16; ++body_part_id) {
+            soldier.skeleton->SetPos(body_part_id, { 0.0F, 0.0F });
+        }
+    });
+    auto bullet = CreateBullet({ -10.0F, 0.0F }, { 20.0F, 0.0F });
+    bullet.particle.Euler();
+
+    const auto collision =
+      Soldank::BulletCollision::FindSoldierCollision(bullet, state_manager, -1.0F);
+
+    ASSERT_TRUE(collision.has_value());
+    EXPECT_EQ(collision->kind, Soldank::BulletCollisionKind::Soldier);
+    EXPECT_EQ(collision->soldier_id, 0);
+    EXPECT_EQ(collision->body_part_id, 12);
+    EXPECT_NEAR(collision->position.x, -7.0F, 0.01F);
+    EXPECT_NEAR(collision->position.y, 0.02F, 0.01F);
+    EXPECT_NEAR(collision->distance, 3.0F, 0.01F);
+}
+
+TEST(BulletPhysicsTest, SelectsNearestSoldierCollisionRatherThanFirstActiveSoldier)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManagerWithSoldierSkeleton(animation_data_manager);
+    auto soldiers = state_manager.CreateEmptySoldiersSnapshot();
+    soldiers.at(0).active = true;
+    soldiers.at(1).active = true;
+    state_manager.ApplySoldiersSnapshot(soldiers);
+
+    const auto position_skeleton = [](Soldank::Soldier& soldier, glm::vec2 position) {
+        soldier.dead_meat = true;
+        soldier.particle.position = position;
+        soldier.skeleton = std::make_shared<Soldank::ParticleSystem>(
+          std::vector<Soldank::Particle>(
+            23, Soldank::Particle(true, position, position, {}, {}, 1.0F, 1.0F, 0.0F, 1.0F, 0.0F)),
+          std::vector<Soldank::Constraint>{});
+        for (unsigned int body_part_id = 1; body_part_id <= 16; ++body_part_id) {
+            soldier.skeleton->SetPos(body_part_id, position);
+        }
+    };
+    state_manager.TransformSoldier(
+      0, [&](Soldank::Soldier& soldier) { position_skeleton(soldier, { 20.0F, 0.0F }); });
+    state_manager.TransformSoldier(
+      1, [&](Soldank::Soldier& soldier) { position_skeleton(soldier, { 0.0F, 0.0F }); });
+    auto bullet = CreateBullet({ -10.0F, 0.0F }, { 40.0F, 0.0F });
+    bullet.particle.Euler();
+
+    const auto collision =
+      Soldank::BulletCollision::FindSoldierCollision(bullet, state_manager, -1.0F);
+
+    ASSERT_TRUE(collision.has_value());
+    EXPECT_EQ(collision->soldier_id, 1);
+    EXPECT_LT(collision->distance, 20.0F);
+}
+
+TEST(BulletPhysicsTest, ResolvesTheNearestImpactAcrossMapAndSoldiers)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManagerWithSoldierSkeleton(animation_data_manager);
+    auto soldiers = state_manager.CreateEmptySoldiersSnapshot();
+    soldiers.at(0).active = true;
+    state_manager.ApplySoldiersSnapshot(soldiers);
+    state_manager.TransformSoldier(0, [](Soldank::Soldier& soldier) {
+        soldier.dead_meat = true;
+        soldier.particle.position = { -5.0F, 0.0F };
+        for (unsigned int body_part_id = 1; body_part_id <= 16; ++body_part_id) {
+            soldier.skeleton->SetPos(body_part_id, { -5.0F, 0.0F });
+        }
+    });
+    auto map =
+      SoldankTesting::MapBuilder::Empty()
+        ->AddPolygon(
+          { 5.0F, -10.0F }, { 15.0F, -10.0F }, { 10.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+        ->Build();
+    Soldank::PhysicsEvents physics_events;
+    int soldier_hit_count = 0;
+    int map_hit_count = 0;
+    physics_events.soldier_hit_by_bullet.AddObserver(
+      [&](Soldank::Soldier&, float) { ++soldier_hit_count; });
+    physics_events.bullet_collides_with_polygon.AddObserver(
+      [&](const Soldank::Bullet&, const glm::vec2&) { ++map_hit_count; });
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_EQ(soldier_hit_count, 1);
+    EXPECT_EQ(map_hit_count, 0);
 }
 
 TEST(BulletPhysicsTest, MapBulletCollisionPolicyCoversEverySpecialPolygonType)

@@ -16,4 +16,10 @@ void ResolveMapImpact(const PhysicsEvents& physics_events,
     bullet.active = false;
     physics_events.bullet_collides_with_polygon.Notify(bullet, collision.position);
 }
+
+void ResolveBlockingImpact(Bullet& bullet, const BulletCollisionResult& collision)
+{
+    bullet.particle.position = collision.position;
+    bullet.active = false;
+}
 } // namespace Soldank::BulletImpactResolver
