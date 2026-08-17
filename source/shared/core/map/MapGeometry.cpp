@@ -56,6 +56,8 @@ bool PolygonCollidesWith(Soldank::PMSPolygonType polygon_type, const RayCastColl
         case PMSPolygonType::OnlyPlayersCollide:
             return policy.player;
         case PMSPolygonType::NoCollide:
+        case PMSPolygonType::Background:
+        case PMSPolygonType::BackgroundTransition:
             return false;
         default:
             return true;
@@ -66,10 +68,15 @@ bool PolygonCollidesWithCollisionTest(Soldank::PMSPolygonType polygon_type, bool
 {
     using Soldank::PMSPolygonType;
     constexpr std::array ALWAYS_EXCLUDED{
-        PMSPolygonType::OnlyBulletsCollide, PMSPolygonType::OnlyPlayersCollide,
-        PMSPolygonType::NoCollide,          PMSPolygonType::AlphaPlayers,
-        PMSPolygonType::BravoPlayers,       PMSPolygonType::CharliePlayers,
+        PMSPolygonType::OnlyBulletsCollide,
+        PMSPolygonType::OnlyPlayersCollide,
+        PMSPolygonType::NoCollide,
+        PMSPolygonType::AlphaPlayers,
+        PMSPolygonType::BravoPlayers,
+        PMSPolygonType::CharliePlayers,
         PMSPolygonType::DeltaPlayers,
+        PMSPolygonType::Background,
+        PMSPolygonType::BackgroundTransition,
     };
     constexpr std::array NON_FLAG_EXCLUDED{
         PMSPolygonType::FlaggerCollides,

@@ -257,7 +257,7 @@ TEST_F(MapEditorControllersTest, UiOptionsAndAssetBrowserReturnCompleteSortedCho
     EXPECT_EQ(EditorUiOptions::GetToolOptions().size(), 11U);
     EXPECT_EQ(EditorUiOptions::GetDisabledToolTypes().size(), 3U);
     EXPECT_EQ(EditorUiOptions::GetSpawnPointOptions().size(), 17U);
-    EXPECT_EQ(EditorUiOptions::GetPolygonTypeOptions().size(), 24U);
+    EXPECT_EQ(EditorUiOptions::GetPolygonTypeOptions().size(), 26U);
     EXPECT_EQ(EditorUiOptions::GetWeatherOptions().size(), 4U);
     EXPECT_EQ(EditorUiOptions::GetStepOptions().size(), 3U);
     EXPECT_EQ(EditorUiOptions::GetJetFuelOptions().size(), 8U);

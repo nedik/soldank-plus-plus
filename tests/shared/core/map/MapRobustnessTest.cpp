@@ -467,6 +467,13 @@ TEST(MapRobustnessTest, CollisionPoliciesDocumentNonFlaggerAndOnlyPlayerDifferen
     EXPECT_FALSE(map.CollisionTest({ -5.0F, -5.0F }, perpendicular));
 }
 
+TEST(MapRobustnessTest, CollisionPoliciesExcludeBackgroundPolygons)
+{
+    EXPECT_FALSE(RayCastHitsPolygon(Soldank::PMSPolygonType::Background, true, false, false, 0));
+    EXPECT_FALSE(
+      RayCastHitsPolygon(Soldank::PMSPolygonType::BackgroundTransition, true, false, false, 0));
+}
+
 TEST(MapRobustnessTest, ColliderRayCastBranchCurrentlyDoesNotReportCollision)
 {
     Soldank::MapData map_data;

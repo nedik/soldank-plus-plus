@@ -76,7 +76,7 @@ std::span<const std::pair<std::string_view, PMSSpawnPointType>> GetSpawnPointOpt
 
 std::span<const std::pair<std::string_view, PMSPolygonType>> GetPolygonTypeOptions()
 {
-    static constexpr std::array<std::pair<std::string_view, PMSPolygonType>, 24> OPTIONS = {
+    static constexpr std::array<std::pair<std::string_view, PMSPolygonType>, 26> OPTIONS = {
         { { "Normal", PMSPolygonType::Normal },
           { "All Bullets Collide", PMSPolygonType::OnlyBulletsCollide },
           { "All Players Collide", PMSPolygonType::OnlyPlayersCollide },
@@ -100,7 +100,9 @@ std::span<const std::pair<std::string_view, PMSPolygonType>> GetPolygonTypeOptio
           { "Hurting Flaggers", PMSPolygonType::HurtFlaggers },
           { "Only Flaggers Collide", PMSPolygonType::FlaggerCollides },
           { "Only Non Flaggers Collide", PMSPolygonType::NonFlaggerCollides },
-          { "Only Flag Collide", PMSPolygonType::FlagCollides } }
+          { "Only Flag Collide", PMSPolygonType::FlagCollides },
+          { "Background", PMSPolygonType::Background },
+          { "Background Transition", PMSPolygonType::BackgroundTransition } }
     };
     return OPTIONS;
 }

@@ -320,6 +320,9 @@ TEST(BulletPhysicsTest, MapBulletCollisionPolicyCoversEverySpecialPolygonType)
       Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::FlaggerCollides, 0));
     EXPECT_FALSE(
       Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::NonFlaggerCollides, 0));
+    EXPECT_FALSE(Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::Background, 0));
+    EXPECT_FALSE(
+      Soldank::Map::BulletCollidesWithPolygon(Soldank::PMSPolygonType::BackgroundTransition, 0));
 
     constexpr std::array TEAM_BULLET_TYPES{
         Soldank::PMSPolygonType::AlphaBullets,
@@ -342,6 +345,27 @@ TEST(BulletPhysicsTest, MapBulletCollisionPolicyCoversEverySpecialPolygonType)
             EXPECT_FALSE(
               Soldank::Map::BulletCollidesWithPolygon(TEAM_PLAYER_TYPES.at(type_index), team_id));
         }
+    }
+}
+
+TEST(BulletPhysicsTest, MapSweepIgnoresBulletExcludedPolygonTypes)
+{
+    constexpr std::array EXCLUDED_POLYGON_TYPES{
+        Soldank::PMSPolygonType::OnlyPlayersCollide, Soldank::PMSPolygonType::NoCollide,
+        Soldank::PMSPolygonType::FlaggerCollides,    Soldank::PMSPolygonType::NonFlaggerCollides,
+        Soldank::PMSPolygonType::Background,         Soldank::PMSPolygonType::BackgroundTransition,
+    };
+
+    for (const auto polygon_type : EXCLUDED_POLYGON_TYPES) {
+        auto map =
+          SoldankTesting::MapBuilder::Empty()
+            ->AddPolygon({ -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, polygon_type)
+            ->Build();
+        auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+        bullet.particle.Euler();
+
+        EXPECT_FALSE(Soldank::BulletCollision::FindMapCollision(bullet, *map).has_value());
     }
 }
 

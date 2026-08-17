@@ -84,7 +84,9 @@ public:
     void ApplySoldiersSnapshot(const SoldierStates& soldiers)
     {
         state_.soldiers = soldiers;
-        for (auto& soldier : state_.soldiers) {
+        for (std::size_t soldier_id = 0; soldier_id < state_.soldiers.size(); ++soldier_id) {
+            Soldier& soldier = state_.soldiers.at(soldier_id);
+            soldier.id = static_cast<std::uint8_t>(soldier_id);
             if (soldier.active) {
                 RepositionSoldierSkeletonParts(soldier);
             }

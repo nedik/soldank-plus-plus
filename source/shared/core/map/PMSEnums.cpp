@@ -27,7 +27,9 @@ enum class PMSPolygonType : unsigned char
     HurtFlaggers,
     FlaggerCollides,
     NonFlaggerCollides,
-    FlagCollides
+    FlagCollides,
+    Background,
+    BackgroundTransition
 };
 
 enum class PMSSceneryLevel : unsigned char

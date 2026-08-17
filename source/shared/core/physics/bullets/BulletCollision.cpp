@@ -52,7 +52,6 @@ std::optional<BulletCollisionResult> FindSoldierCollisionPoint(const Soldier& so
         glm::vec2 body_part_offset =
           soldier.skeleton->GetPos(body_part_id) - soldier.particle.position;
         glm::vec2 collision_position = collision_origin + body_part_offset;
-        collision_position.x -= 2.0F;
 
         const auto hit_position =
           Calc::LineCircleCollision(start_point, end_point, collision_position, radius);
