@@ -474,6 +474,26 @@ TEST(MapRobustnessTest, CollisionPoliciesExcludeBackgroundPolygons)
       RayCastHitsPolygon(Soldank::PMSPolygonType::BackgroundTransition, true, false, false, 0));
 }
 
+TEST(MapRobustnessTest, SectorIndexesPreserveOpenSoldatSignedCoordinates)
+{
+    constexpr int SECTOR_SIZE = 10;
+    constexpr int SECTOR_COUNT = 25;
+    Soldank::MapData map_data;
+    map_data.center_x = 100.0F;
+    map_data.center_y = -50.0F;
+    map_data.sectors_size = SECTOR_SIZE;
+    map_data.sectors_count = SECTOR_COUNT;
+    map_data.sectors_poly = std::vector<std::vector<Soldank::PMSSector>>(
+      2 * SECTOR_COUNT + 1, std::vector<Soldank::PMSSector>(2 * SECTOR_COUNT + 1));
+    const Soldank::Map map(std::move(map_data));
+
+    EXPECT_EQ(map.GetSectorIndex({ 100.0F, -50.0F }), (glm::ivec2{ 25, 25 }));
+    EXPECT_EQ(map.GetSectorIndex({ -150.0F, -300.0F }), (glm::ivec2{ 0, 0 }));
+    EXPECT_EQ(map.GetSectorIndex({ 350.0F, 200.0F }), (glm::ivec2{ 50, 50 }));
+    EXPECT_EQ(map.GetSectorIndex({ -155.0F, -305.0F }), (glm::ivec2{ -1, -1 }));
+    EXPECT_EQ(map.GetSectorIndex({ 355.0F, 205.0F }), (glm::ivec2{ 51, 51 }));
+}
+
 TEST(MapRobustnessTest, ColliderRayCastBranchCurrentlyDoesNotReportCollision)
 {
     Soldank::MapData map_data;

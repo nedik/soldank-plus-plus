@@ -138,6 +138,13 @@ public:
     void TransformItems(const std::function<void(Item& item)>& transform_item_function);
     void ForEachItem(const std::function<void(const Item& item)>& for_each_item_function) const;
 
+    void SetRandomSeed(std::uint32_t seed) { mersenne_twister_engine_.seed(seed); }
+    unsigned int GetRandomInt(unsigned int minimum, unsigned int maximum)
+    {
+        return std::uniform_int_distribution<unsigned int>(minimum,
+                                                           maximum)(mersenne_twister_engine_);
+    }
+
     unsigned int GetGameTick() const { return state_.game_tick; }
     void SetGameTick(unsigned int new_game_tick) { state_.game_tick = new_game_tick; }
 
@@ -153,8 +160,7 @@ private:
     State state_;
     std::vector<BulletParams> bullet_emitter_;
 
-    std::random_device random_device_{};
-    std::mt19937 mersenne_twister_engine_{ random_device_() };
+    std::mt19937 mersenne_twister_engine_{ 0U };
 };
 } // namespace Soldank
 
@@ -560,11 +566,8 @@ glm::vec2 StateManager::SpawnSoldier(unsigned int soldier_id,
         }
 
         if (!possible_spawn_point_positions.empty()) {
-            std::uniform_int_distribution<unsigned int> spawnpoint_id_random_distribution(
-              0, possible_spawn_point_positions.size() - 1);
-
             unsigned int random_spawnpoint_id =
-              spawnpoint_id_random_distribution(mersenne_twister_engine_);
+              GetRandomInt(0, static_cast<unsigned int>(possible_spawn_point_positions.size()) - 1);
 
             initial_player_position = possible_spawn_point_positions.at(random_spawnpoint_id);
         }

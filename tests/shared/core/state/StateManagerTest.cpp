@@ -48,3 +48,19 @@ TEST(StateManagerTest, CreateItemReturnsTheInitializedItemSlot)
     ASSERT_NE(item.skeleton, nullptr);
     EXPECT_EQ(item.skeleton->GetParticles().size(), 2U);
 }
+
+TEST(StateManagerTest, RandomNumbersAreReproducibleAfterResettingTheSeed)
+{
+    AnimationDataReader animation_data_reader;
+    Soldank::AnimationDataManager animation_data_manager;
+    animation_data_manager.LoadAnimationData(
+      Soldank::AnimationType::Stand, "stand.poa", true, 1, animation_data_reader);
+    Soldank::StateManager state_manager(
+      animation_data_manager, Soldank::ParticleSystem::Load(Soldank::ParticleSystemType::Soldier));
+
+    state_manager.SetRandomSeed(42U);
+    const unsigned int first_value = state_manager.GetRandomInt(0, 1000);
+    state_manager.SetRandomSeed(42U);
+
+    EXPECT_EQ(state_manager.GetRandomInt(0, 1000), first_value);
+}

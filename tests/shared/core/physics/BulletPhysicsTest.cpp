@@ -192,6 +192,8 @@ TEST(BulletPhysicsTest, MapCollisionResultContainsImpactDistanceAndTargetMetadat
     ASSERT_TRUE(collision.has_value());
     EXPECT_EQ(collision->kind, Soldank::BulletCollisionKind::MapPolygon);
     EXPECT_GT(collision->distance, 0.0F);
+    ASSERT_TRUE(collision->surface_normal.has_value());
+    EXPECT_LT(glm::dot(*collision->surface_normal, bullet.particle.GetVelocity()), 0.0F);
     EXPECT_TRUE(collision->polygon_id.has_value());
     EXPECT_EQ(*collision->polygon_id, 0U);
     EXPECT_FALSE(collision->soldier_id.has_value());
@@ -381,6 +383,30 @@ TEST(BulletPhysicsTest, PreservesProjectilesForEligiblePenetratingHits)
               0.66F);
     EXPECT_FALSE(
       Soldank::BulletDamage::GetPenetrationVelocityMultiplier(false, false, 10.0F, 30.0F));
+}
+
+TEST(BulletPhysicsTest, KeepsBulletActiveAfterPenetratingDeadSoldier)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManagerWithSoldierSkeleton(animation_data_manager);
+    auto soldiers = state_manager.CreateEmptySoldiersSnapshot();
+    soldiers.at(0).active = true;
+    state_manager.ApplySoldiersSnapshot(soldiers);
+    state_manager.TransformSoldier(0, [](Soldank::Soldier& soldier) {
+        soldier.dead_meat = true;
+        soldier.particle.position = { 0.0F, 0.0F };
+        for (unsigned int body_part_id = 1; body_part_id <= 16; ++body_part_id) {
+            soldier.skeleton->SetPos(body_part_id, { 0.0F, 0.0F });
+        }
+    });
+    auto map = SoldankTesting::MapBuilder::Empty()->Build();
+    Soldank::PhysicsEvents physics_events;
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_TRUE(bullet.active);
+    EXPECT_NEAR(bullet.particle.GetVelocity().x, 35.64F, 0.01F);
 }
 
 TEST(BulletPhysicsTest, ReducesDamageMultiplierAfterTravellingPastFirstThreshold)

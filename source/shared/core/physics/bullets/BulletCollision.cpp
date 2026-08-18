@@ -24,6 +24,42 @@ namespace Soldank
 {
 namespace
 {
+glm::vec2 GetMapImpactNormal(const PMSPolygon& polygon,
+                             const glm::vec2& position,
+                             const glm::vec2& travel_direction)
+{
+    float closest_distance_squared = std::numeric_limits<float>::max();
+    glm::vec2 normal{};
+
+    for (std::size_t edge = 0; edge < polygon.vertices.size(); ++edge) {
+        const glm::vec2 edge_start{ polygon.vertices.at(edge).x, polygon.vertices.at(edge).y };
+        const glm::vec2 edge_end{ polygon.vertices.at((edge + 1) % polygon.vertices.size()).x,
+                                  polygon.vertices.at((edge + 1) % polygon.vertices.size()).y };
+        const glm::vec2 edge_vector = edge_end - edge_start;
+        const float edge_length_squared = glm::dot(edge_vector, edge_vector);
+        if (edge_length_squared == 0.0F) {
+            continue;
+        }
+
+        const float projection = glm::clamp(
+          glm::dot(position - edge_start, edge_vector) / edge_length_squared, 0.0F, 1.0F);
+        const glm::vec2 closest_point = edge_start + edge_vector * projection;
+        const float distance_squared = glm::dot(position - closest_point, position - closest_point);
+        if (distance_squared >= closest_distance_squared) {
+            continue;
+        }
+
+        closest_distance_squared = distance_squared;
+        normal = { polygon.perpendiculars.at(edge).x, polygon.perpendiculars.at(edge).y };
+    }
+
+    if (glm::dot(normal, travel_direction) > 0.0F) {
+        normal = -normal;
+    }
+
+    return glm::normalize(normal);
+}
+
 glm::vec2 GetSoldierCollisionPoint(const Soldier& soldier)
 {
     // TODO: use lag-compensated historical positions.
@@ -107,6 +143,8 @@ std::optional<BulletCollisionResult> FindMapCollision(const Bullet& bullet, cons
                     .kind = BulletCollisionKind::MapPolygon,
                     .position = position,
                     .distance = Calc::Vec2Length(position - start_point),
+                    .surface_normal =
+                      GetMapImpactNormal(polygon, position, end_point - start_point),
                     .polygon_id = polygon_id,
                 };
             }

@@ -22,6 +22,7 @@ struct BulletCollisionResult
     BulletCollisionKind kind;
     glm::vec2 position;
     float distance;
+    std::optional<glm::vec2> surface_normal;
     std::optional<unsigned int> polygon_id;
     std::optional<unsigned int> collider_id;
     std::optional<std::uint8_t> soldier_id;

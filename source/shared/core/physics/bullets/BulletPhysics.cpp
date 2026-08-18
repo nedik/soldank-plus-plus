@@ -12,7 +12,6 @@ import Extern.Glm;
 
 import Shared.Core.Entities.Bullet;
 import Shared.Core.Physics.Bullets.BulletCollision;
-import Shared.Core.Physics.Bullets.BulletDamage;
 import Shared.Core.Physics.Bullets.BulletImpactResolver;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.PhysicsEvents;
@@ -30,7 +29,7 @@ void ApplyTimeoutAndDamageFalloff(Bullet& bullet)
     --bullet.timeout;
 
     if (bullet.timeout == 0) {
-        bullet.active = false;
+        BulletImpactResolver::ResolveExpiry(bullet);
         return;
     }
 
@@ -96,22 +95,7 @@ void UpdateBullet(const PhysicsEvents& physics_events,
       BulletCollision::FindThingCollision(bullet, state_manager),
     });
     if (collision.has_value()) {
-        switch (collision->kind) {
-            case BulletCollisionKind::MapPolygon:
-                BulletImpactResolver::ResolveMapImpact(physics_events, bullet, *collision);
-                break;
-            case BulletCollisionKind::Soldier:
-                if (BulletDamage::ApplyDirectHit(
-                      physics_events, bullet, state_manager, *collision) ==
-                    BulletDamage::DirectHitOutcome::Destroyed) {
-                    bullet.active = false;
-                }
-                break;
-            case BulletCollisionKind::MapCollider:
-            case BulletCollisionKind::Item:
-                BulletImpactResolver::ResolveBlockingImpact(bullet, *collision);
-                break;
-        }
+        BulletImpactResolver::ResolveImpact(physics_events, bullet, state_manager, *collision);
     }
 
     ApplyTimeoutAndDamageFalloff(bullet);
