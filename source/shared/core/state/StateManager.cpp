@@ -112,6 +112,7 @@ public:
     void TransformSoldier(std::uint8_t soldier_id,
                           const std::function<void(Soldier&)>& transform_soldier_function);
     void TransformSoldiers(const std::function<void(Soldier&)>& transform_soldier_function);
+    Soldier& GetSoldier(std::uint8_t soldier_id);
     const Soldier& GetSoldier(std::uint8_t soldier_id) const;
     const Soldier& CreateSoldier(std::optional<unsigned int> force_soldier_id);
     glm::vec2 SpawnSoldier(unsigned int soldier_id, std::optional<glm::vec2> spawn_position);
@@ -495,6 +496,11 @@ void StateManager::TransformSoldiers(
 
         transform_soldier_function(soldier);
     }
+}
+
+Soldier& StateManager::GetSoldier(std::uint8_t soldier_id)
+{
+    return GetSoldierRef(soldier_id);
 }
 
 const Soldier& StateManager::GetSoldier(std::uint8_t soldier_id) const

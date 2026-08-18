@@ -80,9 +80,8 @@ DirectHitOutcome ApplyDirectHit(const PhysicsEvents& physics_events,
             const float speed = Calc::Vec2Length(bullet_velocity);
             const bool was_dead = soldier.dead_meat;
             const float damage = speed * weapon_parameters.hit_multiply * hitbox_modifier;
-            state_manager.TransformSoldier(*collision.soldier_id, [&](Soldier& target) {
-                physics_events.soldier_hit_by_bullet.Notify(target, damage);
-            });
+            Soldier& target = state_manager.GetSoldier(*collision.soldier_id);
+            physics_events.soldier_hit_by_bullet.Notify(target, damage);
 
             const bool is_dead_after_hit =
               state_manager.GetSoldier(*collision.soldier_id).dead_meat;
