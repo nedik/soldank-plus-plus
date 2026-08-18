@@ -70,6 +70,8 @@ struct Bullet
     float timeout_real{};
     float hit_multiply{};
     float hit_multiply_prev{};
+    glm::vec2 hit_spot{};
+    std::int32_t ricochet_count{};
     std::uint32_t degrade_count = 0;
     float push{};
 };

@@ -20,7 +20,6 @@ import Shared.Core.Entities.Item;
 import Shared.Core.Entities.Soldier;
 import Shared.Core.Entities.Weapon;
 import Shared.Core.Entities.WeaponParametersFactory;
-import Shared.Core.Types.BulletType;
 import Shared.Core.Types.ItemType;
 import Shared.Core.Types.TeamType;
 import Shared.Core.Types.WeaponType;
@@ -208,15 +207,6 @@ private:
             spdlog::info("PLAYER {} THROWS FLAGS", soldier.id);
             world->GetStateManager()->ThrowSoldierFlags(soldier.id);
         });
-        world->GetPhysicsEvents().bullet_collides_with_polygon.AddObserver(
-          [world](const Bullet& bullet, const glm::vec2& collision_position) {
-              if (bullet.style == BulletType::ThrownKnife) {
-                  glm::vec2 knife_as_item_position = collision_position;
-                  knife_as_item_position -= bullet.particle.GetVelocity() * 2.0F;
-
-                  world->GetStateManager()->CreateItem(knife_as_item_position, 0, ItemType::Knife);
-              }
-          });
     }
 };
 } // namespace Soldank

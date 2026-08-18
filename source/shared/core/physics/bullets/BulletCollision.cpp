@@ -1,5 +1,6 @@
 module;
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -41,7 +42,7 @@ glm::vec2 GetMapImpactNormal(const PMSPolygon& polygon,
             continue;
         }
 
-        const float projection = glm::clamp(
+        const float projection = std::clamp(
           glm::dot(position - edge_start, edge_vector) / edge_length_squared, 0.0F, 1.0F);
         const glm::vec2 closest_point = edge_start + edge_vector * projection;
         const float distance_squared = glm::dot(position - closest_point, position - closest_point);
@@ -57,7 +58,8 @@ glm::vec2 GetMapImpactNormal(const PMSPolygon& polygon,
         normal = -normal;
     }
 
-    return glm::normalize(normal);
+    const float normal_length = glm::length(normal);
+    return normal_length == 0.0F ? glm::vec2{} : normal / normal_length;
 }
 
 glm::vec2 GetSoldierCollisionPoint(const Soldier& soldier)
@@ -238,7 +240,7 @@ std::optional<BulletCollisionResult> FindThingCollision(const Bullet& bullet,
     state_manager.ForEachItem([&](const Item& item) {
         if (!item.collide_with_bullets ||
             (item.holding_soldier_id != 0 && item.holding_soldier_id == bullet.owner_id) ||
-            item.skeleton == nullptr) {
+            !item.skeleton) {
             return;
         }
 

@@ -510,6 +510,7 @@
       "name": "emscripten-client-release",
       "displayName": "Build Emscripten Browser Client Release",
       "configurePreset": "emscripten-client-release",
+      "jobs": 2,
       "targets": [
         "client"
       ]

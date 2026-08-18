@@ -36,7 +36,11 @@ if (BUILD_WEBASM_CLIENT OR (CMAKE_SYSTEM_NAME STREQUAL "Emscripten"))
     set(BUILD_USE_LLD_LINKER OFF CACHE BOOL "Use LLVM lld as the linker when supported" FORCE)
 endif()
 
-if (BUILD_USE_COMPILER_CACHE)
+if (BUILD_USE_COMPILER_CACHE AND CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+    # em++ is a wrapper around a versioned Clang. ccache cannot reliably detect
+    # changes to that underlying compiler and can restore incompatible C++ module PCMs.
+    message(STATUS "Skipping compiler cache for Emscripten: C++ module PCMs require the active compiler format")
+elseif (BUILD_USE_COMPILER_CACHE)
     if (MSVC)
         find_program(SCCACHE_PROGRAM sccache)
         if (SCCACHE_PROGRAM)
@@ -298,6 +302,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     add_compile_options(
         --target=wasm32-unknown-emscripten
         --sysroot=${EMSCRIPTEN_SYSROOT_DIR}
+        # libc++ ABI tags conflict with named C++ module imports in Emscripten's Clang.
+        -D_LIBCPP_NO_ABI_TAG
         $<$<COMPILE_LANGUAGE:CXX>:-stdlib=libc++>
     )
     add_link_options(

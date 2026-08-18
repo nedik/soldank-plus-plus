@@ -361,6 +361,9 @@ if (BUILD_WEBASM_CLIENT_TRANSPORT AND CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     "SHELL:-sALLOW_MEMORY_GROWTH=0"
     "SHELL:-sINITIAL_MEMORY=536870912"
     "SHELL:-sASYNCIFY=1"
+    # Avoid requiring html-minifier-terser from the host Emscripten package.
+    # This only leaves the generated HTML wrapper unminified.
+    "SHELL:-sMINIFY_HTML=0"
     ${webasm_preload_options}
   )
 endif()

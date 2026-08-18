@@ -13,6 +13,7 @@
 import Shared.Core.Animations;
 import Shared.Core.Data.IFileReader;
 import Shared.Core.Entities.Bullet;
+import Shared.Core.Entities.Item;
 import Shared.Core.Entities.Soldier;
 import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSEnums;
@@ -24,6 +25,7 @@ import Shared.Core.Physics.Particles;
 import Shared.Core.Physics.PhysicsEvents;
 import Shared.Core.State.StateManager;
 import Shared.Core.Types.BulletType;
+import Shared.Core.Types.ItemType;
 import Shared.Core.Types.TeamType;
 import Shared.Core.Types.WeaponType;
 import Testing.Framework.Shared.MapBuilder;
@@ -175,6 +177,129 @@ TEST(BulletPhysicsTest, DetectsMapCollisionAlongBulletSweepAndEmitsEvent)
     EXPECT_LT(collision_position.x, 0.0F);
     EXPECT_GT(collision_position.y, 0.0F);
     EXPECT_LT(collision_position.y, 0.135F);
+}
+
+TEST(BulletPhysicsTest, RicochetsEligibleProjectilesAwayFromMapSurfaces)
+{
+    constexpr auto RICOCHETING_STYLES = std::array{
+        Soldank::BulletType::Bullet,     Soldank::BulletType::GaugeBullet,
+        Soldank::BulletType::Fist,       Soldank::BulletType::Blade,
+        Soldank::BulletType::M2Bullet,   Soldank::BulletType::M79Grenade,
+        Soldank::BulletType::FlameArrow, Soldank::BulletType::LAWMissile,
+    };
+
+    for (const Soldank::BulletType style : RICOCHETING_STYLES) {
+        auto animation_data_manager = CreateAnimationDataManager();
+        auto state_manager = CreateStateManager(animation_data_manager);
+        auto map =
+          SoldankTesting::MapBuilder::Empty()
+            ->AddPolygon(
+              { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+            ->Build();
+        Soldank::PhysicsEvents physics_events;
+        auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+        bullet.style = style;
+        bullet.hit_spot = { -100.0F, 0.0F };
+
+        Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+        EXPECT_TRUE(bullet.active);
+        EXPECT_LT(bullet.particle.GetVelocity().x, 0.0F);
+        EXPECT_EQ(bullet.ricochet_count, 1);
+    }
+}
+
+TEST(BulletPhysicsTest, BouncesFragGrenadesAndFlamesWithDamping)
+{
+    constexpr auto BOUNCING_STYLES =
+      std::array{ Soldank::BulletType::FragGrenade, Soldank::BulletType::Flame };
+
+    for (const Soldank::BulletType style : BOUNCING_STYLES) {
+        auto animation_data_manager = CreateAnimationDataManager();
+        auto state_manager = CreateStateManager(animation_data_manager);
+        auto map =
+          SoldankTesting::MapBuilder::Empty()
+            ->AddPolygon(
+              { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+            ->Build();
+        Soldank::PhysicsEvents physics_events;
+        auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+        bullet.style = style;
+
+        Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+        EXPECT_TRUE(bullet.active);
+        EXPECT_LT(bullet.particle.GetVelocity().x, 0.0F);
+        EXPECT_LT(glm::length(bullet.particle.GetVelocity()), 40.0F);
+        if (style == Soldank::BulletType::Flame) {
+            EXPECT_EQ(bullet.timeout, 15);
+        }
+    }
+}
+
+TEST(BulletPhysicsTest, MakesArrowsResistMapImpacts)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManager(animation_data_manager);
+    auto map =
+      SoldankTesting::MapBuilder::Empty()
+        ->AddPolygon(
+          { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+        ->Build();
+    Soldank::PhysicsEvents physics_events;
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F }, 400);
+    bullet.style = Soldank::BulletType::Arrow;
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_TRUE(bullet.active);
+    EXPECT_EQ(bullet.timeout, 279);
+    EXPECT_LT(bullet.particle.GetForce().y, 0.0F);
+}
+
+TEST(BulletPhysicsTest, DeactivatesClusterProjectilesAndCreatesKnifeItemsOnMapImpact)
+{
+    constexpr auto DETONATING_STYLES =
+      std::array{ Soldank::BulletType::ClusterGrenade, Soldank::BulletType::Cluster };
+
+    for (const Soldank::BulletType style : DETONATING_STYLES) {
+        auto animation_data_manager = CreateAnimationDataManager();
+        auto state_manager = CreateStateManager(animation_data_manager);
+        auto map =
+          SoldankTesting::MapBuilder::Empty()
+            ->AddPolygon(
+              { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+            ->Build();
+        Soldank::PhysicsEvents physics_events;
+        auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+        bullet.style = style;
+
+        Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+        EXPECT_FALSE(bullet.active);
+    }
+
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManager(animation_data_manager);
+    auto map =
+      SoldankTesting::MapBuilder::Empty()
+        ->AddPolygon(
+          { -5.0F, -10.0F }, { 5.0F, -10.0F }, { 0.0F, 10.0F }, Soldank::PMSPolygonType::Normal)
+        ->Build();
+    Soldank::PhysicsEvents physics_events;
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+    bullet.style = Soldank::BulletType::ThrownKnife;
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    std::size_t knife_count = 0;
+    state_manager.ForEachItem([&knife_count](const Soldank::Item& item) {
+        if (item.style == Soldank::ItemType::Knife) {
+            ++knife_count;
+        }
+    });
+    EXPECT_FALSE(bullet.active);
+    EXPECT_EQ(knife_count, 1U);
 }
 
 TEST(BulletPhysicsTest, MapCollisionResultContainsImpactDistanceAndTargetMetadata)
