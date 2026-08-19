@@ -20,6 +20,7 @@ import Shared.Core.Animations;
 import Shared.Core.State.Control;
 import Shared.Core.Entities.Weapon;
 import Shared.Core.Entities.Bullet;
+import Shared.Core.Types.TeamType;
 
 const float GRAV = 0.06F;
 
@@ -89,6 +90,32 @@ struct Soldier
         is_shooting = false;
     }
 
+    void SetTeam(TeamType new_team) { team = new_team; }
+    TeamType GetTeam() const { return team; }
+    bool IsSpectator() const { return team == TeamType::Spectator; }
+    bool IsInSameTeam(const Soldier& other) const
+    {
+        return team != TeamType::None && team == other.team;
+    }
+    bool IsAlive() const { return active && !dead_meat; }
+    bool IsRagdoll() const { return dead_meat; }
+
+    void SetCeaseFireCounter(std::int16_t new_cease_fire_counter)
+    {
+        cease_fire_counter = new_cease_fire_counter;
+    }
+    std::int16_t GetCeaseFireCounter() const { return cease_fire_counter; }
+    bool CanReceiveCombatImpact() const
+    {
+        return active && !IsSpectator() && cease_fire_counter < 0;
+    }
+
+    void SetPingTicks(std::uint16_t new_ping_ticks) { ping_ticks = new_ping_ticks; }
+    std::uint16_t GetPingTicks() const { return ping_ticks; }
+
+    Weapon& GetActiveWeapon() { return weapons.at(active_weapon); }
+    const Weapon& GetActiveWeapon() const { return weapons.at(active_weapon); }
+
     std::uint8_t id{};
 
     glm::vec2 mouse{};
@@ -97,6 +124,9 @@ struct Soldier
 
     bool active{};
     bool dead_meat{ true };
+    TeamType team{ TeamType::None };
+    std::int16_t cease_fire_counter{ -1 };
+    std::uint16_t ping_ticks{};
     std::uint8_t style{};
     std::uint32_t num{};
     std::uint8_t visible{};

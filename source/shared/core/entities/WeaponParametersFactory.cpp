@@ -100,6 +100,8 @@ WeaponParameters LoadFromINI(const CSimpleIniA& ini_config, WeaponType weapon_ty
       (float)ini_config.GetDoubleValue(ini_name.c_str(), "ModifierChest");
     weapon_parameters.modifier_legs =
       (float)ini_config.GetDoubleValue(ini_name.c_str(), "ModifierLegs");
+    weapon_parameters.no_collision =
+      static_cast<std::uint8_t>(ini_config.GetLongValue(ini_name.c_str(), "NoCollision"));
 
     switch (weapon_type) {
         case WeaponType::ClusterGrenade:

@@ -10,6 +10,21 @@ import Shared.Core.Types.BulletType;
 
 export namespace Soldank
 {
+enum class WeaponNoCollision : std::uint8_t
+{
+    Enemy = 1U << 0U,
+    Team = 1U << 1U,
+    Self = 1U << 2U,
+    ExplosionEnemy = 1U << 3U,
+    ExplosionTeam = 1U << 4U,
+    ExplosionSelf = 1U << 5U,
+};
+
+constexpr bool HasWeaponNoCollision(std::uint8_t collision_mask, WeaponNoCollision collision)
+{
+    return (collision_mask & static_cast<std::uint8_t>(collision)) != 0U;
+}
+
 struct WeaponParameters
 {
     WeaponType kind;
@@ -26,6 +41,7 @@ struct WeaponParameters
     float modifier_legs;
     float modifier_chest;
     float modifier_head;
+    std::uint8_t no_collision{};
     float inherited_velocity;
     float push;
     float speed;

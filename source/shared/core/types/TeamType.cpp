@@ -9,5 +9,6 @@ enum class TeamType : unsigned int
     Bravo,
     Charlie,
     Delta,
+    Spectator,
 };
 } // namespace Soldank
