@@ -28,5 +28,6 @@ struct BulletCollisionResult
     std::optional<std::uint8_t> soldier_id;
     std::optional<int> body_part_id;
     std::optional<std::uint8_t> item_id;
+    std::optional<unsigned int> item_particle_id;
 };
 } // namespace Soldank

@@ -8,6 +8,7 @@
 #include <ios>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 import Shared.Core.Animations;
@@ -17,9 +18,11 @@ import Shared.Core.Entities.Item;
 import Shared.Core.Entities.Soldier;
 import Shared.Core.Map.Map;
 import Shared.Core.Map.PMSEnums;
+import Shared.Core.Map.PMSStructs;
 import Shared.Core.Physics.BulletPhysics;
 import Shared.Core.Physics.Bullets.BulletCollision;
 import Shared.Core.Physics.Bullets.BulletDamage;
+import Shared.Core.Physics.Bullets.BulletImpactResolver;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.Particles;
 import Shared.Core.Physics.PhysicsEvents;
@@ -104,6 +107,27 @@ Soldank::AnimationDataManager CreateAnimationDataManager()
       Soldank::AnimationType::Stand, "stand.poa", true, 1, animation_data_reader);
     return animation_data_manager;
 }
+
+std::unique_ptr<Soldank::Map> CreateMapWithColliders(std::vector<Soldank::PMSCollider> colliders)
+{
+    Soldank::MapData map_data;
+    map_data.sectors_size = 100;
+    map_data.sectors_poly =
+      std::vector<std::vector<Soldank::PMSSector>>(51, std::vector<Soldank::PMSSector>(51));
+    map_data.colliders = std::move(colliders);
+    return std::make_unique<Soldank::Map>(std::move(map_data));
+}
+
+std::shared_ptr<Soldank::ParticleSystem> CreateItemSkeleton(glm::vec2 position,
+                                                            glm::vec2 old_position)
+{
+    return std::make_shared<Soldank::ParticleSystem>(
+      std::vector<Soldank::Particle>{
+        { true, position, old_position, {}, {}, 1.0F, 1.0F, 0.0F, 1.0F, 0.0F },
+        { true, position, old_position, {}, {}, 1.0F, 1.0F, 0.0F, 1.0F, 0.0F },
+      },
+      std::vector<Soldank::Constraint>{});
+}
 } // namespace
 
 TEST(BulletPhysicsTest, MovesBulletUsingParticleEulerIntegration)
@@ -119,6 +143,118 @@ TEST(BulletPhysicsTest, MovesBulletUsingParticleEulerIntegration)
     EXPECT_EQ(bullet.particle.old_position, (glm::vec2{ 0.0F, 0.0F }));
     EXPECT_EQ(bullet.particle.position, (glm::vec2{ 10.0F, 0.135F }));
     EXPECT_EQ(bullet.particle.GetVelocity(), (glm::vec2{ 9.9F, 0.13365F }));
+}
+
+TEST(BulletPhysicsTest, AppliesFlameBuoyancyForTheFollowingUpdate)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManager(animation_data_manager);
+    auto map = SoldankTesting::MapBuilder::Empty()->Build();
+    Soldank::PhysicsEvents physics_events;
+    auto bullet = CreateBullet({ 0.0F, 0.0F }, { 0.0F, 0.0F });
+    bullet.style = Soldank::BulletType::Flame;
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_FLOAT_EQ(bullet.particle.GetForce().y, -0.15F);
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_NEAR(bullet.particle.position.y, 0.25365F, 0.00001F);
+    EXPECT_NEAR(bullet.particle.GetVelocity().y, 0.1174635F, 0.00001F);
+    EXPECT_FLOAT_EQ(bullet.particle.GetForce().y, -0.15F);
+}
+
+TEST(BulletPhysicsTest, FindsTheNearestActiveCircularMapCollider)
+{
+    auto map = CreateMapWithColliders({
+      { .active = 0, .x = -15.0F, .y = 0.0F, .radius = 5.0F },
+      { .active = 1, .x = -10.0F, .y = 0.0F, .radius = 5.0F },
+      { .active = 1, .x = 0.0F, .y = 0.0F, .radius = 5.0F },
+    });
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+    bullet.particle.Euler();
+    const auto collision = Soldank::BulletCollision::FindColliderCollision(bullet, *map);
+
+    ASSERT_TRUE(collision.has_value());
+    EXPECT_EQ(collision->kind, Soldank::BulletCollisionKind::MapCollider);
+    ASSERT_TRUE(collision->collider_id.has_value());
+    EXPECT_EQ(*collision->collider_id, 1U);
+    EXPECT_NEAR(collision->position.x, -12.94F, 0.02F);
+    EXPECT_NEAR(collision->distance, 7.06F, 0.02F);
+}
+
+TEST(BulletPhysicsTest, CircularMapColliderBlocksProjectileDuringUpdate)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManager(animation_data_manager);
+    auto map = CreateMapWithColliders({
+      { .active = 1, .x = 0.0F, .y = 0.0F, .radius = 5.0F },
+    });
+    Soldank::PhysicsEvents physics_events;
+    auto bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+
+    Soldank::BulletPhysics::UpdateBullet(physics_events, bullet, *map, state_manager);
+
+    EXPECT_FALSE(bullet.active);
+    EXPECT_NEAR(bullet.particle.position.x, -2.94F, 0.02F);
+}
+
+TEST(BulletPhysicsTest, PushesMovableItemsUsingRelativeVelocityAndPerItemCooldown)
+{
+    auto animation_data_manager = CreateAnimationDataManager();
+    auto state_manager = CreateStateManager(animation_data_manager);
+    auto item_skeleton = CreateItemSkeleton({ 0.0F, 0.0F }, { 0.0F, 0.0F });
+    Soldank::Item& item =
+      state_manager.CreateItem({ 0.0F, 0.0F }, 255, Soldank::ItemType::Ak74, item_skeleton);
+    item_skeleton->SetOldPos(1, { -2.0F, 0.0F });
+    auto sweeping_bullet = CreateBullet({ -20.0F, 0.0F }, { 40.0F, 0.0F });
+    sweeping_bullet.timeout = 98;
+    sweeping_bullet.particle.Euler();
+    const auto found_collision =
+      Soldank::BulletCollision::FindThingCollision(sweeping_bullet, state_manager);
+    ASSERT_TRUE(found_collision.has_value());
+    ASSERT_TRUE(found_collision->item_id.has_value());
+    ASSERT_TRUE(found_collision->item_particle_id.has_value());
+    EXPECT_EQ(*found_collision->item_id, item.id);
+    EXPECT_EQ(*found_collision->item_particle_id, 1U);
+
+    auto bullet = CreateBullet({ 0.0F, 0.0F }, { 10.0F, 0.0F });
+    bullet.push = 0.5F;
+    const Soldank::BulletCollisionResult collision{
+        .kind = Soldank::BulletCollisionKind::Item,
+        .position = { 0.0F, 0.0F },
+        .distance = 0.0F,
+        .item_id = item.id,
+        .item_particle_id = 1,
+    };
+    Soldank::PhysicsEvents physics_events;
+
+    state_manager.SetGameTick(10);
+    Soldank::BulletImpactResolver::ResolveImpact(physics_events, bullet, state_manager, collision);
+
+    EXPECT_TRUE(bullet.active);
+    EXPECT_FALSE(item.static_type);
+    EXPECT_FLOAT_EQ(item_skeleton->GetPos(1).x, 36.0F);
+    ASSERT_EQ(bullet.item_collision_cooldowns.size(), 1U);
+    EXPECT_EQ(bullet.item_collision_cooldowns.at(0).item_id, item.id);
+    EXPECT_EQ(bullet.item_collision_cooldowns.at(0).cooldown_end_tick, 70U);
+
+    item.static_type = true;
+    item_skeleton->SetPos(1, { 0.0F, 0.0F });
+    item_skeleton->SetOldPos(1, { -2.0F, 0.0F });
+    state_manager.SetGameTick(11);
+    Soldank::BulletImpactResolver::ResolveImpact(physics_events, bullet, state_manager, collision);
+
+    EXPECT_FLOAT_EQ(item_skeleton->GetPos(1).x, 0.0F);
+    EXPECT_TRUE(item.static_type);
+
+    state_manager.SetGameTick(70);
+    Soldank::BulletImpactResolver::ResolveImpact(physics_events, bullet, state_manager, collision);
+
+    EXPECT_FLOAT_EQ(item_skeleton->GetPos(1).x, 36.0F);
+    EXPECT_FALSE(item.static_type);
 }
 
 TEST(BulletPhysicsTest, DeactivatesBulletWhenItsLifetimeExpires)

@@ -17,6 +17,7 @@ import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.PhysicsEvents;
 import Shared.Core.Map.Map;
 import Shared.Core.State.StateManager;
+import Shared.Core.Types.BulletType;
 import Shared.Core.Types.WeaponType;
 
 namespace Soldank
@@ -102,6 +103,10 @@ void UpdateBullet(const PhysicsEvents& physics_events,
 
     if (IsOutOfBounds(bullet, map)) {
         bullet.active = false;
+    }
+
+    if (bullet.style == BulletType::Flame) {
+        bullet.particle.SetForce(bullet.particle.GetForce() + glm::vec2{ 0.0F, -0.15F });
     }
 }
 } // namespace Soldank::BulletPhysics

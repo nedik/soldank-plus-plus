@@ -1,6 +1,7 @@
 module;
 
 #include <cstdint>
+#include <vector>
 
 export module Shared.Core.Entities.Bullet;
 
@@ -24,6 +25,12 @@ struct BulletParams
     TeamType team;
     std::uint8_t owner_id;
     float push;
+};
+
+struct ItemCollisionCooldown
+{
+    std::uint8_t item_id;
+    std::uint32_t cooldown_end_tick;
 };
 
 struct Bullet
@@ -74,5 +81,6 @@ struct Bullet
     std::int32_t ricochet_count{};
     std::uint32_t degrade_count = 0;
     float push{};
+    std::vector<ItemCollisionCooldown> item_collision_cooldowns;
 };
 } // namespace Soldank

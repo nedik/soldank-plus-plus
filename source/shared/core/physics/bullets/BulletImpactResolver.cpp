@@ -7,6 +7,7 @@ export module Shared.Core.Physics.Bullets.BulletImpactResolver;
 import Extern.Glm;
 
 import Shared.Core.Entities.Bullet;
+import Shared.Core.Entities.Item;
 import Shared.Core.Physics.Bullets.BulletDamage;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.Physics.PhysicsEvents;
@@ -21,6 +22,8 @@ namespace
 constexpr float RICOCHET_REPEAT_DISTANCE = 50.0F;
 constexpr float GRENADE_SURFACE_COEFFICIENT = 0.88F;
 constexpr std::int16_t ARROW_RESIST_TIMEOUT = 280;
+constexpr float THING_PUSH_MULTIPLIER = 9.0F;
+constexpr unsigned int THING_COLLISION_COOLDOWN = 60;
 
 bool CanRicochet(const Bullet& bullet, const BulletCollisionResult& collision)
 {
@@ -60,6 +63,64 @@ void StickArrow(Bullet& bullet, const BulletCollisionResult& collision)
     }
     if (bullet.timeout < 20) {
         bullet.particle.SetForce(bullet.particle.GetForce() + glm::vec2{ 0.0F, 0.135F });
+    }
+}
+
+void ResolveItemImpact(Bullet& bullet,
+                       StateManager& state_manager,
+                       const BulletCollisionResult& collision)
+{
+    if (!collision.item_id.has_value() || !collision.item_particle_id.has_value()) {
+        return;
+    }
+
+    const unsigned int game_tick = state_manager.GetGameTick();
+    bool has_expired_cooldown = false;
+    for (const auto& cooldown : bullet.item_collision_cooldowns) {
+        if (cooldown.item_id != *collision.item_id) {
+            continue;
+        }
+
+        if (game_tick < cooldown.cooldown_end_tick) {
+            return;
+        }
+
+        has_expired_cooldown = true;
+        break;
+    }
+
+    bool applied_push = false;
+    state_manager.TransformItems([&](Item& item) {
+        if (item.id != *collision.item_id || !item.skeleton ||
+            *collision.item_particle_id > item.skeleton->GetParticles().size()) {
+            return;
+        }
+
+        const unsigned int particle_id = *collision.item_particle_id;
+        const glm::vec2 item_velocity =
+          item.skeleton->GetPos(particle_id) - item.skeleton->GetOldPos(particle_id);
+        const glm::vec2 push =
+          (bullet.particle.GetVelocity() - item_velocity) * bullet.push * THING_PUSH_MULTIPLIER;
+        item.skeleton->SetPos(particle_id, item.skeleton->GetPos(particle_id) + push);
+        item.static_type = false;
+        applied_push = true;
+    });
+
+    if (!applied_push) {
+        return;
+    }
+
+    if (!has_expired_cooldown) {
+        bullet.item_collision_cooldowns.push_back(
+          { *collision.item_id, game_tick + THING_COLLISION_COOLDOWN });
+        return;
+    }
+
+    for (auto& cooldown : bullet.item_collision_cooldowns) {
+        if (cooldown.item_id == *collision.item_id) {
+            cooldown.cooldown_end_tick = game_tick + THING_COLLISION_COOLDOWN;
+            return;
+        }
     }
 }
 } // namespace
@@ -135,8 +196,10 @@ void ResolveImpact(const PhysicsEvents& physics_events,
             }
             return;
         case BulletCollisionKind::MapCollider:
-        case BulletCollisionKind::Item:
             ResolveBlockingImpact(bullet, collision);
+            return;
+        case BulletCollisionKind::Item:
+            ResolveItemImpact(bullet, state_manager, collision);
             return;
     }
 }

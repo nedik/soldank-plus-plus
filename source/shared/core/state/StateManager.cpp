@@ -133,7 +133,10 @@ public:
     std::size_t GetBulletsCount() const;
     void TransformBullets(const std::function<void(Bullet& bullet)>& transform_bullet_function);
 
-    Item& CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style);
+    Item& CreateItem(glm::vec2 position,
+                     std::uint8_t owner_id,
+                     ItemType style,
+                     std::shared_ptr<ParticleSystem> skeleton = nullptr);
     void SetItemPosition(unsigned int id, glm::vec2 new_position);
     void MoveItemIntoDirection(unsigned int id, glm::vec2 direction);
     void TransformItems(const std::function<void(Item& item)>& transform_item_function);
@@ -723,7 +726,10 @@ void StateManager::TransformBullets(
     }
 }
 
-Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemType style)
+Item& StateManager::CreateItem(glm::vec2 position,
+                               std::uint8_t owner_id,
+                               ItemType style,
+                               std::shared_ptr<ParticleSystem> skeleton)
 {
     std::uint8_t new_id = 0;
     for (const auto& item : state_.items) {
@@ -750,6 +756,11 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
     new_item.static_type = false;
     new_item.in_base = false;
     new_item.flipped = false;
+
+    const auto create_skeleton = [&skeleton](ParticleSystemType particle_system_type,
+                                             float particle_scale) {
+        return skeleton ? skeleton : ParticleSystem::Load(particle_system_type, particle_scale);
+    };
 
     for (std::uint8_t& i : new_item.collide_count) {
         i = 0;
@@ -825,7 +836,7 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
         case ItemType::AlphaFlag:
         case ItemType::BravoFlag:
         case ItemType::PointmatchFlag: {
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Flag, particle_scale);
+            new_item.skeleton = create_skeleton(ParticleSystemType::Flag, particle_scale);
             new_item.radius = FLAG_RADIUS;
             new_item.time_out = FLAG_TIMEOUT;
             new_item.collide_with_bullets = true;
@@ -847,7 +858,7 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
         case ItemType::Chainsaw:
         case ItemType::LAW:
         case ItemType::Bow: // TODO: bow has different condition
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Weapon, particle_scale);
+            new_item.skeleton = create_skeleton(ParticleSystemType::Weapon, particle_scale);
             // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
             new_item.radius = GUN_RADIUS;
@@ -862,7 +873,7 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
         case ItemType::ClusterKit:
         case ItemType::VestKit:
         case ItemType::GrenadeKit:
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Kit, particle_scale);
+            new_item.skeleton = create_skeleton(ParticleSystemType::Kit, particle_scale);
             // new_item.skeleton->VDamping = 0.989;
             // new_item.skeleton->GravityMultiplier = 1.07;
             new_item.radius = KIT_RADIUS;
@@ -871,12 +882,11 @@ Item& StateManager::CreateItem(glm::vec2 position, std::uint8_t owner_id, ItemTy
             new_item.collide_with_bullets = true; // TODO: sv_kits_collide.Value;
             break;
         case ItemType::Parachute:
-            new_item.skeleton = ParticleSystem::Load(ParticleSystemType::Parachute, particle_scale);
+            new_item.skeleton = create_skeleton(ParticleSystemType::Parachute, particle_scale);
             new_item.time_out = 3600;
             break;
         case ItemType::M2:
-            new_item.skeleton =
-              ParticleSystem::Load(ParticleSystemType::StationaryGun, particle_scale);
+            new_item.skeleton = create_skeleton(ParticleSystemType::StationaryGun, particle_scale);
             new_item.time_out = 60;
             new_item.radius = STAT_RADIUS;
             new_item.collide_with_bullets = false;

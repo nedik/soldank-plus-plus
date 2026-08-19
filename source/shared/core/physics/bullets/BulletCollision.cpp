@@ -20,6 +20,7 @@ import Shared.Core.Math.Calc;
 import Shared.Core.Physics.Bullets.BulletTypes;
 import Shared.Core.State.StateManager;
 import Shared.Core.Types.BulletType;
+import Shared.Core.Types.ItemType;
 
 namespace Soldank
 {
@@ -230,7 +231,11 @@ std::optional<BulletCollisionResult> FindColliderCollision(const Bullet& bullet,
 std::optional<BulletCollisionResult> FindThingCollision(const Bullet& bullet,
                                                         const StateManager& state_manager)
 {
-    if (bullet.style == BulletType::FragGrenade) {
+    constexpr float THING_COLLISION_RADIUS = 10.0F;
+    constexpr std::int16_t ITEM_COLLISION_GRACE_TICKS = 1;
+
+    if (bullet.style == BulletType::FragGrenade || bullet.style == BulletType::M2Bullet ||
+        bullet.timeout >= bullet.timeout_real - ITEM_COLLISION_GRACE_TICKS) {
         return std::nullopt;
     }
 
@@ -240,13 +245,13 @@ std::optional<BulletCollisionResult> FindThingCollision(const Bullet& bullet,
     state_manager.ForEachItem([&](const Item& item) {
         if (!item.collide_with_bullets ||
             (item.holding_soldier_id != 0 && item.holding_soldier_id == bullet.owner_id) ||
-            !item.skeleton) {
+            item.style == ItemType::M2 || !item.skeleton) {
             return;
         }
 
         for (unsigned int particle_id = 1; particle_id <= 2; ++particle_id) {
             const auto hit_position = Calc::LineCircleCollision(
-              start_point, end_point, item.skeleton->GetPos(particle_id), item.radius);
+              start_point, end_point, item.skeleton->GetPos(particle_id), THING_COLLISION_RADIUS);
             if (!hit_position.has_value()) {
                 continue;
             }
@@ -261,6 +266,7 @@ std::optional<BulletCollisionResult> FindThingCollision(const Bullet& bullet,
                 .position = *hit_position,
                 .distance = distance,
                 .item_id = item.id,
+                .item_particle_id = particle_id,
             };
         }
     });
